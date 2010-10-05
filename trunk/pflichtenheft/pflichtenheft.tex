@@ -1,0 +1,124 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{german}
+\usepackage{graphicx}
+\author{SEP - ITS - Team}
+\title{Pflichtenheft}
+\begin{document}
+	\maketitle
+	\includegraphics[scale=0.5, origin=c]{logo.png}
+	\newpage
+	
+	\section{Zielbestimmung}
+		Ziel des Projekts ist die autonome Erkundung eines unbekannten rechtwinkligen Spielfelds durch bis zu
+		sechs e-puck Roboter. Dies wird durch Kooperation der Roboter und geeignete Algorithmen möglichst
+		effizient umgesetzt. Zusätzlich erfolgt die kontinuierliche Visualisierung der Position der e-pucks auf der
+		bereits erkundeten Karte mit einem Android-Smartphone. Die Steuerung eines Roboters kann wahlweise
+		automatisch oder manuell per Smartphone erfolgen.
+		\subsection{Musskriterien}
+			\begin{itemize}
+				\item e-puck Roboter
+				\begin{itemize}
+					\item Multiple Anzahl von Robotern
+						\\ \textsl{Die Unterstützung von bis zu sechs e-puck Roboter muss gewährleistet sein.}
+					\item Kommunikation über Bluetooth Netzwerk
+					\item Erkundung einer unbekannten rechtwinkligen Fläche
+						\\ \textsl{Das Spielfeld soll hierbei aus quadratischen Feldern bestehen. Diese sind rasterförmig
+						 	und zusammenhängend angeordnet. Die Startpositionen der e-puck Roboter ist fest
+						 	vordefiniert.}
+					\item Fortbewegung auf den Kanten der Quadrate
+						\\ \textsl{Die Linien müssen schwarz mit ausreichendem Kontrastverhältnis zum Untergrund
+							sein.	Zwingend erforderlich ist, dass die Linienbreite innerhalb der Spezifikation der
+							Bodensensoren	liegt.}		
+					\item Kollisionsvermeidung
+						\\ \textsl{Während der Erkundungsphase müssen die Roboter Kollisionen mit anderen Robotern
+							bzw. Hindernissen vermeiden.}	
+					\item Gleichberechtigung der Teilnehmer
+						\\ \textsl{Sämtliche Roboter haben den selben Aufgabenbereich, auf eine Master/Slave-
+							Beziehung wird verzichtet.}	
+					\item Rückkehr zum Ausgangspunkt
+						\\ \textsl{Nach vollendeter Erkundung müssen die e-pucks zurück zu ihrem jeweiligem
+							Ausgangspunkt fahren.}	
+				\end{itemize}
+				\item Smartphone
+				\begin{itemize}
+					\item Kommunikation über Bluetooth
+						\\ \textsl{Die Verbindung des Smartphones mit den Robotern muss über die vorhandenen
+							Bluetooth Schnittstellen erfolgen.}
+					\item Visualisierung
+						\\ \textsl{Die bereits erkundete Karte muss inkl. der aktuellen Roboterpositionen in einer
+							benutzerfreundlichen Android-Anwendung übersichtlich dargestellt werden.}		
+					\item Steuerung des Roboters
+						\\ \textsl{Es muss ein e-puck mit Hilfe der Anwendung gewählt werden können. Dieser lässt sich
+							durch den Benutzer entlang der Kanten steuern. Die Richtung sowie Geschwindigkeit ist
+							stufenweise anpassbar.}		
+					\item Zwei Steuerungsarten
+						\\ \textsl{Die Steuerung der Roboter erfolgt wahlweise über einen On-Screen- Joystick oder über
+							den integrierten Beschleunigungssensor.}											
+				\end{itemize}
+			\end{itemize}
+		\subsection{Wunschkriterien}
+			\begin{itemize}
+				\item e-puck Roboter
+				\begin{itemize}
+					\item Beliebige Startpositionen
+						\\ \textsl{Die Roboter können auf frei wählbaren Startpositionen innerhalb des Spielfeldes
+							abgesetzt werden.}
+					\item Kritische Bereiche
+					\item Virtuelle Tankstelle(n)
+					\item Zustandsvisualisierung	
+					\item Einstellbarer Synchronisationsmodus
+				\end{itemize}
+				\item Smartphone
+				\begin{itemize}
+					\item Exportfunktion
+					\item Internationalisierung	
+					\item Anzeige von Statusinformationen
+					\item Pfadanzeige von einzelnen Robotern										
+				\end{itemize}
+			\end{itemize}
+		\subsection{Abgrenzungskriterien}
+			\begin{itemize}
+				\item Keine abweichenden Spielfelder
+					\\ \textsl{Die Felder und zugehörigen Linien müssen den genannten Musskriterien entsprechen.
+						Es sind keine runden oder diagonalen Verbindungslinien erlaubt.}
+				\item Keine dynamischen Änderungen
+					\\ \textsl{Nachdem der Erkundungsvorgang gestartet wurde, dürfen keine Modifikationen am
+						Spielfeld getätigt werden, welche Einfluss auf den Erkundungsalgorithmus zur Folge haben.}
+				\item Keine dynamischen Änderungen
+					\\ \textsl{Nachdem der Erkundungsvorgang gestartet wurde, dürfen keine Modifikationen am
+						Spielfeld getätigt werden, welche Einfluss auf den Erkundungsalgorithmus zur Folge haben.}
+				\item Maximal ein Smartphone
+					\\ \textsl{Es darf lediglich ein Smartphone zur Auswahl, Steuerung und Visualisierung verwendet
+						werden.}					
+				\item Maximal ein Smartphone
+					\\ \textsl{Es darf lediglich ein Smartphone zur Auswahl, Steuerung und Visualisierung verwendet
+						werden.}		
+			\end{itemize}
+	\section{Produkteinsatz}
+		\subsection{Anwendungsbereiche}
+			Das Projekt dient der Grundlagenforschung in den Bereichen:
+			\begin{itemize}
+				\item Robotik
+				\item Verteilte Systeme
+				\item Künstliche Intelligenz
+			\end{itemize}
+		\subsection{Zielgruppen}
+			\begin{itemize}
+				\item Studenten
+				\item Forschungsgruppen in ähnlichen Bereichen
+				\item e-puck Community
+			\end{itemize}
+		\subsection{Betriebsbedingungen}
+			\begin{itemize}
+				\item Ausreichende Stromversorgung
+					\\ \textsl{ Die Akkuleistung der einzelnen Roboter sowie des Smartphones muss für die gesamte
+						Erkundungsdauer ausreichend sein.}
+				\item Geeignete Bedingungen für Funknetzwerke
+					\\ \textsl{ Die Ausmaße des Spielfelds, die Abstände von e-pucks oder des Smartphones sowie
+						Signale anderer Netze dürfen keine störenden Einflüsse auf die Bluetooth-Verbindungen haben.}
+			\end{itemize}
+\end{document}
