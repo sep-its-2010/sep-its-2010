@@ -63,36 +63,29 @@
 			\begin{itemize}
 				\item e-puck Roboter
 				\begin{itemize}
+					\item Kritische Bereiche
 					\item Beliebige Startpositionen
 						\\ \textsl{Die Roboter können auf frei wählbaren Startpositionen innerhalb des Spielfeldes
 							abgesetzt werden.}
-					\item Kritische Bereiche
-					\item Virtuelle Tankstelle(n)
 					\item Zustandsvisualisierung	
 					\item Einstellbarer Synchronisationsmodus
 				\end{itemize}
 				\item Smartphone
 				\begin{itemize}
-					\item Exportfunktion
-					\item Internationalisierung	
 					\item Anzeige von Statusinformationen
-					\item Pfadanzeige von einzelnen Robotern										
+					\item Pfadanzeige von einzelnen Robotern					
+					\item Exportfunktion
+					\item Internationalisierung										
 				\end{itemize}
 			\end{itemize}
 		\subsection{Abgrenzungskriterien}
 			\begin{itemize}
 				\item Keine abweichenden Spielfelder
-					\\ \textsl{Die Felder und zugehörigen Linien müssen den genannten Musskriterien entsprechen.
-						Es sind keine runden oder diagonalen Verbindungslinien erlaubt.}
+					\\ \textsl{Die Felder und zugehörigen Linien müssen den genannten Musskriterien
+						entsprechen. Es sind keine runden oder diagonalen Verbindungslinien erlaubt.}
 				\item Keine dynamischen Änderungen
 					\\ \textsl{Nachdem der Erkundungsvorgang gestartet wurde, dürfen keine Modifikationen am
-						Spielfeld getätigt werden, welche Einfluss auf den Erkundungsalgorithmus zur Folge haben.}
-				\item Keine dynamischen Änderungen
-					\\ \textsl{Nachdem der Erkundungsvorgang gestartet wurde, dürfen keine Modifikationen am
-						Spielfeld getätigt werden, welche Einfluss auf den Erkundungsalgorithmus zur Folge haben.}
-				\item Maximal ein Smartphone
-					\\ \textsl{Es darf lediglich ein Smartphone zur Auswahl, Steuerung und Visualisierung verwendet
-						werden.}					
+						Spielfeld getätigt werden, welche Einfluss auf den Erkundungsalgorithmus zur Folge haben.}			
 				\item Maximal ein Smartphone
 					\\ \textsl{Es darf lediglich ein Smartphone zur Auswahl, Steuerung und Visualisierung verwendet
 						werden.}		
@@ -119,7 +112,76 @@
 				\item Geeignete Bedingungen für Funknetzwerke
 					\\ \textsl{ Die Ausmaße des Spielfelds, die Abstände von e-pucks oder des Smartphones sowie
 						Signale anderer Netze dürfen keine störenden Einflüsse auf die Bluetooth-Verbindungen haben.}
+				\item Größe des Spielfeldes
+					\\ \textsl{Der integrierte Arbeitsspeicher des e-puck Roboter stellt eine Begrenzung des 
+					 persistierbaren lokalen Spielfeldes dar. Es werden ca. 700 Knotenpunkte unterstützt. }			
+				\item Wartungsfrei
+				\item Betriebsbedingungen des e-puck Roboter
+					\\ \textsl{Die weiteren Betriebsbedingungen können dem Benutzerhandbuch 	entnommen werden.}
 			\end{itemize}
+<<<<<<< .mine
+		\section{Produktumgebung}
+			\subsection{Software}
+				\begin{itemize}
+					\item Geeigneter Bootloader oder Programmer zum Flashen der e-puck Roboter
+					\item Android Software ab Version 2.1
+				\end{itemize}
+			\subsection{Hardware}
+				\begin{itemize}
+					\item e-puck Roboter
+					\item Bodensensor für e-puck Roboter
+					\item Android Smartphone
+						\\ \textsl{Voraussetzungen: Bluetooth, geeignete Auflösung, Beschleunigungssensoren, Touch-Display.}
+					\item Computer mit Bluetooth Unterstützung
+				\end{itemize}		
+	\section{Produktfunktionen}
+		\subsection{e-puck Roboter}
+			\subsubsection{Netzwerkfunktionen}
+				\begin{list}{\labelitemi}{\leftmargin=1cm}
+					\item[\textbf{\textbackslash F50\textbackslash}] Suchfunktion
+					\item[\textbf{\textbackslash F60\textbackslash}] Verbindungsaufbau
+					\item[\textbf{\textbackslash F70\textbackslash}] Broadcast-Kommunikation
+					\item[\textbf{\textbackslash F75W\textbackslash}] Kommunikationsunterdrückung
+				\end{list}
+			\subsubsection{Bewegungsfunktionen}
+				\begin{list}{\labelitemi}{\leftmargin=1cm}
+					\item[\textbf{\textbackslash F80\textbackslash}] Fahrsteuerung 
+					\item[\textbf{\textbackslash F90\textbackslash}] Kollisionsvermeidung
+					\item[\textbf{\textbackslash F100\textbackslash}] Linienverfolgung
+					\item[\textbf{\textbackslash F110\textbackslash}] Knotenanalyse
+				\end{list}
+			\subsubsection{Explorationsfunktionen}
+				\begin{list}{\labelitemi}{\leftmargin=1cm}
+					\item[\textbf{\textbackslash F120\textbackslash}] Lokalisierung 
+					\item[\textbf{\textbackslash F130\textbackslash}] Lokale Kartenkonstruktion					
+					\item[\textbf{\textbackslash F140\textbackslash}] Kartensynchronisation
+					\item[\textbf{\textbackslash F150\textbackslash}] Erkundungsfunktion
+					\item[\textbf{\textbackslash F160\textbackslash}] Rückkehrfunktion
+					\item[\textbf{\textbackslash F170W\textbackslash}] Globale Lokalisierung (evtl. inkl. Steuerung)
+				\end{list}
+		\subsection{Smartphone}
+			\subsubsection{Netzwerkfunktionen}
+				\begin{list}{\labelitemi}{\leftmargin=1cm}
+					\item[\textbf{\textbackslash F200\textbackslash}] Suchfunktion
+					\item[\textbf{\textbackslash F210\textbackslash}] Verbindungsaufbau					
+					\item[\textbf{\textbackslash F220\textbackslash}] Kommunikationsfunktion
+				\end{list}				
+			\subsubsection{GUI}
+				\begin{list}{\labelitemi}{\leftmargin=1cm}
+					\item[\textbf{\textbackslash F230\textbackslash}] Kartendarstellung
+					\item[\textbf{\textbackslash F240\textbackslash}] Roboterdarstellung					
+					\item[\textbf{\textbackslash F250\textbackslash}] Steuerungsfunktion per On-Screen-Joystick
+					\item[\textbf{\textbackslash F260\textbackslash}] Steuerungsfunktion per Bewegungssensor					
+					\item[\textbf{\textbackslash F270W\textbackslash}] Zustandsvisualisierung (status + pfade)		
+					\item[\textbf{\textbackslash F280W\textbackslash}] Internationalisierung	
+				\end{list}		
+			\subsubsection{Steuerungsfunktionen}		
+				\begin{list}{\labelitemi}{\leftmargin=1cm}
+					\item[\textbf{\textbackslash F290\textbackslash}] Steuerungsfunktion per On-Screen-Joystick
+					\item[\textbf{\textbackslash F300\textbackslash}] Steuerungsfunktion per Bewegungssensor					
+				\end{list}				
+=======
 			
 			
+>>>>>>> .r8
 \end{document}
