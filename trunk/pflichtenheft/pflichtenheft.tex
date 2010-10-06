@@ -12,11 +12,12 @@
 	\includegraphics[scale=0.5, origin=c]{logo.png}
 	\newpage
 	\section{Zielbestimmung}
-		Ziel des Projekts ist die autonome Erkundung eines unbekannten rechtwinkligen Spielfelds durch bis zu
+		Das Ziel des Projekts ist die autonome Erkundung eines unbekannten, rechtwinkligen Spielfelds durch bis zu
 		sechs e-puck Roboter. Dies wird durch Kooperation der Roboter und geeignete Algorithmen möglichst
-		effizient umgesetzt. Zusätzlich erfolgt die kontinuierliche Visualisierung der Position der e-pucks auf der
-		bereits erkundeten Karte mit einem Android-Smartphone. Die Steuerung eines Roboters kann wahlweise
-		automatisch oder manuell per Smartphone erfolgen.
+		effizient umgesetzt.
+		Zusätzlich erfolgt die kontinuierliche Visualisierung der Position der e-pucks auf der
+		bereits erkundeten Karte mit einem Android-Smartphone.
+		Die Steuerung eines Roboters kann wahlweise automatisch oder manuell per Smartphone erfolgen.
 		\subsection{Musskriterien}
 			\begin{itemize}
 				\item e-puck Roboter
@@ -139,32 +140,57 @@
 			\subsubsection{Netzwerkfunktionen}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
 					\item[\textbf{\textbackslash F50\textbackslash}] Suchfunktion
+						\\ \textsl{Ein e-puck Roboter kann andere e-puck Roboter in Reichweite seines Bluetooth-Moduls entdecken.}
 					\item[\textbf{\textbackslash F60\textbackslash}] Verbindungsaufbau
+						\\ \textsl{Ein e-puck Roboter kann zu einem anderen e-puck Roboter, den er mit der Suchfunktion entdeckt
+						hat, eine Bluetooth-Verbindung aufbauen.}
 					\item[\textbf{\textbackslash F70\textbackslash}] Broadcast-Kommunikation
+						\\ \textsl{Die e-puck Roboter können über bestehende Bluetooth-Verbindungen per Broadcast
+						Nachrichten austauschen. Auch die Kommunikation mit dem Smartphone erfolgt via Broadcast.}
 					\item[\textbf{\textbackslash F75W\textbackslash}] Kommunikationsunterdrückung
+						\\ \textsl{Erreicht ein e-puck einen kritischen Bereich auf dem Spielfeld, kann er über bestehende
+						Bluetooth-Verbindungen weder Nachrichten senden noch empfangen. Die Verbindungen an sich bleiben bestehen.}
 				\end{list}
 			\subsubsection{Bewegungsfunktionen}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
-					\item[\textbf{\textbackslash F80\textbackslash}] Fahrsteuerung 
+					\item[\textbf{\textbackslash F80\textbackslash}] Fahrsteuerung
+						\\ \textsl{Ein e-puck Roboter kann vorwärts und rückwärts fahren. Außerdem kann er sich links und rechts herum
+						in eine beliebige Richtung drehen.}
 					\item[\textbf{\textbackslash F90\textbackslash}] Kollisionsvermeidung
+						\\ \textsl{Ein e-puck erkennet und vermeidet direkt bevorstehende Kollisionen mit anderen e-pucks.}
 					\item[\textbf{\textbackslash F100\textbackslash}] Linienverfolgung
+						\\ \textsl{Die e-pucks bewegen sich auf dem Spielfeld nur auf den vorhandenen Linien. Das gilt auch für e-pucks,
+						die mit dem Smartphone halbmanuell gesteuert werden.}
 					\item[\textbf{\textbackslash F110\textbackslash}] Knotenanalyse
+						\\ \textsl{Ein e-puck erkennt beim Überfahren eines Knotens, in welche Richtungen er weiterfahren kann.}
 				\end{list}
 			\subsubsection{Explorationsfunktionen}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
-					\item[\textbf{\textbackslash F120\textbackslash}] Lokalisierung 
-					\item[\textbf{\textbackslash F130\textbackslash}] Lokale Kartenkonstruktion					
+					\item[\textbf{\textbackslash F120\textbackslash}] Lokalisierung
+						\\ \textsl{Vor Beginn des Erkundungsvorgangs einigen sich die e-pucks untereinander auf einen gemeinsamen Bezugspunkt
+						und ermitteln relativ dazu ihre eigene Position.} 
+					\item[\textbf{\textbackslash F130\textbackslash}] Lokale Kartenkonstruktion	
+						\\ \textsl{Jeder e-puck speichert lokal die komplette bisher erkundete Karte. Diese wird mit Hilfe
+						der Informationen aus den Nachrichten der anderen e-pucks sowie den eigenen Erkundungsergebnissen konstruiert.} 				
 					\item[\textbf{\textbackslash F140\textbackslash}] Kartensynchronisation
+						\\ \textsl{Während des Erkundungsvorgangs tauschen die e-pucks kontinuierlich Informationen über die von ihnen
+						erkundeten Felder aus. Ist ein Smartphone mit dem Netzwerk verbunden, erhält auch dieses entsprechende Nachrichten.} 
 					\item[\textbf{\textbackslash F150\textbackslash}] Erkundungsfunktion
 					\item[\textbf{\textbackslash F160\textbackslash}] Rückkehrfunktion
+						\\ \textsl{Nachdem das Gebiet vollständig erkundet worden ist, fahren die e-pucks wieder an ihre Startpositionen
+						zurück.}
 					\item[\textbf{\textbackslash F170W\textbackslash}] Globale Lokalisierung (evtl. inkl. Steuerung)
 				\end{list}
 		\subsection{Smartphone}
 			\subsubsection{Netzwerkfunktionen}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
 					\item[\textbf{\textbackslash F200\textbackslash}] Suchfunktion
-					\item[\textbf{\textbackslash F210\textbackslash}] Verbindungsaufbau					
+						\\ \textsl{Das Smartphone kann e-puck Roboter in Reichweite seines Bluetooth-Moduls entdecken.}
+					\item[\textbf{\textbackslash F210\textbackslash}] Verbindungsaufbau
+						\\ \textsl{Das Smartphone kann sich via Bluetooth mit einem e-puck verbinden, den es mit Hilfe
+						der Suchfunktion entdeckt hat.}				
 					\item[\textbf{\textbackslash F220\textbackslash}] Kommunikationsfunktion
+						\\ \textsl{}
 				\end{list}				
 			\subsubsection{GUI}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
