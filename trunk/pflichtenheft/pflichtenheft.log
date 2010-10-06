@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2010.5.5)  5 OCT 2010 15:35
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2010.5.12)  6 OCT 2010 17:54
 entering extended mode
  %&-line parsing enabled.
 **pflichtenheft.tex
@@ -402,26 +402,35 @@ Overfull \hbox (34.00172pt too wide) in paragraph at lines 39--42
 , auf ei-ne Master/Slave-
  []
 
-[2] [3] [4] (./pflichtenheft.aux) ) 
+[2] [3]
+LaTeX Font Info:    Font shape `OMS/cmr/bx/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/b/n' tried instead on input line 142.
+ [4] [5]
+Underfull \hbox (badness 10000) in paragraph at lines 192--194
+
+ []
+
+[6] (./pflichtenheft.aux) ) 
 Here is how much of TeX's memory you used:
- 2190 strings out of 493848
- 25686 string characters out of 3149208
- 82026 words of memory out of 3000000
- 5456 multiletter control sequences out of 15000+200000
- 10157 words of font info for 38 fonts, out of 3000000 for 9000
+ 2194 strings out of 493848
+ 25740 string characters out of 3149207
+ 81026 words of memory out of 3000000
+ 5459 multiletter control sequences out of 15000+200000
+ 10412 words of font info for 39 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 27i,6n,22p,230b,255s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/local/texlive/2009/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2009/texmf-dist/fonts/typ
-e1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2009/texmf-dist/fonts/type
-1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmr17.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmsl10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmsy10.pfb>
-Output written on pflichtenheft.pdf (4 pages, 108893 bytes).
+ 27i,6n,22p,230b,257s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/local/texlive/2009/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmbsy10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmr10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmr12.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmr17.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmsl10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmsy10.pfb>
+Output written on pflichtenheft.pdf (6 pages, 135008 bytes).
 PDF statistics:
- 46 PDF objects out of 1000 (max. 8388607)
+ 56 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
