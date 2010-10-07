@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2010.5.12)  6 OCT 2010 17:54
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2010.5.12)  7 OCT 2010 12:48
 entering extended mode
  %&-line parsing enabled.
 **pflichtenheft.tex
@@ -348,18 +348,18 @@ File: pdftex.def 2009/08/25 v0.04m Graphics/color for pdfTeX
 (./pflichtenheft.aux)
 \openout1 = `pflichtenheft.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 11.
+LaTeX Font Info:    ... okay on input line 11.
 
 (/usr/local/texlive/2009/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -374,11 +374,11 @@ LaTeX Font Info:    ... okay on input line 10.
 \MPnumerator=\count104
 \everyMPtoPDFconversion=\toks23
 )
-LaTeX Font Info:    Try loading font information for U+msa on input line 11.
+LaTeX Font Info:    Try loading font information for U+msa on input line 12.
  (/usr/local/texlive/2009/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 11.
+LaTeX Font Info:    Try loading font information for U+msb on input line 12.
 
 (/usr/local/texlive/2009/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
@@ -389,36 +389,42 @@ File: logo.png Graphic file (type png)
 
 {/usr/local/texlive/2009/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./logo.
 png>]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 23.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 25.
 
 (/usr/local/texlive/2009/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 23.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 25.
 
-Overfull \hbox (34.00172pt too wide) in paragraph at lines 39--42
-\OT1/cmr/m/sl/10 S[]amt-li-che Ro-bo-ter ha-ben den sel-ben Auf-ga-ben-be-reich
-, auf ei-ne Master/Slave-
+Overfull \hbox (18.58397pt too wide) in paragraph at lines 29--32
+\OT1/cmr/m/sl/10 Die Kom-mu-ni-ka-ti-on der e-pucks un-ter-ein-an-der er-folgt 
+[]uber ein Bluetooth-
  []
 
-[2] [3]
+
+Overfull \hbox (9.61827pt too wide) in paragraph at lines 32--35
+\OT1/cmr/m/sl/10 Das Spiel-feld be-steht aus qua-dra-ti-schen Fel-dern. Die-se 
+sind ra-sterf[]ormig
+ []
+
+[2] [3] [4]
 LaTeX Font Info:    Font shape `OMS/cmr/bx/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/b/n' tried instead on input line 142.
- [4] [5]
-Underfull \hbox (badness 10000) in paragraph at lines 192--194
+(Font)              Font shape `OMS/cmsy/b/n' tried instead on input line 162.
+ [5] [6]
+Underfull \hbox (badness 10000) in paragraph at lines 212--214
 
  []
 
-[6] (./pflichtenheft.aux) ) 
+[7] (./pflichtenheft.aux) ) 
 Here is how much of TeX's memory you used:
  2194 strings out of 493848
  25740 string characters out of 3149207
- 81026 words of memory out of 3000000
+ 82026 words of memory out of 3000000
  5459 multiletter control sequences out of 15000+200000
  10412 words of font info for 39 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 27i,6n,22p,230b,257s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 27i,6n,22p,230b,255s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/local/texlive/2009/texmf-dist/fonts/type1/publ
 ic/amsfonts/cm/cmbsy10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/publ
 ic/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/publi
@@ -428,9 +434,9 @@ msfonts/cm/cmr12.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/ams
 fonts/cm/cmr17.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfo
 nts/cm/cmsl10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfon
 ts/cm/cmsy10.pfb>
-Output written on pflichtenheft.pdf (6 pages, 135008 bytes).
+Output written on pflichtenheft.pdf (7 pages, 138231 bytes).
 PDF statistics:
- 56 PDF objects out of 1000 (max. 8388607)
+ 61 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
