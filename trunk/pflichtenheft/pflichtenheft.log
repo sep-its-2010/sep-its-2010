@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2010.5.12)  7 OCT 2010 12:48
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2010.5.12)  7 OCT 2010 13:15
 entering extended mode
  %&-line parsing enabled.
 **pflichtenheft.tex
@@ -410,9 +410,9 @@ sind ra-sterf[]ormig
 
 [2] [3] [4]
 LaTeX Font Info:    Font shape `OMS/cmr/bx/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/b/n' tried instead on input line 162.
+(Font)              Font shape `OMS/cmsy/b/n' tried instead on input line 161.
  [5] [6]
-Underfull \hbox (badness 10000) in paragraph at lines 212--214
+Underfull \hbox (badness 10000) in paragraph at lines 211--213
 
  []
 
@@ -434,7 +434,7 @@ msfonts/cm/cmr12.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/ams
 fonts/cm/cmr17.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfo
 nts/cm/cmsl10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfon
 ts/cm/cmsy10.pfb>
-Output written on pflichtenheft.pdf (7 pages, 138231 bytes).
+Output written on pflichtenheft.pdf (7 pages, 138134 bytes).
 PDF statistics:
  61 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
