@@ -8,11 +8,18 @@
 #include <I2C/e_I2C_master_module.h>
 #include <I2C/e_I2C_protocol.h>
 #include <time.h>
+#include <stdlib.h>
 
 #define uart_send_text(msg) do { e_send_uart1_char(msg,strlen(msg)); while(e_uart1_sending()); } while(0)
 
-#define T 20
-#define INITIAL_SPEED 500
+
+#define T 20.0				// Interrupt intervall for pid-controller
+#define KRC 1.0	//2.5		// stability limit
+#define TC 0.4	//0.2		// loop time
+#define IMAX 1500.0			// max integration sum
+#define INITIAL_SPEED 700	// initial speed
+#define SPEED_MAX 1000		// maximum speed
+#define SPEED_MIN 0			// minimum speed
 
 void initTMR1(void);
 void __attribute__((interrupt, auto_psv, shadow)) _T1Interrupt(void);
@@ -23,7 +30,6 @@ int getSelector() {
 
 int main(void)
 {
-	char buffer[30];
 	long i = 0;
 
 	e_init_port();
@@ -76,26 +82,35 @@ int main(void)
 		}
 }
 
-
 // timer 1 interrupt
 // this code is executed every COM_TIME ms
 void __attribute__((interrupt, auto_psv, shadow)) _T1Interrupt(void) {
 	
 	IFS0bits.T1IF = 0; // clear interrupt flag
 
-	const unsigned char I2C_address = 0xC0;
-	const long t = T/1000;
-	const long kr = 4, Tn = 0.4, Tv = 0.0;
-	const long yp = 1 + (Tv / t);
-	const long yi = 1 - (t / Tn) + 2 * (Tv / t);
-	const long yd = (Tv / t);
+	const unsigned char I2C_address = 0xC0; // adress of ground sensors
+	const float t = (T / 1000.0); // timer intervall in ms
 
+	// constants for pid-controller (ziegler-nichols rules)
+	const float kr = 0.6 * KRC;
+	const float tn = 0.5 * TC;
+	const float tv = 0.12 * TC;
+	
+	// constants for pid-controller (PID-adjust-algorithm)
+	const float yp = 1.0;
+	const float yi = (t / tn);
+	const float yd = (tv / t);
+
+	// local static definitions
+	static int	l_calibrate[3] = {0,0,0};
+	static float y_old = 0,  diff_new = 0, diff_old = 0, diff_sum = 0;
+
+	// local declarations / definitions
 	char buffer[30];
 	int j;
 	int l_buffer[3];
-	long y_new = 0, x_new = 0;
-	static int	l_calibrate[3] = {0,0,0};
-	static long y_old = 0, x_old = 0, x_old_old = 0;
+	float y_new = 0;
+
 
 	// selector 0 = calibrate
 	// selector else = drive
@@ -121,17 +136,27 @@ void __attribute__((interrupt, auto_psv, shadow)) _T1Interrupt(void) {
 			return;
 		}
 
-		// read diff		
-		x_new = l_buffer[2] - l_buffer[0] - (l_calibrate[2] - l_calibrate[0]);
+		// calculate integration-part
+		diff_sum += diff_new;
+		if (diff_sum > IMAX) diff_sum = IMAX;
+		if (diff_sum < -IMAX) diff_sum = -IMAX;
 
-		// PID-speed-algorithm
-		y_new = kr * (yp * x_new - yi * x_old + yd * x_old_old) + y_old;	
+		// get new difference of sensor[0] to sensor[2]
+		diff_new = l_buffer[2] - l_buffer[0] - (l_calibrate[2] - l_calibrate[0]);
+
+		// PID-adjust-algorithm
+		y_new = kr * (yp * diff_new - yi * diff_sum + yd * (diff_new - diff_old));
 		
 		// set motor speed
+		if (INITIAL_SPEED + (int)(y_new / 2) > SPEED_MAX) {
+			y_new = 2 * (SPEED_MAX - INITIAL_SPEED) - 1;
+		}else if (INITIAL_SPEED - (int)(y_new / 2) < SPEED_MIN) {
+			y_new = 2 * (INITIAL_SPEED - SPEED_MIN) + 1;
+		}
 		e_set_speed(INITIAL_SPEED, (int)(y_new / 2));
 					
-		x_old_old = x_old;
-		x_old = x_new;
+		// store static values
+		diff_old = diff_new;
 		y_old = y_new;
 	}
 }
