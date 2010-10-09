@@ -17,4 +17,11 @@
 \contentsline {subsection}{\numberline {4.2}Smartphone}{8}
 \contentsline {subsubsection}{\numberline {4.2.1}Netzwerkfunktionen}{8}
 \contentsline {subsubsection}{\numberline {4.2.2}Steuerungsfunktionen}{8}
-\contentsline {subsubsection}{\numberline {4.2.3}Grafische Benutzerschnittstelle}{8}
+\contentsline {subsubsection}{\numberline {4.2.3}Grafische Benutzeroberfl\IeC {\"a}che}{8}
+\contentsline {section}{\numberline {5}Produktdaten}{9}
+\contentsline {section}{\numberline {6}Produktleistungen}{9}
+\contentsline {section}{\numberline {7}Benutzungsoberfl\IeC {\"a}che}{9}
+\contentsline {section}{\numberline {8}Qualit\IeC {\"a}tsbestimmungen}{9}
+\contentsline {section}{\numberline {9}Globale Testszenarien und Testf\IeC {\"a}lle}{9}
+\contentsline {section}{\numberline {10}Produktfunktionen}{9}
+\contentsline {section}{\numberline {11}Erg\IeC {\"a}nzungen}{9}
