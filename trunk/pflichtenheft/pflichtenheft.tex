@@ -5,6 +5,7 @@
 \usepackage{amssymb}
 \usepackage{german}
 \usepackage{graphicx}
+\usepackage{epstopdf}
 \parindent 0pt
 \pagestyle{headings}
 
@@ -24,12 +25,13 @@
 	
 	\section{Zielbestimmung}
 		Das Ziel des Projekts ist die automatische Erkundung eines unbekannten, rechtwinkligen Spielfelds durch bis zu
-		sechs e-pucks. Die Erkundung soll durch Zusammenarbeit der Roboter möglichst effizient erfolgen.
+		sechs e-puck Roboter. Die Erkundung soll durch Zusammenarbeit der Roboter möglichst effizient erfolgen.
 		
 		Das bereits erkundete Gebiet sowie die aktuellen Positionen der e-pucks werden kontinuierlich auf einem
 		Andorid Smartphone dargestellt.
 		
-		Außerdem kann mit dem Smartphone einer der teilnehmenden e-puck Roboter ausgewählt und halbmanuell gesteuert werden.
+		Außerdem kann mit dem Smartphone einer der teilnehmenden e-puck Roboter ausgewählt und halbmanuell\footnote{Die
+			möglichen Bewegungsrichtungen sind durch die Fahrbahnlinien eingeschränkt}  gesteuert werden.
 		\subsection{Musskriterien}
 			\begin{itemize}
 				\item e-puck Roboter
@@ -285,7 +287,7 @@
 			\subsection{Dialogstruktur}
 			Im folgenden Schaubild wird die grundlegende Dialogstruktur der Android-Anwendung dargestellt.
 			
-			<Bild rein>
+			\includegraphics[width=10cm]{dialog.eps}
 			
 			\subsection{Frame `Karte'}
 			Auf dem Frame `Karte' erfolgt die übersichtliche Darstellung des bereits erkundeten Gebietes. Auf dieser Karte werden außerdem
@@ -302,7 +304,6 @@
 			
 			Der Benutzer kann zwischen den beiden beschriebenen Steuerungsarten wählen.
 			\subsection{Frame `Statistik'}
-
 	\section{Qualitätsbestimmungen}
 		
 		\subsection{e-puck}
