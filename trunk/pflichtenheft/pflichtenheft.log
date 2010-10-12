@@ -1,5 +1,6 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2010.5.5)  11 OCT 2010 16:52
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2010.5.12)  12 OCT 2010 12:16
 entering extended mode
+ \write18 enabled.
  %&-line parsing enabled.
 **pflichtenheft.tex
 (./pflichtenheft.tex
@@ -413,60 +414,56 @@ Overfull \hbox (9.61827pt too wide) in paragraph at lines 42--47
 sind ra-sterf[]ormig
  []
 
-[3] [4] [5] [6]
-Underfull \hbox (badness 10000) in paragraph at lines 195--197
-
- []
-
-[7] [8]
-Underfull \hbox (badness 10000) in paragraph at lines 263--265
+[3] [4] [5] [6] [7] [8]
+Underfull \hbox (badness 10000) in paragraph at lines 265--267
 
  []
 
 
-Overfull \hbox (6.44511pt too wide) in paragraph at lines 276--278
+Overfull \hbox (6.44511pt too wide) in paragraph at lines 278--280
 []\OT1/cmr/m/n/10 Erkundung des Spiel-felds mit Hil-fe ko-ope-rie-ren-der Ro-bo
 -ter er-folgt m[]oglichst
  []
 
 
-! LaTeX Error: Unknown graphics extension: .svg.
+Overfull \hbox (1.25168pt too wide) in paragraph at lines 296--298
+[]\OT1/cmr/m/n/10 Wird kein ver-bin-dungs-be-rei-ter e-puck ge-fun-den, so hat 
+der Be-nut-zer die M[]oglich-
+ []
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.287 ...	\includegraphics[width=10cm]{dialog.svg}
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
+[9]
+Underfull \hbox (badness 10000) in paragraph at lines 332--334
 
-[9] [10] (./pflichtenheft.aux)
+ []
 
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
- ) 
+Underfull \hbox (badness 10000) in paragraph at lines 334--336
+
+ []
+
+[10] [11] (./pflichtenheft.aux) ) 
 Here is how much of TeX's memory you used:
- 2208 strings out of 493848
- 25872 string characters out of 3149208
- 82194 words of memory out of 3000000
- 5467 multiletter control sequences out of 15000+200000
+ 2203 strings out of 493848
+ 25832 string characters out of 3149207
+ 82185 words of memory out of 3000000
+ 5464 multiletter control sequences out of 15000+200000
  11856 words of font info for 46 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
  27i,8n,22p,230b,280s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
-></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
-</usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></
-usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></us
-r/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/
-local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/loc
-al/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/
-texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/tex
-live/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl10.pfb></usr/local/texl
-ive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on pflichtenheft.pdf (10 pages, 177652 bytes).
+</usr/local/texlive/2009/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmr12.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmr17.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmr6.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmr7.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmr8.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmsl10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmsy10.pfb>
+Output written on pflichtenheft.pdf (11 pages, 181824 bytes).
 PDF statistics:
- 78 PDF objects out of 1000 (max. 8388607)
+ 81 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
