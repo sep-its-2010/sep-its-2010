@@ -146,15 +146,14 @@
 					\\ \textsl{Die Ausmaße des Spielfelds, die Abstände zwischen den e-pucks und zum Smartphone sowie
 						Signale anderer Netze dürfen keine störenden Einflüsse auf die Bluetooth-Verbindungen haben.}
 				\item Größe des Spielfeldes
-					\\ \textsl{Der integrierte Arbeitsspeicher des e-puck Roboter stellt eine Begrenzung des 
-					 persistierbaren lokalen Spielfeldes dar. Es werden ca. 700 Knotenpunkte unterstützt. 
-					 !!! Diese Rechnung ist sehr fragwürdig !!!}
+					\\ \textsl{Der integrierte Arbeitsspeicher des e-puck Roboter stellt eine Begrenzung des lokal
+					 speicherbaren Spielfeldes dar. \footnote{Bei Umsetzung mit einem Graph vom Grad 4 sind bei 6 kByte Arbeitsspeicher
+					 	ca. 500 Knoten möglich.} }
 				\item Betriebsbedingungen der e-puck Roboter und des Smartphones
 					\\ \textsl{Die weiteren Betriebsbedingungen können dem Benutzerhandbuch entnommen werden.}			
 				\item Wartungsfrei
 					\\ \textsl{Das System bedarf keiner regelmäßigen Wartung oder Aktualisierung.}		
 			\end{itemize}
-<<<<<<< .mine
 	\section{Produktumgebung}
 		\subsection{Software}
 			\begin{itemize}
@@ -169,52 +168,58 @@
 					\\ \textsl{Voraussetzungen: Bluetooth, geeignete Auflösung, Beschleunigungssensoren, Touch-Display.}
 				\item Computer mit Bluetooth Unterstützung
 			\end{itemize}		
+		\subsection{Orgware}
+			\begin{itemize}
+				\item Namenskonventionen für das Bluetooth-Modul der e-puck-Roboter
+					\\ \textsl{Die Kennung des Bluetooth-Modul der e-puck-Roboter muss zwingend folgender Namenskonventionen
+						genügen: bla \footnote{gemäß reguläre Ausdrücke}  }
+			\end{itemize}		
 	\section{Produktfunktionen}
 		\subsection{e-puck Roboter}
 			\subsubsection{Netzwerkfunktionen}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
-					\item[\textbf{\textbackslash F50\textbackslash}] Suchfunktion
+					\item[\textbf{/F50/}] Suchfunktion
 						\\ \textsl{Ein e-puck Roboter kann andere e-puck Roboter in Reichweite seines Bluetooth-Moduls entdecken.}
-					\item[\textbf{\textbackslash F60\textbackslash}] Verbindungsaufbau
+					\item[\textbf{/F60/}] Verbindungsaufbau
 						\\ \textsl{Ein e-puck Roboter kann zu einem anderen e-puck Roboter, den er mit der Suchfunktion entdeckt
 						hat, eine Bluetooth-Verbindung aufbauen.}
-					\item[\textbf{\textbackslash F70\textbackslash}] Broadcast-Kommunikation
+					\item[\textbf{/F70/}] Broadcast-Kommunikation
 						\\ \textsl{Die e-puck Roboter können über bestehende Bluetooth-Verbindungen per Broadcast
 						Nachrichten austauschen. Auch die Kommunikation mit dem Smartphone erfolgt via Broadcast.}
-					\item[\textbf{\textbackslash F75W\textbackslash}] Kommunikationsunterdrückung
+					\item[\textbf{/F75W/}] Kommunikationsunterdrückung
 						\\ \textsl{Erreicht ein e-puck einen kritischen Bereich auf dem Spielfeld, kann er über bestehende
 						Bluetooth-Verbindungen weder Nachrichten senden noch empfangen. Die Verbindungen an sich bleiben bestehen.}
 				\end{list}
 			\subsubsection{Bewegungsfunktionen}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
-					\item[\textbf{\textbackslash F80\textbackslash}] Fahrsteuerung
+					\item[\textbf{/F80/}] Fahrsteuerung
 						\\ \textsl{}
-					\item[\textbf{\textbackslash F100\textbackslash}] Linienverfolgung
+					\item[\textbf{/F100/}] Linienverfolgung
 						\\ \textsl{Die e-pucks bewegen sich auf dem Spielfeld nur auf den vorhandenen Linien. Das gilt auch für e-pucks,
 						die mit dem Smartphone halbmanuell gesteuert werden.}
-					\item[\textbf{\textbackslash F90\textbackslash}] Kollisionsvermeidung
+					\item[\textbf{/F90/}] Kollisionsvermeidung
 						\\ \textsl{Ein e-puck erkennt und vermeidet direkt bevorstehende Kollisionen mit anderen e-pucks.}
-					\item[\textbf{\textbackslash F110\textbackslash}] Knotenanalyse
+					\item[\textbf{/F110/}] Knotenanalyse
 						\\ \textsl{Ein e-puck erkennt beim Überfahren eines Knotens, in welche Richtungen er weiterfahren kann.}
 				\end{list}
 			\subsubsection{Explorationsfunktionen}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
-					\item[\textbf{\textbackslash F120\textbackslash}] Lokalisierung
+					\item[\textbf{/F120/}] Lokalisierung
 						\\ \textsl{Vor Beginn des Erkundungsvorgangs einigen sich die e-pucks untereinander auf einen gemeinsamen Bezugspunkt
 						und ermitteln relativ dazu ihre eigene Position. Die e-pucks starten in diesem Fall von fest definierten Startpositionen.}
-					\item[\textbf{\textbackslash F150\textbackslash}] Erkundungsfunktion
+					\item[\textbf{/F150/}] Erkundungsfunktion
 						\\ \textsl{Nach Abschluss des Lokalisierungsvorgangs erkunden die e-pucks in Zusammenarbeit das unbekannte
 							Spielfeld vollständig.}
-					\item[\textbf{\textbackslash F140\textbackslash}] Kartensynchronisation
+					\item[\textbf{/F140/}] Kartensynchronisation
 						\\ \textsl{Während des Erkundungsvorgangs tauschen die e-pucks kontinuierlich Informationen über die von ihnen
 						erkundeten Felder aus. Ist ein Smartphone mit dem Netzwerk verbunden, erhält auch dieses entsprechende Nachrichten.}
-					\item[\textbf{\textbackslash F130\textbackslash}] Lokale Kartenkonstruktion	
+					\item[\textbf{/F130/}] Lokale Kartenkonstruktion	
 						\\ \textsl{Jeder e-puck speichert lokal die komplette bisher erkundete Karte. Diese wird mit Hilfe
 						der Informationen aus den Nachrichten der anderen e-pucks sowie den eigenen Erkundungsergebnissen konstruiert.} 				
-					\item[\textbf{\textbackslash F160\textbackslash}] Rückkehrfunktion
+					\item[\textbf{/F160/}] Rückkehrfunktion
 						\\ \textsl{Nachdem das Gebiet vollständig erkundet worden ist, fahren die e-pucks wieder an ihre Startpositionen
 						zurück.}
-					\item[\textbf{\textbackslash F170W\textbackslash}] Globale Lokalisierung (evtl. inkl. Steuerung)
+					\item[\textbf{/F170W/}] Globale Lokalisierung (evtl. inkl. Steuerung)
 						\\ \textsl{Starten die e-pucks nicht auf fest definierten Startpositionen, sondern auf beliebigen Feldern innerhalb
 							des Spielfeldes, sammeln sich die Roboter zunächst nebeneinander in einem Gebiet des Spielfeldes. Dort beginnt der
 							Erkundungsvorgang mit der oben beschriebenen Lokalisierung.}
@@ -222,65 +227,67 @@
 		\subsection{Smartphone}
 			\subsubsection{Netzwerkfunktionen}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
-					\item[\textbf{\textbackslash F200\textbackslash}] Suchfunktion
+					\item[\textbf{/F200/}] Suchfunktion
 						\\ \textsl{Das Smartphone kann e-puck Roboter in Reichweite seines Bluetooth-Moduls entdecken.}
-					\item[\textbf{\textbackslash F210\textbackslash}] Verbindungsaufbau
+					\item[\textbf{/F210/}] Verbindungsaufbau
 						\\ \textsl{Das Smartphone kann sich via Bluetooth mit einem e-puck verbinden, den es mit Hilfe
 						der Suchfunktion entdeckt hat.}				
-					\item[\textbf{\textbackslash F220\textbackslash}] Kommunikationsfunktion
+					\item[\textbf{/F220/}] Kommunikationsfunktion
 						\\ \textsl{Das Smartphone kann Daten über eine korrekte Bluetoothverbindung mit einem e-puck Roboter Daten senden und
 							empfangen.}
 				\end{list}
 			\subsubsection{Steuerungsfunktionen}		
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
-					\item[\textbf{\textbackslash F290\textbackslash}] Steuerungsfunktion mit einem On-Screen-Joystick
+					\item[\textbf{/F290/}] Steuerungsfunktion mit einem On-Screen-Joystick
 						\\ \textsl{Der ausgewählte e-puck kann mit einem On-Screen-Joystick halbmanuell gesteuert werden. Die Bewegung
 							erfolgt weiterhin auf den Linien des Spielfeldes.}	
-					\item[\textbf{\textbackslash F300\textbackslash}] Steuerungsfunktion mit dem eingebauten Beschleunigungssensoren
+					\item[\textbf{/F300/}] Steuerungsfunktion mit dem eingebauten Beschleunigungssensoren
 						\\ \textsl{Alternativ kann der ausgewählte e-puck kann mit Hilfe des eingebauten Beschleunigungssensors halbmanuell
 						gesteuert werden. Auch in diesem Fall bewegt sich der Roboter nur auf den Linien des Spielfeldes.}					
 				\end{list}					
 			\subsubsection{Grafische Benutzeroberfläche}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
-					\item[\textbf{\textbackslash F230\textbackslash}] Kartendarstellung
+					\item[\textbf{/F230/}] Kartendarstellung
 						\\ \textsl{Die GUI stellt die bereits erkundeten Gebiete in geeigneter Art und Weise dar.}	
-					\item[\textbf{\textbackslash F240\textbackslash}] Roboterdarstellung
+					\item[\textbf{/F240/}] Roboterdarstellung
 						\\ \textsl{Die aktuelle Position der e-pucks wird auf der Karte der bisher erkundeten Gebiete
 							einzeichnet.}	
-					\item[\textbf{\textbackslash F250\textbackslash}] Steuerungsfunktion per On-Screen-Joystick
+					\item[\textbf{/F250/}] Steuerungsfunktion per On-Screen-Joystick
 						\\ \textsl{Mithilfe eines Steuerknüppels kann der Teilnehmer entlang der Linien bewegt werden}
-					\item[\textbf{\textbackslash F260\textbackslash}] Steuerungsfunktion per Bewegungssensor	
+					\item[\textbf{/F260/}] Steuerungsfunktion per Bewegungssensor	
 						\\ \textsl{Durch Kippen des Smartphones kann der e-puck Roboter beschleunigt, gebremst sowie in verschiedene, gültige
 							Richtungen bewegt werden.}
-					\item[\textbf{\textbackslash F270W\textbackslash}] Zustandsvisualisierung (status + pfade)		
-						\\ \textsl{Auf dem Smartphone wird für jeden e-puck Roboter der bisher abgefahrene Weg, die Anzahl der überfahreren, und ich will dass das etz funktioniert
+					\item[\textbf{/F270W/}] Zustandsvisualisierung (Status + Pfade)		
+						\\ \textsl{Auf dem Smartphone wird für jeden e-puck Roboter der bisher abgefahrene Weg, die Anzahl der überfahreren
 							Knoten und sein momentaner Status (stehend, fahrend, manuell gesteuert) visualisiert.}
-					\item[\textbf{\textbackslash F280W\textbackslash}] Internationalisierung	
-						\\ \textsl{Es gibt die Möglichkeit zwischen deutscher und englischer Sprachausgabe zu wählen.}
+					\item[\textbf{/F280W/}] Internationalisierung	
+						\\ \textsl{}
 				\end{list}
 				
 	\section{Produktdaten}
-	
-	
+		[ToDo] Keine persistente Datenspeicherung
+		
 	\section{Produktleistungen}
-	
-	
+		\begin{itemize}
+			\item[\textbf{/L50/}] Sofortiger Wiederaufbau der Bluetooth-Verbindung nach Verbindungsverlust
+				\\ \textsl{[ToDo]}
+			\item[\textbf{/L60/}] Robustheit des Systems bei Ausfall eines e-puck Roboter
+				\\ \textsl{[ToDo] -mehr als ein e-puck; - keine zwei Ausfälle zur selben Zeit}
+			\item[\textbf{/L70/}] Erkundung des Spielfelds mit Hilfe kooperierender Roboter erfolgt möglichst effizient
+				\\ \textsl{[ToDo]}						
+			\item[\textbf{/L80/}] Ungültige Richtungsanweisungen werden erkannt und nicht ausgeführt 
+				\\ \textsl{[ToDo]}					
+		\end{itemize}						
 	\section{Benutzungsoberfläche}
-	
-	
+			Im folgenden wird die grobe Dialogstruktur der Android-Anwendung dargestellt.	
+
+			\subsection{Dialogstruktur}	
+
 	\section{Qualitätsbestimmungen}
 	
 	
-	\section{Globale Testszenarien und Testfälle}
-	
-	
-	\section{Produktfunktionen}	
-	
+	\section{Globale Testszenarien und Testfälle}	
 	
 	\section{Ergänzungen}
 						
-=======
-			
-			
->>>>>>> .r8
 \end{document}
