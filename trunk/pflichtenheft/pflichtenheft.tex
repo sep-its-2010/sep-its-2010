@@ -174,7 +174,7 @@
 			\begin{itemize}
 				\item Namenskonventionen für das Bluetooth-Modul der e-puck-Roboter
 					\\ \textsl{Die Kennung des Bluetooth-Modul der e-puck-Roboter muss zwingend folgender Namenskonventionen
-						genügen: bla \footnote{gemäß reguläre Ausdrücke}  }
+						genügen: bla \footnote{gemäß regulärer Ausdrücke}  }
 			\end{itemize}		
 	\section{Produktfunktionen}
 		\subsection{e-puck Roboter}
@@ -227,6 +227,14 @@
 							des Spielfeldes, sammeln sich die Roboter zunächst nebeneinander in einem Gebiet des Spielfeldes. Dort beginnt der
 							Erkundungsvorgang mit der oben beschriebenen Lokalisierung.}
 				\end{list}
+		\subsubsection{Allgemeine Funktionen}
+			\begin{list}{\labelitemi}{\leftmargin=1cm}
+				\item[\textbf{/F180/}] Kalibrierung
+					\\ \textsl{Die Linien- und Abstandssensoren lassen sich vom Benutzer manuell kalibrieren.}					
+				\item[\textbf{/F190W/}] Zustandsvisualisierung (Status + Pfade)		
+					\\ \textsl{Der aktuelle Zustand (z.B. Kollisionen, manuelle Steuerung, Synchronisiert) der einzelnen e-puck Roboter wird
+						durch Verwendung verschiedener Aktoren und Außen-LEDs verdeutlicht.}		
+			\end{list}
 		\subsection{Smartphone}
 			\subsubsection{Netzwerkfunktionen}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
@@ -261,11 +269,12 @@
 					\item[\textbf{/F260/}] Steuerungsfunktion per Bewegungssensor	
 						\\ \textsl{Durch Kippen des Smartphones kann der e-puck Roboter beschleunigt, gebremst sowie in verschiedene, gültige
 							Richtungen bewegt werden.}
-					\item[\textbf{/F270W/}] Zustandsvisualisierung (Status + Pfade)		
+					\item[\textbf{/F270W/}] Statistikfunktion	
 						\\ \textsl{Auf dem Smartphone wird für jeden e-puck Roboter der bisher abgefahrene Weg, die Anzahl der überfahreren
-							Knoten und sein momentaner Status (stehend, fahrend, manuell gesteuert) visualisiert.}
+							Knoten und sein momentaner Status visualisiert.}							
 					\item[\textbf{/F280W/}] Internationalisierung	
-						\\ \textsl{}
+						\\ \textsl{Die Texte der Benutzeroberfläche werden abhängig von der gewählten Systemsprache des Smartphones
+							angezeigt. Wird eine Sprache nicht unterstützt, so ist die Ausgabe standardmäßig englischsprachig.}
 				\end{list}
 				
 	\section{Produktdaten}
@@ -344,11 +353,37 @@
 				\item[\textbf{/T50/}] Kalibrierung
 					\\ \textsl{Nach ordnungsgemäßer Kalibrierung beginnen die Außen-LEDs nacheinander zu leuchten (\textbf{/F85/}).}
 				\item[\textbf{/T60/}] Linienerkennung
-					\\ \textsl{Der e-puck wird im Basismodus entlang einer Linie aufgestellt und folgt dieser in Richtung der
-						Liniensensoren (\textbf{/F100/}).}				
-				\item[\textbf{/T70/}] Knotenanalyse
-					\\ \textsl{Der Roboter wird gemäß textbf{/T60/} aufgestellt. Bei Erreichen des ersten Knotenpunktes wird dieser vom e-puck
-						erkannt. Daraufhin bleibt er auf dem Knoten für die Dauer der Initialisierungsphase stehen. Der Benutzer (\textbf{/F100/}).}	
+					\\ \textsl{Der e-puck wird im Betrieb entlang einer Linie aufgestellt und folgt dieser in Richtung der
+						Liniensensoren (\textbf{/F100/}).}		
+				\item[\textbf{/T70/}] Bluetooth-Verbindung
+					\\ \textsl{Mehrere e-puck-Roboter werden auf dem Spielfeld platziert und eingeschaltet. Nach der Initialisierungsphase
+						sollen sämtliche Teilnehmer auf dem Smartphone erkannt werden. (\textbf{/F50/}, \textbf{/F60/}, \textbf{/F70/}, 
+						\textbf{/F200/}, \textbf{/F210/}).}								
+				\item[\textbf{/T80/}] Knotenanalyse und manuelle Steuerung
+					\\ \textsl{Der Roboter wird gemäß \textbf{/T60/} aufgestellt. Durch manuelle Steuerung per On-Screen-Joystick des
+						Smartphone muss der Benutzer 	auf allen Knotentypen die möglichen Fahrtrichtungen austesten. Nur gültige Richtungen
+						dürfen vom Roboter befahren werden (\textbf{/F110/},	\textbf{/F200/}, \textbf{/F210/}).}							
+				\item[\textbf{/T90/}] Kollisionsvermeidung
+					\\ \textsl{Zwei e-puck-Roboter werden in zugewandter Fahrtrichtung auf einer Linie positioniert und in Bewegung gesetzt.
+						Die bevorstehende Kollision wird erkannt und vermieden (\textbf{/F110/}).}		
+				\item[\textbf{/T100/}] Steuerung per Beschleunigungssensoren
+					\\ \textsl{Der Test wird analog zu \textbf{/T80/} durchgeführt, wobei als Steuerungsmethode die Beschleunigungssensoren
+						verwendet werden (\textbf{/F300/}).}
+				\item[\textbf{/T110/}] Erkundungstest
+					\\ \textsl{Mehrere e-puck Roboter werden auf entsprechende Startpositionen innerhalb des Spielfelds gesetzt und
+						eingeschaltet. Ziel des Testszenarios ist die vollständige Erkundung durch effiziente Zusammenarbeit der Teilnehmer.
+						Falls die Roboter nach Abschluss auf die Startpositionen zurückkehren und die Karte auf dem Smartphone dargestellt
+						wird, ist der Testfall erfolgreich (\textbf{/F120/}, \textbf{/F130/}, \textbf{/F140/}, \textbf{/F150/}, \textbf{/F160/}).}
+				\item[\textbf{/T120/}] Test der grafischen Benutzeroberfläche des Smartphones
+					\\ \textsl{Gemäß \textbf{/T110/} wird während der Erkundung des Spielfeldes die Kartendarstellung auf dem Smartphone
+						dynamisch aufgebaut. Die Positionen der e-pucks sind aus der Karte ersichtlich.  (\textbf{/F230/}, \textbf{/F240/}).}
+				\item[\textbf{/T130W/}] Test von globaler Lokalisierung
+					\\ \textsl{Die e-puck Roboter werden im Gegensatz zu \textbf{/T110/} auf beliebigen Startpositionen gesetzt. Somit müssen
+						sich die Teilnehmer zunächst finden und synchronisieren. Der erfolgreiche Abschluss kann durch die Anzeige aller e-pucks
+						auf der Karte kontrolliert werden. (\textbf{/F170W/}).}
+				\item[\textbf{/T130W/}] Test der Kommunikationsunterdrückung
+					\\ \textsl{Ein e-puck Roboter wird in den kritischen Bereich gefahren. Die Kommunikation per Bluetooth darf nicht möglich
+						sein.  (\textbf{/F75W/}).}																		
 			\end{itemize} 
 				Zu Beginn des Tests wird der Programmselektor des Roboters auf Position 0 gestellt und der e-puck auf eine homogen
 				beleuchtete Hintergrundfläche des Spielfelds gesetzt. Anschließend wird der Roboter eingeschaltet, daraufhin beginnt der
