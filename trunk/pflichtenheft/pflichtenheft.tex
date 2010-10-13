@@ -9,13 +9,15 @@
 \parindent 0pt
 \pagestyle{headings}
 
+\let\oldsection\section
+\renewcommand{\section}{\newpage \oldsection}
 
 \title{
 	\includegraphics[width=10cm]{logo.png} \\
 	\vspace{1cm}
 	Pflichtenheft
 }
-\author{SEP - ITS - Team \\ Max Binder, Florian Büchner, Martin Freund, \\Florian Lorenz,
+\author{SEP - ITS - Team \\ Max Binder, Florian Bürchner, Martin Freund, \\Florian Lorenz,
 											Andreas Poxrucker, Andreas Wilhelm}
 \begin{document}
 	\maketitle
@@ -296,9 +298,21 @@
 			\subsection{Dialogstruktur}
 			Im folgenden Schaubild wird die grundlegende Dialogstruktur der Android-Anwendung dargestellt.
 			
-			\includegraphics[width=10cm]{dialog.eps}
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=10cm]{dialog.eps}
+  				\caption{Dialogsruktur}
+  			\end{figure}			
 			
 			\subsection{Frame `Karte'}
+
+			\begin{figure}[h]
+				  \centering
+				\includegraphics[width=3.5cm]{screenshots/android1b.png}
+				\includegraphics[width=3.5cm]{screenshots/android1a.png}
+  				\caption{Kartendarstellung und e-puck Auswahl}
+  			\end{figure}						
+			
 			Auf dem Frame `Karte' erfolgt die übersichtliche Darstellung des bereits erkundeten Gebietes. Auf dieser Karte werden außerdem
 			die aktuellen Positonen der teilnehmenden e-pucks angezeigt.
 			
@@ -307,12 +321,29 @@
 			Wird kein verbindungsbereiter e-puck gefunden, so hat der Benutzer die Möglichkeit, erneut eine Suche zu starten oder die Anwendung
 			zu verlassen.
 			\subsection{Frame `Steuerung'}
-			Der Frame `Steuerung' ermöglicht die halbmanuelle Steuerung des auf dem Frame `Karte' ausgewählten e-puck.
 			
-			Der Name des gewählten e-pucks wird dem Benutzer angezeigt.
+			\begin{figure}[h]
+				  \centering
+				\includegraphics[width=3.5cm]{screenshots/android2.png}
+				\includegraphics[width=3.5cm]{screenshots/android2a.png}
+				\includegraphics[width=3.5cm]{screenshots/android2c.png}
+  				\caption{Steuerungsarten}
+  			\end{figure}	
 			
-			Der Benutzer kann zwischen den beiden beschriebenen Steuerungsarten wählen.
+			Der Frame `Steuerung' ermöglicht die halbmanuelle Steuerung des auf dem Frame `Karte' ausgewählten e-puck.			
+			Der Name des gewählten e-pucks wird dem Benutzer angezeigt. Der Benutzer kann die halbmanuelle Steuerung
+			aus bzw. einschalten und zwischen den beiden beschriebenen Steuerungsarten wählen. Es wird unabhängig von der
+			gewählten Steuerungsmethode die selbe Oberfläche dargestellt.
+
 			\subsection{Frame `Statistik'}
+				\begin{figure}[h]
+					  \centering
+					\includegraphics[width=3.5cm]{screenshots/android3.png}
+  					\caption{Statistik}
+  				\end{figure}		
+  				
+  			Der Frame `Statistik' zeigt Informationen über 
+			
 	\section{Qualitätsbestimmungen}
 		
 		\subsection{e-puck}
