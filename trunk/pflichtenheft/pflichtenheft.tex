@@ -199,11 +199,11 @@
 					\item[\textbf{/F80/}] Grundbewegungen
 						\\ \textsl{Der e-puck kann sich links und rechts herum in 90 Grad Schritten drehen. Das Vorwärtsfahren erfolgt
 							in Kamerarichtung des Roboters. Rückwärtsbewegungen entgegen der Kamerablickrichtung sind nicht möglich.}
+					\item[\textbf{/F90/}] Kollisionsvermeidung
+						\\ \textsl{Ein e-puck erkennt und vermeidet direkt bevorstehende Kollisionen mit anderen e-pucks.}							
 					\item[\textbf{/F100/}] Linienverfolgung
 						\\ \textsl{Die e-pucks bewegen sich auf dem Spielfeld nur auf den vorhandenen Linien. Das gilt auch für e-pucks,
 						die mit dem Smartphone halbmanuell gesteuert werden.}
-					\item[\textbf{/F90/}] Kollisionsvermeidung
-						\\ \textsl{Ein e-puck erkennt und vermeidet direkt bevorstehende Kollisionen mit anderen e-pucks.}
 					\item[\textbf{/F110/}] Knotenanalyse
 						\\ \textsl{Ein e-puck erkennt beim Überfahren eines Knotens, in welche Richtungen er weiterfahren kann.}
 				\end{list}
@@ -232,7 +232,7 @@
 		\subsubsection{Allgemeine Funktionen}
 			\begin{list}{\labelitemi}{\leftmargin=1cm}
 				\item[\textbf{/F180/}] Kalibrierung
-					\\ \textsl{Die Linien- und Abstandssensoren lassen sich vom Benutzer manuell kalibrieren.}					
+					\\ \textsl{Die Linien- und Abstandssensoren lassen sich vom Benutzer manuell kalibrieren und dauerhaft abspeichern.}					
 				\item[\textbf{/F190W/}] Zustandsvisualisierung (Status + Pfade)		
 					\\ \textsl{Der aktuelle Zustand (z.B. Kollisionen, manuelle Steuerung, Synchronisiert) der einzelnen e-puck Roboter wird
 						durch Verwendung verschiedener Aktoren und Außen-LEDs verdeutlicht.}		
@@ -280,10 +280,13 @@
 				\end{list}
 				
 	\section{Produktdaten}
-		[ToDo] Keine persistente Datenspeicherung
+		\begin{list}{\labelitemi}{\leftmargin=1cm}
+			\item[\textbf{/D100/}] Kalibrierwerte
+				\\ \textsl{Die Werte der Boden- und der Abstandssensoren werden nach dem Kalibrierungsvorgang dauerhaft abgespeichert.}
+		\end{list}
 		
 	\section{Produktleistungen}
-		\begin{itemize}
+		\begin{list}{\labelitemi}{\leftmargin=1cm}
 			\item[\textbf{/L50/}] Sofortiger Wiederaufbau der Bluetooth-Verbindung nach Verbindungsverlust
 				\\ \textsl{[ToDo]}
 			\item[\textbf{/L60/}] Robustheit des Systems bei Ausfall eines e-puck Roboter
@@ -292,7 +295,10 @@
 				\\ \textsl{[ToDo]}						
 			\item[\textbf{/L80/}] Ungültige Richtungsanweisungen werden erkannt und nicht ausgeführt 
 				\\ \textsl{[ToDo]}					
-		\end{itemize}						
+			\item[\textbf{/L90/}] Einarbeitungszeit 
+				\\ \textsl{Die Benutzerschnittelle des Smartphones ist komfortabel und übersichtlich. Dadurch kann die Einarbeitungszeit
+					auch für unerfahrene Benutzer kurz bleiben.}		
+		\end{list}						
 	\section{Benutzungsoberfläche}
 	
 			\subsection{Dialogstruktur}
@@ -342,47 +348,51 @@
   					\caption{Statistik}
   				\end{figure}		
   				
-  			Der Frame `Statistik' zeigt Informationen über 
+  			Der Frame `Statistik' zeigt Informationen über den bisherigen Erkundungsfortschritt der einzelnen Roboter.
 			
 	\section{Qualitätsbestimmungen}
 		
-		\subsection{e-puck}
+		\subsection{e-puck Roboter}
 			\begin{itemize}
 				\item Effizienz
-					\\ \textsl{Großer Wert wird auf eine hohe Performance des Systems gelegt. Die Nutzung des zur Verfügung stehenden
-						Arbeitsspeichers erfolgt so effizient wie möglich.}
+					\\ \textsl{Großer Wert wird auf eine hohe Performance des Systems gelegt. Dazu gehört insbesondere die effiziente Erkundung
+						des Spielfelds. Die Nutzung des zur Verfügung stehenden Arbeitsspeichers erfolgt möglichst platzsparend.}
 				\item Korrektheit
 					\\ \textsl{Das unbekannte Spielfeld wird von den e-pucks vollständig und lückenlos erkundet.}
-				\item Austauschbarkeit
-					\\ \textsl{Die Architektur der e-pucks wird gezielt so entworfen, dass Komponenten der Logik einfach ausgetauscht
-						werden können.
-						Dazu gehören neben der Fahr- uns Steuerungslogik insbesondere die Erkundungs- und Wegfindungsmechanismen.}						
+				\item Austausch- und Erweiterbarkeit
+					\\ \textsl{Die Software-Architektur der e-pucks wird gezielt so entworfen, dass Komponenten der Logik einfach ausgetauscht
+						und erweitert werden können.
+						Dazu gehören neben der Fahr- und Steuerungslogik insbesondere die Erkundungs- und Wegfindungsmechanismen.}	
 				\item Robustheit 
 					\\ \textsl{Das System wird so entworfen, dass die Erkundung des unbekannten Spielfeldes erfolgreich abgeschlossen
-						werden kann, solange wenigstens ein e-puck nicht ausgefallen ist.
-						Auch ein Ausfall des Smartphones führt nicht zum Abbruch des Erkundungsvorgangs.
-						}					
+						wird, solange wenigstens ein e-puck nicht ausgefallen ist.
+						Auch ein Ausfall des Smartphones führt nicht zum Abbruch des Erkundungsvorgangs.	}	
+				\item Wartbarkeit
+					\\ \textsl{Korrekturen im Softwaresystem können möglichst einfach durchgeführt werden.}				
 			\end{itemize}		
 		
 		\subsection{Smartphone}
 			\begin{itemize}
 				\item Korrektheit
-					\\ \textsl{[ToDo]}
+					\\ \textsl{Die Eingabedaten der e-puck Roboter werden vollständig und korrekt verarbeitet. Außerdem
+						müssen die unterstützten Befehle in der Spezifikation entsprechenden Form versendet werden. Die grafische
+						Benutzeroberfläche stellt die Daten korrekt dar.}
 				\item Benutzerfreundlichkeit
-					\\ \textsl{[ToDo]}
-				\item Austauschbarkeit
-					\\ \textsl{}						
-				\item Erweiterbarkeit
-					\\ \textsl{}					
+					\\ \textsl{Die Anwendung ist einfach zu handhaben. Die Benutzeroberfläche ist übersichtlich und selbsterklärend. }
+				\item Austausch- und Erweiterbarkeit
+					\\ \textsl{Die Software-Architektur des Smartphones wird gezielt so entworfen, dass einzelne Komponenten, wie z.B. 
+						Grafische Benutzeroberfläche oder Steuerungsfunktionalität, einfach ausgetauscht und erweitert werden können.}						
+				\item Wartbarkeit
+					\\ \textsl{Korrekturen im Softwaresystem können möglichst einfach durchgeführt werden.}			
 			\end{itemize}
 	
 	\section{Globale Testszenarien und Testfälle}	
 		Alle nachfolgenden Tests werden unter den genannten Betriebsbedingungen (Kapitel 2.3 Betriebsbedingungen)
 		mit Hilfe einer Debug-Konsole durchgeführt.
 		\subsection{e-puck Roboter}
-			\begin{itemize}
+			\begin{list}{\labelitemi}{\leftmargin=1cm}
 				\item[\textbf{/T50/}] Kalibrierung
-					\\ \textsl{Nach ordnungsgemäßer Kalibrierung beginnen die Außen-LEDs nacheinander zu leuchten (\textbf{/F85/}).}
+					\\ \textsl{Nach ordnungsgemäßer Kalibrierung beginnen die Außen-LEDs nacheinander zu leuchten (\textbf{/F180/}).}
 				\item[\textbf{/T60/}] Linienerkennung
 					\\ \textsl{Der e-puck wird im Betrieb entlang einer Linie aufgestellt und folgt dieser in Richtung der
 						Liniensensoren (\textbf{/F100/}).}		
@@ -404,39 +414,16 @@
 					\\ \textsl{Mehrere e-puck Roboter werden auf entsprechende Startpositionen innerhalb des Spielfelds gesetzt und
 						eingeschaltet. Ziel des Testszenarios ist die vollständige Erkundung durch effiziente Zusammenarbeit der Teilnehmer.
 						Falls die Roboter nach Abschluss auf die Startpositionen zurückkehren und die Karte auf dem Smartphone dargestellt
-						wird, ist der Testfall erfolgreich (\textbf{/F120/}, \textbf{/F130/}, \textbf{/F140/}, \textbf{/F150/}, \textbf{/F160/}).}
+						wird, ist der Testfall erfolgreich (\textbf{/F120/}, \textbf{/F130/}, \textbf{/F140/}, \textbf{/F150/}, \textbf{/F160/}, 
+						\textbf{/F190W/}).}
 				\item[\textbf{/T120/}] Test der grafischen Benutzeroberfläche des Smartphones
 					\\ \textsl{Gemäß \textbf{/T110/} wird während der Erkundung des Spielfeldes die Kartendarstellung auf dem Smartphone
 						dynamisch aufgebaut. Die Positionen der e-pucks sind aus der Karte ersichtlich.  (\textbf{/F230/}, \textbf{/F240/}).}
 				\item[\textbf{/T130W/}] Test von globaler Lokalisierung
 					\\ \textsl{Die e-puck Roboter werden im Gegensatz zu \textbf{/T110/} auf beliebigen Startpositionen gesetzt. Somit müssen
 						sich die Teilnehmer zunächst finden und synchronisieren. Der erfolgreiche Abschluss kann durch die Anzeige aller e-pucks
-						auf der Karte kontrolliert werden. (\textbf{/F170W/}).}
-				\item[\textbf{/T130W/}] Test der Kommunikationsunterdrückung
-					\\ \textsl{Ein e-puck Roboter wird in den kritischen Bereich gefahren. Die Kommunikation per Bluetooth darf nicht möglich
-						sein.  (\textbf{/F75W/}).}																		
-			\end{itemize} 
-				Zu Beginn des Tests wird der Programmselektor des Roboters auf Position 0 gestellt und der e-puck auf eine homogen
-				beleuchtete Hintergrundfläche des Spielfelds gesetzt. Anschließend wird der Roboter eingeschaltet, daraufhin beginnt der
-				Kalibrierungsvorgang (\textbf{/F85/}). Sobald die Außen-LEDs nacheinander zu leuchten beginnen, ist die Kalibrierung
-				abgeschlossen. Der Roboter wird ausgeschaltet und der Programmselektor auf Position 1 gestellt, um den Basismodus zu
-				aktivieren. \\
-				Nun kann der Roboter auf eine gültige Startposition des	Spielfelds gesetzt und eingeschaltet werden. Während der Initialisierung
-				kann	sich der Benutzer mit dem Smartphone zum e-puck verbinden und in den manuellen Steuerungsmodus wechseln. Bei
-				abgeschlossener Positionierung auf einem benachbarten Knoten sind die Funktionen (\textbf{/F100/}, \textbf{/F110/}) erfolgreich
-				ausgeführt worden. \\ 
-				Mit Hilfe des Joysticks des Smartphone werden die Bewegungsfunktionen (\textbf{/F80/}) überprüft. Mit einem zweiten e-puck,
-				welcher im ausgeschalteten Zustand als Hindernis
-							
-				Ein e-puck Roboter wird auf einem geeigneten Spielfeld entlang der Linien (/F100/) nacheinander  auf eine 
-				Kreuzung, 	eine Ecke und eine T-Kreuzung gefahren. Sobald der Teilnehmer den jeweiligen Knoten analysiert
-				hat (/F110/) schickt er eine Nachricht an die Debug-Konsole.			
-			
-			
-				Drei e-puck Roboter werden eingeschalten und scannen ihre
-				Umgebung nach anderen Teilnehmer (/F50/). Die Namen der gefundenen
-				Geräte werden an die Debug-Konsole geschickt.
-				
+						auf der Karte kontrolliert werden. (\textbf{/F170W/}).}																	
+			\end{list} 
 
 	\section{Ergänzungen}
 						
