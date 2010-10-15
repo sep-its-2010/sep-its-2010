@@ -29,8 +29,8 @@
 		Das Ziel des Projekts ist die automatische Erkundung eines unbekannten, rechtwinkligen Spielfelds durch bis zu
 		sechs e-puck Roboter. Die Erkundung soll durch Zusammenarbeit der Roboter möglichst effizient erfolgen.
 		
-		Das bereits erkundete Gebiet sowie die aktuellen Positionen der e-pucks werden kontinuierlich auf einem
-		Andorid Smartphone dargestellt.
+		Das bereits erkundete Gebiet sowie die aktuellen Positionen der e-pucks werden mittels einer Anwendung auf einem Android
+		Smartphone dargestellt.	
 		
 		Außerdem kann mit dem Smartphone einer der teilnehmenden e-puck Roboter ausgewählt und halbmanuell\footnote{Die
 			möglichen Bewegungsrichtungen sind durch die Fahrbahnlinien eingeschränkt}  gesteuert werden.
@@ -44,8 +44,8 @@
 						\\ \textsl{Die Kommunikation der e-pucks untereinander erfolgt über ein Bluetooth-Netzwerk.
 						   Dieses wird von den e-pucks selbstständig aufgebaut.}
 					\item Erkundung einer unbekannten rechtwinkligen Fläche ausgehend von fest definierten Startpositionen
-						\\ \textsl{Das Spielfeld besteht aus quadratischen Feldern. Diese sind rasterförmig und
-						   zusammenhängend angeordnet. Die Felder sind mindestens so groß, dass ein im Zentrum des Quadrats
+						\\ \textsl{Das Spielfeld besteht aus einer Menge von vier quadratisch angeordneten Feldern. Diese sind rasterförmig und
+						   zusammenhängend angeordnet. Vier Felder sind mindestens so groß, dass ein im Zentrum des Quadrats
 						   stehender e-puck vollständig in das Innere des Feldes passt. Die Startpositionen der e-puck Roboter sind
 						   fest vordefiniert.}
 					\item Fortbewegung auf den Kanten der Quadrate
@@ -73,8 +73,8 @@
 						\\ \textsl{Mit dem Smartphone kann die Geschwindigkeit der teilnehmenden, automatisch erkundenden e-pucks stufenweise 										eingestellt werden.}	
 					\item Manuelle Steuerung eines Roboters
 						\\ \textsl{Mit Hilfe der Anwendung kann einer der teilnehmenden e-pucks ausgewählt werden. Dieser lässt sich
-							durch den Benutzer entlang der Kanten steuern. Es kann jeweils nur ein Roboter zur selben Zeit ausgewählt
-							und gesteuert werden.}		
+							durch den Benutzer entlang der Linien in einstellbarer Geschwindigkeit steuern. Es kann jeweils nur ein Roboter
+							zur selben Zeit ausgewählt und gesteuert werden.}		
 					\item Zwei Steuerungsarten
 						\\ \textsl{Die manuelle Steuerung der Roboter erfolgt wahlweise über einen On-Screen-Joystick oder über
 							den im Handy integrierten Beschleunigungssensor.}											
@@ -94,23 +94,23 @@
 							notwendig.}
 					\item Zustandsvisualisierung
 						\\ \textsl{Die e-pucks stellen ihren aktuellen Zustand, zum Beispiel `Erkundung läuft' oder `Erkundung
-							beendet', mit Hilfe der ihnen zur Verfügung stehenden Mittel optisch dar.}												
+							beendet', mit Hilfe der ihnen zur Verfügung stehenden Mittel dar.}												
 					\item Einstellbarer Synchronisationsmodus
-						\\ \textsl{Wirklich sinnvoll?!}		
+						\\ \textsl{Der Lokalisierungsmodus zwischen den e-puck Robotern lässt sich mit Hilfe des Programmselektors auswählen.}		
 				\end{itemize}
 				\item Smartphone
 				\begin{itemize}
 					\item Anzeige von Statusinformationen
-						\\ \textsl{Mit Hilfe des Smartphones ist es möglich, Informationen über den aktuellen Status eines e-pucks
+						\\ \textsl{Mit Hilfe des Smartphones ist es möglich, Informationen über den aktuellen Status der e-puck Roboter
 							übersichtlich anzuzeigen.}		
-					\item Pfadanzeige von einzelnen Robotern
-						\\ \textsl{Das Smartphone bietet die Möglichkeit, den Pfad anzuzeigen, den jeder e-puck im Rahmen der
+					\item Pfadanzeige von Robotern
+						\\ \textsl{Das Smartphone bietet die Möglichkeit den Pfad anzuzeigen, den jeder e-puck im Rahmen der
 							Erkundung zurückgelegt hat.}							
 					\item Exportfunktion für erkundete Karten
 						\\ \textsl{Teilweise und vollständig erkundete Karten können in geeigneter Weise exportiert und auf dem
 							Smartphone abgespeichert werden.}		
 					\item Internationalisierung
-						\\ \textsl{Die Anwendung ist in den Sprache Deutsch und Englisch verfügbar.}									
+						\\ \textsl{Die Anwendung ist in den Sprachen Deutsch und Englisch verfügbar.}									
 				\end{itemize}
 			\end{itemize}
 		\subsection{Abgrenzungskriterien}
@@ -124,7 +124,9 @@
 						Insbesondere werden keine nachträglichen Änderungen an bereits erkundeten Gebieten berücksichtigt.}			
 				\item Unterstützung für maximal ein Smartphone
 					\\ \textsl{Es kann lediglich ein Smartphone zur Auswahl, Steuerung und Visualisierung verwendet
-						werden.}		
+						werden.}	
+				\item Größe des Spielfeldes
+					\\ \textsl{Der Arbeitsspeicher des e-puck Roboter stellt eine Obergrenze des speicherbaren Spielfeldes dar. }							
 			\end{itemize}
 	\section{Produkteinsatz}
 		\subsection{Anwendungsbereiche}
@@ -135,11 +137,11 @@
 				\item Künstliche Intelligenz
 			\end{itemize}
 		\subsection{Zielgruppen}
-			Zielgruppe des Projektes sind insbesondere: 
+			Zielgruppen des Projektes sind insbesondere: 
 			\begin{itemize}
 				\item Studenten
 				\item Forschungsgruppen in ähnlichen Bereichen
-				\item e-puck Community
+				\item e-puck Gemeinde
 			\end{itemize}
 		\subsection{Betriebsbedingungen}
 			\begin{itemize}
@@ -149,34 +151,31 @@
 				\item Geeignete Bedingungen für Funknetzwerke
 					\\ \textsl{Die Ausmaße des Spielfelds, die Abstände zwischen den e-pucks und zum Smartphone sowie
 						Signale anderer Netze dürfen keine störenden Einflüsse auf die Bluetooth-Verbindungen haben.}
-				\item Größe des Spielfeldes
-					\\ \textsl{Der integrierte Arbeitsspeicher des e-puck Roboter stellt eine Begrenzung des lokal
-					 speicherbaren Spielfeldes dar. \footnote{Bei Umsetzung mit einem Graph vom Grad 4 sind bei 6 kByte Arbeitsspeicher
-					 	ca. 500 Knoten möglich.} }
 				\item Betriebsbedingungen der e-puck Roboter und des Smartphones
 					\\ \textsl{Die weiteren Betriebsbedingungen können dem Benutzerhandbuch entnommen werden.}			
 				\item Wartungsfrei
-					\\ \textsl{Das System bedarf keiner regelmäßigen Wartung oder Aktualisierung.}		
+					\\ \textsl{Das System bedarf keiner regelmäßigen Wartung oder Aktualisierung.}	
+				\item Namenskonventionen für das Bluetooth-Modul der e-puck-Roboter
+					\\ \textsl{Die Kennung des Bluetooth-Modul der e-puck-Roboter muss zwingend folgender Namenskonventionen
+						genügen: \textit{e-puck\_????} \footnote{ \ ? entspricht einer Ziffer}  }					
 			\end{itemize}
 	\section{Produktumgebung}
 		\subsection{Software}
 			\begin{itemize}
-				\item Geeigneter Bootloader oder Programmer zum Programmieren der e-puck Roboter
 				\item Android Software ab Version 2.1
+				\item CyanogenMod für Android Handys ab Version 6.0.1
 			\end{itemize}
 		\subsection{Hardware}
 			\begin{itemize}
-				\item e-puck Roboter
-				\item Bodensensor für e-puck Roboter
-				\item Android Smartphone
-					\\ \textsl{Voraussetzungen: Bluetooth, geeignete Auflösung, Beschleunigungssensoren, Touch-Display.}
-				\item Computer mit Bluetooth Unterstützung
+				\item e-puck Roboter (HW Rev. 2) mit Erweiterungsmodul für Bodensensoren
+				\item Bluetooth fähiges Android Smartphone mit geeigneter Bildschirmauflösung, Touch-Display und optionalem
+					Beschleunigungssensor zur Steuerung
 			\end{itemize}		
 		\subsection{Orgware}
 			\begin{itemize}
-				\item Namenskonventionen für das Bluetooth-Modul der e-puck-Roboter
-					\\ \textsl{Die Kennung des Bluetooth-Modul der e-puck-Roboter muss zwingend folgender Namenskonventionen
-						genügen: bla \footnote{gemäß regulärer Ausdrücke}  }
+				\item Tiny Bootloader Version 1.97 zum Programmieren der e-puck Roboter
+				\item Tiny Bootloader mit 16x PLL für e-puck					
+				\item Computer mit Bluetooth Unterstützung	
 			\end{itemize}		
 	\section{Produktfunktionen}
 		\subsection{e-puck Roboter}
@@ -197,7 +196,7 @@
 			\subsubsection{Bewegungsfunktionen}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
 					\item[\textbf{/F80/}] Grundbewegungen
-						\\ \textsl{Der e-puck kann sich links und rechts herum in 90 Grad Schritten drehen. Das Vorwärtsfahren erfolgt
+						\\ \textsl{Der e-puck kann sich links und rechts um 90 Grad drehen. Das Vorwärtsfahren erfolgt
 							in Kamerarichtung des Roboters. Rückwärtsbewegungen entgegen der Kamerablickrichtung sind nicht möglich.}
 					\item[\textbf{/F90/}] Kollisionsvermeidung
 						\\ \textsl{Ein e-puck erkennt und vermeidet direkt bevorstehende Kollisionen mit anderen e-pucks.}							
@@ -205,36 +204,35 @@
 						\\ \textsl{Die e-pucks bewegen sich auf dem Spielfeld nur auf den vorhandenen Linien. Das gilt auch für e-pucks,
 						die mit dem Smartphone halbmanuell gesteuert werden.}
 					\item[\textbf{/F110/}] Knotenanalyse
-						\\ \textsl{Ein e-puck erkennt beim Überfahren eines Knotens, in welche Richtungen er weiterfahren kann.}
+						\\ \textsl{Ein e-puck erkennt beim Überfahren eines Knotens in welche Richtungen er weiterfahren kann.}
 				\end{list}
 			\subsubsection{Erkundungsfunktionen}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
 					\item[\textbf{/F120/}] Lokalisierung
 						\\ \textsl{Vor Beginn des Erkundungsvorgangs einigen sich die e-pucks untereinander auf einen gemeinsamen Bezugspunkt
 						und ermitteln relativ dazu ihre eigene Position. Die e-pucks starten in diesem Fall von fest definierten Startpositionen.}
-					\item[\textbf{/F150/}] Erkundungsfunktion
+					\item[\textbf{/F130/}] Erkundungsfunktion
 						\\ \textsl{Nach Abschluss des Lokalisierungsvorgangs erkunden die e-pucks in Zusammenarbeit das unbekannte
 							Spielfeld vollständig.}
 					\item[\textbf{/F140/}] Kartensynchronisation
 						\\ \textsl{Während des Erkundungsvorgangs tauschen die e-pucks kontinuierlich Informationen über die von ihnen
 						erkundeten Felder aus. Ist ein Smartphone mit dem Netzwerk verbunden, erhält auch dieses entsprechende Nachrichten.}
-					\item[\textbf{/F130/}] Lokale Kartenkonstruktion	
-						\\ \textsl{Jeder e-puck speichert lokal die komplette bisher erkundete Karte. Diese wird mit Hilfe
+					\item[\textbf{/F150/}] Lokale Kartenkonstruktion	
+						\\ \textsl{Jeder e-puck speichert lokal die bisher erkundete Karte. Diese wird mit Hilfe
 						der Informationen aus den Nachrichten der anderen e-pucks sowie den eigenen Erkundungsergebnissen konstruiert.} 				
 					\item[\textbf{/F160/}] Rückkehrfunktion
 						\\ \textsl{Nachdem das Gebiet vollständig erkundet worden ist, fahren die e-pucks wieder an ihre Startpositionen
 						zurück.}
 					\item[\textbf{/F170W/}] Globale Lokalisierung
 						\\ \textsl{Starten die e-pucks nicht auf fest definierten Startpositionen, sondern auf beliebigen Feldern innerhalb
-							des Spielfeldes, sammeln sich die Roboter zunächst nebeneinander in einem Gebiet des Spielfeldes. Dort beginnt der
-							Erkundungsvorgang mit der oben beschriebenen Lokalisierung.}
+							des Spielfeldes, so können sich die Roboter durch vorher nicht festgelegte Treffpunkte untereinander lokalisieren.}
 				\end{list}
 		\subsubsection{Allgemeine Funktionen}
 			\begin{list}{\labelitemi}{\leftmargin=1cm}
 				\item[\textbf{/F180/}] Kalibrierung
 					\\ \textsl{Die Linien- und Abstandssensoren lassen sich vom Benutzer manuell kalibrieren und dauerhaft abspeichern.}					
-				\item[\textbf{/F190W/}] Zustandsvisualisierung (Status + Pfade)		
-					\\ \textsl{Der aktuelle Zustand (z.B. Kollisionen, manuelle Steuerung, Synchronisiert) der einzelnen e-puck Roboter wird
+				\item[\textbf{/F190W/}] Zustandsvisualisierung		
+					\\ \textsl{Der aktuelle Zustand (z.B. Kollisionen, manuelle Steuerung, synchronisiert) der einzelnen e-puck Roboter wird
 						durch Verwendung verschiedener Aktoren und Außen-LEDs verdeutlicht.}		
 			\end{list}
 		\subsection{Smartphone}
@@ -246,58 +244,56 @@
 						\\ \textsl{Das Smartphone kann sich via Bluetooth mit einem e-puck verbinden, den es mit Hilfe
 						der Suchfunktion entdeckt hat.}				
 					\item[\textbf{/F220/}] Kommunikationsfunktion
-						\\ \textsl{Das Smartphone kann Daten über eine korrekte Bluetoothverbindung mit einem e-puck Roboter Daten senden und
-							empfangen.}
-				\end{list}
-			\subsubsection{Steuerungsfunktionen}		
+						\\ \textsl{Das Smartphone kann Daten über eine bestehende Bluetooth Verbindung senden und empfangen.}
+				\end{list}	
+			\subsubsection{Erweiterte Funktionen}
 				\begin{list}{\labelitemi}{\leftmargin=1cm}
-					\item[\textbf{/F290/}] Steuerungsfunktion mit einem On-Screen-Joystick
-						\\ \textsl{Der ausgewählte e-puck kann mit einem On-Screen-Joystick halbmanuell gesteuert werden. Die Bewegung
-							erfolgt weiterhin auf den Linien des Spielfeldes. Die Geschwindigkeit kann stufenweise eingestellt werden.}	
-					\item[\textbf{/F300/}] Steuerungsfunktion mit dem eingebauten Beschleunigungssensoren
-						\\ \textsl{Alternativ kann der ausgewählte e-puck kann mit Hilfe des eingebauten Beschleunigungssensors halbmanuell
-						gesteuert werden. Auch in diesem Fall bewegt sich der Roboter nur auf den Linien des Spielfeldes. Die Geschwindigkeit
-						kann stufenweise eingestellt werden.}					
-				\end{list}					
-			\subsubsection{Grafische Benutzeroberfläche}
-				\begin{list}{\labelitemi}{\leftmargin=1cm}
-					\item[\textbf{/F230/}] Kartendarstellung
-						\\ \textsl{Die GUI stellt die bereits erkundeten Gebiete in geeigneter Art und Weise dar.}	
-					\item[\textbf{/F240/}] Roboterdarstellung
-						\\ \textsl{Die aktuelle Position der e-pucks wird auf der Karte der bisher erkundeten Gebiete
-							einzeichnet.}	
-					\item[\textbf{/F250/}] Steuerungsfunktion per On-Screen-Joystick
-						\\ \textsl{Mithilfe eines Steuerknüppels kann der Teilnehmer entlang der Linien bewegt werden}
-					\item[\textbf{/F260/}] Steuerungsfunktion per Bewegungssensor	
-						\\ \textsl{Durch Kippen des Smartphones kann der e-puck Roboter beschleunigt, gebremst sowie in verschiedene, gültige
-							Richtungen bewegt werden.}
-					\item[\textbf{/F270W/}] Statistikfunktion	
+					\item[\textbf{/F230W/}] Statistikfunktion	
 						\\ \textsl{Auf dem Smartphone wird für jeden e-puck Roboter der bisher abgefahrene Weg, die Anzahl der überfahreren
 							Knoten und sein momentaner Status visualisiert.}							
-					\item[\textbf{/F280W/}] Internationalisierung	
+					\item[\textbf{/F240W/}] Internationalisierung	
 						\\ \textsl{Die Texte der Benutzeroberfläche werden abhängig von der gewählten Systemsprache des Smartphones
 							angezeigt. Wird eine Sprache nicht unterstützt, so ist die Ausgabe standardmäßig englischsprachig.}
-				\end{list}
-				
+					\item[\textbf{/F250W/}] Kartenspeicherung	
+						\\ \textsl{Die aktuell dargestellte Karte lässt sich auf dem Smartphone persistent abspeichern.}
+					\item[\textbf{/F260W/}] Ladefunktion	
+						\\ \textsl{Gespeicherte Kartendaten \textbf{/F250W/} können auf der Kartendarstellung des Smartphones geladen werden.}
+				\end{list}						
+			\subsubsection{Steuerungsfunktionen}		
+				\begin{list}{\labelitemi}{\leftmargin=1cm}
+					\item[\textbf{/F270/}] Steuerungsfunktion mit einem On-Screen-Joystick
+						\\ \textsl{Der ausgewählte e-puck kann mit einem On-Screen-Joystick halbmanuell gesteuert werden. Die Bewegung
+							erfolgt weiterhin auf den Linien des Spielfeldes. Die Geschwindigkeit kann stufenweise eingestellt werden.}	
+					\item[\textbf{/F280/}] Steuerungsfunktion mit dem eingebauten Beschleunigungssensor
+						\\ \textsl{Alternativ kann der ausgewählte e-puck mit Hilfe des eingebauten Beschleunigungssensors halbmanuell
+						gesteuert werden. Auch in diesem Fall bewegt sich der Roboter nur auf den Linien des Spielfeldes. Die Geschwindigkeit
+						kann stufenweise eingestellt werden.}					
+				\end{list}						
 	\section{Produktdaten}
 		\begin{list}{\labelitemi}{\leftmargin=1cm}
 			\item[\textbf{/D100/}] Kalibrierwerte
 				\\ \textsl{Die Werte der Boden- und der Abstandssensoren werden nach dem Kalibrierungsvorgang dauerhaft abgespeichert.}
 		\end{list}
+		\begin{list}{\labelitemi}{\leftmargin=1cm}
+			\item[\textbf{/D110W/}] Kartendaten
+				\\ \textsl{Die aktuell dargestellte Karte kann zu jeder Zeit auf dem Android-Smartphone gespeichert werden.}
+		\end{list}
 		
 	\section{Produktleistungen}
 		\begin{list}{\labelitemi}{\leftmargin=1cm}
-			\item[\textbf{/L50/}] Sofortiger Wiederaufbau der Bluetooth-Verbindung nach Verbindungsverlust
-				\\ \textsl{[ToDo]}
-			\item[\textbf{/L60/}] Robustheit des Systems bei Ausfall eines e-puck Roboter
-				\\ \textsl{[ToDo] -mehr als ein e-puck; - keine zwei Ausfälle zur selben Zeit}
-			\item[\textbf{/L70/}] Erkundung des Spielfelds mit Hilfe kooperierender Roboter erfolgt möglichst effizient
-				\\ \textsl{[ToDo]}						
+			\item[\textbf{/L50/}] Wiederaufbau der Bluetooth-Verbindung nach Verbindungsverlust
+				\\ \textsl{Bei Verbindungsverlust eines Teilnehmers wird die Verbindung möglichst schnell wieder aufgebaut.}
+			\item[\textbf{/L60/}] Robustheit des Systems bei Ausfall von e-puck Roboter
+				\\ \textsl{Trotz des Ausfalls von einem oder mehreren Robotern kann der Betrieb fortgesetzt werden.}
+			\item[\textbf{/L70/}] Möglichst effiziente Erkundung des Spielfelds
+				\\ \textsl{Durch Zusammenarbeit mehrerer e-puck Roboter wird das Spielfeld möglichst effizient erkundet.}						
 			\item[\textbf{/L80/}] Ungültige Richtungsanweisungen werden erkannt und nicht ausgeführt 
-				\\ \textsl{[ToDo]}					
+				\\ \textsl{Das System erkennt fehlerhafte Anweisungen des Benutzers und verweigert die Ausführung.}					
 			\item[\textbf{/L90/}] Einarbeitungszeit 
 				\\ \textsl{Die Benutzerschnittelle des Smartphones ist komfortabel und übersichtlich. Dadurch kann die Einarbeitungszeit
-					auch für unerfahrene Benutzer kurz bleiben.}		
+					auch für unerfahrene Benutzer kurz bleiben.}
+			\item[\textbf{/L100/}] Unterstützte Spielfeldgröße 
+				\\ \textsl{Die e-puck Roboter können ein Spielfeld mit bis zu 500 Knotenpunkten vollständig erkunden.}							
 		\end{list}						
 	\section{Benutzungsoberfläche}
 	
@@ -319,13 +315,12 @@
   				\caption{Kartendarstellung und e-puck Auswahl}
   			\end{figure}						
 			
-			Auf dem Frame `Karte' erfolgt die übersichtliche Darstellung des bereits erkundeten Gebietes. Auf dieser Karte werden außerdem
+			Auf dem Frame `Karte' erfolgt die übersichtliche Darstellung des bereits erkundeten Gebiets. Außerdem werden
 			die aktuellen Positonen der teilnehmenden e-pucks angezeigt.
 			
 			Darüber hinaus kann einer der e-pucks ausgewählt werden. Dessen Position wird auf der Karte besonders hervorgehoben.
 			
-			Wird kein verbindungsbereiter e-puck gefunden, so hat der Benutzer die Möglichkeit, erneut eine Suche zu starten oder die Anwendung
-			zu verlassen.
+			Wird kein verbindungsbereiter e-puck gefunden, so hat der Benutzer die Möglichkeit, erneut eine Suche zu starten.
 			\subsection{Frame `Steuerung'}
 			
 			\begin{figure}[h]
@@ -337,8 +332,8 @@
   			\end{figure}	
 			
 			Der Frame `Steuerung' ermöglicht die halbmanuelle Steuerung des auf dem Frame `Karte' ausgewählten e-puck.			
-			Der Name des gewählten e-pucks wird dem Benutzer angezeigt. Der Benutzer kann die halbmanuelle Steuerung
-			aus bzw. einschalten und zwischen den beiden beschriebenen Steuerungsarten wählen. Es wird unabhängig von der
+			Der Name des gewählten e-pucks wird dem Benutzer angezeigt. \\ Der Benutzer kann die halbmanuelle Steuerung
+			aus- bzw. einschalten und zwischen den beiden beschriebenen Steuerungsarten wählen. Es wird unabhängig von der
 			gewählten Steuerungsmethode die selbe Oberfläche dargestellt.
 
 			\subsection{Frame `Statistik'}
@@ -362,7 +357,7 @@
 				\item Austausch- und Erweiterbarkeit
 					\\ \textsl{Die Software-Architektur der e-pucks wird gezielt so entworfen, dass Komponenten der Logik einfach ausgetauscht
 						und erweitert werden können.
-						Dazu gehören neben der Fahr- und Steuerungslogik insbesondere die Erkundungs- und Wegfindungsmechanismen.}	
+						Dazu gehören neben der Fahr- und Steuerungslogik insbesondere die Mechanismen für Erkundung und Wegfindung.}	
 				\item Robustheit 
 					\\ \textsl{Das System wird so entworfen, dass die Erkundung des unbekannten Spielfeldes erfolgreich abgeschlossen
 						wird, solange wenigstens ein e-puck nicht ausgefallen ist.
@@ -389,7 +384,6 @@
 	\section{Globale Testszenarien und Testfälle}	
 		Alle nachfolgenden Tests werden unter den genannten Betriebsbedingungen (Kapitel 2.3 Betriebsbedingungen)
 		mit Hilfe einer Debug-Konsole durchgeführt.
-		\subsection{e-puck Roboter}
 			\begin{list}{\labelitemi}{\leftmargin=1cm}
 				\item[\textbf{/T50/}] Kalibrierung
 					\\ \textsl{Nach ordnungsgemäßer Kalibrierung beginnen die Außen-LEDs nacheinander zu leuchten (\textbf{/F180/}).}
@@ -403,28 +397,29 @@
 				\item[\textbf{/T80/}] Knotenanalyse und manuelle Steuerung
 					\\ \textsl{Der Roboter wird gemäß \textbf{/T60/} aufgestellt. Durch manuelle Steuerung per On-Screen-Joystick des
 						Smartphone muss der Benutzer 	auf allen Knotentypen die möglichen Fahrtrichtungen austesten. Nur gültige Richtungen
-						dürfen vom Roboter befahren werden (\textbf{/F110/},	\textbf{/F200/}, \textbf{/F210/}).}							
+						dürfen vom Roboter befahren werden (\textbf{/F110/},	\textbf{/F200/}, \textbf{/F210/}, \textbf{/F220/}).}							
 				\item[\textbf{/T90/}] Kollisionsvermeidung
 					\\ \textsl{Zwei e-puck-Roboter werden in zugewandter Fahrtrichtung auf einer Linie positioniert und in Bewegung gesetzt.
-						Die bevorstehende Kollision wird erkannt und vermieden (\textbf{/F110/}).}		
+						Die bevorstehende Kollision wird erkannt und vermieden (\textbf{/F90/}).}		
 				\item[\textbf{/T100/}] Steuerung per Beschleunigungssensoren
 					\\ \textsl{Der Test wird analog zu \textbf{/T80/} durchgeführt, wobei als Steuerungsmethode die Beschleunigungssensoren
-						verwendet werden (\textbf{/F300/}).}
+						verwendet werden (\textbf{/F280/}).}
 				\item[\textbf{/T110/}] Erkundungstest
 					\\ \textsl{Mehrere e-puck Roboter werden auf entsprechende Startpositionen innerhalb des Spielfelds gesetzt und
 						eingeschaltet. Ziel des Testszenarios ist die vollständige Erkundung durch effiziente Zusammenarbeit der Teilnehmer.
 						Falls die Roboter nach Abschluss auf die Startpositionen zurückkehren und die Karte auf dem Smartphone dargestellt
 						wird, ist der Testfall erfolgreich (\textbf{/F120/}, \textbf{/F130/}, \textbf{/F140/}, \textbf{/F150/}, \textbf{/F160/}, 
 						\textbf{/F190W/}).}
-				\item[\textbf{/T120/}] Test der grafischen Benutzeroberfläche des Smartphones
-					\\ \textsl{Gemäß \textbf{/T110/} wird während der Erkundung des Spielfeldes die Kartendarstellung auf dem Smartphone
-						dynamisch aufgebaut. Die Positionen der e-pucks sind aus der Karte ersichtlich.  (\textbf{/F230/}, \textbf{/F240/}).}
-				\item[\textbf{/T130W/}] Test von globaler Lokalisierung
+				\item[\textbf{/T120W/}] Speichern der Kartendaten
+					\\ \textsl{Nachdem eine Kartenansicht auf dem Smartphone verfügbar ist, speichert der Benutzer die Kartendaten ab
+						(\textbf{/F250W/}).}
+				\item[\textbf{/T130W/}] Laden der Kartendaten
+					\\ \textsl{Nachdem Kartendaten auf dem Smartphone gespeichert wurden (\textbf{/T120W/}), lädt der Benutzer diese.
+						Daraufhin wird die entsprechende Karte angezeigt (\textbf{/F260W/}).}						
+				\item[\textbf{/T140W/}] Test von globaler Lokalisierung
 					\\ \textsl{Die e-puck Roboter werden im Gegensatz zu \textbf{/T110/} auf beliebigen Startpositionen gesetzt. Somit müssen
 						sich die Teilnehmer zunächst finden und synchronisieren. Der erfolgreiche Abschluss kann durch die Anzeige aller e-pucks
 						auf der Karte kontrolliert werden. (\textbf{/F170W/}).}																	
 			\end{list} 
-
-	\section{Ergänzungen}
 						
 \end{document}
