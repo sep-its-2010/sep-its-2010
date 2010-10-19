@@ -45,9 +45,8 @@
 						   Dieses wird von den e-pucks selbstständig aufgebaut.}
 					\item Erkundung einer unbekannten rechtwinkligen Fläche ausgehend von fest definierten Startpositionen
 						\\ \textsl{Das Spielfeld besteht aus einer Menge von vier quadratisch angeordneten Feldern. Diese sind rasterförmig und
-						   zusammenhängend angeordnet. Vier Felder sind mindestens so groß, dass ein im Zentrum des Quadrats
-						   stehender e-puck vollständig in das Innere des Feldes passt. Die Startpositionen der e-puck Roboter sind
-						   fest vordefiniert.}
+						   zusammenhängend angeordnet. Ein Feld ist mindestens 10cm x 10cm groß. Die Startpositionen der e-puck Roboter
+						   sind fest vordefiniert.}
 					\item Fortbewegung auf den Kanten der Quadrate
 						\\ \textsl{Die Linien des Spielfeldes müssen schwarz mit ausreichendem Kontrastverhältnis
 						    zum Untergrund sein. Zwingend erforderlich ist, dass die Breite der Linien innerhalb der Spezifikation der
@@ -303,25 +302,41 @@
 			\begin{figure}[h]
 				\centering
 				\includegraphics[width=10cm]{dialog.eps}
-  				\caption{Dialogsruktur}
-  			\end{figure}			
+  				\caption{Dialogstruktur}
+  			\end{figure}
+  			
+  			Nach Start der Anwendung kann der Benutzer wahlweise einen verbindungsbereiten e-puck Roboter auswählen oder eine
+  			exportierte Karte laden. Daraufhin wird auf den Dialog 'Karte' gewechselt. \\
+  			Über das Programm-Menü kann zwischen den Dialogen 'Steuerung', 'Karte' und 'Statistik' gewechselt werden. Befindet sich die
+  			Anwendung auf dem Dialog 'Karte', so kann über die Zurück-Funktion die aktuelle Verbindung zu einem Roboter getrennt
+  			und zur  e-puck-Auswahl gewechselt werden. Auf den Dialogen 'Steuerung' und 'Statistik' wird über die Zurück-Funktion
+  			auf 'Karte' gewechselt.
+  			
+  			\subsection{Dialog 'e-puck-Auswahl'}
+  			
+			\begin{figure}[h]
+				  \centering
+				\includegraphics[width=3.5cm]{screenshots/android1a.png}
+  				\caption{e-puck Auswahl}
+  			\end{figure}	  				
+  			
+  				Beim Start der Anwendung wird dem Benutzer eine Auswahl der verbindungsbereiten e-puck Roboter angezeigt.  \\
+  				Das Programm-Menü beinhaltet eine Funktion zum manuellen Start eines erneuten Suchlaufs, sowie eine Ladefunktion
+  				für exportierte Kartendaten.
 			
-			\subsection{Frame `Karte'}
+			\subsection{Dialog `Karte'}
 
 			\begin{figure}[h]
 				  \centering
 				\includegraphics[width=3.5cm]{screenshots/android1b.png}
-				\includegraphics[width=3.5cm]{screenshots/android1a.png}
-  				\caption{Kartendarstellung und e-puck Auswahl}
+  				\caption{Kartendarstellung}
   			\end{figure}						
 			
-			Auf dem Frame `Karte' erfolgt die übersichtliche Darstellung des bereits erkundeten Gebiets. Außerdem werden
-			die aktuellen Positonen der teilnehmenden e-pucks angezeigt.
-			
-			Darüber hinaus kann einer der e-pucks ausgewählt werden. Dessen Position wird auf der Karte besonders hervorgehoben.
-			
-			Wird kein verbindungsbereiter e-puck gefunden, so hat der Benutzer die Möglichkeit, erneut eine Suche zu starten.
-			\subsection{Frame `Steuerung'}
+			Auf der Ansicht `Karte' erfolgt die übersichtliche Darstellung des bereits erkundeten Gebiets. Außerdem werden
+			die aktuellen Positonen der teilnehmenden e-pucks angezeigt. \\			
+			Darüber hinaus kann einer der e-pucks ausgewählt werden. Dessen Position wird auf der Karte besonders hervorgehoben.\\
+			Über das Programm-Menü kann der Benutzer auf die Dialoge 'Statistik' und 'Steuerung' wechseln.
+			\subsection{Dialog `Steuerung'}
 			
 			\begin{figure}[h]
 				  \centering
@@ -331,19 +346,21 @@
   				\caption{Steuerungsarten}
   			\end{figure}	
 			
-			Der Frame `Steuerung' ermöglicht die halbmanuelle Steuerung des auf dem Frame `Karte' ausgewählten e-puck.			
-			Der Name des gewählten e-pucks wird dem Benutzer angezeigt. \\ Der Benutzer kann die halbmanuelle Steuerung
-			aus- bzw. einschalten und zwischen den beiden beschriebenen Steuerungsarten wählen. Es wird unabhängig von der
-			gewählten Steuerungsmethode die selbe Oberfläche dargestellt.
+			Die Ansicht `Steuerung' ermöglicht die halbmanuelle Steuerung des gewählten e-puck.	Diese Auswahl wird synchron zu
+			dem Dialog 'Karte' verwaltet.	Der Name des gewählten e-pucks wird dem Benutzer angezeigt. \\ 
+			Der Benutzer kann die halbmanuelle Steuerung	aus- bzw. einschalten und zwischen den beiden beschriebenen
+			Steuerungsarten wählen. Es wird unabhängig von der	gewählten Steuerungsmethode die selbe Oberfläche dargestellt. \\
+			Über das Programm-Menü kann der Benutzer auf die Dialoge 'Karte' und 'Statistik wechseln.
 
-			\subsection{Frame `Statistik'}
+			\subsection{Dialog `Statistik'}
 				\begin{figure}[h]
 					  \centering
 					\includegraphics[width=3.5cm]{screenshots/android3.png}
   					\caption{Statistik}
   				\end{figure}		
   				
-  			Der Frame `Statistik' zeigt Informationen über den bisherigen Erkundungsfortschritt der einzelnen Roboter.
+  			Die Ansicht `Statistik' zeigt Informationen über den bisherigen Erkundungsfortschritt der einzelnen Roboter. \\
+  			Über das Programm-Menü kann der Benutzer auf die Dialoge 'Karte' und 'Steuerung' wechseln.
 			
 	\section{Qualitätsbestimmungen}
 		
