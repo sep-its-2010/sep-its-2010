@@ -6,3 +6,4 @@
 \beamer@sectionintoc {4}{Funktionalit\IeC {\"a}ten}{9}{0}{4}
 \beamer@sectionintoc {5}{Qualit\IeC {\"a}t}{10}{0}{5}
 \beamer@sectionintoc {6}{Graphische Benutzeroberfl\IeC {\"a}che}{11}{0}{6}
+\beamer@sectionintoc {7}{Ende}{12}{0}{7}

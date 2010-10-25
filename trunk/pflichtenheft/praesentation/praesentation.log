@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.10.13)  25 OCT 2010 10:45
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.10.13)  25 OCT 2010 11:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1060,7 +1060,7 @@ ogo.eps>
 (epstopdf)             \includegraphics on input line 98.
 Package epstopdf Info: Output file is already uptodate.
 
-<logo-eps-converted-to.pdf, id=145, 240.9pt x 466.74374pt>
+<logo-eps-converted-to.pdf, id=137, 240.9pt x 466.74374pt>
 File: logo-eps-converted-to.pdf Graphic file (type pdf)
 
 <use logo-eps-converted-to.pdf>
@@ -1079,23 +1079,46 @@ LaTeX Font Info:    Font shape `OMS/phv/m/n' in size <10> not available
 
 ] [6
 
-] [7
+] <idee.jpg, id=278, 121.20282pt x 237.88875pt>
+File: idee.jpg Graphic file (type jpg)
 
-] [8
+<use idee.jpg> [7
 
-] [9
-
-] [10
-
-] [11
+ <./idee.jpg>] [8
 
 ]
-LaTeX Font Info:    Font shape `T1/phv/m/it' in size <10.95> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 226.
- [12
+<funktional.jpg, id=342, 160.6pt x 160.6pt>
+File: funktional.jpg Graphic file (type jpg)
+ <use funktional.jpg> [9
 
- </usr/share/texmf/tex/latex/beamer/base/art/beamericonbook.pdf> </usr/share/te
-xmf/tex/latex/beamer/base/art/beamericonarticle.pdf>]
+ <./funktional.jpg>] [10
+
+]
+Package epstopdf Info: Source file: <karte.eps>
+(epstopdf)                    date: 2010-10-25 11:39:19
+(epstopdf)                    size: 3886 bytes
+(epstopdf)             Output file: <karte-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-10-25 11:40:00
+(epstopdf)                    size: 3122 bytes
+(epstopdf)             Command: <epstopdf --outfile=karte-eps-converted-to.pdf 
+karte.eps>
+(epstopdf)             \includegraphics on input line 213.
+Package epstopdf Info: Output file is already uptodate.
+ <karte-eps-converted-to.pdf, id=405, 541.02126pt x 787.94376pt>
+File: karte-eps-converted-to.pdf Graphic file (type pdf)
+
+<use karte-eps-converted-to.pdf>
+Overfull \vbox (207.81688pt too high) detected at line 213
+ []
+
+[11
+
+ <./karte-eps-converted-to.pdf>]
+<ende.jpg, id=439, 351.3125pt x 351.3125pt>
+File: ende.jpg Graphic file (type jpg)
+ <use ende.jpg> [12
+
+ <./ende.jpg>]
 \tf@nav=\write5
 \openout5 = `praesentation.nav'.
 
@@ -1105,22 +1128,22 @@ xmf/tex/latex/beamer/base/art/beamericonarticle.pdf>]
 \tf@snm=\write7
 \openout7 = `praesentation.snm'.
 
- (./praesentation.aux) ) 
+
+(./praesentation.aux) ) 
 Here is how much of TeX's memory you used:
- 13640 strings out of 495021
- 237809 string characters out of 1181034
- 322914 words of memory out of 3000000
- 16414 multiletter control sequences out of 15000+50000
- 23066 words of font info for 29 fonts, out of 3000000 for 9000
+ 13580 strings out of 495021
+ 235752 string characters out of 1181034
+ 323914 words of memory out of 3000000
+ 16355 multiletter control sequences out of 15000+50000
+ 20050 words of font info for 27 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 45i,20n,55p,321b,725s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}<
-/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/
-texmf-texlive/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/share/texmf-texlive/fon
-ts/type1/urw/helvetic/uhvro8a.pfb>
-Output written on praesentation.pdf (12 pages, 306793 bytes).
+ 45i,16n,52p,321b,613s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}</
+usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/t
+exmf-texlive/fonts/type1/urw/helvetic/uhvr8a.pfb>
+Output written on praesentation.pdf (12 pages, 332447 bytes).
 PDF statistics:
- 515 PDF objects out of 1000 (max. 8388607)
- 36 named destinations out of 1000 (max. 500000)
- 146 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 489 PDF objects out of 1000 (max. 8388607)
+ 32 named destinations out of 1000 (max. 500000)
+ 150 words of extra memory for PDF output out of 10000 (max. 10000000)
 
