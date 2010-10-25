@@ -1,7 +1,8 @@
 \beamer@endinputifotherversion {3.07pt}
 \select@language {german}
 \beamer@sectionintoc {1}{Einleitung}{3}{0}{1}
-\beamer@subsectionintoc {1}{1}{Frhere Arbeiten}{10}{0}{1}
-\beamer@sectionintoc {2}{Unsere Resultate/Beitrag}{13}{0}{2}
-\beamer@subsectionintoc {2}{1}{Hauptresultate}{13}{0}{2}
-\beamer@subsectionintoc {2}{2}{Beweis-/Implementationsideen}{17}{0}{2}
+\beamer@sectionintoc {2}{Aufgabenstellung}{5}{0}{2}
+\beamer@sectionintoc {3}{Abgrenzungskriterien}{8}{0}{3}
+\beamer@sectionintoc {4}{Funktionalit\IeC {\"a}ten}{9}{0}{4}
+\beamer@sectionintoc {5}{Qualit\IeC {\"a}t}{10}{0}{5}
+\beamer@sectionintoc {6}{Graphische Benutzeroberfl\IeC {\"a}che}{11}{0}{6}

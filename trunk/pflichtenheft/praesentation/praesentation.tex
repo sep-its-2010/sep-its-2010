@@ -80,12 +80,21 @@
 
 \begin{frame}
   \frametitle{Motivation}
-
-	\includegraphics[height=5cm]{logo.eps} 
-	\begin{itemize}
-		\item Aufgabenstellung
-		\item 
-	\end{itemize}
+  \begin{figure}[htbp]
+	\begin{minipage}[t]{5cm}
+		\vspace{0pt}
+		\includegraphics[height=5cm]{logo.eps} 
+	\end{minipage}
+	\hfill
+	\begin{minipage}[t]{0.5\textwidth}
+		\vspace{30pt}
+		\begin{itemize}
+			\item Einleitung
+			\item Grobe Aufgabenstellung
+			\item Vorstellung der Medien
+		\end{itemize}
+	\end{minipage}
+   \end{figure}
 \end{frame}
 
 \begin{frame}
@@ -94,10 +103,10 @@
 Mögliche Anwendungen sowie Erweiterungen unseres Systems sind:
 
 	\begin{itemize}
-	    \item	Vermessung von Baugebieten
-        Putzroboter für dein Einsatz im Alltag
-	•	Grundsrisszeichnungen für neue Wohnungen
-	•	Systematisches Absuchen von Gebieten (Wald, Wohnungsboden)	
+	    \item Vermessung von Baugebieten
+        \item Putzroboter für den Einsatz im Alltag
+		\item Grundsrisszeichnungen für Wohnungen
+		\item Systematisches Absuchen von Gebieten (Wald, Wohnungsboden)	
 	\end{itemize}
 
 \end{frame}
@@ -105,24 +114,24 @@ Mögliche Anwendungen sowie Erweiterungen unseres Systems sind:
 \section{Aufgabenstellung}
 
 \begin{frame}
-  \frametitle{Musskritierien aus dem Lastenheft}
+  \frametitle{Kriterien aus dem Lastenheft}
   
 	\begin{itemize}
-	•	Erkundung von unbekannten Spielfeldern
-	•	Kommunikation und Kooperation der e-puck Roboter ohne zentrale Steuereinheit (Master/Slave)
-	•	Darstellung der bereits erkundeten Karte auf dem Smartphone sowie die aktuelle Position der Roboter
-	•	Auswahl und Steuerung eines einzelnen e-puck Roboters
+		\item Erkundung von unbekannten Spielfeldern
+		\item Kommunikation und Kooperation der e-puck Roboter ohne zentrale Steuereinheit 				(Master/Slave)
+		\item Darstellung der bereits erkundeten Karte auf dem Smartphone sowie die 					aktuelle Position der Roboter
+		\item Auswahl und Steuerung eines einzelnen e-puck Roboters
 	\end{itemize}  
 \end{frame}
 
 \begin{frame}
-  \frametitle{Pflichtenheft}
+  \frametitle{Kriterien aus dem Pflichtenheft}
   
   	\begin{itemize}
-	•	Genaue Rahmenbedingungen für das Spielfeld (Größe von Quadraten usw.)
-	•	Festedefinierte Startplätze
-	•	Feldgröße von mindestens 10cm x 10cm
-	•	Kollisionserkennung und Vermeidung
+		\item Genaue Rahmenbedingungen für das Spielfeld (Größe von Quadraten, usw.)
+		\item Festedefinierte Startplätze
+		\item Feldgröße von mindestens 10cm x 10cm
+		\item Kollisionserkennung und Vermeidung
 	\end{itemize}  
 \end{frame}
 
@@ -130,10 +139,10 @@ Mögliche Anwendungen sowie Erweiterungen unseres Systems sind:
   \frametitle{Wunschkriterien}
   
   	\begin{itemize}
-	•	Zustandvisualisierung
-	•	Bel. Startpositionen
-	•	Exportfunktion für die Karte
-	•	Pfadanzeige der einzelnen Roboter
+		\item Zustandvisualisierung
+		\item Beliebige Startpositionen
+		\item Exportfunktion für die Karte
+		\item Pfadanzeige der einzelnen Roboter
 	\end{itemize}  
 \end{frame}
 
@@ -141,17 +150,50 @@ Mögliche Anwendungen sowie Erweiterungen unseres Systems sind:
 \section{Abgrenzungskriterien}
 
 \begin{frame}
-  \frametitle{berschriften mssen informativ sein.}
+  \frametitle{Rahmenbedingungen}
+  
+  	\begin{itemize}
+		\item Keine ungültigen oder sich dynamisch ändernden Spielfelder
+		\item Unterstützung von maximal einem Smartphone
+		\item Größe des Spielfeldes
+		\item Betriebsbedingungen
+	\end{itemize}  
 \end{frame}
 
+\section{Funktionalitäten}
 \begin{frame}
-  \frametitle{berschriften mssen informativ sein.}
+  \frametitle{Phasenunterteilung}
+  
+  	\begin{itemize}
+		\item Synchronisationsphase
+		\item Erkundungsphase
+		\item Rückkehrphase
+	\end{itemize}  
 \end{frame}
 
+
+\section{Qualität}
 \begin{frame}
-  \frametitle{berschriften mssen informativ sein.}
+  \frametitle{Qualitätsmerkmale}
+  
+  	\begin{itemize}
+		\item Effizienz
+		\item Korrektheit
+		\item Wartbarkeit
+		\item Erweiterbarkeit
+		\item Robustheit
+	\end{itemize}  
 \end{frame}
 
+\section{Graphische Benutzeroberfläche}
+\begin{frame}
+  \frametitle{Funktionalitäten der Benutzeroberfläche}
+  	\begin{itemize}
+		\item Autoskalierung der Karte
+		\item Auswahl der e-puck Roboter
+		\item Kartendarstellung
+	\end{itemize}  
+\end{frame}
 
 
 % Alles nachfolgende ist optional und typischerweise nicht ntig.
