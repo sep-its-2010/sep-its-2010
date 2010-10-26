@@ -76,13 +76,14 @@
 		Ressourcen der Roboter erzwingen hierbei einen möglichst effizienten Aufbau. Insbesondere stellt der interne
 		Arbeitsspeicher sowie die Rechenleistung der e-pucks eine Einschränkung für den Entwurf dar.
 				
-<<<<<<< .mine
 	\section{e-Puck Roboter}
 		
 		\begin{figure}[h]
-=======
-	\section{e-Puck Roboter}	
-	
+			\centering
+			\includegraphics[width=10cm]{images/e-puck.eps}
+  			\caption{Ablaufmodell}
+  		\end{figure}
+  				
 		\subsection{Architektur}
 		Die Software des e-puck wird als Schichtenarchitektur mit wachsendem Abstraktionsgrad entworfen. \\
 		Jede Schicht besteht aus einer oder mehreren Komponenten. Teilweise sind diese Komponenten wiederum aus mehreren
@@ -108,20 +109,7 @@
 			
 			\subsection{Komponente `Selector'}
 			
-			\begin{figure}[h]
->>>>>>> .r54
-			\centering
-			\includegraphics[width=10cm]{images/e-puck.eps}
-<<<<<<< .mine
-  			\caption{Ablaufmodell}
-  		\end{figure} \\	
-	
-		\subsection{•}
-=======
-  			\caption{Ablaufdiagramm}
-  		\end{figure}	
->>>>>>> .r54
-	\section{Smartphone}
+		\section{Smartphone}
 		\subsection{Model-View-Controller (MVC) Architektur}
 			Die Android-Applikation wird durchgängig durch eine MVC-Architektur aufgebaut. Dies ermöglicht ein flexibles Programmdesign,
 			welches eine Wiederverwendbarkeit von Komponente sowie eine reduzierte Komplexität gewährleistet. Die Daten, wie z.B.
@@ -194,7 +182,7 @@
   					er nicht für die Bearbeitung der Nachricht zuständig ist. In diesem Fall behandelt er die Nachricht entsprechend und gibt true zurück
   				\item Der Handler, der keinen Nachfolger mehr hat gibt den Wert false zurück und somit weiß der Client dass für die Nachricht kein
   					entsprechender Handler zur Verfügung steht.  					
-  			\end{itemize}   	  								
+  			\end{enumerate}   	  								
 	\section{Kommunikation}
 				
 	\newpage	
