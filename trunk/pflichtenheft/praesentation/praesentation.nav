@@ -24,7 +24,7 @@
 \headcommand {\beamer@subsectionpages {5}{7}}
 \headcommand {\slideentry {3}{0}{8}{8/8}{}{0}}
 \headcommand {\beamer@framepages {8}{8}}
-\headcommand {\sectionentry {4}{Funktionalit\IeC {\"a}ten}{9}{Funktionalit\IeC {\"a}ten}{0}}
+\headcommand {\sectionentry {4}{Funktionen}{9}{Funktionen}{0}}
 \headcommand {\beamer@sectionpages {8}{8}}
 \headcommand {\beamer@subsectionpages {8}{8}}
 \headcommand {\slideentry {4}{0}{9}{9/9}{}{0}}
@@ -39,13 +39,15 @@
 \headcommand {\beamer@subsectionpages {10}{10}}
 \headcommand {\slideentry {6}{0}{11}{11/11}{}{0}}
 \headcommand {\beamer@framepages {11}{11}}
-\headcommand {\sectionentry {7}{Ende}{12}{Ende}{0}}
-\headcommand {\beamer@sectionpages {11}{11}}
-\headcommand {\beamer@subsectionpages {11}{11}}
-\headcommand {\slideentry {7}{0}{12}{12/12}{}{0}}
+\headcommand {\slideentry {6}{0}{12}{12/12}{}{0}}
 \headcommand {\beamer@framepages {12}{12}}
-\headcommand {\beamer@partpages {1}{12}}
-\headcommand {\beamer@subsectionpages {12}{12}}
-\headcommand {\beamer@sectionpages {12}{12}}
-\headcommand {\beamer@documentpages {12}}
-\headcommand {\def \inserttotalframenumber {12}}
+\headcommand {\sectionentry {7}{Fragen}{13}{Fragen}{0}}
+\headcommand {\beamer@sectionpages {11}{12}}
+\headcommand {\beamer@subsectionpages {11}{12}}
+\headcommand {\slideentry {7}{0}{13}{13/13}{}{0}}
+\headcommand {\beamer@framepages {13}{13}}
+\headcommand {\beamer@partpages {1}{13}}
+\headcommand {\beamer@subsectionpages {13}{13}}
+\headcommand {\beamer@sectionpages {13}{13}}
+\headcommand {\beamer@documentpages {13}}
+\headcommand {\def \inserttotalframenumber {13}}

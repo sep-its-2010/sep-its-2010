@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.10.13)  25 OCT 2010 11:55
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.10.13)  26 OCT 2010 11:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1075,25 +1075,118 @@ LaTeX Font Info:    Font shape `OMS/phv/m/n' in size <10> not available
 
  <./logo-eps-converted-to.pdf>] [4
 
-] [5
+]
+Package epstopdf Info: Source file: <unerkundet.eps>
+(epstopdf)                    date: 2010-10-26 11:02:13
+(epstopdf)                    size: 5420 bytes
+(epstopdf)             Output file: <unerkundet-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-10-26 11:02:42
+(epstopdf)                    size: 4157 bytes
+(epstopdf)             Command: <epstopdf --outfile=unerkundet-eps-converted-to
+.pdf unerkundet.eps>
+(epstopdf)             \includegraphics on input line 131.
+Package epstopdf Info: Output file is already uptodate.
 
-] [6
+<unerkundet-eps-converted-to.pdf, id=214, 541.02126pt x 787.94376pt>
+File: unerkundet-eps-converted-to.pdf Graphic file (type pdf)
 
-] <idee.jpg, id=278, 121.20282pt x 237.88875pt>
+<use unerkundet-eps-converted-to.pdf>
+Overfull \vbox (142.3555pt too high) detected at line 131
+ []
+
+[5
+
+ <./unerkundet-eps-converted-to.pdf>] [6
+
+]
+<idee.jpg, id=281, 121.20282pt x 237.88875pt>
 File: idee.jpg Graphic file (type jpg)
+ <use idee.jpg> [7
 
-<use idee.jpg> [7
+ <./idee.jpg>]
+LaTeX Font Info:    Try loading font information for U+msa on input line 193.
 
- <./idee.jpg>] [8
+(/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2009/06/22 v3.00 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 193.
 
-]
-<funktional.jpg, id=342, 160.6pt x 160.6pt>
+(/usr/share/texmf-texlive/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2009/06/22 v3.00 AMS symbols B
+)
+LaTeX Font Info:    Font shape `T1/phv/m/it' in size <10.95> not available
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 193.
+LaTeX Font Info:    Font shape `T1/phv/m/it' in size <8> not available
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 193.
+LaTeX Font Info:    Font shape `T1/phv/m/it' in size <6> not available
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 193.
+Package epstopdf Info: Source file: <ungueltig1.eps>
+(epstopdf)                    date: 2010-10-26 11:27:53
+(epstopdf)                    size: 3367 bytes
+(epstopdf)             Output file: <ungueltig1-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-10-26 11:28:04
+(epstopdf)                    size: 2908 bytes
+(epstopdf)             Command: <epstopdf --outfile=ungueltig1-eps-converted-to
+.pdf ungueltig1.eps>
+(epstopdf)             \includegraphics on input line 193.
+Package epstopdf Info: Output file is already uptodate.
+
+<ungueltig1-eps-converted-to.pdf, id=314, 541.02126pt x 787.94376pt>
+File: ungueltig1-eps-converted-to.pdf Graphic file (type pdf)
+
+<use ungueltig1-eps-converted-to.pdf>
+Package epstopdf Info: Source file: <ungueltig2.eps>
+(epstopdf)                    date: 2010-10-26 11:23:32
+(epstopdf)                    size: 3061 bytes
+(epstopdf)             Output file: <ungueltig2-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-10-26 11:23:40
+(epstopdf)                    size: 2898 bytes
+(epstopdf)             Command: <epstopdf --outfile=ungueltig2-eps-converted-to
+.pdf ungueltig2.eps>
+(epstopdf)             \includegraphics on input line 193.
+Package epstopdf Info: Output file is already uptodate.
+
+<ungueltig2-eps-converted-to.pdf, id=315, 541.02126pt x 787.94376pt>
+File: ungueltig2-eps-converted-to.pdf Graphic file (type pdf)
+
+<use ungueltig2-eps-converted-to.pdf>
+Package epstopdf Info: Source file: <ungueltig3.eps>
+(epstopdf)                    date: 2010-10-26 11:25:38
+(epstopdf)                    size: 3139 bytes
+(epstopdf)             Output file: <ungueltig3-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-10-26 11:26:23
+(epstopdf)                    size: 2885 bytes
+(epstopdf)             Command: <epstopdf --outfile=ungueltig3-eps-converted-to
+.pdf ungueltig3.eps>
+(epstopdf)             \includegraphics on input line 193.
+Package epstopdf Info: Output file is already uptodate.
+
+<ungueltig3-eps-converted-to.pdf, id=316, 541.02126pt x 787.94376pt>
+File: ungueltig3-eps-converted-to.pdf Graphic file (type pdf)
+
+<use ungueltig3-eps-converted-to.pdf>
+Overfull \hbox (290.218pt too wide) in paragraph at lines 193--193
+ [] 
+ []
+
+
+Overfull \vbox (107.10217pt too high) detected at line 193
+ []
+
+[8
+
+ <./ungueltig1-eps-converted-to.pdf> <./ungueltig2-eps-converted-to.pdf> <./ung
+ueltig3-eps-converted-to.pdf>] <funktional.jpg, id=354, 160.6pt x 160.6pt>
 File: funktional.jpg Graphic file (type jpg)
- <use funktional.jpg> [9
 
- <./funktional.jpg>] [10
+<use funktional.jpg> [9
 
-]
+ <./funktional.jpg>]
+<qualitt.jpg, id=386, 297.913pt x 298.716pt>
+File: qualitt.jpg Graphic file (type jpg)
+ <use qualitt.jpg> [10
+
+ <./qualitt.jpg>]
 Package epstopdf Info: Source file: <karte.eps>
 (epstopdf)                    date: 2010-10-25 11:39:19
 (epstopdf)                    size: 3886 bytes
@@ -1102,21 +1195,38 @@ Package epstopdf Info: Source file: <karte.eps>
 (epstopdf)                    size: 3122 bytes
 (epstopdf)             Command: <epstopdf --outfile=karte-eps-converted-to.pdf 
 karte.eps>
-(epstopdf)             \includegraphics on input line 213.
+(epstopdf)             \includegraphics on input line 249.
 Package epstopdf Info: Output file is already uptodate.
- <karte-eps-converted-to.pdf, id=405, 541.02126pt x 787.94376pt>
+ <karte-eps-converted-to.pdf, id=418, 541.02126pt x 787.94376pt>
 File: karte-eps-converted-to.pdf Graphic file (type pdf)
 
 <use karte-eps-converted-to.pdf>
-Overfull \vbox (207.81688pt too high) detected at line 213
+Overfull \vbox (246.40497pt too high) detected at line 249
  []
 
 [11
 
  <./karte-eps-converted-to.pdf>]
-<ende.jpg, id=439, 351.3125pt x 351.3125pt>
+Package epstopdf Info: Source file: <karte.eps>
+(epstopdf)                    date: 2010-10-25 11:39:19
+(epstopdf)                    size: 3886 bytes
+(epstopdf)             Output file: <karte-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-10-25 11:40:00
+(epstopdf)                    size: 3122 bytes
+(epstopdf)             Command: <epstopdf --outfile=karte-eps-converted-to.pdf 
+karte.eps>
+(epstopdf)             \includegraphics on input line 256.
+Package epstopdf Info: Output file is already uptodate.
+File: karte-eps-converted-to.pdf Graphic file (type pdf)
+ <use karte-eps-converted-to.pdf>
+Overfull \vbox (131.12778pt too high) detected at line 256
+ []
+
+[12
+
+] <ende.jpg, id=484, 351.3125pt x 351.3125pt>
 File: ende.jpg Graphic file (type jpg)
- <use ende.jpg> [12
+ <use ende.jpg> [13
 
  <./ende.jpg>]
 \tf@nav=\write5
@@ -1128,22 +1238,21 @@ File: ende.jpg Graphic file (type jpg)
 \tf@snm=\write7
 \openout7 = `praesentation.snm'.
 
-
-(./praesentation.aux) ) 
+ (./praesentation.aux) ) 
 Here is how much of TeX's memory you used:
- 13580 strings out of 495021
- 235752 string characters out of 1181034
+ 13656 strings out of 495021
+ 237181 string characters out of 1181034
  323914 words of memory out of 3000000
- 16355 multiletter control sequences out of 15000+50000
- 20050 words of font info for 27 fonts, out of 3000000 for 9000
+ 16406 multiletter control sequences out of 15000+50000
+ 29795 words of font info for 47 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  45i,16n,52p,321b,613s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}</
-usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/t
-exmf-texlive/fonts/type1/urw/helvetic/uhvr8a.pfb>
-Output written on praesentation.pdf (12 pages, 332447 bytes).
+{/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}<
+/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/
+texmf-texlive/fonts/type1/urw/helvetic/uhvr8a.pfb>
+Output written on praesentation.pdf (13 pages, 499987 bytes).
 PDF statistics:
- 489 PDF objects out of 1000 (max. 8388607)
- 32 named destinations out of 1000 (max. 500000)
- 150 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 535 PDF objects out of 1000 (max. 8388607)
+ 34 named destinations out of 1000 (max. 500000)
+ 175 words of extra memory for PDF output out of 10000 (max. 10000000)
 
