@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2010.5.5)  25 OCT 2010 15:23
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2010.5.12)  26 OCT 2010 15:53
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -657,17 +657,17 @@ LaTeX Info: Redefining \pageref on input line 51.
 
 \AtBeginShipoutBox=\box34
 Package epstopdf Info: Source file: <logo.eps>
-(epstopdf)                    date: 2010-10-20 10:01:15
+(epstopdf)                    date: 2010-10-26 14:52:39
 (epstopdf)                    size: 1388790 bytes
 (epstopdf)             Output file: <logo-eps-converted-to.pdf>
-(epstopdf)                    date: 2010-10-22 11:20:02
+(epstopdf)                    date: 2010-10-26 14:52:39
 (epstopdf)                    size: 91089 bytes
 (epstopdf)             Command: <epstopdf --outfile=logo-eps-converted-to.pdf l
 ogo.eps>
 (epstopdf)             \includegraphics on input line 53.
 Package epstopdf Info: Output file is already uptodate.
 
-<logo-eps-converted-to.pdf, id=23, 240.9pt x 466.74374pt>
+<logo-eps-converted-to.pdf, id=27, 240.9pt x 466.74374pt>
 File: logo-eps-converted-to.pdf Graphic file (type pdf)
 
 <use logo-eps-converted-to.pdf>
@@ -685,93 +685,63 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 \openout3 = `entwurf.ist'.
 
 {/usr/local/texlive/2009/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./logo-
-eps-converted-to.pdf>] (./entwurf.toc
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 4.
-
-(/usr/local/texlive/2009/texmf-dist/tex/latex/base/omscmr.fd
-File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
-)
-LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 4.
-)
+eps-converted-to.pdf>] (./entwurf.toc)
 \tf@toc=\write7
 \openout7 = `entwurf.toc'.
 
  [2]
 Package epstopdf Info: Source file: <images/system.eps>
-(epstopdf)                    date: 2010-10-25 10:33:24
+(epstopdf)                    date: 2010-10-26 14:51:53
 (epstopdf)                    size: 657682 bytes
 (epstopdf)             Output file: <images/system-eps-converted-to.pdf>
-(epstopdf)                    date: 2010-10-25 10:33:29
+(epstopdf)                    date: 2010-10-26 14:51:53
 (epstopdf)                    size: 96048 bytes
 (epstopdf)             Command: <epstopdf --outfile=images/system-eps-converted
 -to.pdf images/system.eps>
 (epstopdf)             \includegraphics on input line 69.
 Package epstopdf Info: Output file is already uptodate.
 
-<images/system-eps-converted-to.pdf, id=58, 326.21875pt x 244.915pt>
+<images/system-eps-converted-to.pdf, id=62, 326.21875pt x 244.915pt>
 File: images/system-eps-converted-to.pdf Graphic file (type pdf)
 
 <use images/system-eps-converted-to.pdf> [3 <./images/system-eps-converted-to.p
 df>]
 Package epstopdf Info: Source file: <images/e-puck.eps>
-(epstopdf)                    date: 2010-10-25 15:23:51
+(epstopdf)                    date: 2010-10-26 14:51:53
 (epstopdf)                    size: 101542 bytes
 (epstopdf)             Output file: <images/e-puck-eps-converted-to.pdf>
-(epstopdf)                    date: 2010-10-25 14:22:37
-(epstopdf)                    size: 27675 bytes
+(epstopdf)                    date: 2010-10-26 14:51:53
+(epstopdf)                    size: 26854 bytes
 (epstopdf)             Command: <epstopdf --outfile=images/e-puck-eps-converted
 -to.pdf images/e-puck.eps>
 (epstopdf)             \includegraphics on input line 82.
-runsystem(epstopdf --outfile=images/e-puck-eps-converted-to.pdf images/e-puck.e
-ps)...executed.
-
-Package epstopdf Info: Result file: <images/e-puck-eps-converted-to.pdf>
-(epstopdf)                    date: 2010-10-25 15:24:03
-(epstopdf)                    size: 26854 bytes.
- <images/e-puck-eps-converted-to.pdf, id=84, 461.725pt x 420.57124pt>
+Package epstopdf Info: Output file is already uptodate.
+ <images/e-puck-eps-converted-to.pdf, id=88, 461.725pt x 420.57124pt>
 File: images/e-puck-eps-converted-to.pdf Graphic file (type pdf)
 
-<use images/e-puck-eps-converted-to.pdf>
-
-! LaTeX Error: There's no line here to end.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.85 
-     
-Your command was ignored.
-Type  I <command> <return>  to replace it with another command,
-or  <return>  to continue without it.
-
-LaTeX Font Info:    Font shape `OMS/cmr/bx/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/b/n' tried instead on input line 86.
-[4 <./images/e-puck-eps-converted-to.pdf>] [5] [6]
+<use images/e-puck-eps-converted-to.pdf> [4 <./images/e-puck-eps-converted-to.p
+df>] [5] [6]
 No file entwurf.gls.
 (./entwurf.aux) ) 
 Here is how much of TeX's memory you used:
- 7170 strings out of 493848
- 103017 string characters out of 3149208
+ 7160 strings out of 493848
+ 102821 string characters out of 3149207
  187509 words of memory out of 3000000
- 10247 multiletter control sequences out of 15000+200000
- 12457 words of font info for 48 fonts, out of 3000000 for 9000
+ 10232 multiletter control sequences out of 15000+200000
+ 12202 words of font info for 47 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
  41i,7n,36p,1056b,316s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmbsy10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfont
 s/cm/cmbx10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts
 /cm/cmbx12.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmr10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm
 /cmr12.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/c
 mr17.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cms
-l10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy
-10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmti1
-0.pfb>
-Output written on entwurf.pdf (6 pages, 334698 bytes).
+l10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmti
+10.pfb>
+Output written on entwurf.pdf (6 pages, 323209 bytes).
 PDF statistics:
- 150 PDF objects out of 1000 (max. 8388607)
- 15 named destinations out of 1000 (max. 500000)
- 56 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 156 PDF objects out of 1000 (max. 8388607)
+ 24 named destinations out of 1000 (max. 500000)
+ 64 words of extra memory for PDF output out of 10000 (max. 10000000)
 

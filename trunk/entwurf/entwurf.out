@@ -1,5 +1,14 @@
 \BOOKMARK [1][]{section.1}{Einleitung}{}
 \BOOKMARK [1][]{section.2}{e-Puck Roboter}{}
-\BOOKMARK [2][]{subsection.2.1}{\200}{section.2}
+\BOOKMARK [2][]{subsection.2.1}{Architektur}{section.2}
+\BOOKMARK [2][]{subsection.2.2}{Komponente `Interrupt'}{section.2}
+\BOOKMARK [2][]{subsection.2.3}{Komponente `Timer'}{section.2}
+\BOOKMARK [2][]{subsection.2.4}{Komponente `Communication'}{section.2}
+\BOOKMARK [2][]{subsection.2.5}{Komponente `Motor'}{section.2}
+\BOOKMARK [2][]{subsection.2.6}{Komponente `ADC'}{section.2}
+\BOOKMARK [2][]{subsection.2.7}{Komponente `I2C'}{section.2}
+\BOOKMARK [2][]{subsection.2.8}{Komponente `IR proximity sensor'}{section.2}
+\BOOKMARK [2][]{subsection.2.9}{Komponente `Line sensor'}{section.2}
+\BOOKMARK [2][]{subsection.2.10}{Komponente `Selector'}{section.2}
 \BOOKMARK [1][]{section.3}{Smartphone}{}
 \BOOKMARK [1][]{section.4}{Kommunikation}{}
