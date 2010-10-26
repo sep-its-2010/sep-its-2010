@@ -76,6 +76,11 @@
 		Ressourcen der Roboter erzwingen hierbei einen möglichst effizienten Aufbau. Insbesondere stellt der interne
 		Arbeitsspeicher sowie die Rechenleistung der e-pucks eine Einschränkung für den Entwurf dar.
 				
+<<<<<<< .mine
+	\section{e-Puck Roboter}
+		
+		\begin{figure}[h]
+=======
 	\section{e-Puck Roboter}	
 	
 		\subsection{Architektur}
@@ -104,11 +109,92 @@
 			\subsection{Komponente `Selector'}
 			
 			\begin{figure}[h]
+>>>>>>> .r54
 			\centering
 			\includegraphics[width=10cm]{images/e-puck.eps}
+<<<<<<< .mine
+  			\caption{Ablaufmodell}
+  		\end{figure} \\	
+	
+		\subsection{•}
+=======
   			\caption{Ablaufdiagramm}
   		\end{figure}	
+>>>>>>> .r54
 	\section{Smartphone}
+		\subsection{Model-View-Controller (MVC) Architektur}
+			Die Android-Applikation wird durchgängig durch eine MVC-Architektur aufgebaut. Dies ermöglicht ein flexibles Programmdesign,
+			welches eine Wiederverwendbarkeit von Komponente sowie eine reduzierte Komplexität gewährleistet. Die Daten, wie z.B.
+			Karteninformationen oder Roboterpositionen, können dadurch von den zugehörigen Darstellungen getrennt werden
+			(\textit{Separation of Concerns}. Es werden hierbei 3 Views (Activities) verwendet, je ein Dialog für Kartenansicht, Steuerung und
+			Statistik. Gemäß den Entwicklerrichtlinien für Android-Anwendungen
+			\footnote{\url{http://developer.android.com/guide/topics/ui/index.html}} werden Controller in die Activity-Klassen integriert.
+			Die Ereignisse der Views haben über Handle-Methoden Zugriff auf die Model-Schicht. Diese erhält wiederum Aktualisierungen der
+			e-pucks über die Bluetooth-Schnittstelle. 
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=10cm]{images/android_mvc.eps}
+  				\caption{Model-View Controller Architektur}
+  			\end{figure}	
+			\paragraph*{Model}
+  				Die Model-Schicht der Architektur speichert als zentrale Komponente sämtliche Daten bzgl. Karten- und e-puck-Informationen.
+  				Es  beinhaltet außerdem die Applikationslogik der Android-Anwendung. Die Kommunikation nach außen findet über das
+  				angeschlossene Bluetooth-Interface statt. Die Klasse \textit{Environment} erbt von der Klasse \textit{Observable} und verarbeitet
+  				die Aktualisierungen der Roboter. Die Klasse wird als Singleton realisiert, da hier zentral der globale Zustand der Kartendaten
+  				gespeichert wird. Informationen der einzelnen Roboter werden in den Instanzen der Klasse \textit{Proxy} verwaltet (siehe Kapitel
+  				...). Diese Insanzen werden in einer Attributsliste der Klasse \textit{Environment} gehalten. Bei Zustandsänderung der
+  				\textit{Proxy}-Instanzen bzw. bei Änderung der Kartendaten werden die registrierten Views benachrichtigt.
+  			\paragraph*{View}
+  				Die Präsentationskomponenten der MVC-Architektur sind für die Ausgabe der Model-Daten zuständig und bilden eine
+  				Abstraktionsschicht zwischen der Präsentation der Anwendung, dem Model und dem Benutzer. Die Schicht besteht aus den drei
+  				Klassen	\textit{SurfaceView}, \textit{SteeringView} und \textit{StatisticView}. \textit{SurfaceView} ist für die Kartendarstellung
+  				verantwortlich, \textit{SteeringView} stellt die Steuerungsbedienelemente dar und \textit{StatisticView} beinhaltet statistische
+  				Informationen.  Damit die View-Klassen als \textit{Activities} für die Android-Applikation verwendet werden kann, müssen sie
+  				das Interface \textit{Activity} implementieren. Für die Verwendung als View der MVC-Architektur muss zusätzlich das Interface
+  				\textit{Observer} implementiert werden. Jede einzelne View muss sich bei der Klasse \textit{Environment} als Observer
+  				registrieren, um bei Zustandsänderungen vom Model benachrichtigt zu werden. Benutzereingaben auf den Dialogen werden über
+  				die Ereignisbehandler-Methoden des \textit{Activity}-Interface an das Model weitergegeben. Somit stellen diese Handler-Methoden
+  				die Controller-Schicht dar.
+  			\paragraph*{Controller}
+  				Der Controller 
+  		\subsection{Nachrichtenbehandlung}
+  			Wir verwenden das Chain-of-Responsibility-Pattern in unserem Projekt, um Nachrichten, die von den e-puck Robotern an das Handy
+  			geschickt werden zu analysieren und weiter zu verarbeiten. Die Grundidee hinter diesem Pattern ist, dass die Nachricht durch eine Liste
+  			von konkreten Handlerklassen, die von einer abstrakten Handlerklasse erben, gereicht wird und der richtige Handler die Nachricht
+  			verarbeitet. Sobald eine Nachricht von einem Handler erkannt und bearbeitet wurde gibt er true zurück. Falls sich der Handler nicht
+  			verantwortlich für die Nachricht fühlt gibt er sie an den nächsten Handler weiter. Falls auch der letzte Handler mit der Nachricht nicht
+  			umzugehen weiß, gibt er den Rückgabewert false zurück.Im Gegensatz zu herkömmlichen Nachrichtenbearbeitungen wird hier ein
+  			hohes Maß an Flexibilität erreicht und es das Hinzufügen eines neuen Nachrichtentyps wird erleichtert, da nur eine neue Klasse in die
+  			Liste der Handler hinzugefügt werden muss. \\ \\
+  			Vorteile:
+  			\begin{itemize}
+  				\item Der Absender braucht sich nicht zu kümmern, wer genau die Nachricht verarbeitet (implizieter Empfänger)
+  				\item Unabhängigkeit zwischen Sender und Empfänger (Entkopplung)
+  				\item Sehr gut erweiterbar, falls ein neuer Nachrichtentyp hinzugefügt werden soll
+  				\item Mehrere Klassen kümmern sich um die Verarbeitung, d.h. die Fehlersuche und -behandlung wird vereinfacht
+  				\item Größere Flexibilität bei der Bearbeitung von Nachrichten
+  				\item Mithilfe des Rückgabewerts wird erkannt, ob eine Nachricht behandelt wurde
+  			\end{itemize}  
+  			Teilnehmer:
+   			\begin{itemize}
+  				\item Handler\\Definiert ein Interface für die Requests\\Besitzt Zeiger auf nächstes Listenelement
+  				\item Konkrete Handler\\Größere Flexibilität bei der Bearbeitung von Nachrichten\\
+  					Mithilfe des Rückgabewerts wird erkannt, ob eine Nachricht behandelt wurde
+  				\item Client \\ Ruft Funktion handlerequest(Nachricht) auf ersten Listenelement der Handler auf
+  			\end{itemize}   	
+  			
+  			
+  			Erklärung der Grafik:
+   			\begin{enumerate}
+  				\item Die Bluetoothschnittstelle leitet eine einkommende Nachricht weiter an eine Client-Klasse, die eine Liste aus konkreten Handlern,
+  					die von der abstrakten Klasse Handler erben, enthält.
+  				\item Diese Klasse gibt die Nachricht an den ersten Handler seiner Liste weiter und ruft dort die Funktion handlerequest(Nachricht),
+  					die den Rückgabetyp Boolean hat, auf.
+  				\item Der Handler leitet die Nachricht an seinen direkten Nachfolger weiter und ruft dort wieder handlerequest(Nachricht) auf, sofern
+  					er nicht für die Bearbeitung der Nachricht zuständig ist. In diesem Fall behandelt er die Nachricht entsprechend und gibt true zurück
+  				\item Der Handler, der keinen Nachfolger mehr hat gibt den Wert false zurück und somit weiß der Client dass für die Nachricht kein
+  					entsprechender Handler zur Verfügung steht.  					
+  			\end{itemize}   	  								
 	\section{Kommunikation}
 				
 	\newpage	
