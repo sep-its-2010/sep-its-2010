@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.10.13)  26 OCT 2010 11:42
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2010.10.13)  27 OCT 2010 10:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1176,17 +1176,17 @@ Overfull \vbox (107.10217pt too high) detected at line 193
 [8
 
  <./ungueltig1-eps-converted-to.pdf> <./ungueltig2-eps-converted-to.pdf> <./ung
-ueltig3-eps-converted-to.pdf>] <funktional.jpg, id=354, 160.6pt x 160.6pt>
-File: funktional.jpg Graphic file (type jpg)
-
-<use funktional.jpg> [9
-
- <./funktional.jpg>]
-<qualitt.jpg, id=386, 297.913pt x 298.716pt>
+ueltig3-eps-converted-to.pdf>] <qualitt.jpg, id=354, 297.913pt x 298.716pt>
 File: qualitt.jpg Graphic file (type jpg)
- <use qualitt.jpg> [10
+
+<use qualitt.jpg> [9
 
  <./qualitt.jpg>]
+<funktional.jpg, id=386, 160.6pt x 160.6pt>
+File: funktional.jpg Graphic file (type jpg)
+ <use funktional.jpg> [10
+
+ <./funktional.jpg>]
 Package epstopdf Info: Source file: <karte.eps>
 (epstopdf)                    date: 2010-10-25 11:39:19
 (epstopdf)                    size: 3886 bytes
@@ -1201,30 +1201,21 @@ Package epstopdf Info: Output file is already uptodate.
 File: karte-eps-converted-to.pdf Graphic file (type pdf)
 
 <use karte-eps-converted-to.pdf>
-Overfull \vbox (246.40497pt too high) detected at line 249
+Overfull \vbox (232.80496pt too high) detected at line 249
  []
 
 [11
 
  <./karte-eps-converted-to.pdf>]
-Package epstopdf Info: Source file: <karte.eps>
-(epstopdf)                    date: 2010-10-25 11:39:19
-(epstopdf)                    size: 3886 bytes
-(epstopdf)             Output file: <karte-eps-converted-to.pdf>
-(epstopdf)                    date: 2010-10-25 11:40:00
-(epstopdf)                    size: 3122 bytes
-(epstopdf)             Command: <epstopdf --outfile=karte-eps-converted-to.pdf 
-karte.eps>
-(epstopdf)             \includegraphics on input line 256.
-Package epstopdf Info: Output file is already uptodate.
-File: karte-eps-converted-to.pdf Graphic file (type pdf)
- <use karte-eps-converted-to.pdf>
-Overfull \vbox (131.12778pt too high) detected at line 256
- []
+<view1.png, id=453, 332.24126pt x 494.84875pt>
+File: view1.png Graphic file (type png)
+ <use view1.png>
+<view2.png, id=454, 332.24126pt x 493.845pt>
+File: view2.png Graphic file (type png)
+ <use view2.png> [12
 
-[12
-
-] <ende.jpg, id=484, 351.3125pt x 351.3125pt>
+ <./view1.png (PNG copy)> <./view2.png (PNG copy)>]
+<ende.jpg, id=486, 351.3125pt x 351.3125pt>
 File: ende.jpg Graphic file (type jpg)
  <use ende.jpg> [13
 
@@ -1238,21 +1229,22 @@ File: ende.jpg Graphic file (type jpg)
 \tf@snm=\write7
 \openout7 = `praesentation.snm'.
 
- (./praesentation.aux) ) 
+
+(./praesentation.aux) ) 
 Here is how much of TeX's memory you used:
- 13656 strings out of 495021
- 237181 string characters out of 1181034
+ 13687 strings out of 495021
+ 237778 string characters out of 1181034
  323914 words of memory out of 3000000
- 16406 multiletter control sequences out of 15000+50000
- 29795 words of font info for 47 fonts, out of 3000000 for 9000
+ 16433 multiletter control sequences out of 15000+50000
+ 30949 words of font info for 48 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  45i,16n,52p,321b,613s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}<
-/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/
-texmf-texlive/fonts/type1/urw/helvetic/uhvr8a.pfb>
-Output written on praesentation.pdf (13 pages, 499987 bytes).
+{/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}</
+usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/t
+exmf-texlive/fonts/type1/urw/helvetic/uhvr8a.pfb>
+Output written on praesentation.pdf (13 pages, 560784 bytes).
 PDF statistics:
- 535 PDF objects out of 1000 (max. 8388607)
+ 537 PDF objects out of 1000 (max. 8388607)
  34 named destinations out of 1000 (max. 500000)
- 175 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 185 words of extra memory for PDF output out of 10000 (max. 10000000)
 
