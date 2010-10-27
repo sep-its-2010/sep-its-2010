@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2010.5.12)  26 OCT 2010 15:53
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009) (format=pdflatex 2010.5.12)  26 OCT 2010 20:29
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -667,7 +667,7 @@ ogo.eps>
 (epstopdf)             \includegraphics on input line 53.
 Package epstopdf Info: Output file is already uptodate.
 
-<logo-eps-converted-to.pdf, id=27, 240.9pt x 466.74374pt>
+<logo-eps-converted-to.pdf, id=3, 240.9pt x 466.74374pt>
 File: logo-eps-converted-to.pdf Graphic file (type pdf)
 
 <use logo-eps-converted-to.pdf>
@@ -685,11 +685,14 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 \openout3 = `entwurf.ist'.
 
 {/usr/local/texlive/2009/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./logo-
-eps-converted-to.pdf>] (./entwurf.toc)
+eps-converted-to.pdf>]
+
+Package hyperref Warning: old toc file detected, not used; run LaTeX again.
+
 \tf@toc=\write7
 \openout7 = `entwurf.toc'.
 
- [2]
+[2]
 Package epstopdf Info: Source file: <images/system.eps>
 (epstopdf)                    date: 2010-10-26 14:51:53
 (epstopdf)                    size: 657682 bytes
@@ -700,8 +703,7 @@ Package epstopdf Info: Source file: <images/system.eps>
 -to.pdf images/system.eps>
 (epstopdf)             \includegraphics on input line 69.
 Package epstopdf Info: Output file is already uptodate.
-
-<images/system-eps-converted-to.pdf, id=62, 326.21875pt x 244.915pt>
+ <images/system-eps-converted-to.pdf, id=31, 326.21875pt x 244.915pt>
 File: images/system-eps-converted-to.pdf Graphic file (type pdf)
 
 <use images/system-eps-converted-to.pdf> [3 <./images/system-eps-converted-to.p
@@ -712,36 +714,230 @@ Package epstopdf Info: Source file: <images/e-puck.eps>
 (epstopdf)             Output file: <images/e-puck-eps-converted-to.pdf>
 (epstopdf)                    date: 2010-10-26 14:51:53
 (epstopdf)                    size: 26854 bytes
-(epstopdf)             Command: <epstopdf --outfile=images/e-puck-eps-converted
+(epstopdf)       ted
 -to.pdf images/e-puck.eps>
-(epstopdf)             \includegraphics on input line 82.
+(epstopdf)             \includegraphics on input line 83.
 Package epstopdf Info: Output file is already uptodate.
- <images/e-puck-eps-converted-to.pdf, id=88, 461.725pt x 420.57124pt>
+ <images/e-puck-eps-converted-to.pdf, id=143, 461.725pt x 420.57124pt>
 File: images/e-puck-eps-converted-to.pdf Graphic file (type pdf)
 
-<use images/e-puck-eps-converted-to.pdf> [4 <./images/e-puck-eps-converted-to.p
-df>] [5] [6]
+<use images/e-puck-eps-converted-to.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 88--91
+
+ []
+
+Package epstopdf Info: Source file: <images/system.eps>
+(epstopdf)                    date: 2010-10-26 14:51:53
+(epstopdf)                    size: 657682 bytes
+(epstopdf)             Output file: <images/system-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-10-26 14:51:53
+(epstopdf)                    size: 96048 bytes
+(epstopdf)             Command: <epstopdf --outfile=images/system-eps-converted
+-to.pdf images/system.eps>
+(epstopdf)             \includegraphics on input line 94.
+Package epstopdf Info: Output file is already uptodate.
+File: images/system-eps-converted-to.pdf Graphic file (type pdf)
+<use images/system-eps-converted-to.pdf>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 101--105
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 101--105
+
+ []
+
+[4 <./images/e-puck-eps-converted-to.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 112--115
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--124
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 128--134
+
+ []
+
+[5]
+Overfull \hbox (14.47278pt too wide) in paragraph at lines 141--145
+\OT1/cmr/m/n/10 rich-ten der ringnet-Schicht und zur Auf-be-rei-tung von ein-ge
+-hen-den Raw-Nachrichten
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 141--145
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 152--156
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 163--168
+
+ []
+
+[6] [7]
+Package epstopdf Info: Source file: <images/e-puck.eps>
+(epstopdf)                    date: 2010-10-26 14:51:53
+(epstopdf)                    size: 101542 bytes
+(epstopdf)             Output file: <images/e-puck-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-10-26 14:51:53
+(epstopdf)                    size: 26854 bytes
+(epstopdf)             Command: <epstopdf --outfile=images/e-puck-eps-converted
+-to.pdf images/e-puck.eps>
+(epstopdf)             \includegraphics on input line 197.
+Package epstopdf Info: Output file is already uptodate.
+File: images/e-puck-eps-converted-to.pdf Graphic file (type pdf)
+ <use images/e-puck-eps-converted-to.pdf>
+Overfull \hbox (8.5223pt too wide) in paragraph at lines 186--200
+\OT1/cmr/m/n/10 ten-an-sicht, Steue-rung und Sta-tis-tik. Gem[]a^^Y den Ent-wic
+k-ler-richt-li-ni-en f[]ur Android-
+ []
+
+
+Overfull \hbox (19.80617pt too wide) in paragraph at lines 186--200
+\OT1/cmr/m/n/10 Die-se erh[]alt wie-der-um Ak-tua-li-sie-run-gen der e-pucks []
+uber die Bluetooth-Schnittstelle.
+ []
+
+[8]
+Package epstopdf Info: Source file: <images/android_mvc.eps>
+(epstopdf)                    date: 2010-10-26 20:28:29
+(epstopdf)                    size: 417061 bytes
+(epstopdf)             Output file: <images/android_mvc-eps-converted-to.pdf>
+(epstopdf)             Command: <epstopdf --outfile=images/android_mvc-eps-conv
+erted-to.pdf images/android_mvc.eps>
+(epstopdf)             \includegraphics on input line 204.
+runsystem(epstopdf --outfile=images/android_mvc-eps-converted-to.pdf images/and
+roid_mvc.eps)...executed.
+
+Package epstopdf Info: Result file: <images/android_mvc-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-10-26 20:30:01
+(epstopdf)                    size: 87770 bytes.
+
+<images/android_mvc-eps-converted-to.pdf, id=193, 516.93124pt x 443.6575pt>
+File: images/android_mvc-eps-converted-to.pdf Graphic file (type pdf)
+
+<use images/android_mvc-eps-converted-to.pdf>
+
+! LaTeX Error: \caption outside float.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.205   				\caption
+                    {Model-View Controller Architektur}
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Too many }'s.
+\@endfloatbox ...pagefalse \outer@nobreak \egroup 
+                                                  \color@endbox 
+l.206   			\end{figure}
+                       
+You've closed more groups than you opened.
+Such booboos are generally harmless, so keep going.
+
+! Extra \endgroup.
+\color@endgroup ->\endgraf \endgroup 
+                                     
+l.206   			\end{figure}
+                       
+Things are pretty mixed up, but I think the worst is over.
+
+! Too many }'s.
+\color@endbox ->\color@endgroup \egroup 
+                                        
+l.206   			\end{figure}
+                       
+You've closed more groups than you opened.
+Such booboos are generally harmless, so keep going.
+
+
+! LaTeX Error: \begin{document} ended by \end{figure}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.206   			\end{figure}
+                       
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+! Extra \endgroup.
+<recently read> \endgroup 
+                          
+l.206   			\end{figure}
+                       
+Things are pretty mixed up, but I think the worst is over.
+
+[9 <./images/android_mvc-eps-converted-to.pdf>]
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.236 ...r Handler hinzugefügt werden muss. \\ \\
+                                                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 239.
+
+(/usr/local/texlive/2009/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 239.
+
+Overfull \hbox (6.2506pt too wide) in paragraph at lines 251--252
+[]\OT1/cmr/m/n/10 Ruft Funk-ti-on hand-le-re-quest(Nachricht) auf ers-ten Lis-t
+en-ele-ment der Hand-
+ []
+
+[10] [11] [12]
 No file entwurf.gls.
 (./entwurf.aux) ) 
 Here is how much of TeX's memory you used:
- 7160 strings out of 493848
- 102821 string characters out of 3149207
- 187509 words of memory out of 3000000
- 10232 multiletter control sequences out of 15000+200000
- 12202 words of font info for 47 fonts, out of 3000000 for 9000
+ 7219 strings out of 493848
+ 103759 string characters out of 3149207
+ 191509 words of memory out of 3000000
+ 10263 multiletter control sequences out of 15000+200000
+ 12538 words of font info for 49 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 41i,7n,36p,1056b,316s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 41i,8n,36p,1056b,423s stack positions out of 5000i,500n,10000p,200000b,50000s
 </usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfont
 s/cm/cmbx10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts
 /cm/cmbx12.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmr10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm
 /cmr12.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mr17.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cms
-l10.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmti
-10.pfb>
-Output written on entwurf.pdf (6 pages, 323209 bytes).
+mr17.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmr
+6.pfb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.p
+fb></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl10.pf
+b></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
+></usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
+</usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb><
+/usr/local/texlive/2009/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
+Output written on entwurf.pdf (12 pages, 480808 bytes).
 PDF statistics:
- 156 PDF objects out of 1000 (max. 8388607)
- 24 named destinations out of 1000 (max. 500000)
- 64 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 300 PDF objects out of 1000 (max. 8388607)
+ 46 named destinations out of 1000 (max. 500000)
+ 157 words of extra memory for PDF output out of 10000 (max. 10000000)
 
