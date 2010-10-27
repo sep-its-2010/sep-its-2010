@@ -86,18 +86,90 @@
   				
 		\subsection{Architektur}
 		Die Software des e-puck wird als Schichtenarchitektur mit wachsendem Abstraktionsgrad entworfen. \\
-		Jede Schicht besteht aus einer oder mehreren Komponenten. Teilweise sind diese Komponenten wiederum aus mehreren
-		Schichten. \\
+		Jede Schicht besteht aus einer oder mehreren Komponenten. Diese sind teilweise wiederum aus mehreren
+		Schichten aufgebaut. \\
 		
-		Die folgenden Abschnitte beschreiben die einzelnen Komponenten des Diagramms näher.
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=10cm]{images/system.eps}
+  			\caption{Architektur der Software für den e-puck}
+  		\end{figure}
+		
+		Die folgenden Abschnitte beschreiben die einzelnen Komponenten der Architektur näher.
 		 
 			\subsection{Komponente `Interrupt'}
-			Die Komponente Interrupt 
-			\subsection{Komponente `Timer'}
+			Die Komponente `Interrupt' bietet einfache Funktionen zum globalen Ein- und Ausschalten von Interrupts und zur Festlegung
+			von Interrupt-Prioritäten. Außerdem können gesetzte Interrupt-Flags gelöscht werden. \\ \\
+			Diese Funktionen werden in den Komponenten `Timer', `Motor', `Communication' und `IR proximity sensor' sowie
+			in der darüber liegenden Logikschicht verwendet. \\
+			
+			Strukturelle Gliederung: 
+			\begin{verbatim}  
+			hal_int.h, hal_int.c, hal_int_types.h
+			\end{verbatim}
+
+			\subsection{Komponente `Real-Time-Clock'}
+			Die `Real-Time-Clock'-Komponente stellt eine Echtzeituhr bereit. Diese speichert die aktuelle Laufzeit des e-puck Roboters und
+			löst in einem einstellbaren Zeitintervall Interrupts aus. Dieses Zeitintervall kann durch eine Funktion eingestellt werden.
+			Außerdem können Callbacks für zeitgesteuerte Funktionen anderer Komponenten registriert werden. \\
+			
+			Strukturelle Gliederung:
+			\begin{verbatim}  
+			hal_rtc.h, hal_rtc.c, hal_rtc_types.h
+			\end{verbatim}
 			
 			\subsection{Komponente `Communication'}
+			Die Komponente `Communication' stellt einfache Funktionen zum Aufbau und Verwaltung der Ringstruktur des Bluetooth-Netzwerks bereit.
+			Sie enthält außerdem Funktionen zum Senden und Empfangen von Bluetooth-Nachrichten.\\
+			 
+			Die Modul besteht aus drei aufeinander aufbauenden Komponenten mit wachsendem Abstraktionsgrad:
+			
+				\subsubsection{hal???}
+				Diese Komponente bildet die hardwarenahste Schicht des Kommunikationsmoduls. \\
+				Sie enthält Funktionen zur Initialisierung des UART. Insbesondere werden das Datenformat und die Datenrate festgelegt.
+				Darüber hinaus können die Sende- und Empfangs-Interrupts des UART konfiguriert werden. Die zu den Interrupts gehörigen Interrupt
+				Service Routinen sind ebenfalls Teil der Komponente. \\
+				Auch die Kontrolle des Transmitter (Tx)- und Receiver (Rx)-Ringpuffers wird in diesem Modul realisiert. \\
+				Das Senden und Empfangen von Nachrichten erfolgt asynchron. \\
+				
+				Strukturelle Gliederung:
+				\begin{verbatim}  
+				hal_uart.h, hal_uart.c, hal_uart_types.h
+				\end{verbatim}
+				
+				\subsubsection{btm}
+				`btm' bietet eine Schnittstelle für die Benachrichtigung der darüberliegenden `ringnet'-Komponente bei eintretenden Events. \\
+				Außerdem enthält das Modul Funktionen zur Generierung von Raw-Messages (Nachrichten, die vom Bluetooth-Modul versendet werden
+				können) aus Nachrichten der ringnet-Schicht und zur Aufbereitung von eingehenden Raw-Nachrichten aus der darunter liegenden 
+				Schicht. \\
+				
+				Strukturelle Gliederung:
+				\begin{verbatim}  
+				btm.h, btm.c, btm_types.h
+				\end{verbatim}
+				
+				\subsubsection{ringnet}
+				Das `ringnet'-Modul registriert eigene Callbacks in der darunter liegenden `btm'-Komponente und bietet Funktionen zum Management
+				der Vector Clock. Diese wird für die Broadcast-Kommunikation benötigt. \\
+				Die `ringnet'-Komponente ist auch für die Aufrechterhaltung der Ringstruktur des Bluetooth-Netzwerks bei Ausfällen und für die
+				Interagtion neuer Teilnehmer in den Ring zuständig. \\
+				
+				Strukturelle Gliederung:
+				\begin{verbatim}  
+				ringnet.h, ringnet.c, ringnet_types.h
+				\end{verbatim}
 			
 			\subsection{Komponente `Motor'}
+			Das Modul `Motor' stellt Funktionen zur Verfügung, die die Voraussetzung für die High-Level-Steuerung der Bewegung des e-puck bilden.
+			Die Komponente initialisiert und kontrolliert die Timer für die Steuerung der beiden Schrittmotoren und gewährleistet deren korrekte
+			Ansteuerung. \\
+			Außerdem werden Funktionen bereit gestellt, mit denen die Geschwindigkeit der beiden Motoren eingestellt werden kann und deren
+			Schrittzähler gelesen und gesetzt werden können. \\
+			
+			Strukturelle Gliederung:
+				\begin{verbatim}  
+				hal_motor.h, hal_motor.c, hal_motor_types.h
+				\end{verbatim}
 			
 			\subsection{Komponente `ADC'}
 			
@@ -120,6 +192,14 @@
 			Die Ereignisse der Views haben über Handle-Methoden Zugriff auf die Model-Schicht. Diese erhält wiederum Aktualisierungen der
 			e-pucks über die Bluetooth-Schnittstelle. 
 			\begin{figure}[h]
+<<<<<<< .mine
+			\centering
+			\includegraphics[width=10cm]{images/e-puck.eps}
+  			\caption{Ablaufdiagramm}
+  			\end{figure}
+  			
+	\section{Smartphone}
+=======
 				\centering
 				\includegraphics[width=10cm]{images/android_mvc.eps}
   				\caption{Model-View Controller Architektur}
@@ -183,6 +263,7 @@
   				\item Der Handler, der keinen Nachfolger mehr hat gibt den Wert false zurück und somit weiß der Client dass für die Nachricht kein
   					entsprechender Handler zur Verfügung steht.  					
   			\end{enumerate}   	  								
+>>>>>>> .r57
 	\section{Kommunikation}
 				
 	\newpage	
