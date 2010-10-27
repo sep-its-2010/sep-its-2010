@@ -183,23 +183,16 @@
 			
 		\section{Smartphone}
 		\subsection{Model-View-Controller (MVC) Architektur}
-			Die Android-Applikation wird durchgängig durch eine MVC-Architektur aufgebaut. Dies ermöglicht ein flexibles Programmdesign,
-			welches eine Wiederverwendbarkeit von Komponente sowie eine reduzierte Komplexität gewährleistet. Die Daten, wie z.B.
-			Karteninformationen oder Roboterpositionen, können dadurch von den zugehörigen Darstellungen getrennt werden
-			(\textit{Separation of Concerns}. Es werden hierbei 3 Views (Activities) verwendet, je ein Dialog für Kartenansicht, Steuerung und
-			Statistik. Gemäß den Entwicklerrichtlinien für Android-Anwendungen
-			\footnote{\url{http://developer.android.com/guide/topics/ui/index.html}} werden Controller in die Activity-Klassen integriert.
-			Die Ereignisse der Views haben über Handle-Methoden Zugriff auf die Model-Schicht. Diese erhält wiederum Aktualisierungen der
-			e-pucks über die Bluetooth-Schnittstelle. 
+			Die Daten- bzw. Benutzer-Interaktion der Android-Anwendung wird mit einer MVC-Architektur aufgebaut. Dies ermöglicht ein
+			flexibles Programmdesign, das eine Wiederverwendbarkeit von Komponenten sowie eine reduzierte Komplexität gewährleistet.
+			Die Daten, wie z.B. Karteninformationen oder Roboterpositionen, können dadurch von den zugehörigen Darstellungen getrennt werden
+			(\textit{Separation of Concerns}). Es werden hierbei 3 Views (Activities) verwendet, je ein Dialog für Kartenansicht, Steuerung und
+			Statistik. Bei diesem Entwurf hat die View-Schicht keinen direkten Zugriff auf das Model, dieser wird vollständg vom
+			Controller übernommen. Gemäß den Entwicklerrichtlinien für Android-Anwendungen 
+			\footnote{\url{http://developer.android.com/guide/topics/ui/index.html}} gehören die Activity-Klassen der View logisch zum
+			Controller. Die Model-Schicht erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter, welche den Zustand
+			ändern.
 			\begin{figure}[h]
-<<<<<<< .mine
-			\centering
-			\includegraphics[width=10cm]{images/e-puck.eps}
-  			\caption{Ablaufdiagramm}
-  			\end{figure}
-  			
-	\section{Smartphone}
-=======
 				\centering
 				\includegraphics[width=10cm]{images/android_mvc.eps}
   				\caption{Model-View Controller Architektur}
@@ -217,14 +210,17 @@
   				Abstraktionsschicht zwischen der Präsentation der Anwendung, dem Model und dem Benutzer. Die Schicht besteht aus den drei
   				Klassen	\textit{SurfaceView}, \textit{SteeringView} und \textit{StatisticView}. \textit{SurfaceView} ist für die Kartendarstellung
   				verantwortlich, \textit{SteeringView} stellt die Steuerungsbedienelemente dar und \textit{StatisticView} beinhaltet statistische
-  				Informationen.  Damit die View-Klassen als \textit{Activities} für die Android-Applikation verwendet werden kann, müssen sie
+  				Informationen.  Damit die View-Klassen als \textit{Activities} für die Android-Applikation verwendet werden können, müssen sie
   				das Interface \textit{Activity} implementieren. Für die Verwendung als View der MVC-Architektur muss zusätzlich das Interface
-  				\textit{Observer} implementiert werden. Jede einzelne View muss sich bei der Klasse \textit{Environment} als Observer
-  				registrieren, um bei Zustandsänderungen vom Model benachrichtigt zu werden. Benutzereingaben auf den Dialogen werden über
-  				die Ereignisbehandler-Methoden des \textit{Activity}-Interface an das Model weitergegeben. Somit stellen diese Handler-Methoden
-  				die Controller-Schicht dar.
+  				\textit{Observer} implementiert werden. Jede einzelne View registriert sich bei der Klasse \textit{Environment} als Observer,
+  				um bei Zustandsänderungen vom Model benachrichtigt zu werden. Benutzereingaben auf den Dialogen werden über
+  				die Ereignisbehandler-Methoden des \textit{Activity}-Interface an das Model weitergegeben. Somit gehören diese Handler-Methoden
+  				im Sinne der MVC-Architektur der Controller-Schicht an.
   			\paragraph*{Controller}
-  				Der Controller 
+  				Der Controller nimmt Eingaben aus den verschiedenen View Klassen entgegen und leitet diese bereinigt und normalisiert and die
+  				Model-Schicht weiter. Hier wird also eine Abstraktionsschicht eingeführt, welche die Verbindung zwischen Benutzer-Interaktionen
+  				und dem Model beschreibt. Zur Controller-Schicht gehört neben den Ereignisbehandler-Methoden der View Klassen die Klasse
+  				\textit{Controller}, welche für die zentrale Steuerung der Model Schicht verantwortlich ist.
   		\subsection{Nachrichtenbehandlung}
   			Wir verwenden das Chain-of-Responsibility-Pattern in unserem Projekt, um Nachrichten, die von den e-puck Robotern an das Handy
   			geschickt werden zu analysieren und weiter zu verarbeiten. Die Grundidee hinter diesem Pattern ist, dass die Nachricht durch eine Liste
@@ -250,9 +246,12 @@
   					Mithilfe des Rückgabewerts wird erkannt, ob eine Nachricht behandelt wurde
   				\item Client \\ Ruft Funktion handlerequest(Nachricht) auf ersten Listenelement der Handler auf
   			\end{itemize}   	
-  			
-  			
-  			Erklärung der Grafik:
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=10cm]{images/android_handler.eps}
+  				\caption{Chain of Responsibility - Entwurfsmuster}
+  			\end{figure}	
+  			Erklärung der Abbildung:
    			\begin{enumerate}
   				\item Die Bluetoothschnittstelle leitet eine einkommende Nachricht weiter an eine Client-Klasse, die eine Liste aus konkreten Handlern,
   					die von der abstrakten Klasse Handler erben, enthält.
@@ -262,8 +261,26 @@
   					er nicht für die Bearbeitung der Nachricht zuständig ist. In diesem Fall behandelt er die Nachricht entsprechend und gibt true zurück
   				\item Der Handler, der keinen Nachfolger mehr hat gibt den Wert false zurück und somit weiß der Client dass für die Nachricht kein
   					entsprechender Handler zur Verfügung steht.  					
-  			\end{enumerate}   	  								
->>>>>>> .r57
+  			\end{enumerate}   
+  		\subsection{Repräsentation der e-puck Roboter}
+  			Der Zugriff auf einzelne e-pucks aus der Android Applikation heraus erfolgt durch Einsatz des Proxy Patterns. Dieses dient als Schnittstelle
+  			zwischen der Programmlogik und dem Bluetooth Interface. Die Proxy Klasse wird als abstrakte Oberklasse implementiert,wobei jede Instanz
+  			dieser Klasse, genau einen e-puck repräsentiert. Diese Stellvertreterobjekte speichern die Zustände der zugehörigen Roboter und beinhalten
+  			alle Funktionen um Daten des Roboters abzurufen oder zu setzen.
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=10cm]{images/android_proxy.eps}
+  				\caption{Proxy - Entwurfsmuster}
+  			\end{figure}	
+  			Durch das Einsparen von Logik im Bluetooth Interface und Auslagern in die Proxy Klasse ist die Austauschbarkeit der Robotermodelle gegeben
+  			und man bleibt flexibel für die Einführung neuer Befehle. \\ \\
+  			Beim Entdecken eines neuen, noch unbekannten e-pucks durch das Bluetooth Interface wird für diesen eine neue Instanz der Proxy Klasse
+  			angelegt. Die Kommunikation mit diesem Roboter ist ausschließlich über dieses Objekt möglich.\\ \\
+  			Das Erkunden von neuen Knoten wird vom e-puck zunächst an das Bluetooth Interface weitergegeben und die Informationen anschließend
+  			in der Environment Klasse verarbeitet. Die Zustände der einzelnen Roboter, wie zum Beispiel die aktuelle Position, wird aber an die
+  			entsprechenden Proxy Instanzen vermittelt und gespeichert.\\ \\
+  			Der andere Weg führt von der Benutzereingabe über das Environment, welches je nach Befehl die richtige Funktion am Objekt des zugehörigen
+  			e-pucks aufruft. Von dort werden Befehle über das Bluetooth Interface an den Roboter gesendet.\\ \\
 	\section{Kommunikation}
 				
 	\newpage	
