@@ -137,6 +137,8 @@
 				hal_uart.h, hal_uart.c, hal_uart_types.h
 				\end{verbatim}
 				
+				Verwendete Datenstrukturen:
+				
 				\subsubsection{btm}
 				`btm' bietet eine Schnittstelle für die Benachrichtigung der darüberliegenden `ringnet'-Komponente bei eintretenden Events. \\
 				Außerdem enthält das Modul Funktionen zur Generierung von Raw-Messages (Nachrichten, die vom Bluetooth-Modul versendet werden
@@ -148,6 +150,8 @@
 				btm.h, btm.c, btm_types.h
 				\end{verbatim}
 				
+				Verwendete Datenstrukturen:
+
 				\subsubsection{ringnet}
 				Das `ringnet'-Modul registriert eigene Callbacks in der darunter liegenden `btm'-Komponente und bietet Funktionen zum Management
 				der Vector Clock. Diese wird für die Broadcast-Kommunikation benötigt. \\
@@ -158,7 +162,9 @@
 				\begin{verbatim}  
 				ringnet.h, ringnet.c, ringnet_types.h
 				\end{verbatim}
-			
+				
+				Verwendete Datenstrukturen:
+				
 			\subsection{Komponente `Motor'}
 			Das Modul `Motor' stellt Funktionen zur Verfügung, die die Voraussetzung für die High-Level-Steuerung der Bewegung des e-puck bilden.
 			Die Komponente initialisiert und kontrolliert die Timer für die Steuerung der beiden Schrittmotoren und gewährleistet deren korrekte
@@ -170,16 +176,51 @@
 				\begin{verbatim}  
 				hal_motor.h, hal_motor.c, hal_motor_types.h
 				\end{verbatim}
-			
+						
 			\subsection{Komponente `ADC'}
+			Die Komponente `ADC' kapselt Funktionen zur Initialisierung der Analog-Digital-Wandler und zum einfachen Auslesen der Register
+			mit den konvertierten Werten. \\
+			Das Modul bildet die Grundlage für die Verwendung der IR-Abstandssensoren.
+			
+			Strukturelle Gliederung:
+				\begin{verbatim}  
+				hal_adc.h, hal_adc.c, hal_adc_types.h
+				\end{verbatim}
 			
 			\subsection{Komponente `I2C'}
+			Hier findet eine Initialisierung der Datenrate und der Masterfunktionalität des I2C-Moduls statt.
+			Außerdem werden die grundlegenden Übertragungsfunktionalitäten wie Adressierung, Lesen und Schreiben definiert. \\
+			
+			Strukturelle Gliederung:
+				\begin{verbatim}  
+				hal_i2c.h, hal_i2c.c
+				\end{verbatim}
 			
 			\subsection{Komponente `IR proximity sensor'}
+			Es erfüllt im wesentlichen zwei Hauptaufgaben.
+			Zunächst findet eine Initialisierung statt. Hierbei wird das Abtastintervall mit dem die Sensoren ausgelesen werden definiert und der 
+			Timer eingerichtet, mit dem das Abtastintervall betrieben wird.
+			Weiterhin stellt dieses Modul die Funktionen zum Auslesen der IR-Sensoren zur Verfügung, welche nach einer A/D Konvertierung zur 
+			Kollisionsvermeidung herangezogen werden. \\
+			
+			Strukturelle Gliederung:
+				\begin{verbatim}  
+				sen_prox.h, sen_prox.c, sen_prox_types.h
+				\end{verbatim}
 			
 			\subsection{Komponente `Line sensor'}
+			Die Hauptaufgabe dieser logischen Komponente liegt darin, die Daten der IR-Abstandssensoren aus dem I2C-Bus auszulesen um sie später 
+			einem Regler zur Verfügung zu stellen, der gewährleistet, dass der jeweilige Roboter seine Linie nicht verlässt.
+			
+			Strukturelle Gliederung:
+				\begin{verbatim}  
+				sen_line.h, sen_line.c, sen_line_types.h
+				\end{verbatim}
 			
 			\subsection{Komponente `Selector'}
+			Das M
+			
+			\subsection{Komponente `LED'}
 			
 		\section{Smartphone}
 		\subsection{Model-View-Controller (MVC) Architektur}
@@ -193,6 +234,16 @@
 			Controller. Die Model-Schicht erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter, welche den Zustand
 			ändern.
 			\begin{figure}[h]
+<<<<<<< .mine
+			\centering
+			\includegraphics[width=10cm]{images/e-puck.eps}
+  			\caption{Ablaufdiagramm}
+  			\end{figure}
+  			
+	\section{Smartphone}
+			\begin{figure}
+=======
+>>>>>>> .r63
 				\centering
 				\includegraphics[width=10cm]{images/android_mvc.eps}
   				\caption{Model-View Controller Architektur}
