@@ -7,7 +7,17 @@
 \usepackage{epstopdf}
 \usepackage[ngerman]{babel}
 \usepackage[ngerman]{translator}
-\usepackage{hyperref}
+\usepackage[colorlinks=true,
+        linkcolor=black,
+        citecolor=black,
+        filecolor=black,
+        pagecolor=black,
+        urlcolor=black,
+        bookmarks=true,
+        bookmarksopen=true,
+        bookmarksopenlevel=3,
+        plainpages=false,
+        pdfpagelabels=true]{hyperref}
 
 %Paket laden
 \usepackage[
@@ -57,6 +67,7 @@
 \author{SEP - ITS - Team \\ Max Binder, Florian Bürchner, Martin Freund, \\Florian Lorenz,
 											Andreas Poxrucker, Andreas Wilhelm}
 \begin{document}
+	\date{22. Oktober 2010}
 	\maketitle
 	\newpage
 	\tableofcontents	
@@ -81,8 +92,8 @@
 						\\ \textsl{Die Kommunikation der e-pucks untereinander erfolgt über ein Bluetooth-Netzwerk.
 						   Dieses wird von den e-pucks selbstständig aufgebaut.}
 					\item Erkundung einer unbekannten in Quadrate eingeteilten Fläche ausgehend von fest definierten Startpositionen
-						\\ \textsl{Das Spielfeld besteht aus einer Menge von vier quadratisch angeordneten \gls{Feld}ern. Diese sind rasterförmig und
-						   zusammenhängend angeordnet. Ein Feld ist mindestens 10cm x 10cm groß. Die Startpositionen der e-puck Roboter
+						\\ \textsl{Das Spielfeld besteht aus einer Menge von quadratischen \gls{Feld}ern. Diese sind rasterförmig
+							und zusammenhängend angeordnet. Ein Feld ist mindestens 10cm x 10cm groß. Die Startpositionen der e-puck Roboter
 						   sind fest vordefiniert.}
 					\item Fortbewegung auf den Kanten der Quadrate
 						\\ \textsl{Die Linien des Spielfeldes müssen schwarz mit ausreichendem Kontrastverhältnis
@@ -93,6 +104,13 @@
 					\item Gleichberechtigung der teilnehmenden Roboter
 						\\ \textsl{Alle Roboter der Gruppe haben den selben Aufgabenbereich. Es gibt keine zentrale Einheit
 							zur Koordination und Synchronisation.}	
+					\item Einstellbare Geschwindigkeit
+						\\ \textsl{Die Geschwindigkeit einzelner e-puck Roboter lässt sich vom Benutzer steuern. Insbesondere können Roboter
+							zum Stillstand gebracht werden.}
+					\item Dynamische Anpassung der Erkundung bei Deaktivierung / Ausfall einzelner Roboter
+						\\ \textsl{Die erfolgreiche Erkundung des Spielfeldes ist gewährleistet, solange mindestens ein Roboter aktiv ist. Das 
+							bedeutet, der e-puck wird nicht vom Benutzer angehalten oder manuell gesteuert. Außerdem müssen die
+							unerkundeten Bereiche von ihm erreichbar sein.}
 					\item Rückkehr zum Ausgangspunkt
 						\\ \textsl{Nach Abschluss des Erkundungsvorgangs kehren alle Roboter zu ihren jeweiligen Startpositionen
 							zurück.}	
@@ -257,10 +275,11 @@
 					\item[\textbf{/F120/}] Lokalisierung
 						\\ \textsl{Vor Beginn des Erkundungsvorgangs einigen sich die e-pucks untereinander auf einen gemeinsamen Bezugspunkt
 						und ermitteln relativ dazu ihre eigene Position. Die e-pucks starten in diesem Fall von fest definierten Startpositionen.}
-					\item[\textbf{/F130/}] Erkundungsfunktion
-						\\ \textsl{Nach Abschluss des Lokalisierungsvorgangs erkunden die e-pucks in Zusammenarbeit das unbekannte
-							Spielfeld vollständig. Dazu bestimmt jeder Roboter kontinuierlich das günstigste noch nicht erkundete Feld und den
-							kürzesten Weg dorthin. An jedem Knoten werden die entsprechenden Richtungsanweisungen gegeben.}
+					\item[\textbf{/F130/}] Auswahl des günstigsten zu erkundenden Knotens
+						\\ \textsl{Jeder Roboter wählt selbständig den für ihn günstigsten noch nicht erkundeten Knoten.}
+					\item[\textbf{/F135/}] Wegfindung und Fahrt zu bestimmten Knoten
+						\\ \textsl{Die Roboter berechnen den Weg mit den geringsten Kosten zu einem bestimmten Knoten und bewegen sich
+							anhand dieser Wegwahl dorthin.}
 					\item[\textbf{/F140/}] Kartensynchronisation
 						\\ \textsl{Während des Erkundungsvorgangs tauschen die e-pucks kontinuierlich Informationen über die von ihnen
 						erkundeten Felder aus. Ist ein Smartphone mit dem Netzwerk verbunden, erhält auch dieses entsprechende Nachrichten.}
@@ -363,8 +382,11 @@
 		\begin{list}{\labelitemi}{\leftmargin=1cm}
 			\item[\textbf{/L50/}] Wiederaufbau der Bluetooth-Verbindung nach Verbindungsverlust
 				\\ \textsl{Bei Verbindungsverlust eines Teilnehmers wird die Verbindung möglichst schnell wieder aufgebaut.}
-			\item[\textbf{/L60/}] Robustheit des Systems bei Ausfall von e-puck Roboter
+			\item[\textbf{/L60/}] Robustheit des Systems bei Ausfall von e-puck Robotern
 				\\ \textsl{Trotz des Ausfalls von einem oder mehreren Robotern kann der Betrieb fortgesetzt werden.}
+			\item[\textbf{/L65/}] Gewährleistung der vollständigen Erkundung
+				\\ \textsl{Solange sich mindestens ein e-puck Roboter im Erkundungsmodus befindet, nicht angehalten wird
+					und der Zugang zu den unerkundeten Feldern zugänglich ist, wird die vollständige Erkundung gewährleistet.}		
 			\item[\textbf{/L70/}] Möglichst effiziente Erkundung des Spielfelds
 				\\ \textsl{Durch Zusammenarbeit mehrerer e-puck Roboter wird das Spielfeld möglichst effizient erkundet.}						
 			\item[\textbf{/L80/}] Ungültige Richtungsanweisungen werden erkannt und nicht ausgeführt 
@@ -524,8 +546,8 @@
 					\\ \textsl{Mehrere e-puck Roboter werden auf entsprechende Startpositionen innerhalb des Spielfelds gesetzt und
 						eingeschaltet. Ziel des Testszenarios ist die vollständige Erkundung durch effiziente Zusammenarbeit der Teilnehmer.
 						Falls die Roboter nach Abschluss auf die Startpositionen zurückkehren und die Karte auf dem Smartphone dargestellt
-						wird, ist der Testfall erfolgreich (\textbf{/F90/}, \textbf{/F120/}, \textbf{/F130/}, \textbf{/F140/}, \textbf{/F150/},
-						\textbf{/F155/}, \textbf{/F160/}, \textbf{/F190W/}, \textbf{/F230/}, \textbf{/F320/}, \textbf{/F330/}).}
+						wird, ist der Testfall erfolgreich (\textbf{/F90/}, \textbf{/F120/}, \textbf{/F130/}, \textbf{/F135/}, \textbf{/F140/},
+						\textbf{/F150/}, \textbf{/F155/}, \textbf{/F160/}, \textbf{/F190W/}, \textbf{/F230/}, \textbf{/F320/}, \textbf{/F330/}).}
 				\item[\textbf{/T130/}] Erweiterter Steuerungstest
 					\\ \textsl{Der Benutzer wählt nach der Lokalisierung von mindestens zwei Roboter einen per Dropdown-Steuerelement aus.
 						Anschließend wird die Steuerung über beide Steuerungsarten (\textbf{/F270/}, \textbf{/F280/}) durchgeführt. Im nächsten
