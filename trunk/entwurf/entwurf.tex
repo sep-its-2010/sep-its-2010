@@ -7,6 +7,7 @@
 \usepackage{epstopdf}
 \usepackage[ngerman]{babel}
 \usepackage[ngerman]{translator}
+\usepackage{listings}
 \usepackage[colorlinks=true,
         linkcolor=black,
         citecolor=black,
@@ -55,6 +56,17 @@
 	\newpage
 
 	\section{Einleitung}
+		Dieses Dokument stellt den konzeptionellen Entwurf des e-puck Conquest Systems dar. Dabei handelt es sich um ein
+		verteiltes System mit bis zu sechs e-puck Roboter und einem Android-Smartphone. \\ \\
+		Die Roboter sollen ein Spielfeld möglichst zeiteffizient in Kooperation mit den anderen Teilnehmern erkunden.
+		Auf dem Smartphone werden die gesammelten Kartendaten dargestellt. Außerdem kann ein e-puck zur manuellen Steuerung
+		ausgewählt werden. \\ \\
+		Die Kommunikation der Roboter wird über ein Bluetooth-Netzwerk in Ringarchitektur abgewickelt. (siehe Abbildung 1). Trotz
+		der Beschränkung des Bluetooth-Moduls auf sieben direkte Verbindungen wird durch diese Architektur eine hohe Skalierbarkeit
+		gewährleistet. \\
+		Das Smartphone verbindet sich zu einem ausgewählten e-puck, Nachrichten werden mittels Broadcast über das Netzwerk an alle 
+		anderen Teilnehmer versendet.
+		
 		Dieses Dokument stellt den konzeptionellen Entwurf des e-puck Conquest Systems dar. Hierbei handelt es sich um ein
 		verteiltes System mit bis zu sechs  e-puck Roboter und einem Android-Smartphone. \\
 		Die Roboter haben die Aufgabe ein Spielfeld möglichst zeiteffizient in Kooperation mit den anderen Teilnehmern zu erkunden.
@@ -64,25 +76,22 @@
 		der Beschränkung des Bluetooth-Moduls auf 7 direkte Verbindungen wird durch diese Architektur eine hohe Skalierbarkeit
 		gewährleistet. Das Smartphone verbindet sich zu einem ausgewählten e-puck, Nachrichten werden über Broadcast über
 		das Netzwerk an alle anderen Teilnehmer versendet.
+
 		\begin{figure}[h]
 			\centering
 			\includegraphics[width=10cm]{images/system.eps}
   			\caption{Verteiltes e-puck System}
-  		\end{figure} \\
+  		\end{figure}
+  		
 		Der Entwurf des Systems wird zur besseren Übersicht in die Bereiche \textit{e-puck Roboter}, \textit{Smartphone} und
-		\textit{Kommunikation} aufgeteilt. Das Ziel ist ein möglichst hohes Maß an	Qualität, Wartbarkeit und Erweiterbarkeit. Dazu ist
-		ein sinnvolles Systemdesign unter Verwendung mehrerer Entwurfsmuster und Architekturen in allen Bereichen erforderlich. \\
-		Weiterhin werden in den folgenden Abschnitten Datentypen und Schnittstellen der Komponenten erläutert. Die beschränkten
+		\textit{Kommunikation} aufgeteilt. \\
+		Das Ziel ist ein möglichst hohes Maß an	Qualität, Wartbarkeit und Erweiterbarkeit. Dazu ist ein sinnvolles Systemdesign unter
+		Verwendung mehrerer verschiedener Entwurfsmuster und Architekturen in allen Bereichen erforderlich. \\ \\
+		Weiterhin werden in den folgenden Abschnitten die verwendeten Datentypen und Schnittstellen der Komponenten erläutert. Die beschränkten
 		Ressourcen der Roboter erzwingen hierbei einen möglichst effizienten Aufbau. Insbesondere stellt der interne
 		Arbeitsspeicher sowie die Rechenleistung der e-pucks eine Einschränkung für den Entwurf dar.
 				
 	\section{e-Puck Roboter}
-		
-		\begin{figure}[h]
-			\centering
-			\includegraphics[width=10cm]{images/e-puck.eps}
-  			\caption{Ablaufmodell}
-  		\end{figure}
   				
 		\subsection{Architektur}
 		Die Software des e-puck wird als Schichtenarchitektur mit wachsendem Abstraktionsgrad entworfen. \\
@@ -91,26 +100,28 @@
 		
 		\begin{figure}[h]
 			\centering
-			\includegraphics[width=10cm]{images/system.eps}
-  			\caption{Architektur der Software für den e-puck}
+			\includegraphics[width=10cm]{images/e-puck_architecture.eps}
+  			\caption{Architektur der Software des e-puck}
   		\end{figure}
 		
 		Die folgenden Abschnitte beschreiben die einzelnen Komponenten der Architektur näher.
 		 
-			\subsection{Komponente `Interrupt'}
+			\paragraph*{Komponente `Interrupt'}
 			Die Komponente `Interrupt' bietet einfache Funktionen zum globalen Ein- und Ausschalten von Interrupts und zur Festlegung
 			von Interrupt-Prioritäten. Außerdem können gesetzte Interrupt-Flags gelöscht werden. \\ \\
 			Diese Funktionen werden in den Komponenten `Timer', `Motor', `Communication' und `IR proximity sensor' sowie
 			in der darüber liegenden Logikschicht verwendet. \\
 			
-			Strukturelle Gliederung: 
+			Externe Datenstrukturen: keine \\
+			
+			Strukturelle Gliederung der Komponente:
 			\begin{verbatim}  
 			hal_int.h, hal_int.c, hal_int_types.h
 			\end{verbatim}
 
-			\subsection{Komponente `Real-Time-Clock'}
-			Die `Real-Time-Clock'-Komponente stellt eine Echtzeituhr bereit. Diese speichert die aktuelle Laufzeit des e-puck Roboters und
-			löst in einem einstellbaren Zeitintervall Interrupts aus. Dieses Zeitintervall kann durch eine Funktion eingestellt werden.
+			\paragraph*{Komponente `Real-Time-Clock'}
+			Die `Real-Time-Clock'-Komponente stellt eine Echtzeituhr bereit. Diese speichert die aktuelle Laufzeit des e-puck Roboter und löst in
+			regelmäßigen Abständen Interrupts aus.
 			Außerdem können Callbacks für zeitgesteuerte Funktionen anderer Komponenten registriert werden. \\
 			
 			Strukturelle Gliederung:
@@ -118,13 +129,15 @@
 			hal_rtc.h, hal_rtc.c, hal_rtc_types.h
 			\end{verbatim}
 			
-			\subsection{Komponente `Communication'}
+			Externe Datenstrukturen: keine
+			
+			\paragraph*{Komponente `Communication'}
 			Die Komponente `Communication' stellt einfache Funktionen zum Aufbau und Verwaltung der Ringstruktur des Bluetooth-Netzwerks bereit.
 			Sie enthält außerdem Funktionen zum Senden und Empfangen von Bluetooth-Nachrichten.\\
 			 
-			Die Modul besteht aus drei aufeinander aufbauenden Komponenten mit wachsendem Abstraktionsgrad:
+			Die Modul besteht aus zwei aufeinander aufbauenden Komponenten mit wachsendem Abstraktionsgrad:
 			
-				\subsubsection{hal???}
+				\subparagraph*{hal\_uart1}
 				Diese Komponente bildet die hardwarenahste Schicht des Kommunikationsmoduls. \\
 				Sie enthält Funktionen zur Initialisierung des UART. Insbesondere werden das Datenformat und die Datenrate festgelegt.
 				Darüber hinaus können die Sende- und Empfangs-Interrupts des UART konfiguriert werden. Die zu den Interrupts gehörigen Interrupt
@@ -134,38 +147,43 @@
 				
 				Strukturelle Gliederung:
 				\begin{verbatim}  
-				hal_uart.h, hal_uart.c, hal_uart_types.h
+				hal_uart.h, hal_uart.c, hal_uart1_types.h
 				\end{verbatim}
 				
-				Verwendete Datenstrukturen:
+				Externe Datenstrukturen: \\
+				ringbuf\_SContext\_t: Zustand des Ringpuffers
 				
-				\subsubsection{btm}
-				`btm' bietet eine Schnittstelle für die Benachrichtigung der darüberliegenden `ringnet'-Komponente bei eintretenden Events. \\
-				Außerdem enthält das Modul Funktionen zur Generierung von Raw-Messages (Nachrichten, die vom Bluetooth-Modul versendet werden
-				können) aus Nachrichten der ringnet-Schicht und zur Aufbereitung von eingehenden Raw-Nachrichten aus der darunter liegenden 
-				Schicht. \\
+				\lstset{language = C, tabsize = 4}
+				\begin{lstlisting}[frame = single]
+typedef struct {
+	uint8_t* lpui8Storage;
+	uint16_t ui16Size;
+	volatile uint16_t ui16ReadIndex;
+	volatile uint16_t ui16WriteOffset;
+} ringbuf_SContext_t;
+				\end{lstlisting}
+				
+				\subparagraph*{com}
+				`com' enthält Funktionen zur Generierung von Raw-Messages (Nachrichten, die vom Bluetooth-Modul versendet werden
+				können) und zur Aufbereitung von eingehenden Raw-Nachrichten aus der darunter liegenden `hal\_uart'-Schicht. \\
 				
 				Strukturelle Gliederung:
 				\begin{verbatim}  
 				btm.h, btm.c, btm_types.h
 				\end{verbatim}
 				
-				Verwendete Datenstrukturen:
-
-				\subsubsection{ringnet}
-				Das `ringnet'-Modul registriert eigene Callbacks in der darunter liegenden `btm'-Komponente und bietet Funktionen zum Management
-				der Vector Clock. Diese wird für die Broadcast-Kommunikation benötigt. \\
-				Die `ringnet'-Komponente ist auch für die Aufrechterhaltung der Ringstruktur des Bluetooth-Netzwerks bei Ausfällen und für die
-				Interagtion neuer Teilnehmer in den Ring zuständig. \\
+				Externe Datenstrukturen: \\
+				com\_SMessage\_t: Format der Raw-Nachrichten
 				
-				Strukturelle Gliederung:
-				\begin{verbatim}  
-				ringnet.h, ringnet.c, ringnet_types.h
-				\end{verbatim}
+				\lstset{language = C, tabsize = 4}
+				\begin{lstlisting}[frame = single]
+typedef struct {
+	uint16_t ui16type;
+	uint8_t aui8Data[30];
+} com_SMessage_t;
+				\end{lstlisting}
 				
-				Verwendete Datenstrukturen:
-				
-			\subsection{Komponente `Motor'}
+			\paragraph*{Komponente `Motor'}
 			Das Modul `Motor' stellt Funktionen zur Verfügung, die die Voraussetzung für die High-Level-Steuerung der Bewegung des e-puck bilden.
 			Die Komponente initialisiert und kontrolliert die Timer für die Steuerung der beiden Schrittmotoren und gewährleistet deren korrekte
 			Ansteuerung. \\
@@ -177,50 +195,62 @@
 				hal_motor.h, hal_motor.c, hal_motor_types.h
 				\end{verbatim}
 						
-			\subsection{Komponente `ADC'}
+			\paragraph*{Komponente `ADC'}
 			Die Komponente `ADC' kapselt Funktionen zur Initialisierung der Analog-Digital-Wandler und zum einfachen Auslesen der Register
 			mit den konvertierten Werten. \\
-			Das Modul bildet die Grundlage für die Verwendung der IR-Abstandssensoren.
+			Das Funktionen der Komponente bilden eine wichtige Grundlage für die Verwendung der IR-Abstandssensoren und werden vom Modul `IR 
+			proximity sensor' verwendet.
 			
 			Strukturelle Gliederung:
 				\begin{verbatim}  
 				hal_adc.h, hal_adc.c, hal_adc_types.h
 				\end{verbatim}
 			
-			\subsection{Komponente `I2C'}
-			Hier findet eine Initialisierung der Datenrate und der Masterfunktionalität des I2C-Moduls statt.
-			Außerdem werden die grundlegenden Übertragungsfunktionalitäten wie Adressierung, Lesen und Schreiben definiert. \\
+			\paragraph*{Komponente `I2C'}
+			Die Komponente `I2C' initialisiert die Datenrate und die Masterfunktionalität des I2C-Moduls.
+			Außerdem werden grundlegenden Übertragungsfunktionen wie Adressierung, Lesen und Schreiben zur Verfügung gestellt. \\
 			
 			Strukturelle Gliederung:
 				\begin{verbatim}  
 				hal_i2c.h, hal_i2c.c
 				\end{verbatim}
 			
-			\subsection{Komponente `IR proximity sensor'}
+			\paragraph*{Komponente `IR proximity sensor'}
 			Es erfüllt im wesentlichen zwei Hauptaufgaben.
 			Zunächst findet eine Initialisierung statt. Hierbei wird das Abtastintervall mit dem die Sensoren ausgelesen werden definiert und der 
 			Timer eingerichtet, mit dem das Abtastintervall betrieben wird.
-			Weiterhin stellt dieses Modul die Funktionen zum Auslesen der IR-Sensoren zur Verfügung, welche nach einer A/D Konvertierung zur 
-			Kollisionsvermeidung herangezogen werden. \\
+			Weiterhin stellt dieses Modul die Funktionen zum Auslesen der IR-Sensoren zur Verfügung. Dabei werden Funktionen der `ADC'-Komponente 		
+			verwendet. \\
 			
 			Strukturelle Gliederung:
 				\begin{verbatim}  
 				sen_prox.h, sen_prox.c, sen_prox_types.h
 				\end{verbatim}
 			
-			\subsection{Komponente `Line sensor'}
+			\paragraph*{Komponente `Line sensor'}
 			Die Hauptaufgabe dieser logischen Komponente liegt darin, die Daten der IR-Abstandssensoren aus dem I2C-Bus auszulesen um sie später 
-			einem Regler zur Verfügung zu stellen, der gewährleistet, dass der jeweilige Roboter seine Linie nicht verlässt.
+			einem Regler zur Verfügung zu stellen, der gewährleistet, dass der jeweilige Roboter seine Linie nicht verlässt. \\
 			
 			Strukturelle Gliederung:
 				\begin{verbatim}  
 				sen_line.h, sen_line.c, sen_line_types.h
 				\end{verbatim}
 			
-			\subsection{Komponente `Selector'}
-			Das M
+			\paragraph*{Komponente `LED'}
+			Zunächst werden sämtliche für die LEDs benötigten Hardware-Register initialiserit. Sobald dies geschehen ist, kann durch diese Komponente 
+			die Ansteuerung der LEDs am e-puck übernommen werden.
 			
-			\subsection{Komponente `LED'}
+			Strukturelle Gliederung:
+				\begin{verbatim}  
+				hal_led.h, hal_led.c
+				\end{verbatim}
+				
+				
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=9cm]{images/e-puck.eps}
+  			\caption{Ablaufmodell}
+  		\end{figure}
 			
 		\section{Smartphone}
 		\subsection{Model-View-Controller (MVC) Architektur}
@@ -234,6 +264,13 @@
 			Controller. Die Model-Schicht erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter, welche den Zustand
 			ändern.
 			\begin{figure}[h]
+			\centering
+			\includegraphics[width=10cm]{images/e-puck.eps}
+  			\caption{Ablaufdiagramm}
+  			\end{figure}
+  			
+	\section{Smartphone}
+			\begin{figure}
 				\centering
 				\includegraphics[width=10cm]{images/android_mvc.eps}
   				\caption{Model-View Controller Architektur}
