@@ -118,10 +118,10 @@
 			Externe Datenstrukturen: keine
 			
 			\paragraph*{Komponente `Communication'}
-			Die Komponente `Communication' stellt einfache Funktionen zum Aufbau und Verwaltung der Ringstruktur des Bluetooth-Netzwerks bereit.
+			Die Komponente `Communication' stellt einfache Funktionen zum Aufbau und Verwaltung  des Bluetooth-Netzwerks bereit.
 			Sie enthält außerdem Funktionen zum Senden und Empfangen von Bluetooth-Nachrichten.\\
 			 
-			Die Modul besteht aus zwei aufeinander aufbauenden Komponenten mit wachsendem Abstraktionsgrad:
+			Dieses Modul besteht aus zwei aufeinander aufbauenden Komponenten mit wachsendem Abstraktionsgrad:
 			
 				\subparagraph*{hal\_uart1}
 				Diese Komponente bildet die hardwarenahste Schicht des Kommunikationsmoduls. \\
@@ -230,57 +230,8 @@ typedef struct {
 				\begin{verbatim}  
 				hal_led.h, hal_led.c
 				\end{verbatim}
-				
-				
-		\begin{figure}[h]
-			\centering
-			\includegraphics[width=9cm]{images/e-puck.eps}
-  			\caption{Ablaufmodell}
-  		\end{figure}
-  		
- 		\subsection{Sensordaten}
-			Die Linien- und Knotenerkennung erfolgt über die drei Bodensensoren. Wie in Abbildung \ref{fig:auswertung} zu sehen ist,
-			können dunkle Abschnitte besonders gut erkannt werden. Insbesondere wird ein Schwarzwert von 70 Prozent mit zirka einem
-			Drittel des Wertes einer weißen Fläche erkannt. Diese Eigenschaft ist Voraussetzung, um eine sinnvolle Linien- und
-			Knotenerkennung durchführen zu können.
-			\begin{figure}[h]
-				\centering
-				\includegraphics[width=15cm]{images/sensorgrafik.eps}
-				\caption{Verhalten der Sensoren}		
-				\label{fig:auswertung}	
-			\end{figure}
-		\subsection{Kalibrierung}
-			Damit die Unterscheidung von Linien zum Untergrund optimal durchgeführt werden kann, ist eine Kalibrierung notwendig. Diese kann
-			zwar auf dem EEPROM des e-pucks persistent gespeichert werden, muss allerdings bei wechselnden Lichtverhältnissen oder Untergrund
-			erneut durchgeführt werden. \\
-			Für die Kalibrierung muss der Benutzer den Selektor am Roboter auf Position 0 stellen und ihn auf eine Linie des entsprechenden
-			Spielfelds stellen. Im Abstand von 5 Zentimetern vor der Linie in Fahrtrichtung darf hierbei keine Linie sein, sondern die
-			Hintergrundfläche, die später beim Betrieb verwendet wird. Nach dem Einschalten des e-pucks speichert dieser zunächst die Werte der
-			Bodensensoren auf der Linie, fährt anschließend	um 50 Motorschritte (ca. eine viertel Umdrehung) vorwärts und speichert erneut
-			die Werte auf der Hintergrundfläche. Der Roboter ist nun fertig kalibriert und bereit für den Start des Systems.
-		\subsection{Linienerkennung}
-			Die Linienerkennung erfolgt mit Hilfe eines PID-Reglers, welcher als Quelle für Sensordaten die äußeren Bodensensoren verwendet.
-			Für die Realisierung wird der Stellungsalgorithmus verwendet:
-			\begin{equation}
-				u_n = k_r * \left[ x_{d,n} + \frac{T}{T_N} * \sum_{i=1}^{n-1}x_{d,i} + \frac{T_V}{T}*(x_{d,n}-x_{d,n-1}) \right], k=0,1,2...
-			\end{equation}
-			Die erforderlichen Parameter werden über die Einstellregeln von Ziegler-Nichols bestimmt und haben folgende semantische Bedeutung:
-			\begin{itemize}
-				\item[$u_n$] Regelgröße des Systems
-				\item[$k_r$] konstanter Verstärkungsfaktor (Ziegler-Nichols: $0,6 * $Stabilitätsgrenze)
-				\item[$x_{d,n}$] Regeldifferenz ($n$ = aktuell, $1$ = erste Differenz)
-				\item[$T$] Regelungsintervall
-				\item[$T_N$] Nachstellzeit (Ziegler-Nichols: $0,5 * $Intervall einer Dauerschwingung bei Stabilitätsgrenze)
-				\item[$T_V$] Vorhaltezeit (Ziegler-Nichols: $0,12 * $Intervall einer Dauerschwingung bei Stabilitätsgrenze)
-			\end{itemize}		
-			\subsection{Knotenanalyse}
-			Die Knotenanalyse erkennt einen Knoten, sobald der linke oder rechte Bodensensor bei mehr als 3 Motorschritten einen besonders
-			deutlichen Schwarzwert feststellt. Wie in Abbildung \ref{fig:auswertung} zu sehen, werden Sensorwerte bereits bei 70 Prozent des
-			Weiß-Wertes gute Unterscheidungen erreicht. Um auch bei ungünstigen Lichtverhältnissen eine gute Erkennung zu ermöglichen,
-			werden Knoten ab einem Sensorwert von 50 Prozent des Weiß-Wertes festgestellt. Um keine störenden Kurven bei Knoten mit nur einem
-			Ast zu fahren, wird die Linienverfolgung für die Zeit des Knotens deaktiviert. 
 
-		\paragraph*{Komponente `Logik'}
+		\paragraph*{Komponente `Logic'}
 			Diese Komponente des Systems basiert auf allen zuvor genannten Komponenten und wird in einer Subsumption-Architektur umgesetzt. Hierbei
 			handelt es sich um ein nach Prioritäten geordnetes Schichtenmodell, welches in jedem Roboter enthalten in den Dateien subs.c und subs.h enthalten
 			ist. Jede Schicht definiert einen Verhaltensaspekt des jeweiligen e-pucks und besitzt Zugriff auf globale Variablen, welche Sensordaten speichern. \\
@@ -344,7 +295,51 @@ typedef struct {
 					subs_pid.c, subs_pid.h
 					\end{verbatim}
 
-  			\end{enumerate}		
+  			\end{enumerate}
+  		
+ 		\subsection{Sensordaten}
+			Die Linien- und Knotenerkennung erfolgt über die drei Bodensensoren. Wie in Abbildung \ref{fig:auswertung} zu sehen ist,
+			können dunkle Abschnitte besonders gut erkannt werden. Insbesondere wird ein Schwarzwert von 70 Prozent mit zirka einem
+			Drittel des Wertes einer weißen Fläche erkannt. Diese Eigenschaft ist Voraussetzung, um eine sinnvolle Linien- und
+			Knotenerkennung durchführen zu können.
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=15cm]{images/sensorgrafik.eps}
+				\caption{Verhalten der Sensoren}		
+				\label{fig:auswertung}	
+			\end{figure}
+		\subsection{Kalibrierung}
+			Damit die Unterscheidung von Linien zum Untergrund optimal durchgeführt werden kann, ist eine Kalibrierung notwendig. Diese kann
+			zwar auf dem EEPROM des e-pucks persistent gespeichert werden, muss allerdings bei wechselnden Lichtverhältnissen oder Untergrund
+			erneut durchgeführt werden. \\
+			Für die Kalibrierung muss der Benutzer den Selektor am Roboter auf Position 0 stellen und ihn auf eine Linie des entsprechenden
+			Spielfelds stellen. Im Abstand von 5 Zentimetern vor der Linie in Fahrtrichtung darf hierbei keine Linie sein, sondern die
+			Hintergrundfläche, die später beim Betrieb verwendet wird. Nach dem Einschalten des e-pucks speichert dieser zunächst die Werte der
+			Bodensensoren auf der Linie, fährt anschließend	um 50 Motorschritte (ca. eine viertel Umdrehung) vorwärts und speichert erneut
+			die Werte auf der Hintergrundfläche. Der Roboter ist nun fertig kalibriert und bereit für den Start des Systems.
+		\subsection{Linienerkennung}
+			Die Linienerkennung erfolgt mit Hilfe eines PID-Reglers, welcher als Quelle für Sensordaten die äußeren Bodensensoren verwendet.
+			Für die Realisierung wird der Stellungsalgorithmus verwendet:
+			\begin{equation}
+				u_n = k_r * \left[ x_{d,n} + \frac{T}{T_N} * \sum_{i=1}^{n-1}x_{d,i} + \frac{T_V}{T}*(x_{d,n}-x_{d,n-1}) \right], k=0,1,2...
+			\end{equation}
+			Die erforderlichen Parameter werden über die Einstellregeln von Ziegler-Nichols bestimmt und haben folgende semantische Bedeutung:
+			\begin{itemize}
+				\item[$u_n$] Regelgröße des Systems
+				\item[$k_r$] konstanter Verstärkungsfaktor (Ziegler-Nichols: $0,6 * $Stabilitätsgrenze)
+				\item[$x_{d,n}$] Regeldifferenz ($n$ = aktuell, $1$ = erste Differenz)
+				\item[$T$] Regelungsintervall
+				\item[$T_N$] Nachstellzeit (Ziegler-Nichols: $0,5 * $Intervall einer Dauerschwingung bei Stabilitätsgrenze)
+				\item[$T_V$] Vorhaltezeit (Ziegler-Nichols: $0,12 * $Intervall einer Dauerschwingung bei Stabilitätsgrenze)
+			\end{itemize}		
+			\subsection{Knotenanalyse}
+			Die Knotenanalyse erkennt einen Knoten, sobald der linke oder rechte Bodensensor bei mehr als 3 Motorschritten einen besonders
+			deutlichen Schwarzwert feststellt. Wie in Abbildung \ref{fig:auswertung} zu sehen, werden Sensorwerte bereits bei 70 Prozent des
+			Weiß-Wertes gute Unterscheidungen erreicht. Um auch bei ungünstigen Lichtverhältnissen eine gute Erkennung zu ermöglichen,
+			werden Knoten ab einem Sensorwert von 50 Prozent des Weiß-Wertes festgestellt. Um keine störenden Kurven bei Knoten mit nur einem
+			Ast zu fahren, wird die Linienverfolgung für die Zeit des Knotens deaktiviert. 
+
+				
 			
 		\section{Smartphone}
 			\subsection{Model-View-Controller (MVC) Architektur}
