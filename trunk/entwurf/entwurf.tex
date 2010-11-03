@@ -82,35 +82,21 @@
 
 	\section{Einleitung}
 		Dieses Dokument stellt den konzeptionellen Entwurf des e-puck Conquest Systems dar. Dabei handelt es sich um ein
-		verteiltes System mit bis zu sechs e-puck Roboter und einem Android-Smartphone. \\ \\
+		verteiltes System mit bis zu sechs e-puck Roboter und einem Android-Smartphone. \\
 		Die Roboter sollen ein Spielfeld möglichst zeiteffizient in Kooperation mit den anderen Teilnehmern erkunden.
 		Auf dem Smartphone werden die gesammelten Kartendaten dargestellt. Außerdem kann ein e-puck zur manuellen Steuerung
 		ausgewählt werden. \\ \\
-		Die Kommunikation der Roboter wird über ein Bluetooth-Netzwerk in Ringarchitektur abgewickelt. (siehe Abbildung 1). Trotz
-		der Beschränkung des Bluetooth-Moduls auf sieben direkte Verbindungen wird durch diese Architektur eine hohe Skalierbarkeit
-		gewährleistet. \\
-		Das Smartphone verbindet sich zu einem ausgewählten e-puck, Nachrichten werden mittels Broadcast über das Netzwerk an alle 
-		anderen Teilnehmer versendet.
+		Die Kommunikation der Roboter wird über e-puck-Proxys auf dem Smartphone abgewickelt.\\
 		
 		Dieses Dokument stellt den konzeptionellen Entwurf des e-puck Conquest Systems dar. Hierbei handelt es sich um ein
 		verteiltes System mit bis zu sechs  e-puck Roboter und einem Android-Smartphone. \\
 		Die Roboter haben die Aufgabe ein Spielfeld möglichst zeiteffizient in Kooperation mit den anderen Teilnehmern zu erkunden.
 		Auf dem Smartphone werden die gesammelten Kartendaten dargestellt, außerdem kann ein e-puck zur manuellen Steuerung
 		ausgewählt werden. \\
-		Die Kommunikation der Roboter wird über ein Bluetooth-Netzwerk in einer Ringarchitektur behandelt (siehe Abbildung 1). Trotz
-		der Beschränkung des Bluetooth-Moduls auf 7 direkte Verbindungen wird durch diese Architektur eine hohe Skalierbarkeit
-		gewährleistet. Das Smartphone verbindet sich zu einem ausgewählten e-puck, Nachrichten werden über Broadcast über
-		das Netzwerk an alle anderen Teilnehmer versendet.
-
-		\begin{figure}[h]
-			\centering
-			\includegraphics[width=10cm]{images/system.eps}
-  			\caption{Verteiltes e-puck System}
-  		\end{figure}
   		
-		Der Entwurf des Systems wird zur besseren Übersicht in die Bereiche \textit{e-puck Roboter}, \textit{Smartphone} und
-		\textit{Kommunikation} aufgeteilt. \\
-		Das Ziel ist ein möglichst hohes Maß an	Qualität, Wartbarkeit und Erweiterbarkeit. Dazu ist ein sinnvolles Systemdesign unter
+		Der Entwurf des Systems wird zur besseren Übersicht in die Bereiche \textit{e-puck Roboter}, \textit{Smartphone}, \textit{abstrakte Logik}
+		 und \textit{Kommunikation} aufgeteilt. \\
+		Das Ziel ist ein möglichst hohes Maß an Qualität, Wartbarkeit und Erweiterbarkeit. Dazu ist ein sinnvolles Systemdesign unter
 		Verwendung mehrerer verschiedener Entwurfsmuster und Architekturen in allen Bereichen erforderlich. \\ \\
 		Weiterhin werden in den folgenden Abschnitten die verwendeten Datentypen und Schnittstellen der Komponenten erläutert. Die beschränkten
 		Ressourcen der Roboter erzwingen hierbei einen möglichst effizienten Aufbau. Insbesondere stellt der interne
@@ -326,9 +312,72 @@ typedef struct {
 					\end{verbatim}
 
   			\end{enumerate}
+	
+		\section{abstrakte Logik}
+		\subsection{Problemstellung}
+			{Damit die e-pucks ihre Ziele, wie zum Beispiel das Auffinden eines noch nicht erkundeten Knotens oder die 
+			Rückkehr zur Startposition, möglichst effizient erreichen können, wird ein Pfadplanungsalgorithmus benötigt. 
+			Dieser soll auf Grundlage einer bereits (teilweise) erkundeten Karte, einer Liste von möglichen Zielpunkten 
+			und einer Startposition eine Liste von Pfaden zu allen Zielen erstellen. Diese Liste soll nach aufsteigenden 
+			Wegkosten sortiert sein.
+
+			Außerdem soll die Funktion zur Bewertung der tatsächlichen Knotenkosten austauschbar sein. Dadurch lässt 
+			sich der Algorithmus für unterschiedliche Aufgaben verwenden.}
+		\subsection{Überblick}
+			{A* ist ein informierter Offline-Suchalgorithmus, der einen optimalen Pfad zwischen zwei Knoten in kürzester 
+			Laufzeit findet, falls dieser existiert. Alle Knoten werden mit einem der drei folgenden Typen 
+			identifiziert, welche jedoch nur in diesem Kontext gültig sind:
+			\begin{itemize}
+				\item unbekannt: Zu diesem Knoten ist noch kein Pfad bekannt
+				\item bekannt (open): Zu diesem Knoten ist ein (suboptimaler) Pfad bekannt
+				\item erkundet (closed): Zu diesem Knoten ist ein optimaler Pfad bekannt
+			\end{itemize}
+
+			Jeder erkundete oder bekannte Knoten besitzt eine Referenz auf seinen Vorgänger. Diese Verkettung stellt den 
+			Pfad zum Startknoten dar. Für erkundete Knoten ist dies auch der kürzeste Pfad. Außerdem besitzen alle 
+			bekannten und erkundeten Knoten einen Wegkostenzähler.
+
+			Der Container der bekannten Knoten verwendet einen Binary-Heap. Dieser ermöglicht das effiziente Entfernen
+			des jeweils günstigsten als nächstes zu erkundenden Knotens. Der Schlüssel setzt sich dabei aus den 
+			aktuellen Wegkosten zum Start und einer Schätzung der Wegkosten zum aktuellen Ziel zusammen.
+
+			Der Container der erkundeten Knoten ist ein Binärbaum, um Suchoperationen zu beschleunigen.}
+		\subsection{Wegkosten und Heuristik}
+			{Der Algorithmus verwendet eine Bewertungsfunktion, um eine Aussage über die möglichen Gesamtwegkosten eines 
+			Knoten treffen zu können. Diese werden durch die Summe aus den tatsächlichen Wegkosten des Vorgängerknotens, 
+			den Übergangskosten zum aktuellen Knoten und einer Schätzung der verbleibenden Kosten bis zum Ziel 
+			errechnet.
+
+			Die Funktion zur Berechnung der Übergangskosten \textit{calculateCosts()} ist austauschbar, wodurch sich das
+			Verhalten des Algorithmus trimmen lässt. Es ist jedoch zu beachten, dass die tatsächlichen Kosten nie den
+			Schätzwert unterschreiten dürfen. Damit z.B. eine Kollision aktiv vermieden wird, müssen die Kosten eines
+			blockierten Knotens höher sein als die Kosten des kürzesten lokalen Umwegs.
+
+			Als Schätzfunktion (Heuristik) wird hier die Absolutsummennorm verwendet. Mit Hilfe der Heuristik wird eine 
+			zielgerichtete Knotenexpansion erreicht, da nur ein bekannter Knoten mit den 
+			geringsten Gesamtkosten als nächstes analysiert wird.}
+		\subsection{Datenstrukturen}
+			Benötigt wird eine Knotenklasse \textit{AStarNode}, die eine Referenz auf einen Vorgängerknoten vom selben 					Typ sowie eine Referenz auf	einen Graphknoten \textit{GraphNode} der Karte enthält. Außerdem enthält sie
+			einen Integer, der die aktuellen Kosten bis zum Startknoten angibt.
+		\subsection{Interface}
+			Es wird das Interface \textit{IPathFinder} von der Klasse \textit{AStarPathFinder} implementiert:
+			\begin{itemize}
+				\item \textit{AStarNode[] find(GraphNode start, GraphNode[] destinations)} führt eine Suche durch und
+				gibt die kürzesten Pfade zurück
+				\item \textit{int calculateCosts(GraphNode from, GraphNode to)} berechnet die Übergangskosten von einem
+				Knoten zu einem angrenzenden Knoten.
+			\end{itemize}
+		\subsection{Ablauf}
+			{Der Algorithmus basiert auf der Version von Wikipedia
+			\footnote{\href{http://de.wikipedia.org/wiki/A*#Funktionsweise}{Wikipedia A* Algorithmus}},
+			jedoch mit einer Erweiterung für die Suche mehrerer Zielknoten. Dazu wird nach jeder erfolgreichen Suche
+			eines Zielknotens der Container der bekannten Knoten umsortiert, damit jeweils der günstigste Knoten für den
+			nächsten Zielknoten extrahiert werden kann. Durch diese Modifikation muss die Berechnung nicht für jeden
+			Zielknoten neu durchgeführt werden, da auf bereits berechnete Pfadabschnitte zurückgegriffen werden kann.}
 			
 			
 		\section{Smartphone}
+		
 		\subsection{Model-View-Controller (MVC) Architektur}
 			Die Daten- bzw. Benutzer-Interaktion der Android-Anwendung wird mit einer MVC-Architektur aufgebaut. Dies ermöglicht ein
 			flexibles Programmdesign, das eine Wiederverwendbarkeit von Komponenten sowie eine reduzierte Komplexität gewährleistet.
@@ -340,8 +389,6 @@ typedef struct {
 			Controller. Die Model-Schicht erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter, welche den Zustand
 			ändern.
 
-  			
-	\section{Smartphone}
 			\begin{figure}
 				\centering
 				\includegraphics[width=10cm]{images/android_mvc.eps}

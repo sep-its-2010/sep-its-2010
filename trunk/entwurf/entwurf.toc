@@ -2,10 +2,16 @@
 \contentsline {section}{\numberline {1}Einleitung}{5}{section.1}
 \contentsline {section}{\numberline {2}e-Puck Roboter}{6}{section.2}
 \contentsline {subsection}{\numberline {2.1}Architektur}{6}{subsection.2.1}
-\contentsline {section}{\numberline {3}Smartphone}{11}{section.3}
-\contentsline {subsection}{\numberline {3.1}Model-View-Controller (MVC) Architektur}{11}{subsection.3.1}
-\contentsline {section}{\numberline {4}Smartphone}{12}{section.4}
-\contentsline {subsection}{\numberline {4.1}Nachrichtenbehandlung}{13}{subsection.4.1}
-\contentsline {subsection}{\numberline {4.2}Repr\IeC {\"a}sentation der e-puck Roboter}{14}{subsection.4.2}
-\contentsline {subsection}{\numberline {4.3}Erzeugung der Views}{15}{subsection.4.3}
-\contentsline {section}{\numberline {5}Kommunikation}{17}{section.5}
+\contentsline {section}{\numberline {3}abstrakte Logik}{11}{section.3}
+\contentsline {subsection}{\numberline {3.1}Problemstellung}{11}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}\IeC {\"U}berblick}{11}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Wegkosten und Heuristik}{11}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Datenstrukturen}{12}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}Interface}{12}{subsection.3.5}
+\contentsline {subsection}{\numberline {3.6}Ablauf}{12}{subsection.3.6}
+\contentsline {section}{\numberline {4}Smartphone}{13}{section.4}
+\contentsline {subsection}{\numberline {4.1}Model-View-Controller (MVC) Architektur}{13}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Nachrichtenbehandlung}{14}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}Repr\IeC {\"a}sentation der e-puck Roboter}{16}{subsection.4.3}
+\contentsline {subsection}{\numberline {4.4}Erzeugung der Views}{17}{subsection.4.4}
+\contentsline {section}{\numberline {5}Kommunikation}{18}{section.5}
