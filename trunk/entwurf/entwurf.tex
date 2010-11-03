@@ -1,4 +1,4 @@
-\documentclass[10pt,a4paper]{article}
+\documentclass[10pt,a4paper]{article} 
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -251,32 +251,67 @@ typedef struct {
 			\includegraphics[width=9cm]{images/e-puck.eps}
   			\caption{Ablaufmodell}
   		\end{figure}
+  		
+ 		\subsection{Sensordaten}
+			Die Linien- und Knotenerkennung erfolgt über die drei Bodensensoren. Wie in Abbildung \ref{fig:auswertung} zu sehen ist,
+			können dunkle Abschnitte besonders gut erkannt werden. Insbesondere wird ein Schwarzwert von 70 Prozent mit zirka einem
+			Drittel des Wertes einer weißen Fläche erkannt. Diese Eigenschaft ist Voraussetzung, um eine sinnvolle Linien- und
+			Knotenerkennung durchführen zu können.
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=15cm]{images/sensorgrafik.eps}
+				\caption{Verhalten der Sensoren}		
+				\label{fig:auswertung}	
+			\end{figure}
+		\subsection{Kalibrierung}
+			Damit die Unterscheidung von Linien zum Untergrund optimal durchgeführt werden kann, ist eine Kalibrierung notwendig. Diese kann
+			zwar auf dem EEPROM des e-pucks persistent gespeichert werden, muss allerdings bei wechselnden Lichtverhältnissen oder Untergrund
+			erneut durchgeführt werden. \\
+			Für die Kalibrierung muss der Benutzer den Selektor am Roboter auf Position 0 stellen und ihn auf eine Linie des entsprechenden
+			Spielfelds stellen. Im Abstand von 5 Zentimetern vor der Linie in Fahrtrichtung darf hierbei keine Linie sein, sondern die
+			Hintergrundfläche, die später beim Betrieb verwendet wird. Nach dem Einschalten des e-pucks speichert dieser zunächst die Werte der
+			Bodensensoren auf der Linie, fährt anschließend	um 50 Motorschritte (ca. eine viertel Umdrehung) vorwärts und speichert erneut
+			die Werte auf der Hintergrundfläche. Der Roboter ist nun fertig kalibriert und bereit für den Start des Systems.
+		\subsection{Linienerkennung}
+			Die Linienerkennung erfolgt mit Hilfe eines PID-Reglers, welcher als Quelle für Sensordaten die äußeren Bodensensoren verwendet.
+			Für die Realisierung wird der Stellungsalgorithmus verwendet:
+			\begin{equation}
+				u_n = k_r * \left[ x_{d,n} + \frac{T}{T_N} * \sum_{i=1}^{n-1}x_{d,i} + \frac{T_V}{T}*(x_{d,n}-x_{d,n-1}) \right], k=0,1,2...
+			\end{equation}
+			Die erforderlichen Parameter werden über die Einstellregeln von Ziegler-Nichols bestimmt und haben folgende semantische Bedeutung:
+			\begin{itemize}
+				\item[$u_n$] Regelgröße des Systems
+				\item[$k_r$] konstanter Verstärkungsfaktor (Ziegler-Nichols: $0,6 * $Stabilitätsgrenze)
+				\item[$x_{d,n}$] Regeldifferenz ($n$ = aktuell, $1$ = erste Differenz)
+				\item[$T$] Regelungsintervall
+				\item[$T_N$] Nachstellzeit (Ziegler-Nichols: $0,5 * $Intervall einer Dauerschwingung bei Stabilitätsgrenze)
+				\item[$T_V$] Vorhaltezeit (Ziegler-Nichols: $0,12 * $Intervall einer Dauerschwingung bei Stabilitätsgrenze)
+			\end{itemize}		
+			\subsection{Knotenanalyse}
+			Die Knotenanalyse erkennt einen Knoten, sobald der linke oder rechte Bodensensor bei mehr als 3 Motorschritten einen besonders
+			deutlichen Schwarzwert feststellt. Wie in Abbildung \ref{fig:auswertung} zu sehen, werden Sensorwerte bereits bei 70 Prozent des
+			Weiß-Wertes gute Unterscheidungen erreicht. Um auch bei ungünstigen Lichtverhältnissen eine gute Erkennung zu ermöglichen,
+			werden Knoten ab einem Sensorwert von 50 Prozent des Weiß-Wertes festgestellt. Um keine störenden Kurven bei Knoten mit nur einem
+			Ast zu fahren, wird die Linienverfolgung für die Zeit des Knotens deaktiviert. 		
 			
 		\section{Smartphone}
-		\subsection{Model-View-Controller (MVC) Architektur}
-			Die Daten- bzw. Benutzer-Interaktion der Android-Anwendung wird mit einer MVC-Architektur aufgebaut. Dies ermöglicht ein
-			flexibles Programmdesign, das eine Wiederverwendbarkeit von Komponenten sowie eine reduzierte Komplexität gewährleistet.
-			Die Daten, wie z.B. Karteninformationen oder Roboterpositionen, können dadurch von den zugehörigen Darstellungen getrennt werden
-			(\textit{Separation of Concerns}). Es werden hierbei drei Dialoge (\textit{Activities}) verwendet, je ein Dialog für Kartenansicht, Steuerung und
-			Statistik. Bei diesem Entwurf hat die View-Schicht keinen direkten Zugriff auf das Model, dieser wird vollständg vom
-			Controller übernommen. Gemäß den Entwicklerrichtlinien für Android-Anwendungen 
-			\footnote{Android - User Interface (\url{http://developer.android.com/guide/topics/ui/index.html})} gehören die Activity-Klassen der
-			View logisch zum	Controller. Die Model-Schicht (Proxies) erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter,
-			welche den Zustand ändern.\\
-			Die beschriebenen Steuerungs- und Dialogabläufe werden hier nur rudimentär zum Verständnis erwähnt. Eine genauere Erläuterung ist in
-			Kapitel [TODO] zu finden
-			\begin{figure}[h]
-			\centering
-			\includegraphics[width=10cm]{images/e-puck.eps}
-  			\caption{Ablaufdiagramm}
-  			\end{figure}
-  			
-	\section{Smartphone}
-			\begin{figure}
-				\centering
-				\includegraphics[width=10cm]{images/android_mvc.eps}
-  				\caption{Model-View Controller Architektur}
-  			\end{figure}	
+			\subsection{Model-View-Controller (MVC) Architektur}
+				Die Daten- bzw. Benutzer-Interaktion der Android-Anwendung wird mit einer MVC-Architektur aufgebaut. Dies ermöglicht ein
+				flexibles Programmdesign, das eine Wiederverwendbarkeit von Komponenten sowie eine reduzierte Komplexität gewährleistet.
+				Die Daten, wie z.B. Karteninformationen oder Roboterpositionen, können dadurch von den zugehörigen Darstellungen getrennt werden
+				(\textit{Separation of Concerns}). Es werden hierbei drei Dialoge (\textit{Activities}) verwendet, je ein Dialog für Kartenansicht, Steuerung und
+				Statistik. Bei diesem Entwurf hat die View-Schicht keinen direkten Zugriff auf das Model, dieser wird vollständg vom
+				Controller übernommen. Gemäß den Entwicklerrichtlinien für Android-Anwendungen 
+				\footnote{Android - User Interface (\url{http://developer.android.com/guide/topics/ui/index.html})} gehören die Activity-Klassen der
+				View logisch zum	Controller. Die Model-Schicht (Proxies) erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter,
+				welche den Zustand ändern.\\
+				Die beschriebenen Steuerungs- und Dialogabläufe werden hier nur rudimentär zum Verständnis erwähnt. Eine genauere Erläuterung ist in
+				Kapitel [TODO] zu finden
+	  			\begin{figure}
+					\centering
+					\includegraphics[width=10cm]{images/android_mvc.eps}
+  					\caption{Model-View Controller Architektur}
+ 	 			\end{figure}					
 			\paragraph*{Model}
   				Die Model-Schicht der Architektur speichert als zentrale Komponente sämtliche Daten bzgl. Karten- und e-puck-Informationen. 
   				Sie beinhaltet außerdem die Applikationslogik der Android-Anwendung. Die Kommunikation nach außen findet über das
@@ -382,9 +417,114 @@ typedef struct {
   			den sinnvollen Einsatz, liegt bei dem Entwurf der abstrakten Activity-Klassen \textit{Map}, \textit{Controller} und \textit{Statistics}. Zum Einen
   			wird die Erweiterung der entsprechenden Schnittstellen aufwändig, sobald mehrere konkrete Ableitungen existieren. Zusätzlich müssen im
  			Vorhinein sämtliche benötigten Methoden in diese Klassen aufgenommen werden, um die vollständige Funktionalität gewährleisten zu können. 
+	\section{Abstrakte Logik}
+		\subsection{Erkundungsalgorithmus}
+			Im Folgenden wird der Algorithmus für die Erkundung eines unbekannten Spielfeldes mit Hilfe kooperativer Roboter erläutert. Das
+			Vorgehen ist ähnlich zu dem, das von Yamauchi	\footnote{Frontier-Based Exploration Using Multiple Robots, ACM Press, 1998}
+			vorgeschlagen wurde. Es handelt sich hierbei um eine Logik, welche die Roboter in Grenzregionen zu unbekannten Gebieten führt.
+			Der Ansatz verwendet dezentral gespeicherte Karteninformationen, welche alle Teilnehmer lokal speichern. Damit
+			kann die Erkundung effizient ausgeführt werden und ist robust gegenüber Ausfälle einzelner Roboter.
+			\paragraph*{Definition} Ein unbekannter Knoten wird definiert als Knoten, der noch nicht von einem e-puck Roboter befahren wurde
+				sowie mindestens an einem und maximal an drei befahrenen Knoten angrenzt.
+			\paragraph*{Bemerkung} Ein unbefahrener Knoten, der an vier befahrene Knoten angrenzt ist kein unbekannter Knoten.
+			\paragraph*{Algorithmus}Für die Berechnung eines günstigsten unbekannten Knoten wird eine mehrschichtige Logik verwendet.
+				Jede Ebene behandelt einen bestimmten semantischen Aspekt und hat Einfluss auf die letztendliche Auswahl des Zielknotens. Für
+				jeden unbekannten Knoten wird eine Summe berechnet, wobei der Knoten mit der kleinsten Zahl den günstigsten darstellt. Falls
+				mehrere günstigste Knoten existieren, so entscheidet die Berechnungsreihenfolge. Die Ebenen berechnen abhängig von ihren Regeln
+				ihre eigenen Summen und addieren sie zur globalen Summe hinzu.
+				\subparagraph*{Ebene 0: Entfernung} Ein wichtiges Kriterium zum Bestimmen des günstigsten unbekannten Knoten ist dessen
+					Entfernung zum Roboter. Diese Ebene wird vollkommen von dem \textit{A*-Algorithmus} übernommen, welcher auch bei der
+					Wegsuche verwendet wird (siehe Kapitel ...).
+  				\subparagraph*{Ebene 1: Restbereiche} Unbekannte Bereiche, die vollständig innerhalb von erkundeter Gebiete liegen, werden von
+  					dem Algorithmus als weniger 'attraktiv' angesehen. Somit wird erreicht, dass potentiell große unbekannte Teile der Karte
+  					bevorzugt erkundet werden. \\
+  					Es wird ein naives und statisches Vorgehen für die Logik verwendet. Es wird festgestellt, welche unbekannte Knoten sich innerhalb
+  					eines vollständig erkundeten Bereiches befinden. Diesen Knoten wird der Wert 1 hinzu addiert (siehe Abbildung \ref{fig:level1}).  			
+					\begin{figure}[h]
+						\centering
+						\includegraphics[width=10cm]{images/eingeschlossen.eps}
+  						\caption{Unbekannte Bereiche innerhalb erkundeter Gebiete}
+  						\label{fig:level1}
+  					\end{figure}
+  				\subparagraph*{Ebene 2: Gemeinsame Erkundung} Ziel dieser Ebene ist es, dass verschiedene unbekannte Gebiete möglichst von
+  					wenigen Robotern gleichzeitig erkundet werden. Damit lässt sich doppelte Arbeit einsparen und die Effektivität steigern.\\
+  					Die Logik verwendet zur Verarbeitung die Information anderer Roboter. Diese senden Broadcast Nachrichten, sobald ein zu erkundender
+  					Knoten festgelegt wurde. Die benachbarten unbekannten Knoten werden damit automatisch für die weitere Erkundung anderer e-pucks
+  					weniger interessant. Der unbekannte Knoten an sich erhält zusätzlich	5 	Punkte, einem benachbarten Knoten werden 4 Punkte hinzu
+  					addiert usw. bis zum 4. Nachbar, welcher noch einen Punkt zusätzlich erhält. Zur Berechnung der Nachbarn wird die Absolutsummennorm
+  					verwendet:
+					\begin{eqnarray}
+						p(x) = \sum_{j=1}^n |x(j)|
+					\end{eqnarray}
+					Im zweidimensionalen Fall lautet die Norm: $p((x,y))=|x| + |y|$. Falls Hindernisse oder unbekannte Gebiete auf Fahrlinien zwischen
+					zwei Punkten liegen, so dieser direkte Weg ignoriert (siehe Abbildung \ref{fig:level1}). 			
+					\begin{figure}[h]
+						\centering
+						\includegraphics[width=10cm]{images/kooperation.eps}
+  						\caption{Gemeinsame Erkundung von 2 Robotern}
+  						\label{fig:level2}
+  					\end{figure} 
+  				\subparagraph*{Klassen-Entwurf} Um eine einfache Erweiterbarkeit der Logik-Ebenen zu erreichen, werden diese in Form einer
+  					verketteten Liste von Logik-Instanzen realisiert. Eine Logik Klasse implementiert hierbei das Interface \textit{Exploration}, welches
+  					die Methode \textit{explore} enthält. In dieser Methode werden die Knotenwerte entsprechend zu den jeweiligen Logik-Ebenen
+  					addiert. Die Karte wird in Form von Knotenwerte übergeben, der Rückgabewert ist die Koordinate des günstigsten Knoten.
+ 					\begin{figure}[h]
+						\centering
+						\includegraphics[width=10cm]{images/exploration_design.eps}
+  						\caption{Klassenmodell des Erkundungsalgorithmus}
+  						\label{fig:klassen_modell}
+  					\end{figure} 
+		\subsection{Lokale Lokalisierung}
+			Die lokale Lokalisierung wird verwendet, um eine Synchronisation der lokalen Karten- sowie Positionsinformationen zwischen den
+			e-puck Robotern auszutauschen. In anderen Worten, die e-pucks sollen ihre gegenseitige Lage kennen und sich auf ein einheitliches
+			Koordinatensystem einigen. Für die Synchronisation werden die äußeren Abstandssensoren verwendet. Wie im Pflichtenheft definiert,
+			werden bei dieser Lokalisierungsart alle Roboter auf zusammenhängenden Knoten aufgestellt.
+			 \begin{figure}[h]
+				\centering
+				\includegraphics[width=10cm]{images/lokale_lokalisierung.eps}
+  				\caption{Algorithmus zur lokalen Lokalisierung}
+  				\label{fig:lokale_lokalisierung}
+  			\end{figure}
+			Bei dem Algorithmus (siehe Abbildung \ref{fig:lokale_lokalisierung}) durchläuft jeder Roboter einzeln einen Synchronisierungslauf, in Reihenfolge ihrer IDs.
+			Zunächst sendet der ausgewählte e-puck an alle Teilnehmer eine Nachricht, mit der er sein Lokalisierungsvorhaben ankündigt.
+			Anschließend fährt er in gerader Richtung bis einer der folgenden Fälle eintritt:
+			\begin{enumerate}
+				\item Ein leerer Knoten wurde erreicht \\
+				$\Longrightarrow$ Der Knoten wird zur lokalen Karte des e-pucks hinzugefügt und zum Ausgangsknoten zurückgekehrt.
+				\item Eine Kollision ist aufgetreten \\
+				$\Longrightarrow$ Der Knoten wird zur lokalen Karte des e-pucks hinzugefügt. Der passive Kollisionspartner sendet eine
+				Nachricht an den aktiven Roboter und speichert seine Position bzw. Richtung  (die ID und Position weiß er durch die Ankündigung).
+				Der aktive e-puck speichert seinen Nachbar und fährt zurück zum Ausgangsknoten.
+				\item Es wird keine Linie erkannt \\
+				$\Longrightarrow$ Es wird ein Randpunkt in die lokale Karte hinzugefügt.
+			\end{enumerate}
+			Sobald der aktive Roboter zurück bzw. noch immer am Ausgangsknoten ist, wird eine Drehung in eine bisher unerkundete Richtung
+			durchgeführt. Sollte eine solche existieren, beginnt der e-puck erneut mit der Erkundung wie vorhin. Sollte keine Richtung mehr zu
+			erkunden sein, so wird der e-puck mit der kleinsten ID ausgewählt, welcher noch nicht lokalisiert ist. Dieser startet den selben
+			Lokalisierungsprozess, wobei bereits bekannte Richtungen vorhanden sein und ignoriert werden können. \\ \\
+			Die Lokalisierung ist abgeschlossen, sobald jeder einzelne Roboter lokalisiert ist.
+		\subsection{Globale Lokalisierung}
+			Die lokale Lokalisierung ist nur dann einsetzbar, falls alle Roboter auf angrenzenden Knoten stehen. Für die Wunschfunktion
+			\textbf{/F170W/}, bei der die e-pucks auf beliebigen Knoten des Spielfeldes starten können, ist es notwendig eine globale Lokalisierung
+			durchzuführen. \\
+			Dieses Vorhaben soll möglichst deterministisch ablaufen, sodass keine Spielfeldbedingten Ausnahmen auftreten können. Daher ist das
+			erste Ziel jedes Teilnehmers, den Rand des Spielfeldes zu erreichen. Sobald er dies erkannt hat, wird eine Nachricht an alle anderen
+			gesendet und gewartet bis sämtliche Roboter diesen Rand erreicht haben. Zu diesem Zeitpunkt beginnt der e-puck mit der niedrigsten
+			ID die Umrandung des Spielfeldes bis die erste Kollision mit einem Teilnehmer geschieht. Der aktive Roboter fährt zum letzten Knoten
+			und beendet die Umrundung. Dafür beginnt der Kollisionspartner sich auf die Suche nach dem nächsten Teilnehmer zu machen. Die 
+			Lokalisierung findet ähnlich zu Abbildung \ref{fig:lokale_lokalisierung} statt.
+		 	\begin{figure}[h]
+				\centering
+				\includegraphics[width=10cm]{images/globale_lokalisierung.eps}
+  				\caption{Algorithmus zur globalen Lokalisierung}
+  				\label{fig:globale_lokalisierung}
+  			\end{figure}
+			Die Randerkennung geschieht durch die 'Rechte-Hand-Regel'. Sobald ein Roboter einen Randknoten erkannt hat, umrandet er im
+			Uhrzeigersinn den Randbereich. Jede Linkskurve wird hierbei mit $+1$ gewertet, jede Rechtskurve mit $-1$. Erreicht der Roboter wieder
+			den Anfangsknoten und ist die Summe $-4$, so weiß er, dass er sich auf einem äußeren Rand befindet. Ist die Summe allerdings $+4$
+			so befindet er sich auf einem inneren Randstück. Die Suche wird damit fortgesetzt.	
 	\section{Kommunikation}
 				
-			
 	\newpage	
 	%Glossar ausgeben
 	\printglossary[style=altlist,title=Glossar]
