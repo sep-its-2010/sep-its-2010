@@ -257,12 +257,14 @@ typedef struct {
 			Die Daten- bzw. Benutzer-Interaktion der Android-Anwendung wird mit einer MVC-Architektur aufgebaut. Dies ermöglicht ein
 			flexibles Programmdesign, das eine Wiederverwendbarkeit von Komponenten sowie eine reduzierte Komplexität gewährleistet.
 			Die Daten, wie z.B. Karteninformationen oder Roboterpositionen, können dadurch von den zugehörigen Darstellungen getrennt werden
-			(\textit{Separation of Concerns}). Es werden hierbei 3 Views (Activities) verwendet, je ein Dialog für Kartenansicht, Steuerung und
+			(\textit{Separation of Concerns}). Es werden hierbei drei Dialoge (\textit{Activities}) verwendet, je ein Dialog für Kartenansicht, Steuerung und
 			Statistik. Bei diesem Entwurf hat die View-Schicht keinen direkten Zugriff auf das Model, dieser wird vollständg vom
 			Controller übernommen. Gemäß den Entwicklerrichtlinien für Android-Anwendungen 
-			\footnote{\url{http://developer.android.com/guide/topics/ui/index.html}} gehören die Activity-Klassen der View logisch zum
-			Controller. Die Model-Schicht erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter, welche den Zustand
-			ändern.
+			\footnote{Android - User Interface (\url{http://developer.android.com/guide/topics/ui/index.html})} gehören die Activity-Klassen der
+			View logisch zum	Controller. Die Model-Schicht (Proxies) erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter,
+			welche den Zustand ändern.\\
+			Die beschriebenen Steuerungs- und Dialogabläufe werden hier nur rudimentär zum Verständnis erwähnt. Eine genauere Erläuterung ist in
+			Kapitel [TODO] zu finden
 			\begin{figure}[h]
 			\centering
 			\includegraphics[width=10cm]{images/e-puck.eps}
@@ -276,18 +278,19 @@ typedef struct {
   				\caption{Model-View Controller Architektur}
   			\end{figure}	
 			\paragraph*{Model}
-  				Die Model-Schicht der Architektur speichert als zentrale Komponente sämtliche Daten bzgl. Karten- und e-puck-Informationen.
-  				Es  beinhaltet außerdem die Applikationslogik der Android-Anwendung. Die Kommunikation nach außen findet über das
+  				Die Model-Schicht der Architektur speichert als zentrale Komponente sämtliche Daten bzgl. Karten- und e-puck-Informationen. 
+  				Sie beinhaltet außerdem die Applikationslogik der Android-Anwendung. Die Kommunikation nach außen findet über das
   				angeschlossene Bluetooth-Interface statt. Die Klasse \textit{Environment} erbt von der Klasse \textit{Observable} und verarbeitet
-  				die Aktualisierungen der Roboter. Die Klasse wird als Singleton realisiert, da hier zentral der globale Zustand der Kartendaten
-  				gespeichert wird. Informationen der einzelnen Roboter werden in den Instanzen der Klasse \textit{Proxy} verwaltet (siehe Kapitel
-  				...). Diese Insanzen werden in einer Attributsliste der Klasse \textit{Environment} gehalten. Bei Zustandsänderung der
-  				\textit{Proxy}-Instanzen bzw. bei Änderung der Kartendaten werden die registrierten Views benachrichtigt.
+  				die Aktualisierungen der Roboter. Die Klasse wird als Singleton realisiert, da hier globale Zustandsdaten und Karteninformation
+  				für die Anzeige gespeichert werden. Informationen der einzelnen Roboter, sowie deren Ablaufsteuerung, werden in den Instanzen
+  				der Klasse \textit{Proxy} verwaltet (siehe Kapitel [TODO]). Diese Insanzen werden in einer Attributsliste der Klasse \textit{Environment}
+  				gehalten und besitzen auch selbst einen Verweis auf diese Klasse. Bei	Zustandsänderung der \textit{Proxy}-Instanzen bzw. bei
+  				Änderung der Kartendaten werden die registrierten Views benachrichtigt.
   			\paragraph*{View}
   				Die Präsentationskomponenten der MVC-Architektur sind für die Ausgabe der Model-Daten zuständig und bilden eine
   				Abstraktionsschicht zwischen der Präsentation der Anwendung, dem Model und dem Benutzer. Die Schicht besteht aus den drei
-  				Klassen	\textit{SurfaceView}, \textit{SteeringView} und \textit{StatisticView}. \textit{SurfaceView} ist für die Kartendarstellung
-  				verantwortlich, \textit{SteeringView} stellt die Steuerungsbedienelemente dar und \textit{StatisticView} beinhaltet statistische
+  				Klassen	\textit{Map}, \textit{Steer} und \textit{Statistics}. \textit{Map} ist für die Kartendarstellung
+  				verantwortlich, \textit{Steer} stellt die Steuerungsbedienelemente dar und \textit{Statistics} beinhaltet statistische
   				Informationen.  Damit die View-Klassen als \textit{Activities} für die Android-Applikation verwendet werden können, müssen sie
   				das Interface \textit{Activity} implementieren. Für die Verwendung als View der MVC-Architektur muss zusätzlich das Interface
   				\textit{Observer} implementiert werden. Jede einzelne View registriert sich bei der Klasse \textit{Environment} als Observer,
@@ -295,7 +298,7 @@ typedef struct {
   				die Ereignisbehandler-Methoden des \textit{Activity}-Interface an das Model weitergegeben. Somit gehören diese Handler-Methoden
   				im Sinne der MVC-Architektur der Controller-Schicht an.
   			\paragraph*{Controller}
-  				Der Controller nimmt Eingaben aus den verschiedenen View Klassen entgegen und leitet diese bereinigt und normalisiert and die
+  				Der Controller nimmt Eingaben aus den verschiedenen View Klassen entgegen und leitet diese bereinigt und normalisiert an die
   				Model-Schicht weiter. Hier wird also eine Abstraktionsschicht eingeführt, welche die Verbindung zwischen Benutzer-Interaktionen
   				und dem Model beschreibt. Zur Controller-Schicht gehört neben den Ereignisbehandler-Methoden der View Klassen die Klasse
   				\textit{Controller}, welche für die zentrale Steuerung der Model Schicht verantwortlich ist.
@@ -368,7 +371,7 @@ typedef struct {
 				\includegraphics[width=10cm]{images/android_abstrfact.eps}
   				\caption{Abstract Factory - Entwurfsmuster}
   			\end{figure}
-  			Die Klasse \textit{Factory} dient als Muster zur Erzeugung ganzer "Familien" von Views. Um in dem Fall der Android-Anwendung die konkreten
+  			Die Klasse \textit{Factory} dient als Muster zur Erzeugung ganzer ``Familien'' von Views. Um im Fall der Android-Anwendung die konkreten
   			Dialoge für Karte, Steuerung und Statistik zu erstellen, existiert die Klasse \textit{Reference}, welche von \textit{Factory} erbt. Diese sorgt
   			wiederum dafür, dass die konkreten Acitvity-Klassen \textit{SurfaceView}, \textit{SteeringView} und \textit{StatisticsView} der Android
   			-Applikation korrekt erzeugt werden. Um die Repräsentation der Dialoge für den Benutzer einfach austauschbar zu gestalten, erben diese Klassen
