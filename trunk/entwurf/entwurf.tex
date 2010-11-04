@@ -116,8 +116,6 @@
 			Diese Funktionen werden in den Komponenten `Timer', `Motor', `Communication' und `IR proximity sensor' sowie
 			in der darüber liegenden Logikschicht verwendet. \\
 			
-			Externe Datenstrukturen: keine \\
-			
 			Strukturelle Gliederung der Komponente:
 			\begin{verbatim}  
 			hal_int.h, hal_int.c, hal_int_types.h
@@ -132,8 +130,6 @@
 			\begin{verbatim}  
 			hal_rtc.h, hal_rtc.c, hal_rtc_types.h
 			\end{verbatim}
-			
-			Externe Datenstrukturen: keine
 			
 			\paragraph*{Komponente `Communication'}
 			Die Komponente `Communication' stellt einfache Funktionen zum Aufbau und Verwaltung  des Bluetooth-Netzwerks bereit.
@@ -333,7 +329,7 @@ typedef struct {
 			Für die Kalibrierung muss der Benutzer den Selektor am Roboter auf Position 0 stellen und ihn auf eine Linie des entsprechenden
 			Spielfelds stellen. Im Abstand von 5 Zentimetern vor der Linie in Fahrtrichtung darf hierbei keine Linie sein, sondern die
 			Hintergrundfläche, die später beim Betrieb verwendet wird. Nach dem Einschalten des e-pucks speichert dieser zunächst die Werte der
-			Bodensensoren auf der Linie, fährt anschließend	um 50 Motorschritte (ca. eine viertel Umdrehung) vorwärts und speichert erneut
+			Bodensensoren auf der Linie, fährt anschließend um 250 Motorschritte (ca. eine viertel Umdrehung) vorwärts und speichert erneut
 			die Werte auf der Hintergrundfläche. Der Roboter ist nun fertig kalibriert und bereit für den Start des Systems.
 		\subsection{Linienerkennung}
 			Die Linienerkennung erfolgt mit Hilfe eines PID-Reglers, welcher als Quelle für Sensordaten die äußeren Bodensensoren verwendet.
@@ -384,7 +380,7 @@ typedef struct {
   				die Aktualisierungen der Roboter. Die Klasse wird als Singleton realisiert, da hier globale Zustandsdaten und Karteninformation
   				für die Anzeige gespeichert werden. Informationen der einzelnen Roboter, sowie deren Ablaufsteuerung, werden in den Instanzen
   				der Klasse \textit{Proxy} verwaltet (siehe Kapitel [TODO]). Diese Insanzen werden in einer Attributsliste der Klasse \textit{Environment}
-  				gehalten und besitzen auch selbst einen Verweis auf diese Klasse. Bei	Zustandsänderung der \textit{Proxy}-Instanzen bzw. bei
+  				gehalten und besitzen auch selbst einen Verweis auf diese Klasse. Bei Zustandsänderung der \textit{Proxy}-Instanzen bzw. bei
   				Änderung der Kartendaten werden die registrierten Views benachrichtigt.
   			\paragraph*{View}
   				Die Präsentationskomponenten der MVC-Architektur sind für die Ausgabe der Model-Daten zuständig und bilden eine
@@ -404,16 +400,16 @@ typedef struct {
   				\textit{Controller}, welche für die zentrale Steuerung der Model Schicht verantwortlich ist.
   		\subsection{Nachrichtenbehandlung}
   			Wir verwenden das Chain-of-Responsibility-Pattern in unserem Projekt, um Nachrichten, die von den e-puck Robotern an das Handy
-  			geschickt werden zu analysieren und weiter zu verarbeiten. Die Grundidee hinter diesem Pattern ist, dass die Nachricht durch eine Liste
+  			geschickt werden, zu analysieren und weiter zu verarbeiten. Die Grundidee hinter diesem Pattern ist, dass die Nachricht durch eine Liste
   			von konkreten Handlerklassen, die von einer abstrakten Handlerklasse erben, gereicht wird und der richtige Handler die Nachricht
   			verarbeitet. Sobald eine Nachricht von einem Handler erkannt und bearbeitet wurde gibt er true zurück. Falls sich der Handler nicht
   			verantwortlich für die Nachricht fühlt gibt er sie an den nächsten Handler weiter. Falls auch der letzte Handler mit der Nachricht nicht
   			umzugehen weiß, gibt er den Rückgabewert false zurück.Im Gegensatz zu herkömmlichen Nachrichtenbearbeitungen wird hier ein
-  			hohes Maß an Flexibilität erreicht und es das Hinzufügen eines neuen Nachrichtentyps wird erleichtert, da nur eine neue Klasse in die
+  			hohes Maß an Flexibilität erreicht und das Hinzufügen eines neuen Nachrichtentyps wird erleichtert, da nur eine neue Klasse in die
   			Liste der Handler hinzugefügt werden muss. \\ \\
   			Vorteile:
   			\begin{itemize}
-  				\item Der Absender braucht sich nicht zu kümmern, wer genau die Nachricht verarbeitet (implizieter Empfänger)
+  				\item Der Absender braucht sich nicht zu kümmern, wer genau die Nachricht verarbeitet (impliziter Empfänger)
   				\item Unabhängigkeit zwischen Sender und Empfänger (Entkopplung)
   				\item Sehr gut erweiterbar, falls ein neuer Nachrichtentyp hinzugefügt werden soll
   				\item Mehrere Klassen kümmern sich um die Verarbeitung, d.h. die Fehlersuche und -behandlung wird vereinfacht
@@ -440,7 +436,7 @@ typedef struct {
   					die den Rückgabetyp Boolean hat, auf.
   				\item Der Handler leitet die Nachricht an seinen direkten Nachfolger weiter und ruft dort wieder handlerequest(Nachricht) auf, sofern
   					er nicht für die Bearbeitung der Nachricht zuständig ist. In diesem Fall behandelt er die Nachricht entsprechend und gibt true zurück
-  				\item Der Handler, der keinen Nachfolger mehr hat gibt den Wert false zurück und somit weiß der Client dass für die Nachricht kein
+  				\item Der Handler, der keinen Nachfolger mehr hat gibt den Wert false zurück. Somit weiß der Client dass für die Nachricht kein
   					entsprechender Handler zur Verfügung steht.  					
   			\end{enumerate}   
   		\subsection{Repräsentation der e-puck Roboter}
