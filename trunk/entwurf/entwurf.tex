@@ -237,7 +237,7 @@ typedef struct {
 				\end{verbatim}
 			
 			\paragraph*{Komponente `LED'}
-			Zunächst werden sämtliche für die LEDs benötigten Hardware-Register initialiserit. Sobald dies geschehen ist, kann durch diese Komponente 
+			Zunächst werden sämtliche für die LEDs benötigten Hardware-Register initialisiert. Sobald dies geschehen ist, kann durch diese Komponente
 			die Ansteuerung der LEDs am e-puck übernommen werden.
 			
 			Strukturelle Gliederung:
@@ -251,7 +251,7 @@ typedef struct {
 			ist. Jede Schicht definiert einen Verhaltensaspekt des jeweiligen e-pucks und besitzt Zugriff auf globale Variablen, welche Sensordaten speichern. \\
                                     In der folgenden Grafik wird die Anordnung der Schichten nach Priorität in einem Stack veranschaulicht: \\ 
 
-			\includegraphics[height=5cm]{subsumption.eps}
+			\includegraphics[height=5cm]{images/subsumption.eps}
 
 			Niedrige Schichten beschreiben also die grundlegendsten und wichtigsten Verhaltensweisen eines e-pucks, während höhere Schichten zunehmend
 			abstraktere Verhalten beschreiben und nur dann ausgeführt werden, wenn nicht bereits ein wichtigeres Verhalten ausgeführt wurde. Weitere,
@@ -482,7 +482,7 @@ typedef struct {
 
 		\begin{minipage}[t]{5cm}
 		\vspace{0pt}
-		{\includegraphics[height=14cm]{Surface.eps}}
+		{\includegraphics[height=14cm]{images/Surface.eps}}
 		\end{minipage}
 		 \hfill
 		\begin{minipage}[t]{0.5\textwidth}
@@ -510,15 +510,15 @@ typedef struct {
 		zeichnen können. 
 		
 		\begin{figure}[H]
-		\fbox{\includegraphics[height=1cm]{BottomLeftEdge.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{BottomRightEdge.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{BottomT.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{cross.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{LeftT.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{RightT.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{TopLeftEdge.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{TopRightEdge.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{TopT.png}}
+		\fbox{\includegraphics[height=1cm]{images/BottomLeftEdge.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{images/BottomRightEdge.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{images/BottomT.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{images/cross.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{images/LeftT.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{images/RightT.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{images/TopLeftEdge.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{images/TopRightEdge.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{images/TopT.png}}
 		\caption{Richtungsgrafiken}
 		\end{figure}
 		
@@ -526,11 +526,11 @@ typedef struct {
 		Knoten die bereits von einem e-puck erkundet wurden, werden farblich anders dargestellt. Sollte ein bereits erkundeter Knoten noch einmal
 		überfahren werden, so wird die Farbe immer kräftiger.
 		
-		\begin{figure}[H]
-		\fbox{\includegraphics[height=1cm]{Visited1.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{Visited2.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{Visited3.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{Visited4.png}}
+		\begin{figure}[h]
+		\fbox{\includegraphics[height=1cm]{images/Visited1.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{images/Visited2.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{images/Visited3.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{images/Visited4.png}}
 		\caption{besuchte Knoten}
 		\end{figure}
 
