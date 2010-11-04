@@ -477,7 +477,63 @@ typedef struct {
   			Außerdem macht es den Austausch ganzer Familien einfach und fördert Konsistenz über gesamte Dialog-Familien. Der entscheidende Punkt für
   			den sinnvollen Einsatz, liegt bei dem Entwurf der abstrakten Activity-Klassen \textit{Map}, \textit{Controller} und \textit{Statistics}. Zum Einen
   			wird die Erweiterung der entsprechenden Schnittstellen aufwändig, sobald mehrere konkrete Ableitungen existieren. Zusätzlich müssen im
- 			Vorhinein sämtliche benötigten Methoden in diese Klassen aufgenommen werden, um die vollständige Funktionalität gewährleisten zu können. 
+ 			Vorhinein sämtliche benötigten Methoden in diese Klassen aufgenommen werden, um die vollständige Funktionalität gewährleisten zu können.
+			\begin{figure}[htbp]
+
+		\begin{minipage}[t]{5cm}
+		\vspace{0pt}
+		{\includegraphics[height=14cm]{Surface.eps}}
+		\end{minipage}
+		 \hfill
+		\begin{minipage}[t]{0.5\textwidth}
+		\vspace{30pt}
+		Die Darstellung der Karte erfolgt durch eine Surface-View, die dynamisch mit der erkundeten Fläche der Roboter wächst. Somit vergrößert sich
+		die Karte während der Erkundung und wird möglicherweise zu groß, um auf dem Display komplett angezeigt zu werden. Sollte dieser Fall eintreten wird sie
+		zunächst mittels Autoskalierung an die Größe des Displays angepasst.\\
+		\\
+		Dazu wird vor jedem Neuzeichnen der Surface View eine Autoskalierungsfunktion aufgerufen, die den Skalierungswert solange vermindert bis
+		die Karte schließlich wieder komplett auf dem Display zu sehen ist. Der Skalierungswert stellt die Größe der zu zeichnenden Knoten dar -
+		somit schrumpft die Größe der Karte automatisch mit deren Verkleinerung.\\
+		\\
+		Die Funktion der Autoskalierung ist nur solange sinnvoll wie dieser Wert im positiven Bereich liegt bzw. die e-pucks auf der Karte noch
+		sichtbar sind. Erreicht also der Skalierungswert den Wert Null, so wird eine Scrollfunktion aktiviert, die es erlaubt die Karte mittels des
+		Touchscreens in die gewünschte Richtung zu verschieben. Dazu werden vier Offset Werte verwendet um die Position des Fingers auf dem Display
+		vor und nach dem verschieben festzustellen.
+		\end{minipage}
+		\end{figure}
+		
+		
+		Das Zeichnen der Karte wird über den DrawThread gesteuert. Zunächst werden die Farben für die bereits überfahrenen Knoten mittels der Klasse
+		Paint als Quadrat an die richtige Stelle gesetzt.  Bei einem neuen Ereignis eines e-pucks, wie z.B. das Erkunden eines Knotens, wird die run() Methode
+		aufgerufen und diese verständigt die doDraw() Methode. Hier wird durch die Datenstruktur der Karte iteriert und der Status jedes Knotens ausgelesen.
+		Je nach dem werden dann die entsprechenden draw-Methoden aufgerufen, die alle benötigten Knotentypen selbstständig, also ohne externe Grafiken,
+		zeichnen können. 
+		
+		\begin{figure}[H]
+		\fbox{\includegraphics[height=1cm]{BottomLeftEdge.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{BottomRightEdge.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{BottomT.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{cross.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{LeftT.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{RightT.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{TopLeftEdge.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{TopRightEdge.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{TopT.png}}
+		\caption{Richtungsgrafiken}
+		\end{figure}
+		
+		Die zuvor erzeugten, erkundeten Farbquadrate werden durch die Knoten überzeichnet, sodass sie im Hintergrund aber sichtbar bleiben.
+		Knoten die bereits von einem e-puck erkundet wurden, werden farblich anders dargestellt. Sollte ein bereits erkundeter Knoten noch einmal
+		überfahren werden, so wird die Farbe immer kräftiger.
+		
+		\begin{figure}[H]
+		\fbox{\includegraphics[height=1cm]{Visited1.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{Visited2.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{Visited3.png}}\hfill
+		\fbox{\includegraphics[height=1cm]{Visited4.png}}
+		\caption{besuchte Knoten}
+		\end{figure}
+
 	\section{Abstrakte Logik}
 		\subsection{Erkundungsalgorithmus}
 			Im Folgenden wird der Algorithmus für die Erkundung eines unbekannten Spielfeldes mit Hilfe kooperativer Roboter erläutert. Das
