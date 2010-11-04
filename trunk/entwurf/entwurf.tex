@@ -356,6 +356,25 @@ typedef struct {
 				
 			
 		\section{Smartphone}
+			\subsection{Repräsentation der e-puck Roboter}
+  			Der Zugriff auf einzelne e-pucks aus der Android Applikation heraus erfolgt durch Einsatz des Proxy Patterns. Dieses dient als Schnittstelle
+  			zwischen der Programmlogik und dem Bluetooth Interface. Die Proxy Klasse wird als abstrakte Oberklasse implementiert,wobei jede Instanz
+  			dieser Klasse, genau einen e-puck repräsentiert. Diese Stellvertreterobjekte speichern die Zustände der zugehörigen Roboter und beinhalten
+  			alle Funktionen um Daten des Roboters abzurufen oder zu setzen.
+			\begin{figure}[h]
+				\centering
+				\includegraphics[width=10cm]{images/android_proxy.eps}
+  				\caption{Proxy - Entwurfsmuster}
+  			\end{figure}	
+  			Durch das Einsparen von Logik im Bluetooth Interface und Auslagern in die Proxy Klasse ist die Austauschbarkeit der Robotermodelle gegeben
+  			und man bleibt flexibel für die Einführung neuer Befehle. \\ \\
+  			Beim Entdecken eines neuen, noch unbekannten e-pucks durch das Bluetooth Interface wird für diesen eine neue Instanz der Proxy Klasse
+  			angelegt. Die Kommunikation mit diesem Roboter ist ausschließlich über dieses Objekt möglich.\\ \\
+  			Das Erkunden von neuen Knoten wird vom e-puck zunächst an das Bluetooth Interface weitergegeben und die Informationen anschließend
+  			in der Environment Klasse verarbeitet. Die Zustände der einzelnen Roboter, wie zum Beispiel die aktuelle Position, wird aber an die
+  			entsprechenden Proxy Instanzen vermittelt und gespeichert.\\ \\
+  			Der andere Weg führt von der Benutzereingabe über das Environment, welches je nach Befehl die richtige Funktion am Objekt des zugehörigen
+  			e-pucks aufruft. Von dort werden Befehle über das Bluetooth Interface an den Roboter gesendet.
 			\subsection{Model-View-Controller (MVC) Architektur}
 				Die Daten- bzw. Benutzer-Interaktion der Android-Anwendung wird mit einer MVC-Architektur aufgebaut. Dies ermöglicht ein
 				flexibles Programmdesign, das eine Wiederverwendbarkeit von Komponenten sowie eine reduzierte Komplexität gewährleistet.
@@ -439,47 +458,8 @@ typedef struct {
   				\item Der Handler, der keinen Nachfolger mehr hat gibt den Wert false zurück. Somit weiß der Client dass für die Nachricht kein
   					entsprechender Handler zur Verfügung steht.  					
   			\end{enumerate}   
-  		\subsection{Repräsentation der e-puck Roboter}
-  			Der Zugriff auf einzelne e-pucks aus der Android Applikation heraus erfolgt durch Einsatz des Proxy Patterns. Dieses dient als Schnittstelle
-  			zwischen der Programmlogik und dem Bluetooth Interface. Die Proxy Klasse wird als abstrakte Oberklasse implementiert,wobei jede Instanz
-  			dieser Klasse, genau einen e-puck repräsentiert. Diese Stellvertreterobjekte speichern die Zustände der zugehörigen Roboter und beinhalten
-  			alle Funktionen um Daten des Roboters abzurufen oder zu setzen.
-			\begin{figure}[h]
-				\centering
-				\includegraphics[width=10cm]{images/android_proxy.eps}
-  				\caption{Proxy - Entwurfsmuster}
-  			\end{figure}	
-  			Durch das Einsparen von Logik im Bluetooth Interface und Auslagern in die Proxy Klasse ist die Austauschbarkeit der Robotermodelle gegeben
-  			und man bleibt flexibel für die Einführung neuer Befehle. \\ \\
-  			Beim Entdecken eines neuen, noch unbekannten e-pucks durch das Bluetooth Interface wird für diesen eine neue Instanz der Proxy Klasse
-  			angelegt. Die Kommunikation mit diesem Roboter ist ausschließlich über dieses Objekt möglich.\\ \\
-  			Das Erkunden von neuen Knoten wird vom e-puck zunächst an das Bluetooth Interface weitergegeben und die Informationen anschließend
-  			in der Environment Klasse verarbeitet. Die Zustände der einzelnen Roboter, wie zum Beispiel die aktuelle Position, wird aber an die
-  			entsprechenden Proxy Instanzen vermittelt und gespeichert.\\ \\
-  			Der andere Weg führt von der Benutzereingabe über das Environment, welches je nach Befehl die richtige Funktion am Objekt des zugehörigen
-  			e-pucks aufruft. Von dort werden Befehle über das Bluetooth Interface an den Roboter gesendet.
-  		\subsection{Erzeugung der Views}
-  			Ein Ziel der Anwendungs-Architektur ist die Möglichkeit, den Austausch von View-Elementen in einfacher Weise zu ermöglichen. Für diesen
-  			Zweck wird das Abstract-Factory Entwurfsmuster zur Erzeugung einer Gruppe von Steuerelementen verwendet. Die Art sowie das Aussehen der
-  			Benutzeroberfläche ist damit von der Logik getrennt und neue Darstellungen können einfach hinzugefügt werden.
-			\begin{figure}[h]
-				\centering
-				\includegraphics[width=10cm]{images/android_abstrfact.eps}
-  				\caption{Abstract Factory - Entwurfsmuster}
-  			\end{figure}
-  			Die Klasse \textit{Factory} dient als Muster zur Erzeugung ganzer ``Familien'' von Views. Um im Fall der Android-Anwendung die konkreten
-  			Dialoge für Karte, Steuerung und Statistik zu erstellen, existiert die Klasse \textit{Reference}, welche von \textit{Factory} erbt. Diese sorgt
-  			wiederum dafür, dass die konkreten Acitvity-Klassen \textit{SurfaceView}, \textit{SteeringView} und \textit{StatisticsView} der Android
-  			-Applikation korrekt erzeugt werden. Um die Repräsentation der Dialoge für den Benutzer einfach austauschbar zu gestalten, erben diese Klassen
-  			von entsprechenden abstrakten Oberklassen. Der Client hat somit lediglich die Aufgabe, eine Instanz einer konkreten Factory-Klasse zu
-  			erzeugen, der restliche Ablauf kann für jede beliebige Familie von Dialogen gleich erfolgen. \\ \\
-  			Die Verwendung des Abstract Factory - Entwurfsmusters hat hier den Vorteil, dass konkrete Dialog-Klassen isoliert behandelt werden können.
-  			Außerdem macht es den Austausch ganzer Familien einfach und fördert Konsistenz über gesamte Dialog-Familien. Der entscheidende Punkt für
-  			den sinnvollen Einsatz, liegt bei dem Entwurf der abstrakten Activity-Klassen \textit{Map}, \textit{Controller} und \textit{Statistics}. Zum Einen
-  			wird die Erweiterung der entsprechenden Schnittstellen aufwändig, sobald mehrere konkrete Ableitungen existieren. Zusätzlich müssen im
- 			Vorhinein sämtliche benötigten Methoden in diese Klassen aufgenommen werden, um die vollständige Funktionalität gewährleisten zu können.
-			\begin{figure}[htbp]
 
+	\begin{figure}[htbp]
 		\begin{minipage}[t]{5cm}
 		\vspace{0pt}
 		{\includegraphics[height=14cm]{images/Surface.eps}}
