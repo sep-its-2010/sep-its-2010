@@ -46,17 +46,5 @@
 			\item Die verbleibenden 30 Bytes können nachrichtenspezifisch verwendet werden
 		\end{itemize}
 	\section{Nachrichtensequenzen}	
-		\begin{tabular}{|l|l|}
-			\hline {\bf Anfragenachrichten des Android-Handys} & {\bf Antwortnachrichten des e-pucks} \\
-			\hline Reset & Bestätigung nach Initialisierung \\
-			\hline Statusabfrage & e-puck System-Up-Time, gegenwärtige Kollisionen, Sturzerkennung, Knotentyp \\
-			\hline Drehbefehl mit Gradangabe & Bestätigung nach Abschluss \\
-			\hline Drehbefehl mit Gradangabe & Stopp durch Sturzerkennung \\
-			\hline Fahrbefehl in Blickrichtung & Bestätigung mit Knotentyp nach Abschluss \\
-			\hline Fahrbefehl in Blickrichtung & Stopp durch Kollision mit Kollisionsrichtung \\
-			\hline Fahrbefehl in Blickrichtung & Stopp durch Sturzerkennung \\
-			\hline Geschwindigkeitsänderung & Bestätigung \\
-			\hline Zustandsvisualisierung per LED & Bestätigung \\
-			\hline 
-		\end{tabular}
+		\includegraphics[height=10cm]{images/epuck_bt_msgs.eps}
 \end{document}
