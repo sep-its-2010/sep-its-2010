@@ -52,7 +52,7 @@
 	\hline
 	Phase & Verantwortlicher & E-Mail \\
 	\hline \hline
-	Pflichtenheft & Florian Lorenz & Lorenz@fim.uni-passau.de \\
+	Pflichtenheft & Florian Lorenz & lorenz@fim.uni-passau.de \\
 	\hline
 	Entwurf & Andreas Wilhelm &  wilhelm@fim.uni-passau.de \\
 	\hline
@@ -348,28 +348,15 @@ typedef struct {
 			werden Knoten ab einem Sensorwert von 50 Prozent des Weiß-Wertes festgestellt. Um keine störenden Kurven bei Knoten mit nur einem
 			Ast zu fahren, wird die Linienverfolgung für die Zeit des Knotens deaktiviert. 
 
-				
-			
 		\section{Smartphone}
-			\subsection{Repräsentation der e-puck Roboter}
-  			Der Zugriff auf einzelne e-pucks aus der Android Applikation heraus erfolgt durch Einsatz des Proxy Patterns. Dieses dient als Schnittstelle
-  			zwischen der Programmlogik und dem Bluetooth Interface. Die Proxy Klasse wird als abstrakte Oberklasse implementiert,wobei jede Instanz
-  			dieser Klasse, genau einen e-puck repräsentiert. Diese Stellvertreterobjekte speichern die Zustände der zugehörigen Roboter und beinhalten
-  			alle Funktionen um Daten des Roboters abzurufen oder zu setzen.
+					
+	
 			\begin{figure}[h]
 				\centering
-				\includegraphics[width=10cm]{images/android_proxy.eps}
-  				\caption{Proxy - Entwurfsmuster}
+				\includegraphics[width=18cm, angle=90]{images/android_klassendiagramm.eps}
+  				\caption{Klassendiagramm - Android Anwendung}
   			\end{figure}	
-  			Durch das Einsparen von Logik im Bluetooth Interface und Auslagern in die Proxy Klasse ist die Austauschbarkeit der Robotermodelle gegeben
-  			und man bleibt flexibel für die Einführung neuer Befehle. \\ \\
-  			Beim Entdecken eines neuen, noch unbekannten e-pucks durch das Bluetooth Interface wird für diesen eine neue Instanz der Proxy Klasse
-  			angelegt. Die Kommunikation mit diesem Roboter ist ausschließlich über dieses Objekt möglich.\\ \\
-  			Das Erkunden von neuen Knoten wird vom e-puck zunächst an das Bluetooth Interface weitergegeben und die Informationen anschließend
-  			in der Environment Klasse verarbeitet. Die Zustände der einzelnen Roboter, wie zum Beispiel die aktuelle Position, wird aber an die
-  			entsprechenden Proxy Instanzen vermittelt und gespeichert.\\ \\
-  			Der andere Weg führt von der Benutzereingabe über das Environment, welches je nach Befehl die richtige Funktion am Objekt des zugehörigen
-  			e-pucks aufruft. Von dort werden Befehle über das Bluetooth Interface an den Roboter gesendet.
+
 			\subsection{Model-View-Controller (MVC) Architektur}
 				Die Daten- bzw. Benutzer-Interaktion der Android-Anwendung wird mit einer MVC-Architektur aufgebaut. Dies ermöglicht ein
 				flexibles Programmdesign, das eine Wiederverwendbarkeit von Komponenten sowie eine reduzierte Komplexität gewährleistet.
@@ -610,6 +597,11 @@ typedef struct {
 	
 	\paragraph*{Hauptmenü} Über das Hauptmenü kann zu den Dialogen `Map' und 'Steer' gewechselt werden.        
       		
+      	\subsection{Repräsentation der e-puck Roboter}
+  			Der Zugriff auf einzelne e-pucks aus der Android Applikation heraus erfolgt durch Einsatz des Proxy Patterns. Dieses dient als Schnittstelle
+  			zwischen der Programmlogik und dem Bluetooth Interface. Die Proxy Klasse wird als abstrakte Oberklasse implementiert,wobei jede Instanz
+  			dieser Klasse, genau einen e-puck repräsentiert. Diese Stellvertreterobjekte speichern die Zustände der zugehörigen Roboter und beinhalten
+  			alle Funktionen um Daten des Roboters abzurufen oder zu setzen.
   		
   		\subsection{Nachrichtenbehandlung}
   			Wir verwenden das Chain-of-Responsibility-Pattern in unserem Projekt, um Nachrichten, die von den e-puck Robotern an das Handy
