@@ -82,16 +82,8 @@
 		Die Roboter sollen ein Spielfeld möglichst zeiteffizient in Kooperation mit den anderen Teilnehmern erkunden.
 		Auf dem Smartphone werden die gesammelten Kartendaten dargestellt. Außerdem kann ein e-puck zur manuellen Steuerung
 		ausgewählt werden. \\ \\
-		Die Kommunikation der Roboter wird über e-puck-Proxys auf dem Smartphone abgewickelt.\\
-		
-		Dieses Dokument stellt den konzeptionellen Entwurf des e-puck Conquest Systems dar. Hierbei handelt es sich um ein
-		verteiltes System mit bis zu sechs  e-puck Roboter und einem Android-Smartphone. \\
-		Die Roboter haben die Aufgabe ein Spielfeld möglichst zeiteffizient in Kooperation mit den anderen Teilnehmern zu erkunden.
-		Auf dem Smartphone werden die gesammelten Kartendaten dargestellt, außerdem kann ein e-puck zur manuellen Steuerung
-		ausgewählt werden. \\
-  		
 		Der Entwurf des Systems wird zur besseren Übersicht in die Bereiche \textit{e-puck Roboter}, \textit{Smartphone}, \textit{abstrakte Logik}
-		 und \textit{Kommunikation} aufgeteilt. \\
+		und \textit{Kommunikation} aufgeteilt. \\
 		Das Ziel ist ein möglichst hohes Maß an Qualität, Wartbarkeit und Erweiterbarkeit. Dazu ist ein sinnvolles Systemdesign unter
 		Verwendung mehrerer verschiedener Entwurfsmuster und Architekturen in allen Bereichen erforderlich. \\ \\
 		Weiterhin werden in den folgenden Abschnitten die verwendeten Datentypen und Schnittstellen der Komponenten erläutert. Die beschränkten
@@ -420,6 +412,205 @@ typedef struct {
   				Model-Schicht weiter. Hier wird also eine Abstraktionsschicht eingeführt, welche die Verbindung zwischen Benutzer-Interaktionen
   				und dem Model beschreibt. Zur Controller-Schicht gehört neben den Ereignisbehandler-Methoden der View Klassen die Klasse
   				\textit{Controller}, welche für die zentrale Steuerung der Model Schicht verantwortlich ist.
+  				
+		\subsection{Aufbau der Dialoge}
+	Die Realisierung aller Dialoge erfolgt nach dem oben beschriebenen Model-View-Controller-Pattern.
+	
+	\paragraph*{View-Schicht} Das Layout der Dialoge wird durch eine xml-Datei beschrieben. Diese wird im Unterzeichnis `layout' des `res'
+	Verzeichnisses abgelegt. Jedes Steuerelement erhält eine innerhalb des zugehörigen Layouts eindeutige ID. Über diese ID kann das Steuerelement
+	im Code identifiziert werden. \\ \\
+	Die Aktualisierung der Views erfolgt durch die Implementierung der der \textit{update()}-Methode in den Activitys. \\ \\
+	Um die Anwendung in den Sprachen Deutsch und Englisch anbieten zu können, wird das Android-eigene Internationalisierungskonzept verwendet. \\ \\
+	Dazu werden die Beschriftungen der Steuerelemente der Views als ""String-Res\-sour\-cen in xml-Dateien hinterlegt. Diese wiederum werden in
+	speziellen Unterverzeichnissen des `res'-Verzeichnisses abgelegt. Pro angebotener Sprache ist dazu eine eigene Datei und ein eigenes
+	Unterverzeichnis erforderlich. \\ \\
+	Durch die Verwendung dieses Systems kann die Anwendung leicht auf weitere Sprachen erweitert werden.
+	
+	\paragraph*{Controller-Schicht} Die Activity übernimmt die Rolle des lokalen Controllers. Sie legt durch die Methode \textit{setContentPane()}
+	das in der xml-Datei beschriebene Layout als View des Dialogs fest. \\ \\
+	Außerdem erstellt sie Referenzen auf die in der Datei beschriebenen Steuerelemente und belegt diese mit benötigten EventListenern. Die Referenzen
+	werden durch die \textit{findViewById()}-Methode der Activitys und den eindeutigen IDs der Steuerelemente erstellt. Die EventListener werden
+	durch innere Klassen der Activity realisiert. Klick-Ereignisse auf Einträge des Hauptmenüs werden durch die geerbte Methode 
+	\textit{onOptionsItemSelected()} verarbeitet. \\ \\
+	
+	\paragraph*{Model-Schicht}
+	Mit Ausnahme des Dialogs `Connect' bzw. der zugehörigen Activity registrieren sich alle Activitys als Observer des \textit{Environment}. Diese
+	Klasse bildet die globale Model-Schicht.
+	
+	\subsection*{Dialog `Connect'}
+	
+	\begin{figure}[h]
+			\centering
+			\includegraphics[width=14cm]{images/entwurf_connect.eps}
+  			\caption{Klassendiagramm des Dialogs `Connect'}
+  	\end{figure}
+	
+	\paragraph*{Kurzbeschreibung} Der Dialog `Connect' ist der Einsprungspunkt der gesamten Anwendung. Er dient der Auswahl der an der Erkundung
+	teilnehmenden e-puck Roboter. Außerdem können über die Import-Funktion abgespeicherte Karten aus vorhergehenden Erkundungen geladen und im Dialog
+	`Map' dargestellt werden.
+	
+	\paragraph*{Bluetooth-Schnittstelle} Die Activity verwaltet eine Referenz auf einen \textit{""Blue\-tooth-A\-dap\-ter}, eine Klasse der Android
+	eigenen Bluetooth-API. Mit diesem kann nach verbindungsbereiten Robotern gesucht werden. Gefundene Geräte werden über Broadcast-Nachrichten des
+	Betriebssystems gemeldet. Deshalb ist ein \textit{Broadcast-Receiver} mit entsprechenden Nachrichtenfiltern zur Verarbeitung der Nachrichten
+	erforderlich.
+	Die Realisierung des Broadcast-Receivers erfolgt als innere Klasse der Activity. Dieser wird mit der Methode \textit{registerReceiver()} zusammen
+	mit einem \textit{IntentFilter} registriert.
+	Der \textit{IntentFilter} wird durch setzen der entsprechenden Eigenschaft auf die beiden Ereignisse `Suche abgeschlossen' und `Gerät gefunden'
+	eingestellt. Eingehende Nachrichten werden in der \textit{onReceive()}-Methode des Broadcast-Receivers verarbeitet.
+	
+	\paragraph*{Bluetooth-Suche} Beim erstmaligen Aufruf des Dialogs wird automatisch eine Suche nach verbindungsbereiten e-pucks gestartet. 
+	Gefundene Roboter werden gespeichert (found\_robots) und mit ihren Bluetooth-Namen in einer ListView aufgelistet. Durch eine 
+	Filterfunktion wird sichergestellt, dass nur e-puck Roboter angezeigt werden, die der im Pflichtenheft spezifizierten Namenskonvention genügen.
+	Durch den Button 'New Search' hat der Benutzer die Möglichkeit, eine neue Suche zu starten. 
+	
+	\paragraph*{Auswahl der teilnehmenden e-puck Roboter} Durch Klick bzw. bei Touch auf die Einträge der ListView können diejenigen e-pucks
+	ausgewählt werden, die an der Erkundung teilnehmen sollen. Ausgewählte Roboter bzw. deren Einträge erscheinen in grüner Schrift, nicht
+	ausgewählte in roter Schrift. Ausgewählte Roboter werden gespeichert (selected\_robots).
+	
+	\paragraph*{Verbindungsherstellung}
+	Bei Auswahl des Menüeintrags `Connect' wird die Anzeige des Dialogs solange gesperrt, bis zu allen ausgewählten e-pucks eine Bluetooth-Verbindung
+	hergestellt wurde. Die Verbindungsherstellung erfolgt sequentiell. Jede erfolgreiche Verbindung liefert eine \textit{BluetoothSocket} zurück.
+	Diese werden in einer Liste gesammelt bis alle Verbindungen aufgebaut wurden.
+	
+	\paragraph*{Erzeugung der Proxys}
+	Anschließend wird dem \textit{Environment} für jeden Socket eine neue Instanz der \textit{Proxy}-Klasse hinzugefügt und der Dialog `Map' über
+	eine \textit{Intent}-Nachricht gestartet.
+	
+	\paragraph*{Verhalten im Fehlerfall}
+	Tritt während der Verbindungsherstellung ein Fehler auf (zum Beispiel e-puck ist nicht mehr verfügbar nachdem die letzte Suche beendet worden
+	ist), wird die Herstellung der Verbindungen abgebrochen. Bereits aufgebaute Verbindungen werden beendet. Der Benutzer erhält eine entsprechende
+	Hinweismeldung und hat die Möglichkeit eine neue Suche zu starten.
+	
+	\subsection*{Dialog `Map'}
+	
+	\begin{figure}[h]
+			\centering
+			\includegraphics[width=14cm]{images/entwurf_map.eps}
+  			\caption{Klassendiagramm des Dialogs `Map'}
+  	\end{figure}
+	
+	\paragraph*{Kurzbeschreibung} Der Dialog `Map' stellt das bereits erkundete Gebiet und die Positionen der Roboter grafisch dar. Zusätzlich werden
+	die Felder der Karte je nach Häugfigkeit der Befahrung unterschiedlich transparent dargestellt.
+	
+	\paragraph*{Zeichnung der Karte und der Roboterpositionen}
+	Die Darstellung erfolgt mit Hilfe der Klasse \textit{MapSurfaceView}, die von der Klasse \textit{SurfaceView} der Android-API erbt. Diese Klasse
+	bietet eine spezielle Zeichenoberfläche an, die durch einen zweiten Thread verwaltet wird. Das Zeichnen der Karte auf diese Oberfläche erfolgt
+	asynchron zum normalen Layout-Prozess des Android Systems durch eine Instanz der Klasse \textit{SurfaceDrawThread}.
+	Dieser enthält Methoden, um alle möglichen Knotentypen und Roboter an bestimmten Koordinaten zu zeichnen.
+	
+	\paragraph*{Autoskalierung der Karte}
+	Im Lauf der Erkundung vergrößert sich die Karte ständig und wird möglicherweise zu groß, um auf dem Display komplett angezeigt zu werden.
+    Die maximale Ausdehnung der Karte kann mit Hilfe der \textit{GridMap} des \textit{Environment} berechnet werden. Diese stellt den größten und
+    kleinsten x-Wert und y-Wert zur Verfügung. Über den Skalierungsfaktor kann dann die Größe der Karte in Pixel berechnet werden. Der
+    Skalierungswert stellt die Größe eines zu zeichnenden Knoten dar. Ein Knoten entspricht einer normalen Kreuzung, einer T-Kreuzung oder
+    einer Ecke.
+	Sollte die zu zeichnende Karte größer sein als das Display, so wird über die Funktion \textit{autoscale()} der Skalierungsfaktor verkleinert.
+	Dadurch wird die Größe der zu zeichnenden Knoten reduziert und die Karte kann vollständig auf dem Display angezeigt werden. 
+	
+	\paragraph*{Scrollfunktion der Karte}
+	Unterschreitet der Skalierungsfaktor einen bestimmten Schwellwert, findet keine Autoskalierung mehr statt, da die Darstellung sonst zu klein
+	werden würde. Statt dessen wird die Karte scrollbar. Der angezeigte Kartenausschnitt kann dann durch Bewegung eines Fingers auf dem Touch-Screen
+	verschoben werden.
+	Die Verarbeitung der Touch-Events erfolgt in einem \textit{OnTouchListener} unter Verwendung der vier Offset-Werte. previousPositonX und
+	previousPositionY speichern die Position des Fingers vor, currentPositonX und currentPositionY nach der Verschiebebewegung. Aus diesen Werten
+	wird die Verschiebung des Kartenausschnitts berechnet.
+	
+	\paragraph*{Auswahl eines Roboters} Der Benutzer kann über ein ""Drop\-Down-Steu\-er\-ele\-ment einen teilnehmenden Roboter auswählen. Dieser
+	wird auf der Karte besonders hervorgehoben. Außerdem werden die von ihm befahrenen Felder farbig gekenntzeichnet und ja nach Häufigkeit der
+	Befahrung unterschiedlich transparent dargestellt. \\
+	Die Auswahl des Roboters kann alternativ durch Touch auf die Darstellung des Roboters in der Karte erfolgen. Der Roboter wird dann im
+	DropDown-Steuerelement als aktuelle Auswahl eingestellt. \\
+	Soll kein Roboter ausgewählt werden, bietet das ""Drop\-Down-Steu\-er\-ele\-ment den Eintrag `none' an. \\ 
+	Die Auswahl eines Roboters ist erst nach erfolgreicher Lokalisierung möglich. Wurde der Dialog durch die Import-Funktion aufgerufen, so ist keine
+	Auswahl möglich. Das ""Drop\-Down-Steu\-er\-ele\-ment wird in diesen Fällen ausgegraut dargestellt.
+	
+	\paragraph*{Verhalten bei Verbindungsverlust} Verliert einer der e-puck Roboter die Verbindung zum Smartphone, so erhält der Benutzer eine
+	entsprechende Hinweismeldung. Durch die Entfernung des zugehörigen Proxys aus dem \textit{Environment} ist gewährleistet, dass der Roboter aus
+	dem ""Drop\-Down-Steu\-er\-ele\-ment entfernt und nicht mehr auf der Karte dargestellt wird. War der ausgefallene e-Puck gerade ausgewählt, wird
+	am ""Drop\-Down-Steu\-er\-ele\-ment der Eintrag `none' eingestellt.
+	
+	\paragraph*{Hauptmenü} Über das Hauptmenü kann zu den Dialogen `Steer' und `Statistics' gewechselt werden. Dies ist jedoch erst nach
+	erfolgreicher Lokalisierung der Roboter möglich. Versucht der Benutzer vorher zu wechseln, erhält er eine entsprechende Hinweismeldung.
+	Wurde der Dialog durch die Import-Funktion des `Connect'-Dialogs gestartet, ist kein Wechsel zum Dialog `Steer' möglich.
+
+	\subsection*{Dialog `Steer'}
+	
+	\begin{figure}[h]
+			\centering
+			\includegraphics[width=14cm]{images/entwurf_steer.eps}
+  			\caption{Klassendiagramm des Dialogs `Steer'}
+  	\end{figure}
+	
+	\paragraph*{Kurzbeschreibung}
+	Der Dialog `Steer' bietet die Möglichkeit, einen teilnehmenden Roboter auszuwählen und manuell zu steuern. Der Benutzer kann den Roboter mit der
+	Steuerung geradeaus bewegen, um 90 Grad rechts und links herum drehen oder durch Drehung um 180 Grad wenden lassen. Der Roboter bewegt sich dabei
+	weiterhin nur auf den Linien des Spielfeldes. \\
+	Der Aufruf des Dialogs ist erst nach Abschluss des Lokalisierungsvorgangs der Roboter möglich.
+	
+	\paragraph*{Auswahl eines Roboters}
+	Über ein ""Drop\-Down-Steu\-er\-ele\-ment kann der zu steuernde Roboter ausgewählt werden. Die ID des ausgewählten Roboters wird gespeichert.
+	
+	\paragraph*{Aktivierung/Deaktivierung der Steuerung} Durch Klick auf den Button `Start' wird die manuelle Steuerung aktiviert. Der entsprechende
+	\textit{Proxy} wird in den Zustand `CONTROLLED' versetzt und kann durch das von ihm implementierte Interface \textit{IRobot} gesteuert werden.
+	Wird im ""Drop\-Down-Steu\-er\-ele\-ment `none' ausgewählt, kann die Steuerung nicht aktiviert werden. \\ \\
+	Die Beschriftung des Buttons ändert sich nach Aktivierung auf `Stop'. Durch einen erneuten Klick auf die Schaltfläche kann die manuelle Steuerung
+	deaktiviert werden. Der Roboter verlässt daraufhin den Zustand `CONTROLLED' und fährt mit seinem letzten Verhalten fort.
+	
+	\paragraph*{Auswahl der Steuerungsart} Ein weiteres ""Drop\-Down-Steu\-er\-ele\-ment ermöglicht die Auswahl der zu verwendeten Steuerungart. Zur
+	Auswahl stehen die Steuerung über einen On-Screen-Joystick oder eine Kippsteuerung über den im Smartphone eingebauten Beschleunigungssensor.
+	
+	\paragraph*{Realisierung des On-Screen-Joysticks} Die Realisierung des On-Screen-Joystick geschieht durch einen einfachen \textit{onTouch}- bzw.
+	\textit{""on\-Click\-E\-vent\-List\-e\-ner}. Berührt der Benutzer einen der vier möglichen Richtungsbuttons, so wird durch einen registrierten
+	Listener das entsprechende Kommando über den globalen \textit{Controller} und das \textit{Environment} an den ausgewählten \textit{Proxy}
+	weitergeleitet.
+	
+	\paragraph*{Realisierung der Kippsteuerung} Die Realisierung der Steuerung mit den Beschleunigungssensoren erfolgt ähnlich: Statt der 
+	\textit{onTouch}- bzw. \textit{""on\-Click\-E\-vent\-List\-e\-ner} wird ein \textit{SensorEventListener} der Android-API verwendet. Dieser wird
+	an einem \textit{SensorManager} registriert und berechnet aus den aktuellen Sensormesswerten eine passende Richtungsanweisung. Diese wird über
+	den globalen \textit{Controller} an den ausgewählten \textit{Proxy} weitergegeben.
+	
+	\paragraph*{Weitergabe der Steuerungsbefehle an den e-puck} Wurde eine Richtungsanweisung an den \textit{Proxy} weitergeleitet, so wird diese vom
+	\textit{Proxy} bzw. dem zugehörigen \textit{LogicThread} per Bluetooth an den e-puck weitergegeben. Dieser sendet nach Ausführung eine
+	Bestätigungsnachricht.
+	Solange die Bestätigungsnachricht nicht eingegangen ist, werden keine weiteren Richtungsanweisungen mehr an den Roboter weitergegeben. In der 
+	Zwischenzeit gegebene Anweisungen werden außerdem gespeichert.
+	
+	\paragraph*{Einstellung der Geschwindigkeit} Die Einstellung der Geschwindigkeit erfolgt in beiden Fällen über ein Slider-Steuerelement. Die
+	Weitergabe von Geschwindigkeitsanweisungen erfolgt ebenfalls über einen \textit{OnClickListener}, der die einzustellende Geschwindigkeit an den
+	globalen \textit{Controller} und das \textit{Environment} weiter gibt.
+	
+	\paragraph*{Verhalten bei Verbindungsverlust} Tritt während der Steuerung ein Fehler durch den Verlust der Verbindung zum e-puck auf, so wird die
+	manuelle Steuerung deaktiviert. Der Benutzer erhält eine entsprechende Hinweismeldung. Der Roboter wird aus dem DropDown-Steuerelement entfernt.
+	Statt dessen wird `none' eingestellt.
+	
+	\paragraph*{Hauptmenü} Über das Hauptmenü kann zu den Dialogen `Map' und `Statistics' gewechselt werden.
+	
+	\subsection*{Dialog `Statistics'}
+	
+	\begin{figure}[h]
+			\centering
+			\includegraphics[width=14cm]{images/entwurf_statistics.eps}
+  			\caption{Klassendiagramm des Dialogs `Statistics'}
+  	\end{figure}
+	
+	\paragraph*{Kurzbeschreibung} Der Dialog „Statistics“ bietet dem Benutzer die Möglichkeit, Statistiken zum aktuellen Erkundungsverlauf zu
+	betrachten.
+	
+	\paragraph*{Angezeigte Statistiken} Nach Start des Dialogs werden folgende Informationen zum aktuellen Erkundungsverlauf angezeigt:
+	\begin{itemize}
+	\item die Zahl der bisher erkundeten Knoten je Roboter
+	\item die Zahl der bisher befahrenen Knoten je Roboter
+	\item die Gesamtzahl der bisher erkundeten Knoten
+	\item die Gesamtzahl der bisher befahrenen Knoten
+	\item das Verhältnis der beiden Gesamtzahlen
+	\end{itemize}
+	
+	\paragraph*{Verhalten bei Verbindungsverlust} Tritt während der Steuerung ein Fehler durch den Verlust der Verbindung zum e-puck auf, so erhält
+	 der Benutzer eine entsprechende Hinweismeldung.
+	
+	\paragraph*{Hauptmenü} Über das Hauptmenü kann zu den Dialogen `Map' und 'Steer' gewechselt werden.        
+      		
+  		
   		\subsection{Nachrichtenbehandlung}
   			Wir verwenden das Chain-of-Responsibility-Pattern in unserem Projekt, um Nachrichten, die von den e-puck Robotern an das Handy
   			geschickt werden, zu analysieren und weiter zu verarbeiten. Die Grundidee hinter diesem Pattern ist, dass die Nachricht durch eine Liste
@@ -461,61 +652,6 @@ typedef struct {
   				\item Der Handler, der keinen Nachfolger mehr hat gibt den Wert false zurück. Somit weiß der Client dass für die Nachricht kein
   					entsprechender Handler zur Verfügung steht.  					
   			\end{enumerate}   
-
-	\begin{figure}[htbp]
-		\begin{minipage}[t]{5cm}
-		\vspace{0pt}
-		{\includegraphics[height=14cm]{images/Surface.eps}}
-		\end{minipage}
-		 \hfill
-		\begin{minipage}[t]{0.5\textwidth}
-		\vspace{30pt}
-		Die Darstellung der Karte erfolgt durch eine Surface-View, die dynamisch mit der erkundeten Fläche der Roboter wächst. Somit vergrößert sich
-		die Karte während der Erkundung und wird möglicherweise zu groß, um auf dem Display komplett angezeigt zu werden. Sollte dieser Fall eintreten wird sie
-		zunächst mittels Autoskalierung an die Größe des Displays angepasst.\\
-		\\
-		Dazu wird vor jedem Neuzeichnen der Surface View eine Autoskalierungsfunktion aufgerufen, die den Skalierungswert solange vermindert bis
-		die Karte schließlich wieder komplett auf dem Display zu sehen ist. Der Skalierungswert stellt die Größe der zu zeichnenden Knoten dar -
-		somit schrumpft die Größe der Karte automatisch mit deren Verkleinerung.\\
-		\\
-		Die Funktion der Autoskalierung ist nur solange sinnvoll wie dieser Wert im positiven Bereich liegt bzw. die e-pucks auf der Karte noch
-		sichtbar sind. Erreicht also der Skalierungswert den Wert Null, so wird eine Scrollfunktion aktiviert, die es erlaubt die Karte mittels des
-		Touchscreens in die gewünschte Richtung zu verschieben. Dazu werden vier Offset Werte verwendet um die Position des Fingers auf dem Display
-		vor und nach dem verschieben festzustellen.
-		\end{minipage}
-		\end{figure}
-		
-		
-		Das Zeichnen der Karte wird über den DrawThread gesteuert. Zunächst werden die Farben für die bereits überfahrenen Knoten mittels der Klasse
-		Paint als Quadrat an die richtige Stelle gesetzt.  Bei einem neuen Ereignis eines e-pucks, wie z.B. das Erkunden eines Knotens, wird die run() Methode
-		aufgerufen und diese verständigt die doDraw() Methode. Hier wird durch die Datenstruktur der Karte iteriert und der Status jedes Knotens ausgelesen.
-		Je nach dem werden dann die entsprechenden draw-Methoden aufgerufen, die alle benötigten Knotentypen selbstständig, also ohne externe Grafiken,
-		zeichnen können. 
-		
-		\begin{figure}[H]
-		\fbox{\includegraphics[height=1cm]{images/BottomLeftEdge.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{images/BottomRightEdge.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{images/BottomT.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{images/cross.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{images/LeftT.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{images/RightT.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{images/TopLeftEdge.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{images/TopRightEdge.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{images/TopT.png}}
-		\caption{Richtungsgrafiken}
-		\end{figure}
-		
-		Die zuvor erzeugten, erkundeten Farbquadrate werden durch die Knoten überzeichnet, sodass sie im Hintergrund aber sichtbar bleiben.
-		Knoten die bereits von einem e-puck erkundet wurden, werden farblich anders dargestellt. Sollte ein bereits erkundeter Knoten noch einmal
-		überfahren werden, so wird die Farbe immer kräftiger.
-		
-		\begin{figure}[h]
-		\fbox{\includegraphics[height=1cm]{images/Visited1.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{images/Visited2.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{images/Visited3.png}}\hfill
-		\fbox{\includegraphics[height=1cm]{images/Visited4.png}}
-		\caption{besuchte Knoten}
-		\end{figure}
 
 	\section{Abstrakte Logik}
 
