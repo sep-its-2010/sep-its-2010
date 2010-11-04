@@ -1,0 +1,17 @@
+\select@language {ngerman}
+\contentsline {section}{\numberline {1}Einleitung}{3}{section.1}
+\contentsline {section}{\numberline {2}e-Puck Roboter}{4}{section.2}
+\contentsline {subsection}{\numberline {2.1}Architektur}{4}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Sensordaten}{8}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Kalibrierung}{9}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}Linienerkennung}{9}{subsection.2.4}
+\contentsline {subsection}{\numberline {2.5}Knotenanalyse}{10}{subsection.2.5}
+\contentsline {section}{\numberline {3}Smartphone}{11}{section.3}
+\contentsline {subsection}{\numberline {3.1}Repr\IeC {\"a}sentation der e-puck Roboter}{11}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Model-View-Controller (MVC) Architektur}{11}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Nachrichtenbehandlung}{13}{subsection.3.3}
+\contentsline {section}{\numberline {4}Abstrakte Logik}{17}{section.4}
+\contentsline {subsection}{\numberline {4.1}Erkundungsalgorithmus}{17}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Lokale Lokalisierung}{18}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}Globale Lokalisierung}{19}{subsection.4.3}
+\contentsline {section}{\numberline {5}Kommunikation}{20}{section.5}

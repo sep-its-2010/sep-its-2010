@@ -1,0 +1,1371 @@
+This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2010.10.26)  4 NOV 2010 15:14
+entering extended mode
+**entwurf.tex
+
+("C:\Users\Florian\Desktop\UNIVERSITÄT PASSAU\SEMESTER IV\SEP\trunk\entwurf\ent
+wurf.tex"
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
+rman, ngerman, german-x-2009-06-19, ngerman-x-2009-06-19, french, loaded.
+("C:\Program Files\MiKTeX 2.8\tex\latex\base\article.cls"
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+("C:\Program Files\MiKTeX 2.8\tex\latex\base\size10.clo"
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\base\inputenc.sty"
+Package: inputenc 2008/03/30 v1.1d Input encoding file
+\inpenc@prehook=\toks14
+\inpenc@posthook=\toks15
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\base\utf8.def"
+File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
+Now handling font encoding OML ...
+... no UTF-8 mapping file for font encoding OML
+Now handling font encoding T1 ...
+... processing UTF-8 mapping file for font encoding T1
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\base\t1enc.dfu"
+File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A1 (decimal 161)
+   defining Unicode char U+00A3 (decimal 163)
+   defining Unicode char U+00AB (decimal 171)
+   defining Unicode char U+00BB (decimal 187)
+   defining Unicode char U+00BF (decimal 191)
+   defining Unicode char U+00C0 (decimal 192)
+   defining Unicode char U+00C1 (decimal 193)
+   defining Unicode char U+00C2 (decimal 194)
+   defining Unicode char U+00C3 (decimal 195)
+   defining Unicode char U+00C4 (decimal 196)
+   defining Unicode char U+00C5 (decimal 197)
+   defining Unicode char U+00C6 (decimal 198)
+   defining Unicode char U+00C7 (decimal 199)
+   defining Unicode char U+00C8 (decimal 200)
+   defining Unicode char U+00C9 (decimal 201)
+   defining Unicode char U+00CA (decimal 202)
+   defining Unicode char U+00CB (decimal 203)
+   defining Unicode char U+00CC (decimal 204)
+   defining Unicode char U+00CD (decimal 205)
+   defining Unicode char U+00CE (decimal 206)
+   defining Unicode char U+00CF (decimal 207)
+   defining Unicode char U+00D0 (decimal 208)
+   defining Unicode char U+00D1 (decimal 209)
+   defining Unicode char U+00D2 (decimal 210)
+   defining Unicode char U+00D3 (decimal 211)
+   defining Unicode char U+00D4 (decimal 212)
+   defining Unicode char U+00D5 (decimal 213)
+   defining Unicode char U+00D6 (decimal 214)
+   defining Unicode char U+00D8 (decimal 216)
+   defining Unicode char U+00D9 (decimal 217)
+   defining Unicode char U+00DA (decimal 218)
+   defining Unicode char U+00DB (decimal 219)
+   defining Unicode char U+00DC (decimal 220)
+   defining Unicode char U+00DD (decimal 221)
+   defining Unicode char U+00DE (decimal 222)
+   defining Unicode char U+00DF (decimal 223)
+   defining Unicode char U+00E0 (decimal 224)
+   defining Unicode char U+00E1 (decimal 225)
+   defining Unicode char U+00E2 (decimal 226)
+   defining Unicode char U+00E3 (decimal 227)
+   defining Unicode char U+00E4 (decimal 228)
+   defining Unicode char U+00E5 (decimal 229)
+   defining Unicode char U+00E6 (decimal 230)
+   defining Unicode char U+00E7 (decimal 231)
+   defining Unicode char U+00E8 (decimal 232)
+   defining Unicode char U+00E9 (decimal 233)
+   defining Unicode char U+00EA (decimal 234)
+   defining Unicode char U+00EB (decimal 235)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00EE (decimal 238)
+   defining Unicode char U+00EF (decimal 239)
+   defining Unicode char U+00F0 (decimal 240)
+   defining Unicode char U+00F1 (decimal 241)
+   defining Unicode char U+00F2 (decimal 242)
+   defining Unicode char U+00F3 (decimal 243)
+   defining Unicode char U+00F4 (decimal 244)
+   defining Unicode char U+00F5 (decimal 245)
+   defining Unicode char U+00F6 (decimal 246)
+   defining Unicode char U+00F8 (decimal 248)
+   defining Unicode char U+00F9 (decimal 249)
+   defining Unicode char U+00FA (decimal 250)
+   defining Unicode char U+00FB (decimal 251)
+   defining Unicode char U+00FC (decimal 252)
+   defining Unicode char U+00FD (decimal 253)
+   defining Unicode char U+00FE (decimal 254)
+   defining Unicode char U+00FF (decimal 255)
+   defining Unicode char U+0102 (decimal 258)
+   defining Unicode char U+0103 (decimal 259)
+   defining Unicode char U+0104 (decimal 260)
+   defining Unicode char U+0105 (decimal 261)
+   defining Unicode char U+0106 (decimal 262)
+   defining Unicode char U+0107 (decimal 263)
+   defining Unicode char U+010C (decimal 268)
+   defining Unicode char U+010D (decimal 269)
+   defining Unicode char U+010E (decimal 270)
+   defining Unicode char U+010F (decimal 271)
+   defining Unicode char U+0110 (decimal 272)
+   defining Unicode char U+0111 (decimal 273)
+   defining Unicode char U+0118 (decimal 280)
+   defining Unicode char U+0119 (decimal 281)
+   defining Unicode char U+011A (decimal 282)
+   defining Unicode char U+011B (decimal 283)
+   defining Unicode char U+011E (decimal 286)
+   defining Unicode char U+011F (decimal 287)
+   defining Unicode char U+0130 (decimal 304)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0132 (decimal 306)
+   defining Unicode char U+0133 (decimal 307)
+   defining Unicode char U+0139 (decimal 313)
+   defining Unicode char U+013A (decimal 314)
+   defining Unicode char U+013D (decimal 317)
+   defining Unicode char U+013E (decimal 318)
+   defining Unicode char U+0141 (decimal 321)
+   defining Unicode char U+0142 (decimal 322)
+   defining Unicode char U+0143 (decimal 323)
+   defining Unicode char U+0144 (decimal 324)
+   defining Unicode char U+0147 (decimal 327)
+   defining Unicode char U+0148 (decimal 328)
+   defining Unicode char U+014A (decimal 330)
+   defining Unicode char U+014B (decimal 331)
+   defining Unicode char U+0150 (decimal 336)
+   defining Unicode char U+0151 (decimal 337)
+   defining Unicode char U+0152 (decimal 338)
+   defining Unicode char U+0153 (decimal 339)
+   defining Unicode char U+0154 (decimal 340)
+   defining Unicode char U+0155 (decimal 341)
+   defining Unicode char U+0158 (decimal 344)
+   defining Unicode char U+0159 (decimal 345)
+   defining Unicode char U+015A (decimal 346)
+   defining Unicode char U+015B (decimal 347)
+   defining Unicode char U+015E (decimal 350)
+   defining Unicode char U+015F (decimal 351)
+   defining Unicode char U+0160 (decimal 352)
+   defining Unicode char U+0161 (decimal 353)
+   defining Unicode char U+0162 (decimal 354)
+   defining Unicode char U+0163 (decimal 355)
+   defining Unicode char U+0164 (decimal 356)
+   defining Unicode char U+0165 (decimal 357)
+   defining Unicode char U+016E (decimal 366)
+   defining Unicode char U+016F (decimal 367)
+   defining Unicode char U+0170 (decimal 368)
+   defining Unicode char U+0171 (decimal 369)
+   defining Unicode char U+0178 (decimal 376)
+   defining Unicode char U+0179 (decimal 377)
+   defining Unicode char U+017A (decimal 378)
+   defining Unicode char U+017B (decimal 379)
+   defining Unicode char U+017C (decimal 380)
+   defining Unicode char U+017D (decimal 381)
+   defining Unicode char U+017E (decimal 382)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201A (decimal 8218)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+   defining Unicode char U+201E (decimal 8222)
+   defining Unicode char U+2030 (decimal 8240)
+   defining Unicode char U+2031 (decimal 8241)
+   defining Unicode char U+2039 (decimal 8249)
+   defining Unicode char U+203A (decimal 8250)
+   defining Unicode char U+2423 (decimal 9251)
+)
+Now handling font encoding OT1 ...
+... processing UTF-8 mapping file for font encoding OT1
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\base\ot1enc.dfu"
+File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A1 (decimal 161)
+   defining Unicode char U+00A3 (decimal 163)
+   defining Unicode char U+00B8 (decimal 184)
+   defining Unicode char U+00BF (decimal 191)
+   defining Unicode char U+00C5 (decimal 197)
+   defining Unicode char U+00C6 (decimal 198)
+   defining Unicode char U+00D8 (decimal 216)
+   defining Unicode char U+00DF (decimal 223)
+   defining Unicode char U+00E6 (decimal 230)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00EE (decimal 238)
+   defining Unicode char U+00EF (decimal 239)
+   defining Unicode char U+00F8 (decimal 248)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0141 (decimal 321)
+   defining Unicode char U+0142 (decimal 322)
+   defining Unicode char U+0152 (decimal 338)
+   defining Unicode char U+0153 (decimal 339)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+)
+Now handling font encoding OMS ...
+... processing UTF-8 mapping file for font encoding OMS
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\base\omsenc.dfu"
+File: omsenc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A7 (decimal 167)
+   defining Unicode char U+00B6 (decimal 182)
+   defining Unicode char U+00B7 (decimal 183)
+   defining Unicode char U+2020 (decimal 8224)
+   defining Unicode char U+2021 (decimal 8225)
+   defining Unicode char U+2022 (decimal 8226)
+)
+Now handling font encoding OMX ...
+... no UTF-8 mapping file for font encoding OMX
+Now handling font encoding U ...
+... no UTF-8 mapping file for font encoding U
+   defining Unicode char U+00A9 (decimal 169)
+   defining Unicode char U+00AA (decimal 170)
+   defining Unicode char U+00AE (decimal 174)
+   defining Unicode char U+00BA (decimal 186)
+   defining Unicode char U+02C6 (decimal 710)
+   defining Unicode char U+02DC (decimal 732)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2026 (decimal 8230)
+   defining Unicode char U+2122 (decimal 8482)
+   defining Unicode char U+2423 (decimal 9251)
+))
+("C:\Program Files\MiKTeX 2.8\tex\latex\ams\math\amsmath.sty"
+Package: amsmath 2000/07/18 v2.13 AMS math features
+\@mathmargin=\skip43
+
+For additional information on amsmath, use the `?' option.
+("C:\Program Files\MiKTeX 2.8\tex\latex\ams\math\amstext.sty"
+Package: amstext 2000/06/29 v2.01
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\ams\math\amsgen.sty"
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks16
+\ex@=\dimen103
+))
+("C:\Program Files\MiKTeX 2.8\tex\latex\ams\math\amsbsy.sty"
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen104
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\ams\math\amsopn.sty"
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count87
+LaTeX Info: Redefining \frac on input line 211.
+\uproot@=\count88
+\leftroot@=\count89
+LaTeX Info: Redefining \overline on input line 307.
+\classnum@=\count90
+\DOTSCASE@=\count91
+LaTeX Info: Redefining \ldots on input line 379.
+LaTeX Info: Redefining \dots on input line 382.
+LaTeX Info: Redefining \cdots on input line 467.
+\Mathstrutbox@=\box26
+\strutbox@=\box27
+\big@size=\dimen105
+LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
+\macc@depth=\count92
+\c@MaxMatrixCols=\count93
+\dotsspace@=\muskip10
+\c@parentequation=\count94
+\dspbrk@lvl=\count95
+\tag@help=\toks17
+\row@=\count96
+\column@=\count97
+\maxfields@=\count98
+\andhelp@=\toks18
+\eqnshift@=\dimen106
+\alignsep@=\dimen107
+\tagshift@=\dimen108
+\tagwidth@=\dimen109
+\totwidth@=\dimen110
+\lineht@=\dimen111
+\@envbody=\toks19
+\multlinegap=\skip44
+\multlinetaggap=\skip45
+\mathdisplay@stack=\toks20
+LaTeX Info: Redefining \[ on input line 2666.
+LaTeX Info: Redefining \] on input line 2667.
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\amsfonts\amsfonts.sty"
+Package: amsfonts 2009/06/22 v3.00 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 96.
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\amsfonts\amssymb.sty"
+Package: amssymb 2009/06/22 v3.00
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\graphics\graphicx.sty"
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\graphics\keyval.sty"
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks21
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\graphics\graphics.sty"
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\graphics\trig.sty"
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\00miktex\graphics.cfg"
+File: graphics.cfg 2007/01/18 v1.5 graphics configuration of teTeX/TeXLive
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\pdftex-def\pdftex.def"
+File: pdftex.def 2009/08/25 v0.04m Graphics/color for pdfTeX
+\Gread@gobject=\count99
+))
+\Gin@req@height=\dimen112
+\Gin@req@width=\dimen113
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\oberdiek\epstopdf.sty"
+Package: epstopdf 2009/10/17 v2.4 Conversion with epstopdf on the fly (HO)
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\oberdiek\epstopdf-base.sty"
+Package: epstopdf-base 2009/10/17 v2.4 Base part for package epstopdf
+
+("C:\Program Files\MiKTeX 2.8\tex\generic\oberdiek\infwarerr.sty"
+Package: infwarerr 2007/09/09 v1.2 Providing info/warning/message (HO)
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\oberdiek\grfext.sty"
+Package: grfext 2007/09/30 v1.0 Managing graphics extensions (HO)
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\oberdiek\kvoptions.sty"
+Package: kvoptions 2009/08/13 v3.4 Keyval support for LaTeX options (HO)
+
+("C:\Program Files\MiKTeX 2.8\tex\generic\oberdiek\kvsetkeys.sty"
+Package: kvsetkeys 2009/07/30 v1.5 Key value parser with default handler suppor
+t (HO)
+
+("C:\Program Files\MiKTeX 2.8\tex\generic\oberdiek\etexcmds.sty"
+Package: etexcmds 2007/12/12 v1.2 Prefix for e-TeX command names (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+("C:\Program Files\MiKTeX 2.8\tex\generic\oberdiek\pdftexcmds.sty"
+Package: pdftexcmds 2009/09/23 v0.6 LuaTeX support for pdfTeX utility functions
+ (HO)
+
+("C:\Program Files\MiKTeX 2.8\tex\generic\oberdiek\ifluatex.sty"
+Package: ifluatex 2009/04/17 v1.2 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+("C:\Program Files\MiKTeX 2.8\tex\generic\oberdiek\ltxcmds.sty"
+Package: ltxcmds 2009/08/05 v1.0 Some LaTeX kernel commands for general use (HO
+)
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+)
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 433.
+))
+("C:\Program Files\MiKTeX 2.8\tex\generic\babel\babel.sty"
+Package: babel 2008/07/06 v3.8l The Babel package
+
+*************************************
+* Local config file bblopts.cfg used
+*
+("C:\Program Files\MiKTeX 2.8\tex\latex\00miktex\bblopts.cfg"
+File: bblopts.cfg 2006/07/31 v1.0 MiKTeX 'babel' configuration
+)
+("C:\Program Files\MiKTeX 2.8\tex\generic\babel\ngermanb.ldf"
+Language: ngermanb 2008/07/06 v2.6n new German support from the babel system
+
+("C:\Program Files\MiKTeX 2.8\tex\generic\babel\babel.def"
+File: babel.def 2008/07/06 v3.8l Babel common definitions
+\babel@savecnt=\count100
+\U@D=\dimen114
+)
+\l@naustrian = a dialect from \language\l@ngerman 
+Package babel Info: Making " an active character on input line 92.
+))
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\translator\base\translat
+or.sty
+Package: translator 2007/03/11 ver 1.00
+
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\translator\base\translat
+or-language-mappings.tex))
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\listings\listings.sty
+\lst@mode=\count101
+\lst@gtempboxa=\box28
+\lst@token=\toks22
+\lst@length=\count102
+\lst@currlwidth=\dimen115
+\lst@column=\count103
+\lst@pos=\count104
+\lst@lostspace=\dimen116
+\lst@width=\dimen117
+\lst@newlines=\count105
+\lst@lineno=\count106
+\lst@maxwidth=\dimen118
+
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\listings\lstmisc.sty
+File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
+\c@lstnumber=\count107
+\lst@skipnumbers=\count108
+\lst@framebox=\box29
+)
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\listings\listings.cfg
+File: listings.cfg 2007/02/22 1.4 listings configuration
+))
+Package: listings 2007/02/22 1.4 (Carsten Heinz)
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\hyperref\hyperref.sty"
+Package: hyperref 2009/10/19 v6.79b Hypertext links for LaTeX
+
+("C:\Program Files\MiKTeX 2.8\tex\generic\oberdiek\ifpdf.sty"
+Package: ifpdf 2009/04/10 v2.0 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in pdf mode detected.
+)
+("C:\Program Files\MiKTeX 2.8\tex\generic\oberdiek\ifvtex.sty"
+Package: ifvtex 2008/11/04 v1.4 Switches for detecting VTeX and its modes (HO)
+Package ifvtex Info: VTeX not detected.
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\ifxetex\ifxetex.sty"
+Package: ifxetex 2009/01/23 v0.5 Provides ifxetex conditional
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\oberdiek\hycolor.sty"
+Package: hycolor 2009/10/02 v1.5 Code for color options of hyperref/bookmark (H
+O)
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\oberdiek\xcolor-patch.sty"
+Package: xcolor-patch 2009/10/02 xcolor patch
+))
+\@linkdim=\dimen119
+\Hy@linkcounter=\count109
+\Hy@pagecounter=\count110
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\hyperref\pd1enc.def"
+File: pd1enc.def 2009/10/19 v6.79b Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\00miktex\hyperref.cfg"
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 2864.
+
+
+Package hyperref Warning: Option `pagecolor' is not available anymore.
+
+Package hyperref Info: Option `bookmarks' set `true' on input line 2864.
+Package hyperref Info: Option `bookmarksopen' set `true' on input line 2864.
+Package hyperref Info: Option `plainpages' set `false' on input line 2864.
+Package hyperref Info: Option `pdfpagelabels' set `true' on input line 2864.
+Package hyperref Info: Hyper figures OFF on input line 2975.
+Package hyperref Info: Link nesting OFF on input line 2980.
+Package hyperref Info: Hyper index ON on input line 2983.
+Package hyperref Info: Plain pages OFF on input line 2990.
+Package hyperref Info: Backreferencing OFF on input line 2995.
+Implicit mode ON; LaTeX internals redefined
+Package hyperref Info: Bookmarks ON on input line 3191.
+("C:\Program Files\MiKTeX 2.8\tex\latex\ltxmisc\url.sty"
+\Urlmuskip=\muskip11
+Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 3428.
+
+("C:\Program Files\MiKTeX 2.8\tex\generic\oberdiek\bitset.sty"
+Package: bitset 2007/09/28 v1.0 Data type bit set (HO)
+
+("C:\Program Files\MiKTeX 2.8\tex\generic\oberdiek\intcalc.sty"
+Package: intcalc 2007/09/27 v1.1 Expandable integer calculations (HO)
+)
+("C:\Program Files\MiKTeX 2.8\tex\generic\oberdiek\bigintcalc.sty"
+Package: bigintcalc 2007/11/11 v1.1 Expandable big integer calculations (HO)
+))
+\Fld@menulength=\count111
+\Field@Width=\dimen120
+\Fld@charsize=\dimen121
+\Field@toks=\toks23
+Package hyperref Info: Hyper figures OFF on input line 4377.
+Package hyperref Info: Link nesting OFF on input line 4382.
+Package hyperref Info: Hyper index ON on input line 4385.
+Package hyperref Info: backreferencing OFF on input line 4392.
+Package hyperref Info: Link coloring ON on input line 4395.
+Package hyperref Info: Link coloring with OCG OFF on input line 4402.
+Package hyperref Info: PDF/A mode OFF on input line 4407.
+
+("C:\Program Files\MiKTeX 2.8\tex\generic\oberdiek\atbegshi.sty"
+Package: atbegshi 2008/07/31 v1.9 At begin shipout hook (HO)
+)
+\Hy@abspage=\count112
+\c@Item=\count113
+\c@Hfootnote=\count114
+)
+*hyperref using default driver hpdftex*
+("C:\Program Files\MiKTeX 2.8\tex\latex\hyperref\hpdftex.def"
+File: hpdftex.def 2009/10/19 v6.79b Hyperref driver for pdfTeX
+\Fld@listcount=\count115
+)
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\glossaries\base\glossari
+es.sty
+Package: glossaries 2010/07/10 v2.07 (NLCT)
+ ("C:\Program Files\MiKTeX 2.8\tex\latex\base\ifthen.sty"
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+("C:\Program Files\MiKTeX 2.8\tex\latex\xkeyval\xkeyval.sty"
+Package: xkeyval 2008/08/13 v2.6a package option processing (HA)
+
+("C:\Program Files\MiKTeX 2.8\tex\generic\xkeyval\xkeyval.tex"
+\XKV@toks=\toks24
+\XKV@tempa@toks=\toks25
+\XKV@depth=\count116
+File: xkeyval.tex 2008/08/13 v2.6a key=value parser (HA)
+))
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\glossaries\base\mfirstuc
+.sty
+Package: mfirstuc 2009/11/03 v1.04 (NLCT)
+\@glsmfirst=\toks26
+\@glsmrest=\toks27
+) (C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\xfor\xfor.sty
+Package: xfor 2009/02/05 v1.05 (NLCT)
+)
+\gls@level=\count117
+\@gls@tmpb=\toks28
+\gls@tmplen=\skip46
+\istfile=\write3
+\glskeylisttok=\toks29
+\glslabeltok=\toks30
+\glsshorttok=\toks31
+\glslongtok=\toks32
+
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\glossaries\styles\glossa
+ry-hypernav.sty
+Package: glossary-hypernav 2007/07/04 v1.01 (NLCT)
+)
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\glossaries\styles\glossa
+ry-list.sty
+Package: glossary-list 2009/05/30 v2.01 (NLCT)
+\glslistdottedwidth=\skip47
+)
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\glossaries\styles\glossa
+ry-long.sty
+Package: glossary-long 2009/05/30 v2.01 (NLCT)
+ ("C:\Program Files\MiKTeX 2.8\tex\latex\tools\longtable.sty"
+Package: longtable 2004/02/01 v4.11 Multi-page Table package (DPC)
+\LTleft=\skip48
+\LTright=\skip49
+\LTpre=\skip50
+\LTpost=\skip51
+\LTchunksize=\count118
+\LTcapwidth=\dimen122
+\LT@head=\box30
+\LT@firsthead=\box31
+\LT@foot=\box32
+\LT@lastfoot=\box33
+\LT@cols=\count119
+\LT@rows=\count120
+\c@LT@tables=\count121
+\c@LT@chunks=\count122
+\LT@p@ftn=\toks33
+)
+\glsdescwidth=\skip52
+\glspagelistwidth=\skip53
+)
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\glossaries\styles\glossa
+ry-super.sty
+Package: glossary-super 2009/05/30 v2.01 (NLCT)
+
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\supertabular\supertabula
+r.sty
+Package: supertabular 2004/02/20 v4.1e the supertabular environment
+\c@tracingst=\count123
+\ST@wd=\dimen123
+\ST@rightskip=\skip54
+\ST@leftskip=\skip55
+\ST@parfillskip=\skip56
+\ST@pageleft=\dimen124
+\ST@headht=\dimen125
+\ST@tailht=\dimen126
+\ST@pagesofar=\dimen127
+\ST@pboxht=\dimen128
+\ST@lineht=\dimen129
+\ST@stretchht=\dimen130
+\ST@prevht=\dimen131
+\ST@toadd=\dimen132
+\ST@dimen=\dimen133
+\ST@pbox=\box34
+))
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\glossaries\styles\glossa
+ry-tree.sty
+Package: glossary-tree 2009/01/14 v1.01 (NLCT)
+\glstreeindent=\skip57
+))
+\glo@main@file=\write4
+Package glossaries Info: Writing glossary file entwurf.glo on input line 32.
+\glo@acronym@file=\write5
+Package glossaries Info: Writing glossary file entwurf.acn on input line 32.
+
+No file entwurf.aux.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 70.
+LaTeX Font Info:    ... okay on input line 70.
+("C:\Program Files\MiKTeX 2.8\tex\context\base\supp-pdf.tex"
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count124
+\scratchdimen=\dimen134
+\scratchbox=\box35
+\nofMPsegments=\count125
+\nofMParguments=\count126
+\everyMPshowfont=\toks34
+\MPscratchCnt=\count127
+\MPscratchDim=\dimen135
+\MPnumerator=\count128
+\everyMPtoPDFconversion=\toks35
+)
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\glossaries\dict\glossari
+es-dictionary-English.dict
+Dictionary: glossaries-dictionary, Language: English 
+)
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\glossaries\dict\glossari
+es-dictionary-German.dict
+Dictionary: glossaries-dictionary, Language: German 
+)
+\c@lstlisting=\count129
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\graphics\color.sty"
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\00miktex\color.cfg"
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+Package hyperref Info: Link coloring ON on input line 70.
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\hyperref\nameref.sty"
+Package: nameref 2007/05/29 v2.31 Cross-referencing by name of section
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\oberdiek\refcount.sty"
+Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
+)
+\c@section@level=\count130
+)
+LaTeX Info: Redefining \ref on input line 70.
+LaTeX Info: Redefining \pageref on input line 70.
+\@outlinefile=\write6
+\AtBeginShipoutBox=\box36
+Package epstopdf Info: Source file: <logo.eps>
+(epstopdf)                    date: 2010-10-26 16:55:22
+(epstopdf)                    size: 1388790 bytes
+(epstopdf)             Output file: <logo-eps-converted-to.pdf>
+(epstopdf)             Command: <epstopdf --outfile=logo-eps-converted-to.pdf l
+ogo.eps>
+(epstopdf)             \includegraphics on input line 72.
+runsystem(epstopdf --outfile=logo-eps-converted-to.pdf logo.eps)...executed (al
+lowed).
+
+Package epstopdf Info: Result file: <logo-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-11-04 15:14:59
+(epstopdf)                    size: 91029 bytes.
+
+<logo-eps-converted-to.pdf, id=3, 240.9pt x 466.74374pt>
+File: logo-eps-converted-to.pdf Graphic file (type pdf)
+
+<use logo-eps-converted-to.pdf>
+LaTeX Font Info:    Try loading font information for U+msa on input line 72.
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\amsfonts\umsa.fd"
+File: umsa.fd 2009/06/22 v3.00 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 72.
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\amsfonts\umsb.fd"
+File: umsb.fd 2009/06/22 v3.00 AMS symbols B
+)
+Overfull \hbox (35.03966pt too wide) in paragraph at lines 72--72
+ [][] 
+ []
+
+[1
+
+{C:/Users/Florian/AppData/Local/MiKTeX/2.8/pdftex/config/pdftex.map} <C:/Users/
+Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/logo-eps-conve
+rted-to.pdf>]
+\tf@toc=\write7
+ [2]
+Underfull \hbox (badness 10000) in paragraph at lines 77--83
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 77--83
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 84--89
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 90--97
+
+ []
+
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 101--104
+
+ []
+
+Package epstopdf Info: Source file: <images/e-puck_architecture.eps>
+(epstopdf)                    date: 2010-11-03 13:11:40
+(epstopdf)                    size: 50404 bytes
+(epstopdf)             Output file: <images/e-puck_architecture-eps-converted-t
+o.pdf>
+(epstopdf)             Command: <epstopdf --outfile=images/e-puck_architecture-
+eps-converted-to.pdf images/e-puck_architecture.eps>
+(epstopdf)             \includegraphics on input line 107.
+runsystem(epstopdf --outfile=images/e-puck_architecture-eps-converted-to.pdf im
+ages/e-puck_architecture.eps)...executed (allowed).
+
+Package epstopdf Info: Result file: <images/e-puck_architecture-eps-converted-t
+o.pdf>
+(epstopdf)                    date: 2010-11-04 15:15:08
+(epstopdf)                    size: 14319 bytes.
+
+<images/e-puck_architecture-eps-converted-to.pdf, id=37, 566.115pt x 288.07625p
+t>
+File: images/e-puck_architecture-eps-converted-to.pdf Graphic file (type pdf)
+ <use images/e-puck_architecture-eps-converted-to.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 114--118
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 114--118
+
+ []
+
+
+Overfull \hbox (2.27031pt too wide) in paragraph at lines 125--128
+ \OT1/cmr/bx/n/10 Kom-po-nen-te `Real-Time-Clock' \OT1/cmr/m/n/10 Die `Real-Tim
+e-Clock'-Komponente stellt
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 125--128
+
+ []
+
+
+Overfull \hbox (7.9796pt too wide) in paragraph at lines 135--137
+\OT1/cmr/m/n/10 reit. Sie enth[]alt au-er-dem Funk-tio-nen zum Sen-den und Emp
+-fan-gen von Bluetooth-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 135--137
+
+ []
+
+[4 <C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/i
+mages/e-puck_architecture-eps-converted-to.pdf>]
+Underfull \hbox (badness 10000) in paragraph at lines 141--147
+
+ []
+
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\listings\lstlang1.sty
+File: lstlang1.sty 2004/09/05 1.3 listings language file
+)
+(C:\Users\Florian\AppData\Roaming\MiKTeX\2.8\tex\latex\listings\lstmisc.sty
+File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
+)
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 158.
+
+
+("C:\Program Files\MiKTeX 2.8\tex\latex\base\omscmr.fd"
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 158.
+
+Underfull \hbox (badness 10000) in paragraph at lines 167--169
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 187--192
+
+ []
+
+[5]
+Overfull \hbox (72.06306pt too wide) in paragraph at lines 210--212
+\OT1/cmr/m/n/10 Mas-ter-funk-tio-na-lit[]at des I2C-Moduls. Au-er-dem wer-den 
+grund-le-gen-den []Ubertragungsfunktionen
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 210--212
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 219--224
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--233
+
+ []
+
+
+Overfull \hbox (0.34161pt too wide) in paragraph at lines 240--242
+\OT1/cmr/m/n/10 Hardware-Register in-itia-li-siert. So-bald dies ge-sche-hen is
+t, kann durch die-se Kom-
+ []
+
+[6]
+Underfull \hbox (badness 10000) in paragraph at lines 249--253
+
+ []
+
+Package epstopdf Info: Source file: <images/subsumption.eps>
+(epstopdf)                    date: 2010-11-04 13:19:59
+(epstopdf)                    size: 45848 bytes
+(epstopdf)             Output file: <images/subsumption-eps-converted-to.pdf>
+(epstopdf)             Command: <epstopdf --outfile=images/subsumption-eps-conv
+erted-to.pdf images/subsumption.eps>
+(epstopdf)             \includegraphics on input line 254.
+runsystem(epstopdf --outfile=images/subsumption-eps-converted-to.pdf images/sub
+sumption.eps)...executed (allowed).
+
+Package epstopdf Info: Result file: <images/subsumption-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-11-04 15:15:11
+(epstopdf)                    size: 13210 bytes.
+<images/subsumption-eps-converted-to.pdf, id=87, 363.3575pt x 222.8325pt>
+File: images/subsumption-eps-converted-to.pdf Graphic file (type pdf)
+
+<use images/subsumption-eps-converted-to.pdf>
+Overfull \hbox (2.19492pt too wide) in paragraph at lines 256--265
+\OT1/cmr/m/n/10 Die ein-zel-nen Ver-hal-tens-schich-ten be-fin-den sich ge-kap-
+selt in ein-zel-nen C-Dateien,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 256--265
+
+ []
+
+[7 <C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/i
+mages/subsumption-eps-converted-to.pdf>]
+
+LaTeX Warning: Reference `fig:auswertung' on page 8 undefined on input line 315
+.
+
+Package epstopdf Info: Source file: <images/sensorgrafik.eps>
+(epstopdf)                    date: 2010-11-04 09:37:28
+(epstopdf)                    size: 11956 bytes
+(epstopdf)             Output file: <images/sensorgrafik-eps-converted-to.pdf>
+(epstopdf)             Command: <epstopdf --outfile=images/sensorgrafik-eps-con
+verted-to.pdf images/sensorgrafik.eps>
+(epstopdf)             \includegraphics on input line 321.
+runsystem(epstopdf --outfile=images/sensorgrafik-eps-converted-to.pdf images/se
+nsorgrafik.eps)...executed (allowed).
+
+Package epstopdf Info: Result file: <images/sensorgrafik-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-11-04 15:15:12
+(epstopdf)                    size: 4160 bytes.
+
+<images/sensorgrafik-eps-converted-to.pdf, id=105, 1265.72874pt x 715.67375pt>
+File: images/sensorgrafik-eps-converted-to.pdf Graphic file (type pdf)
+
+<use images/sensorgrafik-eps-converted-to.pdf>
+Overfull \hbox (81.79134pt too wide) in paragraph at lines 321--322
+ [][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[8] [9 <C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwu
+rf/images/sensorgrafik-eps-converted-to.pdf>]
+
+LaTeX Warning: Reference `fig:auswertung' on page 10 undefined on input line 35
+1.
+
+
+Overfull \hbox (1.17377pt too wide) in paragraph at lines 350--355
+\OT1/cmr/m/n/10 nem Sen-sor-wert von 50 Pro-zent des Wei-Wertes fest-ge-stellt
+. Um kei-ne st[]orenden
+ []
+
+[10]
+Package epstopdf Info: Source file: <images/android_proxy.eps>
+(epstopdf)                    date: 2010-10-27 09:46:15
+(epstopdf)                    size: 77482 bytes
+(epstopdf)             Output file: <images/android_proxy-eps-converted-to.pdf>
+
+(epstopdf)             Command: <epstopdf --outfile=images/android_proxy-eps-co
+nverted-to.pdf images/android_proxy.eps>
+(epstopdf)             \includegraphics on input line 366.
+runsystem(epstopdf --outfile=images/android_proxy-eps-converted-to.pdf images/a
+ndroid_proxy.eps)...executed (allowed).
+
+Package epstopdf Info: Result file: <images/android_proxy-eps-converted-to.pdf>
+
+(epstopdf)                    date: 2010-11-04 15:15:20
+(epstopdf)                    size: 20755 bytes.
+
+<images/android_proxy-eps-converted-to.pdf, id=136, 476.78125pt x 233.87375pt>
+File: images/android_proxy-eps-converted-to.pdf Graphic file (type pdf)
+
+<use images/android_proxy-eps-converted-to.pdf>
+Underfull \hbox (badness 10000) in paragraph at lines 360--378
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 360--378
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 360--378
+
+ []
+
+
+Underfull \hbox (badness 2189) in paragraph at lines 385--385
+[][][]\OT1/cmr/m/n/8 Android - User In-ter-face ([][]$\OT1/cmtt/m/n/8 http : / 
+/ developer . android . com / guide / topics / ui / index .
+ []
+
+Package epstopdf Info: Source file: <images/android_mvc.eps>
+(epstopdf)                    date: 2010-11-03 13:11:40
+(epstopdf)                    size: 430171 bytes
+(epstopdf)             Output file: <images/android_mvc-eps-converted-to.pdf>
+(epstopdf)             Command: <epstopdf --outfile=images/android_mvc-eps-conv
+erted-to.pdf images/android_mvc.eps>
+(epstopdf)             \includegraphics on input line 392.
+runsystem(epstopdf --outfile=images/android_mvc-eps-converted-to.pdf images/and
+roid_mvc.eps)...executed (allowed).
+
+Package epstopdf Info: Result file: <images/android_mvc-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-11-04 15:15:32
+(epstopdf)                    size: 88316 bytes.
+<images/android_mvc-eps-converted-to.pdf, id=139, 515.9275pt x 443.6575pt>
+File: images/android_mvc-eps-converted-to.pdf Graphic file (type pdf)
+
+<use images/android_mvc-eps-converted-to.pdf> [11 <C:/Users/Florian/Desktop/UNI
+VERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/images/android_proxy-eps-converte
+d-to.pdf>] [12 <C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/tru
+nk/entwurf/images/android_mvc-eps-converted-to.pdf>]
+Overfull \hbox (6.2572pt too wide) in paragraph at lines 416--420
+\OT1/cmr/m/n/10 dung zwi-schen Benutzer-Interaktionen und dem Mo-del be-schreib
+t. Zur Controller-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 421--430
+
+ []
+
+[13]
+Overfull \hbox (6.2506pt too wide) in paragraph at lines 443--444
+\OT1/cmr/m/n/10 Ruft Funk-ti-on hand-le-re-quest(Nachricht) auf ers-ten Lis-ten
+-ele-ment der Hand-
+ []
+
+Package epstopdf Info: Source file: <images/android_handler.eps>
+(epstopdf)                    date: 2010-10-27 09:46:15
+(epstopdf)                    size: 74276 bytes
+(epstopdf)             Output file: <images/android_handler-eps-converted-to.pd
+f>
+(epstopdf)             Command: <epstopdf --outfile=images/android_handler-eps-
+converted-to.pdf images/android_handler.eps>
+(epstopdf)             \includegraphics on input line 447.
+runsystem(epstopdf --outfile=images/android_handler-eps-converted-to.pdf images
+/android_handler.eps)...executed (allowed).
+
+Package epstopdf Info: Result file: <images/android_handler-eps-converted-to.pd
+f>
+(epstopdf)                    date: 2010-11-04 15:15:39
+(epstopdf)                    size: 19861 bytes.
+
+<images/android_handler-eps-converted-to.pdf, id=202, 475.7775pt x 242.9075pt>
+File: images/android_handler-eps-converted-to.pdf Graphic file (type pdf)
+
+<use images/android_handler-eps-converted-to.pdf> [14 <C:/Users/Florian/Desktop
+/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/images/android_handler-eps-co
+nverted-to.pdf>]
+Package epstopdf Info: Source file: <images/Surface.eps>
+(epstopdf)                    date: 2010-11-03 10:01:28
+(epstopdf)                    size: 14332 bytes
+(epstopdf)             Output file: <images/Surface-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-11-03 10:14:41
+(epstopdf)                    size: 3240 bytes
+(epstopdf)             Command: <epstopdf --outfile=images/Surface-eps-converte
+d-to.pdf images/Surface.eps>
+(epstopdf)             \includegraphics on input line 465.
+Package epstopdf Info: Output file is already uptodate.
+
+<images/Surface-eps-converted-to.pdf, id=224, 324.21124pt x 785.93625pt>
+File: images/Surface-eps-converted-to.pdf Graphic file (type pdf)
+
+<use images/Surface-eps-converted-to.pdf>
+Overfull \hbox (22.06267pt too wide) in paragraph at lines 465--466
+[][] 
+ []
+
+
+Underfull \hbox (badness 2229) in paragraph at lines 470--482
+\OT1/cmr/m/n/10 der er-kun-de-ten Fl[]ache der Ro-bo-ter
+ []
+
+
+Underfull \hbox (badness 4144) in paragraph at lines 470--482
+\OT1/cmr/m/n/10 w[]ahrend der Er-kun-dung und wird
+ []
+
+
+Underfull \hbox (badness 1546) in paragraph at lines 470--482
+\OT1/cmr/m/n/10 Soll-te die-ser Fall ein-tre-ten wird sie
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 470--482
+
+ []
+
+
+Underfull \hbox (badness 4024) in paragraph at lines 470--482
+\OT1/cmr/m/n/10 Dazu wird vor je-dem Neu-zeich-nen
+ []
+
+
+Underfull \hbox (badness 5374) in paragraph at lines 470--482
+\OT1/cmr/m/n/10 der Sur-face View ei-ne Au-tos-ka-lie-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 470--482
+\OT1/cmr/m/n/10 rungs-funk-ti-on auf-ge-ru-fen, die den
+ []
+
+
+Underfull \hbox (badness 1466) in paragraph at lines 470--482
+\OT1/cmr/m/n/10 auf dem Dis-play zu se-hen ist. Der
+ []
+
+
+Underfull \hbox (badness 1406) in paragraph at lines 470--482
+\OT1/cmr/m/n/10 Ska-lie-rungs-wert stellt die Gr[]oe der
+ []
+
+
+Underfull \hbox (badness 1253) in paragraph at lines 470--482
+\OT1/cmr/m/n/10 zu zeich-nen-den Kno-ten dar - so-mit
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 470--482
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 470--482
+\OT1/cmr/m/n/10 Die Funk-ti-on der Au-tos-ka-lie-rung
+ []
+
+
+Underfull \hbox (badness 1694) in paragraph at lines 470--482
+\OT1/cmr/m/n/10 im po-si-ti-ven Be-reich liegt bzw. die
+ []
+
+<images/BottomLeftEdge.png, id=225, 80.3pt x 80.3pt>
+File: images/BottomLeftEdge.png Graphic file (type png)
+
+<use images/BottomLeftEdge.png>
+<images/BottomRightEdge.png, id=227, 80.3pt x 80.3pt>
+File: images/BottomRightEdge.png Graphic file (type png)
+
+<use images/BottomRightEdge.png> <images/BottomT.png, id=228, 80.3pt x 80.3pt>
+File: images/BottomT.png Graphic file (type png)
+
+<use images/BottomT.png> <images/cross.png, id=229, 80.3pt x 80.3pt>
+File: images/cross.png Graphic file (type png)
+
+<use images/cross.png> <images/LeftT.png, id=230, 80.3pt x 80.3pt>
+File: images/LeftT.png Graphic file (type png)
+
+<use images/LeftT.png> <images/RightT.png, id=231, 80.3pt x 80.3pt>
+File: images/RightT.png Graphic file (type png)
+
+<use images/RightT.png> <images/TopLeftEdge.png, id=232, 80.3pt x 80.3pt>
+File: images/TopLeftEdge.png Graphic file (type png)
+
+<use images/TopLeftEdge.png>
+<images/TopRightEdge.png, id=233, 80.3pt x 80.3pt>
+File: images/TopRightEdge.png Graphic file (type png)
+
+<use images/TopRightEdge.png> <images/TopT.png, id=234, 80.3pt x 80.3pt>
+File: images/TopT.png Graphic file (type png)
+
+<use images/TopT.png> [15 <C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER
+ IV/SEP/trunk/entwurf/images/Surface-eps-converted-to.pdf>]
+Overfull \hbox (24.3906pt too wide) in paragraph at lines 505--508
+[]\OT1/cmr/m/n/10 Die zu-vor er-zeug-ten, er-kun-de-ten Far-b-qua-dra-te wer-de
+n durch die Kno-ten []uberzeichnet,
+ []
+
+<images/Visited1.png, id=244, 80.3pt x 80.3pt>
+File: images/Visited1.png Graphic file (type png)
+ <use images/Visited1.png>
+<images/Visited2.png, id=245, 80.3pt x 80.3pt>
+File: images/Visited2.png Graphic file (type png)
+ <use images/Visited2.png>
+<images/Visited3.png, id=246, 80.3pt x 80.3pt>
+File: images/Visited3.png Graphic file (type png)
+ <use images/Visited3.png>
+<images/Visited4.png, id=247, 80.3pt x 80.3pt>
+File: images/Visited4.png Graphic file (type png)
+ <use images/Visited4.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[16]
+Overfull \hbox (0.67517pt too wide) in paragraph at lines 527--532
+ \OT1/cmr/bx/n/10 Al-go-rith-mus \OT1/cmr/m/n/10 F[]ur die Be-rech-nung ei-nes 
+g[]unstigsten un-be-kann-ten Kno-ten wird
+ []
+
+
+Overfull \hbox (8.46902pt too wide) in paragraph at lines 532--535
+ \OT1/cmr/bx/n/10 Ebe-ne 0: Ent-fer-nung \OT1/cmr/m/n/10 Ein wich-ti-ges Kri-te
+-ri-um zum Be-stim-men des g[]unstigsten
+ []
+
+
+LaTeX Warning: Reference `fig:level1' on page 17 undefined on input line 539.
+
+Package epstopdf Info: Source file: <images/eingeschlossen.eps>
+(epstopdf)                    date: 2010-11-04 09:37:29
+(epstopdf)                    size: 134061 bytes
+(epstopdf)             Output file: <images/eingeschlossen-eps-converted-to.pdf
+>
+(epstopdf)             Command: <epstopdf --outfile=images/eingeschlossen-eps-c
+onverted-to.pdf images/eingeschlossen.eps>
+(epstopdf)             \includegraphics on input line 542.
+runsystem(epstopdf --outfile=images/eingeschlossen-eps-converted-to.pdf images/
+eingeschlossen.eps)...executed (allowed).
+
+Package epstopdf Info: Result file: <images/eingeschlossen-eps-converted-to.pdf
+>
+(epstopdf)                    date: 2010-11-04 15:16:08
+(epstopdf)                    size: 20917 bytes.
+<images/eingeschlossen-eps-converted-to.pdf, id=253, 254.9525pt x 222.8325pt>
+File: images/eingeschlossen-eps-converted-to.pdf Graphic file (type pdf)
+
+<use images/eingeschlossen-eps-converted-to.pdf>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[17]
+
+LaTeX Warning: Reference `fig:level1' on page 18 undefined on input line 557.
+
+Package epstopdf Info: Source file: <images/kooperation.eps>
+(epstopdf)                    date: 2010-11-04 09:37:28
+(epstopdf)                    size: 171617 bytes
+(epstopdf)             Output file: <images/kooperation-eps-converted-to.pdf>
+(epstopdf)             Command: <epstopdf --outfile=images/kooperation-eps-conv
+erted-to.pdf images/kooperation.eps>
+(epstopdf)             \includegraphics on input line 560.
+runsystem(epstopdf --outfile=images/kooperation-eps-converted-to.pdf images/koo
+peration.eps)...executed (allowed).
+
+Package epstopdf Info: Result file: <images/kooperation-eps-converted-to.pdf>
+(epstopdf)                    date: 2010-11-04 15:16:38
+(epstopdf)                    size: 28500 bytes.
+<images/kooperation-eps-converted-to.pdf, id=267, 259.97125pt x 251.94125pt>
+File: images/kooperation-eps-converted-to.pdf Graphic file (type pdf)
+
+<use images/kooperation-eps-converted-to.pdf>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+Package epstopdf Info: Source file: <images/exploration_design.eps>
+(epstopdf)                    date: 2010-11-04 09:37:28
+(epstopdf)                    size: 68022 bytes
+(epstopdf)             Output file: <images/exploration_design-eps-converted-to
+.pdf>
+(epstopdf)             Command: <epstopdf --outfile=images/exploration_design-e
+ps-converted-to.pdf images/exploration_design.eps>
+(epstopdf)             \includegraphics on input line 570.
+runsystem(epstopdf --outfile=images/exploration_design-eps-converted-to.pdf ima
+ges/exploration_design.eps)...executed (allowed).
+
+Package epstopdf Info: Result file: <images/exploration_design-eps-converted-to
+.pdf>
+(epstopdf)                    date: 2010-11-04 15:16:46
+(epstopdf)                    size: 18182 bytes.
+
+<images/exploration_design-eps-converted-to.pdf, id=268, 369.38pt x 187.70125pt
+>
+File: images/exploration_design-eps-converted-to.pdf Graphic file (type pdf)
+ <use images/exploration_design-eps-converted-to.pdf>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+Package epstopdf Info: Source file: <images/lokale_lokalisierung.eps>
+(epstopdf)                    date: 2010-11-04 09:37:28
+(epstopdf)                    size: 155469 bytes
+(epstopdf)             Output file: <images/lokale_lokalisierung-eps-converted-
+to.pdf>
+(epstopdf)             Command: <epstopdf --outfile=images/lokale_lokalisierung
+-eps-converted-to.pdf images/lokale_lokalisierung.eps>
+(epstopdf)             \includegraphics on input line 581.
+runsystem(epstopdf --outfile=images/lokale_lokalisierung-eps-converted-to.pdf i
+mages/lokale_lokalisierung.eps)...executed (allowed).
+
+Package epstopdf Info: Result file: <images/lokale_lokalisierung-eps-converted-
+to.pdf>
+(epstopdf)                    date: 2010-11-04 15:17:00
+(epstopdf)                    size: 38306 bytes.
+
+<images/lokale_lokalisierung-eps-converted-to.pdf, id=269, 636.3775pt x 638.385
+pt>
+File: images/lokale_lokalisierung-eps-converted-to.pdf Graphic file (type pdf)
+ <use images/lokale_lokalisierung-eps-converted-to.pdf>
+
+LaTeX Warning: Reference `fig:lokale_lokalisierung' on page 18 undefined on inp
+ut line 585.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 598--603
+
+ []
+
+[18]
+
+LaTeX Warning: Reference `fig:lokale_lokalisierung' on page 19 undefined on inp
+ut line 612.
+
+Package epstopdf Info: Source file: <images/globale_lokalisierung.eps>
+(epstopdf)                    date: 2010-11-04 09:37:28
+(epstopdf)                    size: 107492 bytes
+(epstopdf)             Output file: <images/globale_lokalisierung-eps-converted
+-to.pdf>
+(epstopdf)             Command: <epstopdf --outfile=images/globale_lokalisierun
+g-eps-converted-to.pdf images/globale_lokalisierung.eps>
+(epstopdf)             \includegraphics on input line 615.
+runsystem(epstopdf --outfile=images/globale_lokalisierung-eps-converted-to.pdf 
+images/globale_lokalisierung.eps)...executed (allowed).
+
+Package epstopdf Info: Result file: <images/globale_lokalisierung-eps-converted
+-to.pdf>
+(epstopdf)                    date: 2010-11-04 15:17:14
+(epstopdf)                    size: 25789 bytes.
+
+<images/globale_lokalisierung-eps-converted-to.pdf, id=280, 519.9425pt x 568.12
+25pt>
+File: images/globale_lokalisierung-eps-converted-to.pdf Graphic file (type pdf)
+
+ <use images/globale_lokalisierung-eps-converted-to.pdf>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[19] [20]
+No file entwurf.gls.
+[21] [22 <C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/ent
+wurf/images/BottomLeftEdge.png> <C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SE
+MESTER IV/SEP/trunk/entwurf/images/BottomRightEdge.png> <C:/Users/Florian/Deskt
+op/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/images/BottomT.png> <C:/Use
+rs/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/images/cros
+s.png> <C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwu
+rf/images/LeftT.png> <C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/S
+EP/trunk/entwurf/images/RightT.png> <C:/Users/Florian/Desktop/UNIVERSITÄT PASSA
+U/SEMESTER IV/SEP/trunk/entwurf/images/TopLeftEdge.png> <C:/Users/Florian/Deskt
+op/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/images/TopRightEdge.png> <C
+:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/images
+/TopT.png> <C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/e
+ntwurf/images/Visited1.png> <C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMEST
+ER IV/SEP/trunk/entwurf/images/Visited2.png> <C:/Users/Florian/Desktop/UNIVERSI
+TÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/images/Visited3.png> <C:/Users/Florian
+/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/images/Visited4.png> 
+<C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/imag
+es/eingeschlossen-eps-converted-to.pdf>] [23 <C:/Users/Florian/Desktop/UNIVERSI
+TÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/images/kooperation-eps-converted-to.pd
+f> <C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/i
+mages/exploration_design-eps-converted-to.pdf>] [24 <C:/Users/Florian/Desktop/U
+NIVERSITÄT PASSAU/SEMESTER IV/SEP/trunk/entwurf/images/lokale_lokalisierung-eps
+-converted-to.pdf>] [25 <C:/Users/Florian/Desktop/UNIVERSITÄT PASSAU/SEMESTER I
+V/SEP/trunk/entwurf/images/globale_lokalisierung-eps-converted-to.pdf>]
+("C:\Users\Florian\Desktop\UNIVERSITÄT PASSAU\SEMESTER IV\SEP\trunk\entwurf\ent
+wurf.aux")
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 9354 strings out of 495285
+ 133535 string characters out of 3180387
+ 244810 words of memory out of 3000000
+ 12229 multiletter control sequences out of 15000+200000
+ 12538 words of font info for 49 fonts, out of 3000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 41i,13n,72p,1168b,1375s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files/MiKTeX 2.8/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Pr
+ogram Files/MiKTeX 2.8/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Fi
+les/MiKTeX 2.8/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program Files/MiKT
+eX 2.8/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.8/f
+onts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Program Files/MiKTeX 2.8/fonts/type
+1/public/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.8/fonts/type1/public/
+amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.8/fonts/type1/public/amsfonts/
+cm/cmr17.pfb><C:/Program Files/MiKTeX 2.8/fonts/type1/public/amsfonts/cm/cmr6.p
+fb><C:/Program Files/MiKTeX 2.8/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Pro
+gram Files/MiKTeX 2.8/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program Files
+/MiKTeX 2.8/fonts/type1/public/amsfonts/cm/cmsl10.pfb><C:/Program Files/MiKTeX 
+2.8/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/MiKTeX 2.8/font
+s/type1/public/amsfonts/cm/cmsy7.pfb><C:/Program Files/MiKTeX 2.8/fonts/type1/p
+ublic/amsfonts/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.8/fonts/type1/public/am
+sfonts/cm/cmtt10.pfb><C:/Program Files/MiKTeX 2.8/fonts/type1/public/amsfonts/c
+m/cmtt8.pfb>
+Output written on entwurf.pdf (25 pages, 643726 bytes).
+PDF statistics:
+ 480 PDF objects out of 1000 (max. 8388607)
+ 105 named destinations out of 1000 (max. 500000)
+ 131 words of extra memory for PDF output out of 10000 (max. 10000000)
+
