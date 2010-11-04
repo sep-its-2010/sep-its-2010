@@ -67,7 +67,10 @@
 	\end{tabular}
 }
 
+	\urldef{\astern}{\url}{http://de.wikipedia.org/wiki/A*#Funktionsweise}
+	
 \begin{document}
+
 	\maketitle
 	\newpage
 	\tableofcontents	
@@ -570,7 +573,7 @@ typedef struct {
 			\end{itemize}
 		\paragraph{Ablauf}
 			Der Algorithmus basiert auf der Version von Wikipedia
-			\footnote{{\href{http://de.wikipedia.org/wiki/A*#Funktionsweise}{Wikipedia A$^\ast$ Algorithmus}},
+			\footnote{\astern}{Wikipedia A$^\ast$ Algorithmus},
 			jedoch mit einer Erweiterung für die Suche mehrerer Zielknoten. Dazu wird nach jeder erfolgreichen Suche
 			eines Zielknotens der Container der bekannten Knoten umsortiert, damit jeweils der günstigste Knoten für den
 			nächsten Zielknoten extrahiert werden kann. Durch diese Modifikation muss die Berechnung nicht für jeden
