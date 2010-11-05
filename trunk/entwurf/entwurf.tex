@@ -149,7 +149,7 @@
 				ringbuf\_SContext\_t: Zustand des Ringpuffers
 				
 				\lstset{language = C, tabsize = 4}
-				\begin{lstlisting}[frame = single]
+				\begin{lstlisting}[captionpos=b, caption={ringbuf\_SContext\_t}, frame = single]
 typedef struct {
 	uint8_t* lpui8Storage;
 	uint16_t ui16Size;
@@ -171,7 +171,7 @@ typedef struct {
 				com\_SMessage\_t: Format der Raw-Nachrichten
 				
 				\lstset{language = C, tabsize = 4}
-				\begin{lstlisting}[frame = single]
+				\begin{lstlisting}[captionpos=b, caption={com\_SMessage\_t}, frame = single]
 typedef struct {
 	uint16_t ui16type;
 	uint8_t aui8Data[30];
@@ -230,6 +230,17 @@ typedef struct {
 				\begin{verbatim}  
 				sen_line.h, sen_line.c, sen_line_types.h
 				\end{verbatim}
+
+			\subparagraph*{Sensordaten}
+				Die Linien- und Knotenerkennung erfolgt über die drei Bodensensoren. Wie in Abbildung \ref{fig:auswertung} zu sehen ist,
+				können dunkle Abschnitte besonders gut erkannt werden. Eine sinnvolle Linien- und Knotenerkennung kann bereits bei einem Schwarzwert von
+				70 Prozent durchgeführt werden.
+				\begin{figure}[h]
+					\centering
+					\includegraphics[width=15cm]{images/sensorgrafik.eps}
+					\caption{Verhalten der Sensoren}		
+					\label{fig:auswertung}	
+				\end{figure}
 			
 			\paragraph*{Komponente `LED'}
 			Zunächst werden sämtliche für die LEDs benötigten Hardware-Register initialisiert. Sobald dies geschehen ist, kann durch diese Komponente
@@ -242,11 +253,16 @@ typedef struct {
 
 		\paragraph*{Komponente `Logic'}
 			Diese Komponente des Systems basiert auf allen zuvor genannten Komponenten und wird in einer Subsumption-Architektur umgesetzt. Hierbei
-			handelt es sich um ein nach Prioritäten geordnetes Schichtenmodell, welches in jedem Roboter enthalten in den Dateien subs.c und subs.h enthalten
+			handelt es sich um ein nach Prioritäten geordnetes Schichtenmodell, welches in jedem Roboter in den Dateien subs.c und subs.h enthalten
 			ist. Jede Schicht definiert einen Verhaltensaspekt des jeweiligen e-pucks und besitzt Zugriff auf globale Variablen, welche Sensordaten speichern. \\
-                                    In der folgenden Grafik wird die Anordnung der Schichten nach Priorität in einem Stack veranschaulicht: \\ 
+            In Abbildung \ref{fig:subsumption} wird die Anordnung der Schichten nach Priorität in einem Stack veranschaulicht: \\ 
 
-			\includegraphics[height=5cm]{images/subsumption.eps}
+			\begin{figure}[h]
+				\centering
+				\includegraphics[height=5cm]{images/subsumption.eps}
+				\caption{Subsumption-Stack}		
+				\label{fig:subsumption}	
+			\end{figure}
 
 			Niedrige Schichten beschreiben also die grundlegendsten und wichtigsten Verhaltensweisen eines e-pucks, während höhere Schichten zunehmend
 			abstraktere Verhalten beschreiben und nur dann ausgeführt werden, wenn nicht bereits ein wichtigeres Verhalten ausgeführt wurde. Weitere,
@@ -259,6 +275,21 @@ typedef struct {
 			gewartet werden können. Diese Schichten werden im Folgenden näher erläutert. \\
 
 			\begin{enumerate}
+  				\item Schicht 0: Kalibrierung \\
+					Damit die Unterscheidung von Linien zum Untergrund optimal durchgeführt werden kann, ist eine Kalibrierung notwendig. Diese kann
+					zwar auf dem EEPROM des e-pucks persistent gespeichert werden, muss allerdings bei wechselnden Lichtverhältnissen oder Untergrund
+					erneut durchgeführt werden. \\
+					Für die Kalibrierung muss der Benutzer den Selektor am Roboter auf Position 0 stellen und ihn auf eine Linie des entsprechenden
+					Spielfelds stellen. Im Abstand von 5 Zentimetern vor der Linie in Fahrtrichtung darf hierbei keine Linie sein, sondern die
+					Hintergrundfläche, die später beim Betrieb verwendet wird. Nach dem Einschalten des e-pucks speichert dieser zunächst die Werte der
+					Bodensensoren auf der Linie, fährt anschließend um 250 Motorschritte (ca. eine viertel Umdrehung) vorwärts und speichert erneut
+					die Werte auf der Hintergrundfläche. Der Roboter ist nun fertig kalibriert und bereit für den Start des Systems, wobei die Position des
+					Selektors auf eine Position ungleich 0 gestellt wird.
+
+					\begin{verbatim} 
+					subs_calibrate.c, subs_calibrate.h
+					\end{verbatim}			
+			
   				\item Schicht 1: Abgrund \\
 					Diese Schicht wird aktiv sobald die Bodensensoren einen Abgrund erkennen. Diese kritische Situation muss mit oberster 
 					Priorität behandelt werden indem die Motoren sofort gestoppt werden und eine Meldung an das Smartphone erfolgt. Anschließend
@@ -280,7 +311,12 @@ typedef struct {
 				\item Schicht 3: Knotenanalyse \\
 					Hier werden die Daten der Bodensensoren verarbeitet um zu entscheiden ob der Roboter soeben einen Knoten passiert hat und welche
 					Beschaffenheit dieser besitzt. Falls ein Knoten ermittelt werden konnte wird seine	Position und Art an das Smartphone gemeldet und auf
-					die nächste Anweisung gewartet.					
+					die nächste Anweisung gewartet.	\\
+					Die Knotenanalyse erkennt einen Knoten, sobald der linke oder rechte Bodensensor bei mehr als 3 Motorschritten einen besonders
+					deutlichen Schwarzwert feststellt. Wie in Abbildung \ref{fig:auswertung} zu sehen, werden Sensorwerte bereits bei 70 Prozent des
+					Weiß-Wertes gute Unterscheidungen erreicht. Um auch bei ungünstigen Lichtverhältnissen eine gute Erkennung zu ermöglichen,
+					werden Knoten ab einem Sensorwert von 50 Prozent des Weiß-Wertes festgestellt. Um keine störenden Kurven bei Knoten mit nur einem
+					Ast zu fahren, wird die Linienverfolgung für die Zeit des Knotens deaktiviert. 				
 
 					\begin{verbatim}  
 					subs_analyse.c, subs_analyse.h
@@ -305,48 +341,6 @@ typedef struct {
 					\end{verbatim}
 
   			\end{enumerate}
-  		
- 		\subsection{Sensordaten}
-			Die Linien- und Knotenerkennung erfolgt über die drei Bodensensoren. Wie in Abbildung \ref{fig:auswertung} zu sehen ist,
-			können dunkle Abschnitte besonders gut erkannt werden. Insbesondere wird ein Schwarzwert von 70 Prozent mit zirka einem
-			Drittel des Wertes einer weißen Fläche erkannt. Diese Eigenschaft ist Voraussetzung, um eine sinnvolle Linien- und
-			Knotenerkennung durchführen zu können.
-			\begin{figure}[h]
-				\centering
-				\includegraphics[width=15cm]{images/sensorgrafik.eps}
-				\caption{Verhalten der Sensoren}		
-				\label{fig:auswertung}	
-			\end{figure}
-		\subsection{Kalibrierung}
-			Damit die Unterscheidung von Linien zum Untergrund optimal durchgeführt werden kann, ist eine Kalibrierung notwendig. Diese kann
-			zwar auf dem EEPROM des e-pucks persistent gespeichert werden, muss allerdings bei wechselnden Lichtverhältnissen oder Untergrund
-			erneut durchgeführt werden. \\
-			Für die Kalibrierung muss der Benutzer den Selektor am Roboter auf Position 0 stellen und ihn auf eine Linie des entsprechenden
-			Spielfelds stellen. Im Abstand von 5 Zentimetern vor der Linie in Fahrtrichtung darf hierbei keine Linie sein, sondern die
-			Hintergrundfläche, die später beim Betrieb verwendet wird. Nach dem Einschalten des e-pucks speichert dieser zunächst die Werte der
-			Bodensensoren auf der Linie, fährt anschließend um 250 Motorschritte (ca. eine viertel Umdrehung) vorwärts und speichert erneut
-			die Werte auf der Hintergrundfläche. Der Roboter ist nun fertig kalibriert und bereit für den Start des Systems.
-		\subsection{Linienerkennung}
-			Die Linienerkennung erfolgt mit Hilfe eines PID-Reglers, welcher als Quelle für Sensordaten die äußeren Bodensensoren verwendet.
-			Für die Realisierung wird der Stellungsalgorithmus verwendet:
-			\begin{equation}
-				u_n = k_r * \left[ x_{d,n} + \frac{T}{T_N} * \sum_{i=1}^{n-1}x_{d,i} + \frac{T_V}{T}*(x_{d,n}-x_{d,n-1}) \right], k=0,1,2...
-			\end{equation}
-			Die erforderlichen Parameter werden über die Einstellregeln von Ziegler-Nichols bestimmt und haben folgende semantische Bedeutung:
-			\begin{itemize}
-				\item[$u_n$] Regelgröße des Systems
-				\item[$k_r$] konstanter Verstärkungsfaktor (Ziegler-Nichols: $0,6 * $Stabilitätsgrenze)
-				\item[$x_{d,n}$] Regeldifferenz ($n$ = aktuell, $1$ = erste Differenz)
-				\item[$T$] Regelungsintervall
-				\item[$T_N$] Nachstellzeit (Ziegler-Nichols: $0,5 * $Intervall einer Dauerschwingung bei Stabilitätsgrenze)
-				\item[$T_V$] Vorhaltezeit (Ziegler-Nichols: $0,12 * $Intervall einer Dauerschwingung bei Stabilitätsgrenze)
-			\end{itemize}		
-			\subsection{Knotenanalyse}
-			Die Knotenanalyse erkennt einen Knoten, sobald der linke oder rechte Bodensensor bei mehr als 3 Motorschritten einen besonders
-			deutlichen Schwarzwert feststellt. Wie in Abbildung \ref{fig:auswertung} zu sehen, werden Sensorwerte bereits bei 70 Prozent des
-			Weiß-Wertes gute Unterscheidungen erreicht. Um auch bei ungünstigen Lichtverhältnissen eine gute Erkennung zu ermöglichen,
-			werden Knoten ab einem Sensorwert von 50 Prozent des Weiß-Wertes festgestellt. Um keine störenden Kurven bei Knoten mit nur einem
-			Ast zu fahren, wird die Linienverfolgung für die Zeit des Knotens deaktiviert. 
 
 		\section{Smartphone}
 					
@@ -364,7 +358,7 @@ typedef struct {
 				(\textit{Separation of Concerns}). Es werden hierbei drei Dialoge (\textit{Activities}) verwendet, je ein Dialog für Kartenansicht, Steuerung und
 				Statistik. Bei diesem Entwurf hat die View-Schicht keinen direkten Zugriff auf das Model, dieser wird vollständg vom
 				Controller übernommen. Gemäß den Entwicklerrichtlinien für Android-Anwendungen 
-				\footnote{Android - User Interface (\url{http://developer.android.com/guide/topics/ui/index.html})} gehören die Activity-Klassen der
+				\footnote{Android-User Interface (\url{http://developer.android.com/guide/topics/ui/index.html})} gehören die Activity-Klassen der
 				View logisch zum	Controller. Die Model-Schicht (Proxies) erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter,
 				welche den Zustand ändern.\\
 				Die beschriebenen Steuerungs- und Dialogabläufe werden hier nur rudimentär zum Verständnis erwähnt. Eine genauere Erläuterung ist in
@@ -403,15 +397,15 @@ typedef struct {
 		\subsection{Aufbau der Dialoge}
 	Die Realisierung aller Dialoge erfolgt nach dem oben beschriebenen Model-View-Controller-Pattern.
 	
-	\paragraph*{View-Schicht} Das Layout der Dialoge wird durch eine xml-Datei beschrieben. Diese wird im Unterzeichnis `layout' des `res'
-	Verzeichnisses abgelegt. Jedes Steuerelement erhält eine innerhalb des zugehörigen Layouts eindeutige ID. Über diese ID kann das Steuerelement
-	im Code identifiziert werden. \\ \\
-	Die Aktualisierung der Views erfolgt durch die Implementierung der der \textit{update()}-Methode in den Activitys. \\ \\
-	Um die Anwendung in den Sprachen Deutsch und Englisch anbieten zu können, wird das Android-eigene Internationalisierungskonzept verwendet. \\ \\
-	Dazu werden die Beschriftungen der Steuerelemente der Views als ""String-Res\-sour\-cen in xml-Dateien hinterlegt. Diese wiederum werden in
-	speziellen Unterverzeichnissen des `res'-Verzeichnisses abgelegt. Pro angebotener Sprache ist dazu eine eigene Datei und ein eigenes
-	Unterverzeichnis erforderlich. \\ \\
-	Durch die Verwendung dieses Systems kann die Anwendung leicht auf weitere Sprachen erweitert werden.
+		\paragraph*{View-Schicht} Das Layout der Dialoge wird durch eine xml-Datei beschrieben. Diese wird im Unterzeichnis `layout' des `res'
+		Verzeichnisses abgelegt. Jedes Steuerelement erhält eine innerhalb des zugehörigen Layouts eindeutige ID. Über diese ID kann das Steuerelement
+		im Code identifiziert werden. \\ \\
+		Die Aktualisierung der Views erfolgt durch die Implementierung der der \textit{update()}-Methode in den Activitys. \\ \\
+		Um die Anwendung in den Sprachen Deutsch und Englisch anbieten zu können, wird das Android-eigene Internationalisierungskonzept verwendet. \\ \\
+		Dazu werden die Beschriftungen der Steuerelemente der Views als ""String-Res\-sour\-cen in xml-Dateien hinterlegt. Diese wiederum werden in
+		speziellen Unterverzeichnissen des `res'-Verzeichnisses abgelegt. Pro angebotener Sprache ist dazu eine eigene Datei und ein eigenes
+		Unterverzeichnis erforderlich. \\ \\
+		Durch die Verwendung dieses Systems kann die Anwendung leicht auf weitere Sprachen erweitert werden.
 	
 	\paragraph*{Controller-Schicht} Die Activity übernimmt die Rolle des lokalen Controllers. Sie legt durch die Methode \textit{setContentPane()}
 	das in der xml-Datei beschriebene Layout als View des Dialogs fest. \\ \\ 
@@ -429,12 +423,13 @@ typedef struct {
 	\begin{figure}[h]
 			\centering
 			\includegraphics[width=14cm]{images/entwurf_connect.eps}
-  			\caption{Klassendiagramm des Dialogs `Connect'}
+  			\caption{Klassendiagramm - Dialog `Connect'}
+  			\label{fig:dialog_connect}
   	\end{figure}
 	
-	\paragraph*{Kurzbeschreibung} Der Dialog `Connect' ist der Einsprungspunkt der gesamten Anwendung. Er dient der Auswahl der an der Erkundung
-	teilnehmenden e-puck Roboter. Außerdem können über die Import-Funktion abgespeicherte Karten aus vorhergehenden Erkundungen geladen und im Dialog
-	`Map' dargestellt werden.
+	\paragraph*{Kurzbeschreibung} Der Dialog `Connect' (Abbildung \ref{fig:dialog_connect}) ist der Einsprungspunkt der gesamten Anwendung. Er dient der 
+	Auswahl der an der Erkundung teilnehmenden e-puck Roboter. Außerdem können über die Import-Funktion abgespeicherte Karten aus vorhergehenden
+	Erkundungen geladen und im Dialog `Map' dargestellt werden.
 	
 	\paragraph*{Bluetooth-Schnittstelle} Die Activity verwaltet eine Referenz auf einen \textit{""Blue\-tooth-A\-dap\-ter}, eine Klasse der Android
 	eigenen Bluetooth-API. Mit diesem kann nach verbindungsbereiten Robotern gesucht werden. Gefundene Geräte werden über Broadcast-Nachrichten des
@@ -473,11 +468,12 @@ typedef struct {
 	\begin{figure}[h]
 			\centering
 			\includegraphics[width=14cm]{images/entwurf_map.eps}
-  			\caption{Klassendiagramm des Dialogs `Map'}
+  			\caption{Klassendiagramm - Dialog `Map'}
+  			\label{fig:dialog_map}
   	\end{figure}
 	
-	\paragraph*{Kurzbeschreibung} Der Dialog `Map' stellt das bereits erkundete Gebiet und die Positionen der Roboter grafisch dar. Zusätzlich werden
-	die Felder der Karte je nach Häugfigkeit der Befahrung unterschiedlich transparent dargestellt.
+	\paragraph*{Kurzbeschreibung} Der Dialog `Map' (Abbildung \ref{fig:dialog_map}) stellt das bereits erkundete Gebiet und die Positionen der Roboter
+	grafisch dar. Zusätzlich werden die Felder der Karte je nach Häugfigkeit der Befahrung unterschiedlich transparent dargestellt.
 	
 	\paragraph*{Zeichnung der Karte und der Roboterpositionen}
 	Die Darstellung erfolgt mit Hilfe der Klasse \textit{MapSurfaceView}, die von der Klasse \textit{SurfaceView} der Android-API erbt. Diese Klasse
@@ -525,11 +521,13 @@ typedef struct {
 	\begin{figure}[h]
 			\centering
 			\includegraphics[width=14cm]{images/entwurf_steer.eps}
-  			\caption{Klassendiagramm des Dialogs `Steer'}
+  			\caption{Klassendiagramm - Dialog `Steer'}
+  			\label{fig:dialog_steer}
   	\end{figure}
 	
 	\paragraph*{Kurzbeschreibung}
-	Der Dialog `Steer' bietet die Möglichkeit, einen teilnehmenden Roboter auszuwählen und manuell zu steuern. Der Benutzer kann den Roboter mit der
+	Der Dialog `Steer' (Abbildung \ref{fig:dialog_steer}) bietet die Möglichkeit, einen teilnehmenden Roboter auszuwählen und manuell zu steuern. Der 
+	Benutzer kann den Roboter mit der 
 	Steuerung geradeaus bewegen, um 90 Grad rechts und links herum drehen oder durch Drehung um 180 Grad wenden lassen. Der Roboter bewegt sich dabei
 	weiterhin nur auf den Linien des Spielfeldes. \\
 	Der Aufruf des Dialogs ist erst nach Abschluss des Lokalisierungsvorgangs der Roboter möglich.
@@ -577,7 +575,8 @@ typedef struct {
 	\begin{figure}[h]
 			\centering
 			\includegraphics[width=14cm]{images/entwurf_statistics.eps}
-  			\caption{Klassendiagramm des Dialogs `Statistics'}
+  			\caption{Klassendiagramm - Dialog `Statistics'}
+  			\label{fig:dialog_statistics}
   	\end{figure}
 	
 	\paragraph*{Kurzbeschreibung} Der Dialog „Statistics“ bietet dem Benutzer die Möglichkeit, Statistiken zum aktuellen Erkundungsverlauf zu
@@ -597,11 +596,32 @@ typedef struct {
 	
 	\paragraph*{Hauptmenü} Über das Hauptmenü kann zu den Dialogen `Map' und 'Steer' gewechselt werden.        
       		
-      	\subsection{Repräsentation der e-puck Roboter}
-  			Der Zugriff auf einzelne e-pucks aus der Android Applikation heraus erfolgt durch Einsatz des Proxy Patterns. Dieses dient als Schnittstelle
-  			zwischen der Programmlogik und dem Bluetooth Interface. Die Proxy Klasse wird als abstrakte Oberklasse implementiert,wobei jede Instanz
-  			dieser Klasse, genau einen e-puck repräsentiert. Diese Stellvertreterobjekte speichern die Zustände der zugehörigen Roboter und beinhalten
-  			alle Funktionen um Daten des Roboters abzurufen oder zu setzen.
+      \subsection{Repräsentation der e-puck Roboter}
+		Die Proxy-Klasse implementiert \textit{IRobot} und besteht aus einem Thread, der für die Verarbeitungslogik von
+		Informationen zuständig ist. Diese Klasse repräsentiert die Schnittstelle zwischen einem e-puck Roboter und der
+		\textit{Environment}-Klasse. \\
+		Hauptaufgaben, welche größtenteils vom \textit{LogicThread} wahrgenommen werden:
+		\begin{itemize}
+			\item Nachrichtenaustausch mit dem e-puck \\
+				Über den Bluetooth-Socket werden Daten vom e-puck Roboter empfangen und gesendet.
+			\item Senden von Broadcast-Nachrichten \\
+				Mit Hilfe der \textit{broadcast()}-Methode der \textit{Environment}-Klasse können Nachrichten an alle
+				e-puck Proxies sowie an das \textit{Environment} selbst, übermittelt werden. \\
+				Diese Nachrichten enthalten	Zustandsupdates, die für alle Teilnehmer relevant sind. Darunter fallen z.B.
+				Positionsupdates, Kartenupdates oder Nachrichten der abstrakten Logik.
+			\item Empfangen von Nachrichten  \\
+				Nachricht werden über die \textit{deliver()}-Methode angenommen und durch das Chain-of-Responsibility
+				-Pattern verarbeitet.
+			\item Zustandsbeschreibung aller e-puck Roboter \\
+				Mithilfe von \textit{Positioning}-Objekten wird der aktuelle Zustand aller e-puck Roboter lokal gespeichert.
+			\item Verwaltung der lokalen Karte \\
+				Die lokale \textit{GridMap} muss sowohl bei lokalen als auch bei entfernten Updates aktualisiert werden. 
+			\item Umsetzung von Benutzereingaben \\
+				Geschwindigkeitsänderungen sowie Fahrtanweisungen durch den Benutzer werden verarbeitet und gegebenenfalls
+				an den e-puck weitergeleitet.
+			\item Management der künstlichen Intelligenz \\
+				Hierunter fällt die Anwendung der abstrakten Logik wie z.B. Erkundung und Kollisionsvermeidung.
+		\end{itemize} 
   		
   		\subsection{Nachrichtenbehandlung}
   			Wir verwenden das Chain-of-Responsibility-Pattern in unserem Projekt, um Nachrichten, die von den e-puck Robotern an das Handy
@@ -718,7 +738,7 @@ typedef struct {
 			\paragraph*{Bemerkung} Ein unbefahrener Knoten, der an vier befahrene Knoten angrenzt ist kein unbekannter Knoten.
 			\paragraph*{Algorithmus}Für die Berechnung eines günstigsten unbekannten Knoten wird eine mehrschichtige Logik verwendet.
 				Jede Ebene behandelt einen bestimmten semantischen Aspekt und hat Einfluss auf die letztendliche Auswahl des Zielknotens. Für
-				jeden unbekannten Knoten wird eine Summe berechnet, wobei der Knoten mit der kleinsten Zahl den günstigsten darstellt. Falls
+				jeden unbekannten Knoten wird eine Kennzahl berechnet, wobei der Knoten mit der kleinsten Zahl den günstigsten darstellt. Falls
 				mehrere günstigste Knoten existieren, so entscheidet die Berechnungsreihenfolge. Die Ebenen berechnen abhängig von ihren Regeln
 				ihre eigenen Summen und addieren sie zur globalen Summe hinzu.
 				\subparagraph*{Ebene 0: Entfernung} Ein wichtiges Kriterium zum Bestimmen des günstigsten unbekannten Knoten ist dessen
@@ -743,9 +763,9 @@ typedef struct {
   					addiert usw. bis zum 4. Nachbar, welcher noch einen Punkt zusätzlich erhält. Zur Berechnung der Nachbarn wird die Absolutsummennorm
   					verwendet:
 					\begin{eqnarray}
-						p(x) = \sum_{j=1}^n |x(j)|
+						||x|| = \sum_{j=1}^n |x(j)|
 					\end{eqnarray}
-					Im zweidimensionalen Fall lautet die Norm: $p((x,y))=|x| + |y|$. Falls Hindernisse oder unbekannte Gebiete auf Fahrlinien zwischen
+					Im zweidimensionalen Fall lautet die Norm: $||(x,y)||=|x| + |y|$. Falls Hindernisse oder unbekannte Gebiete auf Fahrlinien zwischen
 					zwei Punkten liegen, so dieser direkte Weg ignoriert (siehe Abbildung \ref{fig:level1}). 			
 					\begin{figure}[h]
 						\centering
@@ -764,14 +784,14 @@ typedef struct {
   						\label{fig:klassen_modell}
   					\end{figure} 
 		\subsection{Lokale Lokalisierung}
-			Die lokale Lokalisierung wird verwendet, um eine Synchronisation der lokalen Karten- sowie Positionsinformationen zwischen den
+			Die lokale Lokalisierung wird verwendet, um lokal Karten- sowie Positionsinformationen zwischen den
 			e-puck Robotern auszutauschen. In anderen Worten, die e-pucks sollen ihre gegenseitige Lage kennen und sich auf ein einheitliches
 			Koordinatensystem einigen. Für die Synchronisation werden die äußeren Abstandssensoren verwendet. Wie im Pflichtenheft definiert,
 			werden bei dieser Lokalisierungsart alle Roboter auf zusammenhängenden Knoten aufgestellt.
 			 \begin{figure}[h]
 				\centering
 				\includegraphics[width=10cm]{images/lokale_lokalisierung.eps}
-  				\caption{Algorithmus zur lokalen Lokalisierung}
+  				\caption{Zustandsdiagramm - Algorithmus zur lokalen Lokalisierung}
   				\label{fig:lokale_lokalisierung}
   			\end{figure}
 			Bei dem Algorithmus (siehe Abbildung \ref{fig:lokale_lokalisierung}) durchläuft jeder Roboter einzeln einen Synchronisierungslauf, in Reihenfolge ihrer IDs.
@@ -789,12 +809,13 @@ typedef struct {
 			\end{enumerate}
 			Sobald der aktive Roboter zurück bzw. noch immer am Ausgangsknoten ist, wird eine Drehung in eine bisher unerkundete Richtung
 			durchgeführt. Sollte eine solche existieren, beginnt der e-puck erneut mit der Erkundung wie vorhin. Sollte keine Richtung mehr zu
-			erkunden sein, so wird der e-puck mit der kleinsten ID ausgewählt, welcher noch nicht lokalisiert ist. Dieser startet den selben
-			Lokalisierungsprozess, wobei bereits bekannte Richtungen vorhanden sein und ignoriert werden können. \\ \\
-			Die Lokalisierung ist abgeschlossen, sobald jeder einzelne Roboter lokalisiert ist.
+			erkunden sein, so ist der Roboter lokalisiert. Der Partner, welcher die erste Kollision hervorgerufen hat und noch nicht lokalisiert ist,
+			wird verwendet um den selben Lokalisierungsprozess durchzuführen. Dabei können bereits bekannte Richtungen vorhanden sein und
+			ignoriert werden.\\ \\
+			Dieser Wechsel wird solange wiederholt, bis sämtliche Roboter lokalisert sind ist.
 		\subsection{Globale Lokalisierung}
-			Die lokale Lokalisierung ist nur dann einsetzbar, falls alle Roboter auf angrenzenden Knoten stehen. Für die Wunschfunktion
-			\textbf{/F170W/}, bei der die e-pucks auf beliebigen Knoten des Spielfeldes starten können, ist es notwendig eine globale Lokalisierung
+			Die lokale Lokalisierung ist nur dann einsetzbar, falls alle Roboter auf angrenzenden Knoten stehen. Für die Wunschfunktion,
+			bei der die e-pucks auf beliebigen Knoten des Spielfeldes starten können, ist es notwendig eine globale Lokalisierung
 			durchzuführen. \\
 			Dieses Vorhaben soll möglichst deterministisch ablaufen, sodass keine Spielfeldbedingten Ausnahmen auftreten können. Daher ist das
 			erste Ziel jedes Teilnehmers, den Rand des Spielfeldes zu erreichen. Sobald er dies erkannt hat, wird eine Nachricht an alle anderen
@@ -805,15 +826,38 @@ typedef struct {
 		 	\begin{figure}[h]
 				\centering
 				\includegraphics[width=10cm]{images/globale_lokalisierung.eps}
-  				\caption{Algorithmus zur globalen Lokalisierung}
+  				\caption{Zustandsdiagramm - Algorithmus zur globalen Lokalisierung}
   				\label{fig:globale_lokalisierung}
   			\end{figure}
 			Die Randerkennung geschieht durch die 'Rechte-Hand-Regel'. Sobald ein Roboter einen Randknoten erkannt hat, umrandet er im
-			Uhrzeigersinn den Randbereich. Jede Linkskurve wird hierbei mit $+1$ gewertet, jede Rechtskurve mit $-1$. Erreicht der Roboter wieder
-			den Anfangsknoten und ist die Summe $-4$, so weiß er, dass er sich auf einem äußeren Rand befindet. Ist die Summe allerdings $+4$
+			mit hilfe der ``Rechten-Hand-Regel'' den Randbereich. Jede Linkskurve wird hierbei mit $+1$ gewertet, jede Rechtskurve mit $-1$. Erreicht der Roboter wieder
+			den Anfangsknoten und ist die Summe $+4$, so weiß er, dass er sich auf einem äußeren Rand befindet. Ist die Summe allerdings $-4$
 			so befindet er sich auf einem inneren Randstück. Die Suche wird damit fortgesetzt.	
 	\section{Kommunikation}
-				
+		\subsection{Nachrichtenverarbeitung}
+			{Abgesehen von der anfänglichen Initialisierung des Bluetooth-Moduls, verläuft die Übertragung in beide
+			Richtungen transparent über den primären UART des e-pucks mit der {\tt hal\_uart1} Schicht. Jeder e-puck besitzt
+			sowohl einen Eingangs- als auch	einen Ausgangsringpuffer über welche die Nachrichten von der Hardware empfangen
+			bzw. gesendet werden. Die Logik des e-pucks verwendet lediglich die {\tt com}-Schicht um Nachrichten zu
+			empfangen bzw. zu senden. Dazu wird der Eingangspuffer von der Logik überwacht. Sobald mindestens eine Nachricht
+			vorhanden ist, wird diese über die	{\tt com}-Schicht ausgelesen und an den von der Logik festgelegten Callback
+			übergeben.
+
+			Jede e-puck Antwortnachricht hat eine vorhergehende Android Anfragenachricht als Ursache.}
+		\subsection{Nachrichtenformat}
+			\begin{itemize}
+				\item Jede Nachricht besteht aus 32 Bytes
+				\item Das Zahlenformat ist Little-Endian
+				\item Die ersten beiden Bytes identifizieren den Nachrichtentyp eindeutig
+				\item Die verbleibenden 30 Bytes können nachrichtenspezifisch verwendet werden
+			\end{itemize}
+		\subsection{Nachrichtensequenzen}	
+		 	\begin{figure}[h]
+				\centering
+				\includegraphics[width=10cm]{images/epuck_bt_msgs.eps}
+  				\caption{Nachrichtensequenzen}
+  				\label{fig:nachrichtensequenzen}
+  			\end{figure}					
 	\newpage	
 	%Glossar ausgeben
 	\printglossary[style=altlist,title=Glossar]
