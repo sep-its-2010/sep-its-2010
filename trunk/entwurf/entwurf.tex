@@ -39,8 +39,8 @@
 \parindent 0pt
 \pagestyle{headings}
 
-\let\oldsection\section
-\renewcommand{\section}{\newpage \oldsection}
+%\let\oldsection\section
+%\renewcommand{\section}{\newpage \oldsection}
 
 \title{
 	\includegraphics[height=10cm]{logo.eps} \\
@@ -54,7 +54,7 @@
 	\hline \hline
 	Pflichtenheft & Florian Lorenz & lorenz@fim.uni-passau.de \\
 	\hline
-	Entwurf & Andreas Wilhelm &  wilhelm@fim.uni-passau.de \\
+	Entwurf & Andreas Wilhelm &  wilhelma@fim.uni-passau.de \\
 	\hline
 	Spezifikation & Andreas Poxrucker & poxrucke@fim.uni-passau.de \\
 	\hline
@@ -193,7 +193,7 @@ typedef struct {
 			\paragraph*{Komponente `ADC'}
 			Die Komponente `ADC' kapselt Funktionen zur Initialisierung der Analog-Digital-Wandler und zum einfachen Auslesen der Register
 			mit den konvertierten Werten. \\
-			Das Funktionen der Komponente bilden eine wichtige Grundlage für die Verwendung der IR-Abstandssensoren und werden vom Modul `IR 
+			Die Funktionen der Komponente bilden eine wichtige Grundlage für die Verwendung der IR-Abstandssensoren und werden vom Modul `IR 
 			proximity sensor' verwendet.
 			
 			Strukturelle Gliederung:
@@ -211,7 +211,7 @@ typedef struct {
 				\end{verbatim}
 			
 			\paragraph*{Komponente `IR proximity sensor'}
-			Es erfüllt im wesentlichen zwei Hauptaufgaben.
+			Diese Komponente erfüllt im wesentlichen zwei Aufgaben.
 			Zunächst findet eine Initialisierung statt. Hierbei wird das Abtastintervall mit dem die Sensoren ausgelesen werden definiert und der 
 			Timer eingerichtet, mit dem das Abtastintervall betrieben wird.
 			Weiterhin stellt dieses Modul die Funktionen zum Auslesen der IR-Sensoren zur Verfügung. Dabei werden Funktionen der `ADC'-Komponente 		
@@ -237,7 +237,7 @@ typedef struct {
 				70 Prozent durchgeführt werden.
 				\begin{figure}[h]
 					\centering
-					\includegraphics[width=15cm]{images/sensorgrafik.eps}
+					\includegraphics[width=18cm]{images/sensorgrafik.eps}
 					\caption{Verhalten der Sensoren}		
 					\label{fig:auswertung}	
 				\end{figure}
@@ -343,12 +343,13 @@ typedef struct {
   			\end{enumerate}
 
 		\section{Smartphone}
-					
-	
+			In Abbildung \ref{fig:klassendiagramm} wird das Klassendiagramm der Android-Anwendung dargestellt. Die einzelnen Klassen und Abläufe
+			sind in den folgenden Kapiteln näher erläutert. Dazu werden auch Teile des Diagramms zur Veranschaulichung verwendet. \\
 			\begin{figure}[p]
 				\centering
 				\includegraphics[width=18cm, angle=90]{images/android_klassendiagramm.eps}
   				\caption{Klassendiagramm - Android Anwendung}
+  				\label{fig:klassendiagramm}
   			\end{figure}	
 
 			\subsection{Model-View-Controller (MVC) Architektur}
@@ -359,14 +360,15 @@ typedef struct {
 				Statistik. Bei diesem Entwurf hat die View-Schicht keinen direkten Zugriff auf das Model, dieser wird vollständg vom
 				Controller übernommen. Gemäß den Entwicklerrichtlinien für Android-Anwendungen 
 				\footnote{Android-User Interface (\url{http://developer.android.com/guide/topics/ui/index.html})} gehören die Activity-Klassen der
-				View logisch zum	Controller. Die Model-Schicht (Proxies) erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter,
+				View logisch zum	Controller. Die Model-Schicht (VirtualPucks) erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter,
 				welche den Zustand ändern.\\
 				Die beschriebenen Steuerungs- und Dialogabläufe werden hier nur rudimentär zum Verständnis erwähnt. Eine genauere Erläuterung ist in
-				Kapitel [TODO] zu finden
+				Kapitel \ref{sec:aufbau_dialoge} zu finden
 	  			\begin{figure}
 					\centering
 					\includegraphics[width=10cm]{images/android_mvc.eps}
   					\caption{Model-View Controller Architektur}
+  					\label{fig:mvc}
  	 			\end{figure}					
 			\paragraph*{Model}
   				Die Model-Schicht der Architektur speichert als zentrale Komponente sämtliche Daten bzgl. Karten- und e-puck-Informationen. 
@@ -374,9 +376,9 @@ typedef struct {
   				angeschlossene Bluetooth-Interface statt. Die Klasse \textit{Environment} erbt von der Klasse \textit{Observable} und verarbeitet
   				die Aktualisierungen der Roboter. Die Klasse wird als Singleton realisiert, da hier globale Zustandsdaten und Karteninformation
   				für die Anzeige gespeichert werden. Informationen der einzelnen Roboter, sowie deren Ablaufsteuerung, werden in den Instanzen
-  				der Klasse \textit{Proxy} verwaltet (siehe Kapitel [TODO]). Diese Insanzen werden in einer Attributsliste der Klasse \textit{Environment}
-  				gehalten und besitzen auch selbst einen Verweis auf diese Klasse. Bei Zustandsänderung der \textit{Proxy}-Instanzen bzw. bei
-  				Änderung der Kartendaten werden die registrierten Views benachrichtigt.
+  				der Klasse \textit{VirtualPuck} verwaltet (siehe Kapitel \ref{sec:repraesentation}). Diese Insanzen werden in einer Attributsliste der Klasse
+  				\textit{Environment} gehalten und besitzen auch selbst einen Verweis auf diese Klasse. Bei Zustandsänderung der \textit{VirtualPuck}-Instanzen
+  				bzw. bei Änderung der Kartendaten werden die registrierten Views benachrichtigt.
   			\paragraph*{View}
   				Die Präsentationskomponenten der MVC-Architektur sind für die Ausgabe der Model-Daten zuständig und bilden eine
   				Abstraktionsschicht zwischen der Präsentation der Anwendung, dem Model und dem Benutzer. Die Schicht besteht aus den drei
@@ -384,7 +386,9 @@ typedef struct {
   				verantwortlich, \textit{Steer} stellt die Steuerungsbedienelemente dar und \textit{Statistics} beinhaltet statistische
   				Informationen.  Damit die View-Klassen als \textit{Activities} für die Android-Applikation verwendet werden können, müssen sie
   				das Interface \textit{Activity} implementieren. Für die Verwendung als View der MVC-Architektur muss zusätzlich das Interface
-  				\textit{Observer} implementiert werden. Jede einzelne View registriert sich bei der Klasse \textit{Environment} als Observer,
+  				\textit{Observer} implementiert werden\footnote{Die Activity \textit{Map} stellt eine Ausnahme dar, da hier ein \textit{Surface View} als
+  				Darstellung verwendet wird. Die Aktualisierung geschieht hierbei über einen extra Thread. Daher muss dieser auch als Observer eingetragen
+  				werden (siehe Abschnitt \ref{subsec:dialog_map})}. Jede einzelne View registriert sich bei der Klasse \textit{Environment} als Observer,
   				um bei Zustandsänderungen vom Model benachrichtigt zu werden. Benutzereingaben auf den Dialogen werden über
   				die Ereignisbehandler-Methoden des \textit{Activity}-Interface an das Model weitergegeben. Somit gehören diese Handler-Methoden
   				im Sinne der MVC-Architektur der Controller-Schicht an.
@@ -395,12 +399,13 @@ typedef struct {
   				\textit{Controller}, welche für die zentrale Steuerung der Model Schicht verantwortlich ist.
   				
 		\subsection{Aufbau der Dialoge}
+  		\label{sec:aufbau_dialoge}
 	Die Realisierung aller Dialoge erfolgt nach dem oben beschriebenen Model-View-Controller-Pattern.
 	
 		\paragraph*{View-Schicht} Das Layout der Dialoge wird durch eine xml-Datei beschrieben. Diese wird im Unterzeichnis `layout' des `res'
 		Verzeichnisses abgelegt. Jedes Steuerelement erhält eine innerhalb des zugehörigen Layouts eindeutige ID. Über diese ID kann das Steuerelement
 		im Code identifiziert werden. \\ \\
-		Die Aktualisierung der Views erfolgt durch die Implementierung der der \textit{update()}-Methode in den Activitys. \\ \\
+		Die Aktualisierung der Views erfolgt durch die Implementierung der der \textit{update()}-Methode in den Activities. \\ \\
 		Um die Anwendung in den Sprachen Deutsch und Englisch anbieten zu können, wird das Android-eigene Internationalisierungskonzept verwendet. \\ \\
 		Dazu werden die Beschriftungen der Steuerelemente der Views als ""String-Res\-sour\-cen in xml-Dateien hinterlegt. Diese wiederum werden in
 		speziellen Unterverzeichnissen des `res'-Verzeichnisses abgelegt. Pro angebotener Sprache ist dazu eine eigene Datei und ein eigenes
@@ -410,12 +415,12 @@ typedef struct {
 	\paragraph*{Controller-Schicht} Die Activity übernimmt die Rolle des lokalen Controllers. Sie legt durch die Methode \textit{setContentPane()}
 	das in der xml-Datei beschriebene Layout als View des Dialogs fest. \\ \\ 
 	Außerdem erstellt sie Referenzen auf die in der Datei beschriebenen Steuerelemente und belegt diese mit benötigten EventListenern. Die Referenzen
-	werden durch die \textit{findViewById()}-Methode der Activitys und den eindeutigen IDs der Steuerelemente erstellt. Die EventListener werden
+	werden durch die \textit{findViewById()}-Methode der Activities und den eindeutigen IDs der Steuerelemente erstellt. Die EventListener werden
 	durch innere Klassen der Activity realisiert. Klick-Ereignisse auf Einträge des Hauptmenüs werden durch die geerbte Methode 
 	\textit{onOptionsItemSelected()} verarbeitet. \\ \\
 	
 	\paragraph*{Model-Schicht}
-	Mit Ausnahme des Dialogs `Connect' bzw. der zugehörigen Activity registrieren sich alle Activitys als Observer des \textit{Environment}. Diese
+	Mit Ausnahme des Dialogs `Connect' bzw. der zugehörigen Activity registrieren sich alle Activities als Observer des \textit{Environment}. Diese
 	Klasse bildet die globale Model-Schicht.
 	
 	\subsection*{Dialog `Connect'}
@@ -454,8 +459,8 @@ typedef struct {
 	hergestellt wurde. Die Verbindungsherstellung erfolgt sequentiell. Jede erfolgreiche Verbindung liefert eine \textit{BluetoothSocket} zurück.
 	Diese werden in einer Liste gesammelt bis alle Verbindungen aufgebaut wurden.
 	
-	\paragraph*{Erzeugung der Proxys}
-	Anschließend wird dem \textit{Environment} für jeden Socket eine neue Instanz der \textit{Proxy}-Klasse hinzugefügt und der Dialog `Map' über
+	\paragraph*{Erzeugung der VirtualPucks}
+	Anschließend wird dem \textit{Environment} für jeden Socket eine neue Instanz der \textit{VirtualPuck}-Klasse hinzugefügt und der Dialog `Map' über
 	eine \textit{Intent}-Nachricht gestartet.
 	
 	\paragraph*{Verhalten im Fehlerfall}
@@ -464,6 +469,7 @@ typedef struct {
 	Hinweismeldung und hat die Möglichkeit eine neue Suche zu starten.
 	
 	\subsection*{Dialog `Map'}
+	\label{subsec:dialog_map}
 	
 	\begin{figure}[h]
 			\centering
@@ -508,7 +514,7 @@ typedef struct {
 	Auswahl möglich. Das ""Drop\-Down-Steu\-er\-ele\-ment wird in diesen Fällen ausgegraut dargestellt.
 	
 	\paragraph*{Verhalten bei Verbindungsverlust} Verliert einer der e-puck Roboter die Verbindung zum Smartphone, so erhält der Benutzer eine
-	entsprechende Hinweismeldung. Durch die Entfernung des zugehörigen Proxys aus dem \textit{Environment} ist gewährleistet, dass der Roboter aus
+	entsprechende Hinweismeldung. Durch die Entfernung des zugehörigen VirtualPucks aus dem \textit{Environment} ist gewährleistet, dass der Roboter aus
 	dem ""Drop\-Down-Steu\-er\-ele\-ment entfernt und nicht mehr auf der Karte dargestellt wird. War der ausgefallene e-Puck gerade ausgewählt, wird
 	am ""Drop\-Down-Steu\-er\-ele\-ment der Eintrag `none' eingestellt.
 	
@@ -536,7 +542,7 @@ typedef struct {
 	Über ein ""Drop\-Down-Steu\-er\-ele\-ment kann der zu steuernde Roboter ausgewählt werden. Die ID des ausgewählten Roboters wird gespeichert.
 	
 	\paragraph*{Aktivierung/Deaktivierung der Steuerung} Durch Klick auf den Button `Start' wird die manuelle Steuerung aktiviert. Der entsprechende
-	\textit{Proxy} wird in den Zustand `CONTROLLED' versetzt und kann durch das von ihm implementierte Interface \textit{IRobot} gesteuert werden.
+	\textit{VirtualPuck} wird in den Zustand `CONTROLLED' versetzt und kann durch das von ihm implementierte Interface \textit{IRobot} gesteuert werden.
 	Wird im ""Drop\-Down-Steu\-er\-ele\-ment `none' ausgewählt, kann die Steuerung nicht aktiviert werden. \\ \\
 	Die Beschriftung des Buttons ändert sich nach Aktivierung auf `Stop'. Durch einen erneuten Klick auf die Schaltfläche kann die manuelle Steuerung
 	deaktiviert werden. Der Roboter verlässt daraufhin den Zustand `CONTROLLED' und fährt mit seinem letzten Verhalten fort.
@@ -546,16 +552,16 @@ typedef struct {
 	
 	\paragraph*{Realisierung des On-Screen-Joysticks} Die Realisierung des On-Screen-Joystick geschieht durch einen einfachen \textit{onTouch}- bzw.
 	\textit{""on\-Click\-E\-vent\-List\-e\-ner}. Berührt der Benutzer einen der vier möglichen Richtungsbuttons, so wird durch einen registrierten
-	Listener das entsprechende Kommando über den globalen \textit{Controller} und das \textit{Environment} an den ausgewählten \textit{Proxy}
+	Listener das entsprechende Kommando über den globalen \textit{Controller} und das \textit{Environment} an den ausgewählten \textit{VirtualPuck}
 	weitergeleitet.
 	
 	\paragraph*{Realisierung der Kippsteuerung} Die Realisierung der Steuerung mit den Beschleunigungssensoren erfolgt ähnlich: Statt der 
 	\textit{onTouch}- bzw. \textit{""on\-Click\-E\-vent\-List\-e\-ner} wird ein \textit{SensorEventListener} der Android-API verwendet. Dieser wird
 	an einem \textit{SensorManager} registriert und berechnet aus den aktuellen Sensormesswerten eine passende Richtungsanweisung. Diese wird über
-	den globalen \textit{Controller} an den ausgewählten \textit{Proxy} weitergegeben.
+	den globalen \textit{Controller} an den ausgewählten \textit{VirtualPuck} weitergegeben.
 	
-	\paragraph*{Weitergabe der Steuerungsbefehle an den e-puck} Wurde eine Richtungsanweisung an den \textit{Proxy} weitergeleitet, so wird diese vom
-	\textit{Proxy} bzw. dem zugehörigen \textit{LogicThread} per Bluetooth an den e-puck weitergegeben. Dieser sendet nach Ausführung eine
+	\paragraph*{Weitergabe der Steuerungsbefehle an den e-puck} Wurde eine Richtungsanweisung an den \textit{VirtualPuck} weitergeleitet, so wird diese vom
+	\textit{VirtualPuck} bzw. dem zugehörigen \textit{LogicThread} per Bluetooth an den e-puck weitergegeben. Dieser sendet nach Ausführung eine
 	Bestätigungsnachricht.
 	Solange die Bestätigungsnachricht nicht eingegangen ist, werden keine weiteren Richtungsanweisungen mehr an den Roboter weitergegeben. In der 
 	Zwischenzeit gegebene Anweisungen werden außerdem gespeichert.
@@ -597,7 +603,8 @@ typedef struct {
 	\paragraph*{Hauptmenü} Über das Hauptmenü kann zu den Dialogen `Map' und 'Steer' gewechselt werden.        
       		
       \subsection{Repräsentation der e-puck Roboter}
-		Die Proxy-Klasse implementiert \textit{IRobot} und besteht aus einem Thread, der für die Verarbeitungslogik von
+      	\label{sec:repraesentation}
+		Die VirtualPuck-Klasse implementiert \textit{IRobot} und besteht aus einem Thread, der für die Verarbeitungslogik von
 		Informationen zuständig ist. Diese Klasse repräsentiert die Schnittstelle zwischen einem e-puck Roboter und der
 		\textit{Environment}-Klasse. \\
 		Hauptaufgaben, welche größtenteils vom \textit{LogicThread} wahrgenommen werden:
@@ -606,7 +613,7 @@ typedef struct {
 				Über den Bluetooth-Socket werden Daten vom e-puck Roboter empfangen und gesendet.
 			\item Senden von Broadcast-Nachrichten \\
 				Mit Hilfe der \textit{broadcast()}-Methode der \textit{Environment}-Klasse können Nachrichten an alle
-				e-puck Proxies sowie an das \textit{Environment} selbst, übermittelt werden. \\
+				VirtualPucks sowie an das \textit{Environment} selbst, übermittelt werden. \\
 				Diese Nachrichten enthalten	Zustandsupdates, die für alle Teilnehmer relevant sind. Darunter fallen z.B.
 				Positionsupdates, Kartenupdates oder Nachrichten der abstrakten Logik.
 			\item Empfangen von Nachrichten  \\
