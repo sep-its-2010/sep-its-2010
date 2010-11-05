@@ -87,8 +87,7 @@
 		Das Ziel ist ein möglichst hohes Maß an Qualität, Wartbarkeit und Erweiterbarkeit. Dazu ist ein sinnvolles Systemdesign unter
 		Verwendung mehrerer verschiedener Entwurfsmuster und Architekturen in allen Bereichen erforderlich. \\ \\
 		Weiterhin werden in den folgenden Abschnitten die verwendeten Datentypen und Schnittstellen der Komponenten erläutert. Die beschränkten
-		Ressourcen der Roboter erzwingen hierbei einen möglichst effizienten Aufbau. Insbesondere stellt der interne
-		Arbeitsspeicher sowie die Rechenleistung der e-pucks eine Einschränkung für den Entwurf dar.
+		Ressourcen der Roboter erzwingen hierbei einen möglichst effizienten Aufbau.
 				
 	\section{e-Puck Roboter}
   				
@@ -127,14 +126,13 @@
 			\end{verbatim}
 			
 			\paragraph*{Komponente `Communication'}
-			Die Komponente `Communication' stellt einfache Funktionen zum Aufbau und Verwaltung  des Bluetooth-Netzwerks bereit.
+			Die Komponente `Communication' stellt einfache Funktionen zum Aufbau und zur Verwaltung  der Bluetooth-Verbindung bereit.
 			Sie enthält außerdem Funktionen zum Senden und Empfangen von Bluetooth-Nachrichten.\\
 			 
 			Dieses Modul besteht aus zwei aufeinander aufbauenden Komponenten mit wachsendem Abstraktionsgrad:
 			
 				\subparagraph*{hal\_uart1}
-				Diese Komponente bildet die hardwarenahste Schicht des Kommunikationsmoduls. \\
-				Sie enthält Funktionen zur Initialisierung des UART. Insbesondere werden das Datenformat und die Datenrate festgelegt.
+				Diese Komponente enthält Funktionen zur Initialisierung des UART. Insbesondere werden das Datenformat und die Datenrate festgelegt.
 				Darüber hinaus können die Sende- und Empfangs-Interrupts des UART konfiguriert werden. Die zu den Interrupts gehörigen Interrupt
 				Service Routinen sind ebenfalls Teil der Komponente. \\
 				Auch die Kontrolle des Transmitter (Tx)- und Receiver (Rx)-Ringpuffers wird in diesem Modul realisiert. \\
@@ -194,7 +192,7 @@ typedef struct {
 			Die Komponente `ADC' kapselt Funktionen zur Initialisierung der Analog-Digital-Wandler und zum einfachen Auslesen der Register
 			mit den konvertierten Werten. \\
 			Die Funktionen der Komponente bilden eine wichtige Grundlage für die Verwendung der IR-Abstandssensoren und werden vom Modul `IR 
-			proximity sensor' verwendet.
+			proximity sensor' verwendet.\\
 			
 			Strukturelle Gliederung:
 				\begin{verbatim}  
@@ -203,7 +201,7 @@ typedef struct {
 			
 			\paragraph*{Komponente `I2C'}
 			Die Komponente `I2C' initialisiert die Datenrate und die Masterfunktionalität des I2C-Moduls.
-			Außerdem werden grundlegenden Übertragungsfunktionen wie Adressierung, Lesen und Schreiben zur Verfügung gestellt. \\
+			Außerdem werden grundlegende Übertragungsfunktionen wie Adressierung, Lesen und Schreiben zur Verfügung gestellt. \\
 			
 			Strukturelle Gliederung:
 				\begin{verbatim}  
@@ -223,8 +221,8 @@ typedef struct {
 				\end{verbatim}
 			
 			\paragraph*{Komponente `Line sensor'}
-			Die Hauptaufgabe dieser logischen Komponente liegt darin, die Daten der IR-Abstandssensoren aus dem I2C-Bus auszulesen um sie später 
-			einem Regler zur Verfügung zu stellen, der gewährleistet, dass der jeweilige Roboter seine Linie nicht verlässt. \\
+			Die Hauptaufgabe dieser Komponente liegt darin, die Daten der IR-Abstandssensoren aus dem I2C-Bus auszulesen. Diese Daten werden 
+			einem Regler zur Verfügung gestellt, der gewährleistet, dass der Roboter seine Linie nicht verlässt. \\
 			
 			Strukturelle Gliederung:
 				\begin{verbatim}  
@@ -253,8 +251,9 @@ typedef struct {
 
 		\paragraph*{Komponente `Logic'}
 			Diese Komponente des Systems basiert auf allen zuvor genannten Komponenten und wird in einer Subsumption-Architektur umgesetzt. Hierbei
-			handelt es sich um ein nach Prioritäten geordnetes Schichtenmodell, welches in jedem Roboter in den Dateien subs.c und subs.h enthalten
-			ist. Jede Schicht definiert einen Verhaltensaspekt des jeweiligen e-pucks und besitzt Zugriff auf globale Variablen, welche Sensordaten speichern. \\
+			handelt es sich um ein nach Prioritäten geordnetes Schichtenmodell, welches in jedem Roboter in den Dateien \texttt{subs.c} und 
+			\texttt{subs.h} enthalten ist. Jede Schicht definiert einen Verhaltensaspekt des jeweiligen e-pucks und besitzt Zugriff auf globale Variablen,
+			welche Sensordaten speichern. \\
             In Abbildung \ref{fig:subsumption} wird die Anordnung der Schichten nach Priorität in einem Stack veranschaulicht: \\ 
 
 			\begin{figure}[h]
@@ -265,7 +264,7 @@ typedef struct {
 			\end{figure}
 
 			Niedrige Schichten beschreiben also die grundlegendsten und wichtigsten Verhaltensweisen eines e-pucks, während höhere Schichten zunehmend
-			abstraktere Verhalten beschreiben und nur dann ausgeführt werden, wenn nicht bereits ein wichtigeres Verhalten ausgeführt wurde. Weitere,
+			abstrakteres Verhalten beschreiben und nur dann ausgeführt werden, wenn nicht bereits ein wichtigeres Verhalten ausgeführt wurde. Weitere,
 			komplexere Verhaltensschichten können dadurch problemlos ergänzt werden.\\ 
 			In diesem System wird jeder e-puck einen Verhaltenskodex gemäß obiger Abbildung befolgen. \\
 			Je nach Sensordaten kommt ein bestimmtes Verhalten zur Ausführung, wobei höher liegende Verhaltensschichten ignoriert werden bis das
@@ -292,8 +291,7 @@ typedef struct {
 			
   				\item Schicht 1: Abgrund \\
 					Diese Schicht wird aktiv sobald die Bodensensoren einen Abgrund erkennen. Diese kritische Situation muss mit oberster 
-					Priorität behandelt werden indem die Motoren sofort gestoppt werden und eine Meldung an das Smartphone erfolgt. Anschließend
-					erwartet der e-puck eine Antwort mit der nächsten Bewegungsanweisung.
+					Priorität behandelt werden indem die Motoren sofort gestoppt werden und eine Meldung an das Smartphone erfolgt.
 
 					\begin{verbatim} 
 					subs_abyss.c, subs_abyss.h
@@ -310,9 +308,9 @@ typedef struct {
 
 				\item Schicht 3: Knotenanalyse \\
 					Hier werden die Daten der Bodensensoren verarbeitet um zu entscheiden ob der Roboter soeben einen Knoten passiert hat und welche
-					Beschaffenheit dieser besitzt. Falls ein Knoten ermittelt werden konnte wird seine	Position und Art an das Smartphone gemeldet und auf
+					Beschaffenheit dieser besitzt. Falls ein Knoten ermittelt werden konnte wird dessen Art an dass Smartphone gemeldet und auf
 					die nächste Anweisung gewartet.	\\
-					Die Knotenanalyse erkennt einen Knoten, sobald der linke oder rechte Bodensensor bei mehr als 3 Motorschritten einen besonders
+					Die Knotenanalyse erkennt einen Knoten, sobald der linke oder rechte Bodensensor bei mehr als drei Motorschritten einen besonders
 					deutlichen Schwarzwert feststellt. Wie in Abbildung \ref{fig:auswertung} zu sehen, werden Sensorwerte bereits bei 70 Prozent des
 					Weiß-Wertes gute Unterscheidungen erreicht. Um auch bei ungünstigen Lichtverhältnissen eine gute Erkennung zu ermöglichen,
 					werden Knoten ab einem Sensorwert von 50 Prozent des Weiß-Wertes festgestellt. Um keine störenden Kurven bei Knoten mit nur einem
@@ -323,18 +321,30 @@ typedef struct {
 					\end{verbatim}
 
 				\item Schicht 4: Bewegungsmodifikationen \\
-					Die Aufgabe dieses Teils der Verhaltensarchitektur ist es die Befehle des Handys bezüglich Geschwindigkeitsänderungen und Drehungen
-					umzusetzen. Dies kann nur unmittelbar nach einer erfolgreichen Knotenanalyse inklusive Rückmeldung des Smartphones geschehen. Der
-					e-puck befindet sich zu diesem Zeitpunkt auf einem Knoten.			
+					Die Aufgabe dieses Teils der Verhaltensarchitektur ist es die Befehle des Handys (vom zugehörigen \textit{VirtualPuck}) bezüglich
+					Geschwindigkeitsänderungen und Drehungen	 umzusetzen. Dies kann nur unmittelbar nach einer erfolgreichen Knotenanalyse
+					inklusive Rückmeldung des Smartphones geschehen. Der e-puck befindet sich zu diesem Zeitpunkt auf einem Knoten.			
 
 					\begin{verbatim}  
 					subs_move.c, subs_move.h
 					\end{verbatim}
 
   				\item Schicht 5: Linienverfolgung \\
-					Diese Schicht beinhaltet Algorithmen, welche die Daten der Bodensensoren bezüglich  der Linienverfolgung beurteilen. Hierfür werden die
-					Sensordaten in die Berechnungen des PID-Reglers aufgenommen, welcher sich darum kümmert, 	dass der e-puck die Linie auf der er sich
-					befindet nicht verlässt.
+					Diese Schicht verwendet die Daten der Bodensensoren, um mit Hilfe eines PID-Reglers dafür zu sorgen, dass der e-puck die Linie
+					nicht verlässt. \\
+					Für die Realisierung wird der Stellungsalgorithmus verwendet:
+					\begin{equation}
+						u_n = k_r * \left[ x_{d,n} + \frac{T}{T_N} * \sum_{i=1}^{n-1}x_{d,i} + \frac{T_V}{T}*(x_{d,n}-x_{d,n-1}) \right], k=0,1,2...
+					\end{equation}
+					Die erforderlichen Parameter werden über die Einstellregeln von Ziegler-Nichols bestimmt und haben folgende semantische Bedeutung:
+					\begin{itemize}
+						\item[$u_n$] Regelgröße des Systems
+						\item[$k_r$] konstanter Verstärkungsfaktor (Ziegler-Nichols: $0,6 * $Stabilitätsgrenze)
+						\item[$x_{d,n}$] Regeldifferenz ($n$ = aktuell, $1$ = erste Differenz)
+						\item[$T$] Regelungsintervall
+						\item[$T_N$] Nachstellzeit (Ziegler-Nichols: $0,5 * $Intervall einer Dauerschwingung bei Stabilitätsgrenze)
+						\item[$T_V$] Vorhaltezeit (Ziegler-Nichols: $0,12 * $Intervall einer Dauerschwingung bei Stabilitätsgrenze)
+					\end{itemize}
 
 					\begin{verbatim}
 					subs_pid.c, subs_pid.h
@@ -385,12 +395,12 @@ typedef struct {
   				Klassen	\textit{Map}, \textit{Steer} und \textit{Statistics}. \textit{Map} ist für die Kartendarstellung
   				verantwortlich, \textit{Steer} stellt die Steuerungsbedienelemente dar und \textit{Statistics} beinhaltet statistische
   				Informationen.  Damit die View-Klassen als \textit{Activities} für die Android-Applikation verwendet werden können, müssen sie
-  				das Interface \textit{Activity} implementieren. Für die Verwendung als View der MVC-Architektur muss zusätzlich das Interface
+  				von der Klasse \textit{Activity} erben. Für die Verwendung als View der MVC-Architektur muss zusätzlich das Interface
   				\textit{Observer} implementiert werden\footnote{Die Activity \textit{Map} stellt eine Ausnahme dar, da hier ein \textit{Surface View} als
   				Darstellung verwendet wird. Die Aktualisierung geschieht hierbei über einen extra Thread. Daher muss dieser auch als Observer eingetragen
   				werden (siehe Abschnitt \ref{subsec:dialog_map})}. Jede einzelne View registriert sich bei der Klasse \textit{Environment} als Observer,
   				um bei Zustandsänderungen vom Model benachrichtigt zu werden. Benutzereingaben auf den Dialogen werden über
-  				die Ereignisbehandler-Methoden des \textit{Activity}-Interface an das Model weitergegeben. Somit gehören diese Handler-Methoden
+  				die Ereignisbehandler-Methoden der \textit{Activity}-Klasse an das Model weitergegeben. Somit gehören diese Handler-Methoden
   				im Sinne der MVC-Architektur der Controller-Schicht an.
   			\paragraph*{Controller}
   				Der Controller nimmt Eingaben aus den verschiedenen View Klassen entgegen und leitet diese bereinigt und normalisiert an die
@@ -405,7 +415,7 @@ typedef struct {
 		\paragraph*{View-Schicht} Das Layout der Dialoge wird durch eine xml-Datei beschrieben. Diese wird im Unterzeichnis `layout' des `res'
 		Verzeichnisses abgelegt. Jedes Steuerelement erhält eine innerhalb des zugehörigen Layouts eindeutige ID. Über diese ID kann das Steuerelement
 		im Code identifiziert werden. \\ \\
-		Die Aktualisierung der Views erfolgt durch die Implementierung der der \textit{update()}-Methode in den Activities. \\ \\
+		Die Aktualisierung der Views erfolgt durch die Implementierung der \textit{update()}-Methode in den Activities. \\ \\
 		Um die Anwendung in den Sprachen Deutsch und Englisch anbieten zu können, wird das Android-eigene Internationalisierungskonzept verwendet. \\ \\
 		Dazu werden die Beschriftungen der Steuerelemente der Views als ""String-Res\-sour\-cen in xml-Dateien hinterlegt. Diese wiederum werden in
 		speziellen Unterverzeichnissen des `res'-Verzeichnisses abgelegt. Pro angebotener Sprache ist dazu eine eigene Datei und ein eigenes
@@ -456,7 +466,7 @@ typedef struct {
 	
 	\paragraph*{Verbindungsherstellung}
 	Bei Auswahl des Menüeintrags `Connect' wird die Anzeige des Dialogs solange gesperrt, bis zu allen ausgewählten e-pucks eine Bluetooth-Verbindung
-	hergestellt wurde. Die Verbindungsherstellung erfolgt sequentiell. Jede erfolgreiche Verbindung liefert eine \textit{BluetoothSocket} zurück.
+	hergestellt wurde. Die Verbindungsherstellung erfolgt sequentiell. Jede erfolgreiche Verbindung liefert einen \textit{BluetoothSocket} zurück.
 	Diese werden in einer Liste gesammelt bis alle Verbindungen aufgebaut wurden.
 	
 	\paragraph*{Erzeugung der VirtualPucks}
@@ -631,12 +641,13 @@ typedef struct {
 		\end{itemize} 
   		
   		\subsection{Nachrichtenbehandlung}
-  			Wir verwenden das Chain-of-Responsibility-Pattern in unserem Projekt, um Nachrichten, die von den e-puck Robotern an das Handy
-  			geschickt werden, zu analysieren und weiter zu verarbeiten. Die Grundidee hinter diesem Pattern ist, dass die Nachricht durch eine Liste
+  			Wir verwenden das Chain-of-Responsibility-Pattern in unserem Projekt, um Nachrichten zwischen einem e-puck Roboter und einer
+  			VirtualPuck, zwei VirtualPucks und zwischen VitualPucks und dem Environment zu analysieren und zu verarbeiten. Die Grundidee hinter
+  			diesem Pattern ist, dass die Nachricht durch eine Liste
   			von konkreten Handlerklassen, die von einer abstrakten Handlerklasse erben, gereicht wird und der richtige Handler die Nachricht
   			verarbeitet. Sobald eine Nachricht von einem Handler erkannt und bearbeitet wurde gibt er true zurück. Falls sich der Handler nicht
   			verantwortlich für die Nachricht fühlt gibt er sie an den nächsten Handler weiter. Falls auch der letzte Handler mit der Nachricht nicht
-  			umzugehen weiß, gibt er den Rückgabewert false zurück.Im Gegensatz zu herkömmlichen Nachrichtenbearbeitungen wird hier ein
+  			umzugehen weiß, gibt er den Rückgabewert false zurück. Im Gegensatz zu herkömmlichen Nachrichtenbearbeitungen wird hier ein
   			hohes Maß an Flexibilität erreicht und das Hinzufügen eines neuen Nachrichtentyps wird erleichtert, da nur eine neue Klasse in die
   			Liste der Handler hinzugefügt werden muss. \\ \\
   			Vorteile:
@@ -653,7 +664,7 @@ typedef struct {
   				\item Handler\\Definiert ein Interface für die Requests\\Besitzt Zeiger auf nächstes Listenelement
   				\item Konkrete Handler\\Größere Flexibilität bei der Bearbeitung von Nachrichten\\
   					Mithilfe des Rückgabewerts wird erkannt, ob eine Nachricht behandelt wurde
-  				\item Client \\ Ruft Funktion handlerequest(Nachricht) auf ersten Listenelement der Handler auf
+  				\item Receiver \\ Ruft Funktion handlerequest(Nachricht) auf ersten Listenelement der Handler auf
   			\end{itemize}   	
 			\begin{figure}[h]
 				\centering
@@ -662,8 +673,8 @@ typedef struct {
   			\end{figure}	
   			Erklärung der Abbildung:
    			\begin{enumerate}
-  				\item Die Bluetoothschnittstelle leitet eine einkommende Nachricht weiter an eine Client-Klasse, die eine Liste aus konkreten Handlern,
-  					die von der abstrakten Klasse Handler erben, enthält.
+  				\item Ein Sender schickt eine Nachricht an eine Empfängerklasse, die eine Liste aus konkreten Handlern,
+  					welche von der abstrakten Klasse Handler erben, enthält.
   				\item Diese Klasse gibt die Nachricht an den ersten Handler seiner Liste weiter und ruft dort die Funktion handlerequest(Nachricht),
   					die den Rückgabetyp Boolean hat, auf.
   				\item Der Handler leitet die Nachricht an seinen direkten Nachfolger weiter und ruft dort wieder handlerequest(Nachricht) auf, sofern
@@ -674,13 +685,13 @@ typedef struct {
 
 	\section{Abstrakte Logik}
 
-	\subsection{Entwurf - A$^\ast$ Wegfindung}
+	\subsection{A$^\ast$ Suchalgorithmus}
+		\label{subsec:astern}
 		\paragraph{Problemstellung}
 			Damit die e-pucks ihre Ziele, wie zum Beispiel das Auffinden eines noch nicht erkundeten Knotens oder die 
 			Rückkehr zur Startposition, möglichst effizient erreichen können, wird ein Pfadplanungsalgorithmus benötigt. 
 			Dieser soll auf Grundlage einer bereits (teilweise) erkundeten Karte, einer Liste von möglichen Zielpunkten 
-			und einer Startposition eine Liste von Pfaden zu allen Zielen erstellen. Diese Liste soll nach aufsteigenden 
-			Wegkosten sortiert sein. \\
+			und einer Startposition, eine Liste von Pfaden zu allen Zielen erstellen.\\
 			Außerdem soll die Funktion zur Bewertung der tatsächlichen Knotenkosten austauschbar sein. Dadurch lässt 
 			sich der Algorithmus für unterschiedliche Aufgaben verwenden.
 		\paragraph{Überblick}
@@ -702,7 +713,7 @@ typedef struct {
 			Der Container der erkundeten Knoten ist ein Binärbaum, um Suchoperationen zu beschleunigen.
 		\paragraph{Wegkosten und Heuristik}
 			Der Algorithmus verwendet eine Bewertungsfunktion, um eine Aussage über die möglichen Gesamtwegkosten eines 
-			Knoten treffen zu können. Diese werden durch die Summe aus den tatsächlichen Wegkosten des Vorgängerknotens, 
+			Knotens treffen zu können. Diese werden durch die Summe aus den tatsächlichen Wegkosten des Vorgängerknotens, 
 			den Übergangskosten zum aktuellen Knoten und einer Schätzung der verbleibenden Kosten bis zum Ziel 
 			errechnet. \\
 
@@ -716,19 +727,18 @@ typedef struct {
 			geringsten Gesamtkosten als nächstes analysiert wird.
 		\paragraph{Datenstrukturen}
 			Benötigt wird eine Knotenklasse \textit{AStarNode}, die eine Referenz auf einen Vorgängerknoten vom selben
-			Typ sowie eine Referenz auf	einen Graphknoten \textit{GraphNode} der Karte enthält. Außerdem enthält sie
+			Typ sowie eine Referenz auf	einen Graphknoten \textit{MapNode} der Karte enthält. Außerdem enthält sie
 			einen Integer, der die aktuellen Kosten bis zum Startknoten angibt.
 		\paragraph{Interface}
 			Es wird das Interface \textit{IPathFinder} von der Klasse \textit{AStarPathFinder} implementiert:
 			\begin{itemize}
-				\item \textit{AStarNode[] find(GraphNode start, GraphNode[] destinations)} führt eine Suche durch und
+				\item \textit{AStarNode[] find(MapNode start, MapNode[] destinations)} führt eine Suche durch und
 				gibt die kürzesten Pfade zurück
-				\item \textit{int calculateCosts(GraphNode from, GraphNode to)} berechnet die Übergangskosten von einem
+				\item \textit{int calculateCosts(MapNode from, MapNode to)} berechnet die Übergangskosten von einem
 				Knoten zu einem angrenzenden Knoten.
 			\end{itemize}
 		\paragraph{Ablauf}
-			Der Algorithmus basiert auf der Version von Wikipedia
-			\footnote{\astern}{Wikipedia A$^\ast$ Algorithmus},
+			Der Algorithmus basiert auf dem Buch ``Game Programming Gems''\footnote{Abschnitt ``Path Finding Strategies''},
 			jedoch mit einer Erweiterung für die Suche mehrerer Zielknoten. Dazu wird nach jeder erfolgreichen Suche
 			eines Zielknotens der Container der bekannten Knoten umsortiert, damit jeweils der günstigste Knoten für den
 			nächsten Zielknoten extrahiert werden kann. Durch diese Modifikation muss die Berechnung nicht für jeden
@@ -749,13 +759,13 @@ typedef struct {
 				mehrere günstigste Knoten existieren, so entscheidet die Berechnungsreihenfolge. Die Ebenen berechnen abhängig von ihren Regeln
 				ihre eigenen Summen und addieren sie zur globalen Summe hinzu.
 				\subparagraph*{Ebene 0: Entfernung} Ein wichtiges Kriterium zum Bestimmen des günstigsten unbekannten Knoten ist dessen
-					Entfernung zum Roboter. Diese Ebene wird vollkommen von dem \textit{A*-Algorithmus} übernommen, welcher auch bei der
-					Wegsuche verwendet wird (siehe Kapitel ...).
-  				\subparagraph*{Ebene 1: Restbereiche} Unbekannte Bereiche, die vollständig innerhalb von erkundeter Gebiete liegen, werden von
-  					dem Algorithmus als weniger 'attraktiv' angesehen. Somit wird erreicht, dass potentiell große unbekannte Teile der Karte
+					Entfernung zum Roboter. Diese Ebene wird vollkommen von dem \textit{A*-Algorithmus} 
+					übernommen, welcher auch bei der Wegsuche verwendet wird (siehe Kapitel \ref{subsec:astern}).
+  				\subparagraph*{Ebene 1: Restbereiche} Unbekannte Bereiche, die vollständig innerhalb von erkundeter Gebiete liegen, werden vom
+  					Algorithmus als weniger 'attraktiv' angesehen. Somit wird erreicht, dass potentiell große, unbekannte Teile der Karte
   					bevorzugt erkundet werden. \\
   					Es wird ein naives und statisches Vorgehen für die Logik verwendet. Es wird festgestellt, welche unbekannte Knoten sich innerhalb
-  					eines vollständig erkundeten Bereiches befinden. Diesen Knoten wird der Wert 1 hinzu addiert (siehe Abbildung \ref{fig:level1}).  			
+  					eines vollständig erkundeten Bereiches befinden. Diesem Knoten wird der Wert 1 hinzu addiert (siehe Abbildung \ref{fig:level1}).  			
 					\begin{figure}[h]
 						\centering
 						\includegraphics[width=10cm]{images/eingeschlossen.eps}
@@ -764,7 +774,7 @@ typedef struct {
   					\end{figure}
   				\subparagraph*{Ebene 2: Gemeinsame Erkundung} Ziel dieser Ebene ist es, dass verschiedene unbekannte Gebiete möglichst von
   					wenigen Robotern gleichzeitig erkundet werden. Damit lässt sich doppelte Arbeit einsparen und die Effektivität steigern.\\
-  					Die Logik verwendet zur Verarbeitung die Information anderer Roboter. Diese senden Broadcast Nachrichten, sobald ein zu erkundender
+  					Die Logik verwendet zur Verarbeitung die Information anderer Roboter. Diese senden Broadcast-Nachrichten, sobald ein zu erkundender
   					Knoten festgelegt wurde. Die benachbarten unbekannten Knoten werden damit automatisch für die weitere Erkundung anderer e-pucks
   					weniger interessant. Der unbekannte Knoten an sich erhält zusätzlich	5 	Punkte, einem benachbarten Knoten werden 4 Punkte hinzu
   					addiert usw. bis zum 4. Nachbar, welcher noch einen Punkt zusätzlich erhält. Zur Berechnung der Nachbarn wird die Absolutsummennorm
@@ -824,10 +834,10 @@ typedef struct {
 			Die lokale Lokalisierung ist nur dann einsetzbar, falls alle Roboter auf angrenzenden Knoten stehen. Für die Wunschfunktion,
 			bei der die e-pucks auf beliebigen Knoten des Spielfeldes starten können, ist es notwendig eine globale Lokalisierung
 			durchzuführen. \\
-			Dieses Vorhaben soll möglichst deterministisch ablaufen, sodass keine Spielfeldbedingten Ausnahmen auftreten können. Daher ist das
+			Dieses Vorhaben soll möglichst deterministisch ablaufen, sodass keine Spielfeld-bedingten Ausnahmen auftreten können. Daher ist das
 			erste Ziel jedes Teilnehmers, den Rand des Spielfeldes zu erreichen. Sobald er dies erkannt hat, wird eine Nachricht an alle anderen
 			gesendet und gewartet bis sämtliche Roboter diesen Rand erreicht haben. Zu diesem Zeitpunkt beginnt der e-puck mit der niedrigsten
-			ID die Umrandung des Spielfeldes bis die erste Kollision mit einem Teilnehmer geschieht. Der aktive Roboter fährt zum letzten Knoten
+			ID die Umrandung des Spielfeldes, bis die erste Kollision mit einem Teilnehmer geschieht. Der aktive Roboter fährt zum letzten Knoten
 			und beendet die Umrundung. Dafür beginnt der Kollisionspartner sich auf die Suche nach dem nächsten Teilnehmer zu machen. Die 
 			Lokalisierung findet ähnlich zu Abbildung \ref{fig:lokale_lokalisierung} statt.
 		 	\begin{figure}[h]
@@ -836,10 +846,11 @@ typedef struct {
   				\caption{Zustandsdiagramm - Algorithmus zur globalen Lokalisierung}
   				\label{fig:globale_lokalisierung}
   			\end{figure}
-			Die Randerkennung geschieht durch die 'Rechte-Hand-Regel'. Sobald ein Roboter einen Randknoten erkannt hat, umrandet er im
-			mit hilfe der ``Rechten-Hand-Regel'' den Randbereich. Jede Linkskurve wird hierbei mit $+1$ gewertet, jede Rechtskurve mit $-1$. Erreicht der Roboter wieder
+  			Die Fahranweisungen erhält der Roboter über den A$^\ast$ Suchalgorithmus, somit fährt er stets zum nächsten (``günstigsten'') unbekannten
+  			Knoten. Die Randerkennung geschieht durch die 'Rechte-Hand-Regel'. Sobald ein Roboter einen Randknoten erkannt hat, umrandet er im
+			mit Hilfe der ``Rechten-Hand-Regel'' den Randbereich. Jede Linkskurve wird hierbei mit $+1$ gewertet, jede Rechtskurve mit $-1$. Erreicht der Roboter wieder
 			den Anfangsknoten und ist die Summe $+4$, so weiß er, dass er sich auf einem äußeren Rand befindet. Ist die Summe allerdings $-4$
-			so befindet er sich auf einem inneren Randstück. Die Suche wird damit fortgesetzt.	
+			so befindet er sich auf einem inneren Randstück. Die Suche muss in diesem Fall mit Hilfe des A$^\ast$ Suchalgorithmus fortgesetzt werden.	
 	\section{Kommunikation}
 		\subsection{Nachrichtenverarbeitung}
 			{Abgesehen von der anfänglichen Initialisierung des Bluetooth-Moduls, verläuft die Übertragung in beide
@@ -850,7 +861,7 @@ typedef struct {
 			vorhanden ist, wird diese über die	{\tt com}-Schicht ausgelesen und an den von der Logik festgelegten Callback
 			übergeben.
 
-			Jede e-puck Antwortnachricht hat eine vorhergehende Android Anfragenachricht als Ursache.}
+			Jede e-puck Antwortnachricht hat eine vorhergehende Android-Anfragenachricht als Ursache.}
 		\subsection{Nachrichtenformat}
 			\begin{itemize}
 				\item Jede Nachricht besteht aus 32 Bytes
