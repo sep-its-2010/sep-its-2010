@@ -613,21 +613,21 @@ typedef struct {
       		
       \subsection{Repräsentation der e-puck Roboter}
       	\label{sec:repraesentation}
-		Die VirtualPuck-Klasse implementiert \textit{IRobot} und besteht aus einem Thread, der für die Verarbeitungslogik von
-		Informationen zuständig ist. Diese Klasse repräsentiert die Schnittstelle zwischen einem e-puck Roboter und der
-		\textit{Environment}-Klasse. \\
+		Die \textit{VirtualPuck}-Klasse ist die Repräsentation der e-puck Roboter auf dem Smartphone. Sie enthält Zustandsdaten wie zum Beispiel die
+		lokale Karte oder den Zustand und implementiert das Interface \textit{IRobot} und besteht aus einer Instanz der Klasse \textit{LogicThread},
+		der für die Verarbeitung von Informationen zuständig ist. Die \textit{VirtualPuck}-Klasse repräsentiert die Schnittstelle zwischen einem e
+		puck Roboter und der \textit{Environment}-Klasse. \\
 		Hauptaufgaben, welche größtenteils vom \textit{LogicThread} wahrgenommen werden:
 		\begin{itemize}
 			\item Nachrichtenaustausch mit dem e-puck \\
 				Über den Bluetooth-Socket werden Daten vom e-puck Roboter empfangen und gesendet.
 			\item Senden von Broadcast-Nachrichten \\
-				Mit Hilfe der \textit{broadcast()}-Methode der \textit{Environment}-Klasse können Nachrichten an alle
+				Mit Hilfe der \textit{broadcast()}-Methode der \textit{CommunicationManager}-Klasse können Nachrichten an alle
 				VirtualPucks sowie an das \textit{Environment} selbst, übermittelt werden. \\
 				Diese Nachrichten enthalten	Zustandsupdates, die für alle Teilnehmer relevant sind. Darunter fallen z.B.
 				Positionsupdates, Kartenupdates oder Nachrichten der abstrakten Logik.
 			\item Empfangen von Nachrichten  \\
-				Nachricht werden über die \textit{deliver()}-Methode angenommen und durch das Chain-of-Responsibility
-				-Pattern verarbeitet.
+				Nachricht werden über die \textit{deliver()}-Methode angenommen und durch das Chain-of-Responsibility-Pattern verarbeitet.
 			\item Zustandsbeschreibung aller e-puck Roboter \\
 				Mithilfe von \textit{Positioning}-Objekten wird der aktuelle Zustand aller e-puck Roboter lokal gespeichert.
 			\item Verwaltung der lokalen Karte \\
