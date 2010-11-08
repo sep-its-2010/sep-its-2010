@@ -88,9 +88,22 @@
 		Verwendung mehrerer verschiedener Entwurfsmuster und Architekturen in allen Bereichen erforderlich. \\ \\
 		Weiterhin werden in den folgenden Abschnitten die verwendeten Datentypen und Schnittstellen der Komponenten erläutert. Die beschränkten
 		Ressourcen der Roboter erzwingen hierbei einen möglichst effizienten Aufbau.
-				
+		\paragraph*{Ablauf}		
+		In Abbildung \ref{fig:ablauf} wird der grundsätzliche Ablauf des Systems gezeigt. Zunächst erfolgt hierbei die Kalibrierung der e-puck Roboter, um
+		die Linienerkennung sinnvoll durchführen zu können. Anschließend startet der Benutzer den Erkundungsmodus des Roboters. Dabei erhält dieser
+		ständig neue Fahrbefehle von den ``virtuellen e-pucks'' des Smartphones. Sobald Knoten oder Kollisionen erkannt werden, sendet der e-puck
+		die entsprechenden Informationen an das Smartphone. Diese werden in den lokalen Karten der \textit{VirtualPucks }verarbeitet und haben
+		Auswirkungen auf die folgenden Fahrbefehle.\\
+		Die \textit{VirtualPucks} geben die Karteninformationen der realen e-pucks an das \textit{Environment} (Model) weiter, welches die globale Karte
+		aufbaut und gleichzeitig für die Aktualisierung der Kartenanzeige auf dem Smartphone zuständig ist.\\
+		Der Ablauf wird beendet, sobald das Spielfeld vollständig erkundet ist.		
+		\begin{figure}[htbp]
+			\centering
+			\includegraphics[width=10cm]{images/sequenzdiagramm.eps}
+  			\caption{Sequenzdiagramm - Grundsätzlicher Ablauf}
+  			\label{fig:ablauf}
+  		\end{figure}				
 	\section{e-Puck Roboter}
-
 		Die Software des e-puck wird als Schichtenarchitektur mit wachsendem Abstraktionsgrad entworfen. \\
 		Jede Schicht besteht aus einer oder mehreren Komponenten. Diese sind teilweise wiederum aus mehreren
 		Schichten aufgebaut. \\
