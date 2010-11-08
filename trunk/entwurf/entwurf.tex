@@ -90,8 +90,7 @@
 		Ressourcen der Roboter erzwingen hierbei einen möglichst effizienten Aufbau.
 				
 	\section{e-Puck Roboter}
-  				
-		\subsection{Architektur}
+
 		Die Software des e-puck wird als Schichtenarchitektur mit wachsendem Abstraktionsgrad entworfen. \\
 		Jede Schicht besteht aus einer oder mehreren Komponenten. Diese sind teilweise wiederum aus mehreren
 		Schichten aufgebaut. \\
@@ -140,7 +139,7 @@
 				
 				Strukturelle Gliederung:
 				\begin{verbatim}  
-				hal_uart.h, hal_uart.c, hal_uart1_types.h
+				hal_uart1.h, hal_uart1.c, hal_uart_types.h
 				\end{verbatim}
 				
 				Externe Datenstrukturen: \\
@@ -158,7 +157,7 @@ typedef struct {
 				
 				\subparagraph*{com}
 				`com' enthält Funktionen zur Generierung von Raw-Messages (Nachrichten, die vom Bluetooth-Modul versendet werden
-				können) und zur Aufbereitung von eingehenden Raw-Nachrichten aus der darunter liegenden `hal\_uart'-Schicht. \\
+				können) und zur Aufbereitung von eingehenden Raw-Nachrichten aus der darunter liegenden `hal\_uart1'-Schicht. \\
 				
 				Strukturelle Gliederung:
 				\begin{verbatim}  
@@ -254,7 +253,7 @@ typedef struct {
 			handelt es sich um ein nach Prioritäten geordnetes Schichtenmodell, welches in jedem Roboter in den Dateien \texttt{subs.c} und 
 			\texttt{subs.h} enthalten ist. Jede Schicht definiert einen Verhaltensaspekt des jeweiligen e-pucks und besitzt Zugriff auf globale Variablen,
 			welche Sensordaten speichern. \\
-            In Abbildung \ref{fig:subsumption} wird die Anordnung der Schichten nach Priorität in einem Stack veranschaulicht: \\ 
+            In Abbildung \ref{fig:subsumption} wird die Anordnung der Schichten nach Priorität veranschaulicht. \\ 
 
 			\begin{figure}[h]
 				\centering
@@ -332,19 +331,6 @@ typedef struct {
   				\item Schicht 5: Linienverfolgung \\
 					Diese Schicht verwendet die Daten der Bodensensoren, um mit Hilfe eines PID-Reglers dafür zu sorgen, dass der e-puck die Linie
 					nicht verlässt. \\
-					Für die Realisierung wird der Stellungsalgorithmus verwendet:
-					\begin{equation}
-						u_n = k_r * \left[ x_{d,n} + \frac{T}{T_N} * \sum_{i=1}^{n-1}x_{d,i} + \frac{T_V}{T}*(x_{d,n}-x_{d,n-1}) \right], k=0,1,2...
-					\end{equation}
-					Die erforderlichen Parameter werden über die Einstellregeln von Ziegler-Nichols bestimmt und haben folgende semantische Bedeutung:
-					\begin{itemize}
-						\item[$u_n$] Regelgröße des Systems
-						\item[$k_r$] konstanter Verstärkungsfaktor (Ziegler-Nichols: $0,6 * $Stabilitätsgrenze)
-						\item[$x_{d,n}$] Regeldifferenz ($n$ = aktuell, $1$ = erste Differenz)
-						\item[$T$] Regelungsintervall
-						\item[$T_N$] Nachstellzeit (Ziegler-Nichols: $0,5 * $Intervall einer Dauerschwingung bei Stabilitätsgrenze)
-						\item[$T_V$] Vorhaltezeit (Ziegler-Nichols: $0,12 * $Intervall einer Dauerschwingung bei Stabilitätsgrenze)
-					\end{itemize}
 
 					\begin{verbatim}
 					subs_pid.c, subs_pid.h
@@ -370,7 +356,7 @@ typedef struct {
 				Statistik. Bei diesem Entwurf hat die View-Schicht keinen direkten Zugriff auf das Model, dieser wird vollständg vom
 				Controller übernommen. Gemäß den Entwicklerrichtlinien für Android-Anwendungen 
 				\footnote{Android-User Interface (\url{http://developer.android.com/guide/topics/ui/index.html})} gehören die Activity-Klassen der
-				View logisch zum	Controller. Die Model-Schicht (VirtualPucks) erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter,
+				View logisch zum	Controller. Die Model-Schicht (\textit{VirtualPuck}) erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter,
 				welche den Zustand ändern.\\
 				Die beschriebenen Steuerungs- und Dialogabläufe werden hier nur rudimentär zum Verständnis erwähnt. Eine genauere Erläuterung ist in
 				Kapitel \ref{sec:aufbau_dialoge} zu finden
@@ -382,8 +368,8 @@ typedef struct {
  	 			\end{figure}					
 			\paragraph*{Model}
   				Die Model-Schicht der Architektur speichert als zentrale Komponente sämtliche Daten bzgl. Karten- und e-puck-Informationen. 
-  				Sie beinhaltet außerdem die Applikationslogik der Android-Anwendung. Die Kommunikation nach außen findet über das
-  				angeschlossene Bluetooth-Interface statt. Die Klasse \textit{Environment} erbt von der Klasse \textit{Observable} und verarbeitet
+  				Sie beinhaltet außerdem die Applikationslogik der Android-Anwendung. Die Kommunikation nach außen findet über die
+  				Bluetooth-API statt. Die Klasse \textit{Environment} erbt von der Klasse \textit{Observable} und verarbeitet
   				die Aktualisierungen der Roboter. Die Klasse wird als Singleton realisiert, da hier globale Zustandsdaten und Karteninformation
   				für die Anzeige gespeichert werden. Informationen der einzelnen Roboter, sowie deren Ablaufsteuerung, werden in den Instanzen
   				der Klasse \textit{VirtualPuck} verwaltet (siehe Kapitel \ref{sec:repraesentation}). Diese Insanzen werden in einer Attributsliste der Klasse
@@ -437,7 +423,7 @@ typedef struct {
 	
 	\begin{figure}[h]
 			\centering
-			\includegraphics[width=14cm]{images/entwurf_connect.eps}
+			\includegraphics[width=10cm]{images/entwurf_connect.eps}
   			\caption{Klassendiagramm - Dialog `Connect'}
   			\label{fig:dialog_connect}
   	\end{figure}
@@ -483,7 +469,7 @@ typedef struct {
 	
 	\begin{figure}[h]
 			\centering
-			\includegraphics[width=14cm]{images/entwurf_map.eps}
+			\includegraphics[width=10cm]{images/entwurf_map.eps}
   			\caption{Klassendiagramm - Dialog `Map'}
   			\label{fig:dialog_map}
   	\end{figure}
@@ -536,7 +522,7 @@ typedef struct {
 	
 	\begin{figure}[h]
 			\centering
-			\includegraphics[width=14cm]{images/entwurf_steer.eps}
+			\includegraphics[width=10cm]{images/entwurf_steer.eps}
   			\caption{Klassendiagramm - Dialog `Steer'}
   			\label{fig:dialog_steer}
   	\end{figure}
@@ -590,7 +576,7 @@ typedef struct {
 	
 	\begin{figure}[h]
 			\centering
-			\includegraphics[width=14cm]{images/entwurf_statistics.eps}
+			\includegraphics[width=10cm]{images/entwurf_statistics.eps}
   			\caption{Klassendiagramm - Dialog `Statistics'}
   			\label{fig:dialog_statistics}
   	\end{figure}
@@ -632,7 +618,7 @@ typedef struct {
 			\item Zustandsbeschreibung aller e-puck Roboter \\
 				Mithilfe von \textit{Positioning}-Objekten wird der aktuelle Zustand aller e-puck Roboter lokal gespeichert.
 			\item Verwaltung der lokalen Karte \\
-				Die lokale \textit{GridMap} muss sowohl bei lokalen als auch bei entfernten Updates aktualisiert werden. 
+				Die lokale \textit{GridMap} muss sowohl bei lokalen als auch bei Updates eines anderen e-pucks aktualisiert werden. 
 			\item Umsetzung von Benutzereingaben \\
 				Geschwindigkeitsänderungen sowie Fahrtanweisungen durch den Benutzer werden verarbeitet und gegebenenfalls
 				an den e-puck weitergeleitet.
@@ -641,18 +627,17 @@ typedef struct {
 		\end{itemize} 
   		
   		\subsection{Nachrichtenbehandlung}
-  			Wir verwenden das Chain-of-Responsibility-Pattern in unserem Projekt, um Nachrichten zwischen einem e-puck Roboter und einer
+  			Im Android-System wird das Chain-of-Responsibility-Pattern verwendet, um Nachrichten zwischen einem e-puck Roboter und einer
   			VirtualPuck, zwei VirtualPucks und zwischen VitualPucks und dem Environment zu analysieren und zu verarbeiten. Die Grundidee hinter
   			diesem Pattern ist, dass die Nachricht durch eine Liste
   			von konkreten Handlerklassen, die von einer abstrakten Handlerklasse erben, gereicht wird und der richtige Handler die Nachricht
-  			verarbeitet. Sobald eine Nachricht von einem Handler erkannt und bearbeitet wurde gibt er true zurück. Falls sich der Handler nicht
-  			verantwortlich für die Nachricht fühlt gibt er sie an den nächsten Handler weiter. Falls auch der letzte Handler mit der Nachricht nicht
-  			umzugehen weiß, gibt er den Rückgabewert false zurück. Im Gegensatz zu herkömmlichen Nachrichtenbearbeitungen wird hier ein
+  			verarbeitet. Sobald eine Nachricht von einem Handler erkannt und bearbeitet wurde gibt er true zurück. Falls der Handler nicht
+  			für die Nachricht verantwortlich ist, gibt er sie an den nächsten Handler weiter. Falls kein Handler die Nachricht verarbeitet, so wird
+  			dem Aufrufer dies über den Rückgabewert `false' zurückgeliefert. Im Gegensatz zu herkömmlichen Nachrichtenbearbeitungen wird hier ein
   			hohes Maß an Flexibilität erreicht und das Hinzufügen eines neuen Nachrichtentyps wird erleichtert, da nur eine neue Klasse in die
   			Liste der Handler hinzugefügt werden muss. \\ \\
   			Vorteile:
   			\begin{itemize}
-  				\item Der Absender braucht sich nicht zu kümmern, wer genau die Nachricht verarbeitet (impliziter Empfänger)
   				\item Unabhängigkeit zwischen Sender und Empfänger (Entkopplung)
   				\item Sehr gut erweiterbar, falls ein neuer Nachrichtentyp hinzugefügt werden soll
   				\item Mehrere Klassen kümmern sich um die Verarbeitung, d.h. die Fehlersuche und -behandlung wird vereinfacht
@@ -661,7 +646,8 @@ typedef struct {
   			\end{itemize}  
   			Teilnehmer:
    			\begin{itemize}
-  				\item Handler\\Definiert ein Interface für die Requests\\Besitzt Zeiger auf nächstes Listenelement
+  				\item Handler\\Definiert ein Interface für die Requests\\Besitzt eine Referenz auf den nächsten Handler bzw. eine \textit{Null}-Referenz
+  					im Falle des letzten Handlers.
   				\item Konkrete Handler\\Größere Flexibilität bei der Bearbeitung von Nachrichten\\
   					Mithilfe des Rückgabewerts wird erkannt, ob eine Nachricht behandelt wurde
   				\item Receiver \\ Ruft Funktion handlerequest(Nachricht) auf ersten Listenelement der Handler auf
@@ -679,7 +665,7 @@ typedef struct {
   					die den Rückgabetyp Boolean hat, auf.
   				\item Der Handler leitet die Nachricht an seinen direkten Nachfolger weiter und ruft dort wieder handlerequest(Nachricht) auf, sofern
   					er nicht für die Bearbeitung der Nachricht zuständig ist. In diesem Fall behandelt er die Nachricht entsprechend und gibt true zurück
-  				\item Der Handler, der keinen Nachfolger mehr hat gibt den Wert false zurück. Somit weiß der Client dass für die Nachricht kein
+  				\item Der Handler, der keinen Nachfolger mehr hat gibt den Wert false zurück. Somit weiß die Empfängerklasse dass für die Nachricht kein
   					entsprechender Handler zur Verfügung steht.  					
   			\end{enumerate}   
 
@@ -792,7 +778,7 @@ typedef struct {
   					\end{figure} 
   				\subparagraph*{Klassen-Entwurf} Um eine einfache Erweiterbarkeit der Logik-Ebenen zu erreichen, werden diese in Form einer
   					verketteten Liste von Logik-Instanzen realisiert. Eine Logik Klasse implementiert hierbei das Interface \textit{Exploration}, welches
-  					die Methode \textit{explore} enthält. In dieser Methode werden die Knotenwerte entsprechend zu den jeweiligen Logik-Ebenen
+  					die Methode \textit{execute} enthält. In dieser Methode werden die Knotenwerte entsprechend zu den jeweiligen Logik-Ebenen
   					addiert. Die Karte wird in Form von Knotenwerte übergeben, der Rückgabewert ist die Koordinate des günstigsten Knoten.
  					\begin{figure}[h]
 						\centering
@@ -861,21 +847,21 @@ typedef struct {
 			vorhanden ist, wird diese über die	{\tt com}-Schicht ausgelesen und an den von der Logik festgelegten Callback
 			übergeben.
 
-			Jede e-puck Antwortnachricht hat eine vorhergehende Android-Anfragenachricht als Ursache.}
-		\subsection{Nachrichtenformat}
-			\begin{itemize}
-				\item Jede Nachricht besteht aus 32 Bytes
-				\item Das Zahlenformat ist Little-Endian
-				\item Die ersten beiden Bytes identifizieren den Nachrichtentyp eindeutig
-				\item Die verbleibenden 30 Bytes können nachrichtenspezifisch verwendet werden
-			\end{itemize}
-		\subsection{Nachrichtensequenzen}	
+			Jede e-puck Antwortnachricht hat eine vorhergehende Android-Anfragenachricht (siehe Abbildung \ref{fig:nachrichtensequenzen}) als Ursache.
 		 	\begin{figure}[h]
 				\centering
 				\includegraphics[width=10cm]{images/epuck_bt_msgs.eps}
   				\caption{Nachrichtensequenzen}
   				\label{fig:nachrichtensequenzen}
   			\end{figure}					
+			}
+		\subsection{Nachrichtenformat}
+			\begin{itemize}
+				\item Jede Nachricht besteht aus 32 Bytes
+				\item Das Zahlenformat ist Little-Endian
+				\item Die ersten beiden Bytes identifizieren den Nachrichtentyp eindeutig
+				\item Die verbleibenden 30 Bytes können nachrichtenspezifisch verwendet werden
+			\end{itemize}			
 	\newpage	
 	%Glossar ausgeben
 	\printglossary[style=altlist,title=Glossar]
