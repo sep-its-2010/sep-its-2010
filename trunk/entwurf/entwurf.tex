@@ -442,13 +442,13 @@ typedef struct {
  	 			\end{figure}					
 			\paragraph*{Model}
   				Die Model-Schicht der Architektur speichert als zentrale Komponente sämtliche Daten bzgl. Karten- und e-puck-Informationen. 
-  				Sie beinhaltet außerdem die Applikationslogik der Android-Anwendung. Die Kommunikation nach außen findet über die
-  				Bluetooth-API statt. Die Klasse \textit{Environment} erbt von der Klasse \textit{Observable} und verarbeitet
+  				Sie beinhaltet außerdem die Applikationslogik der Android-Anwendung. Die Kommunikation nach außen findet im Erkundungsmodus
+  				mit realen e-pucks über die Bluetooth-API statt. Die Klasse \textit{Environment} erbt von der Klasse \textit{Observable} und verarbeitet
   				die Aktualisierungen der Roboter. Die Klasse wird als Singleton realisiert, da hier globale Zustandsdaten und Karteninformation
   				für die Anzeige gespeichert werden. Informationen der einzelnen Roboter, sowie deren Ablaufsteuerung, werden in den Instanzen
   				der Klasse \textit{RealPuck} verwaltet (siehe Kapitel \ref{sec:repraesentation}). Diese Instanzen werden in einer Attributsliste der Klasse
-  				\textit{Environment} gehalten und besitzen auch selbst einen Verweis auf diese Klasse. Bei Zustandsänderung der \textit{RealPuck}-Instanzen
-  				bzw. bei Änderung der Kartendaten werden die registrierten Views benachrichtigt.
+  				\textit{CommunicationManager} gehalten und besitzen auch selbst einen Verweis auf den Kommunikations-Manager. Bei Zustandsänderung
+  				der \textit{RealPuck}-Instanzen bzw. bei Änderung der Kartendaten werden die registrierten Views benachrichtigt.
   			\paragraph*{View}
   				Die Präsentationskomponenten der MVC-Architektur sind für die Ausgabe der Model-Daten zuständig und bilden eine
   				Abstraktionsschicht zwischen der Präsentation der Anwendung, dem Model und dem Benutzer. Die Schicht besteht aus den drei
@@ -466,8 +466,7 @@ typedef struct {
   				Der Controller nimmt Eingaben aus den verschiedenen View Klassen entgegen und leitet diese bereinigt und normalisiert an die
   				Model-Schicht weiter. Hier wird also eine Abstraktionsschicht eingeführt, welche die Verbindung zwischen Benutzer-Interaktionen
   				und dem Model beschreibt. Zur Controller-Schicht gehört neben den Ereignisbehandler-Methoden der View Klassen die Klasse
-  				\textit{Controller}, welche für die zentrale Steuerung der Model Schicht verantwortlich ist.
-  				
+  				\textit{Controller}, welche für die zentrale Steuerung der Model Schicht verantwortlich ist.  				
 		\subsection{Aufbau der Dialoge}
   		\label{sec:aufbau_dialoge}
 	Die Realisierung aller Dialoge erfolgt nach dem oben beschriebenen Model-View-Controller-Pattern.
