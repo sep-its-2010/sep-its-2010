@@ -364,90 +364,63 @@ typedef struct {
   			\end{figure}	
 
 			\subsection{Beschreibung der verwendeten Klassen}
-				\paragraph*{\textbf{Connect}} erbt von der Klasse \textit{Activity} und ermöglicht die Suche nach verfügbaren e-puck Robotern. Diese werden
-				aufgelistet angezeigt und stellt die Verbindung zu den ausgewählten e-pucks her.
-				
-				\paragraph*{\textbf{Import}} erbt von der Klasse \textit{Activity} und ermöglicht das Auswählen und Öffnen einer abgespeicherten Karte.
-				
-				\paragraph*{\textbf{Simulation}} erbt von der Klasse \textit{Activity} und ermöglicht die Ausführung der Anwendung im Simulationsmodus.
-				Es kann die zu simulierende Karte und die Anzahl der teilnehmenden e-puck Roboter eingestellt werden.
-				
-				\paragraph*{\textbf{CommunicationManager}} implementiert das Interface \textit{IComMan} und regelt die Kommunikation zwischen den Instanzen der
-				\textit{Puck}-Klassen einerseits und Instanzen der \textit{Puck}-Klassen mit dem \textit{Environment} andererseits.
-				
-				\paragraph*{\textbf{Environment}} erbt von der Klasse \textit{Observable}. Sie bildet das Model der MVC-Architektur.
-				
-				\paragraph*{\textbf{Puck}} ist die abstrakte Oberklasse der Klassen \textit{VirtualPuck} und \textit{RealPuck}. Sie enthält die lokale Karte
-				sowie Informationen zur eigenen Position und die Position der anderen Roboter. Außerdem ist die Verhaltenslogik der Roboter in Form eines Threads
-				realisiert.
-				
-				\paragraph*{\textbf{VirtualPuck}} erbt von der abstrakten Klasse \textit{Puck} und stellt einen virtuellen e-puck für den Simulationsmodus dar.
-				Die für die Erkundung notwendigen Informationen (z.B. Knotentypen) erhält der \textit{VirtualPuck} durch den \textit{Simulator}.
-				
-				\paragraph*{\textbf{RealPuck}} erbt von der abstrakten Klasse \textit{Puck} und stellt einen realen e-puck für den normalen Erkundungsmodus
-				dar. Die für die Erkundung notwendigen Informationen tauscht der \textit{RealPuck} durch Bluetooth-Kommunikation mit dem realen e-puck Roboter
-				aus.
-				
-				\paragraph*{\textbf{Simulator}} stellt den \textit{VirtualPuck}s im Simulationsmodus alle relevanten Informationen (z.B. Startpositionen und
-				Knotentypen) zur Verfügung.
-				
-				\paragraph*{\textbf{Positioning}} ist eine Containerklasse, die den aktuellen Zustand des \textit{Puck}s sowie dessen aktuelle Position
-				speichert.
-				
-				\paragraph*{\textbf{GridMap}} wird als Struktur zur Speicherung der Karte verwendet.
-				
-				\paragraph*{\textbf{MapNode}}s sind die Bausteine der \textit{GridMap}. Sie speichern u.a. Koordinaten, Referenzen auf Nachbarknoten und die Art
-				des Knotens.
-				
-				\paragraph*{\textbf{AStarNode}} ist eine Erweiterung der Klasse \textit{MapNode} und wird für den A*-Algorithmus verwendet.
-				
-				\paragraph*{\textbf{LogicThread}} ist für die Ausführung der zustandsabhängigen Verhaltenslogik und zuständig und steuert die Kommunikation des
-				zugehörigen \textit{Puck}s.
-				
-				\paragraph*{\textbf{ConcreteBehaviour}}-Klassen implementieren das Interface \textit{IBehaviour} und enthalten die zustandsabhängige
-				Verhaltenslogik der \textit{Puck}s.
-				
-				\paragraph*{\textbf{AStarPathFinder}} implementiert das Interface \textit{IPathFinder} und enthält den A*-Algorithmus.
-				
-				\paragraph*{\textbf{Handler}} ist eine abstrakte Klasse, die als Oberklasse für konkrete \textit{Handler}-Klassen zur Behandlung von eingehenden
-				Nachrichten verwendet wird.
-				
-				\paragraph*{\textbf{ConcreteHandler}} erben von der abstrakten \textit{Handler}-Klasse und implementieren die konkrete Behandlung je eines
-				speziellen Nachrichtentyps.
+			\paragraph*{\textbf{Connect}} erbt von der Klasse \textit{Activity} und ermöglicht die Suche nach verfügbaren e-puck Robotern. Diese werden
+			aufgelistet angezeigt und stellt die Verbindung zu den ausgewählten e-pucks her.
+			\paragraph*{\textbf{Import}} erbt von der Klasse \textit{Activity} und ermöglicht das Auswählen und Öffnen einer abgespeicherten Karte.
+			\paragraph*{\textbf{Simulation}} erbt von der Klasse \textit{Activity} und ermöglicht die Ausführung der Anwendung im Simulationsmodus.
+			Es kann die zu simulierende Karte und die Anzahl der teilnehmenden e-puck Roboter eingestellt werden.
+			\paragraph*{\textbf{CommunicationManager}} implementiert das Interface \textit{IComMan} und regelt die Kommunikation zwischen den Instanzen der
+			\textit{Puck}-Klassen einerseits und Instanzen der \textit{Puck}-Klassen mit dem \textit{Environment} andererseits.
+			\paragraph*{\textbf{Environment}} erbt von der Klasse \textit{Observable}. Sie bildet das Model der MVC-Architektur.
+			\paragraph*{\textbf{Puck}} ist die abstrakte Oberklasse der Klassen \textit{VirtualPuck} und \textit{RealPuck}. Sie enthält die lokale Karte
+			sowie Informationen zur eigenen Position und die Position der anderen Roboter. Außerdem ist die Verhaltenslogik der Roboter in Form eines Threads
+			realisiert.
+			\paragraph*{\textbf{VirtualPuck}} erbt von der abstrakten Klasse \textit{Puck} und stellt einen virtuellen e-puck für den Simulationsmodus dar.
+			Die für die Erkundung notwendigen Informationen (z.B. Knotentypen) erhält der \textit{VirtualPuck} durch den \textit{Simulator}.
+			\paragraph*{\textbf{RealPuck}} erbt von der abstrakten Klasse \textit{Puck} und stellt einen realen e-puck für den normalen Erkundungsmodus
+			dar. Die für die Erkundung notwendigen Informationen tauscht der \textit{RealPuck} durch Bluetooth-Kommunikation mit dem realen e-puck Roboter
+			aus.
+			\paragraph*{\textbf{Simulator}} stellt den \textit{VirtualPuck}s im Simulationsmodus alle relevanten Informationen (z.B. Startpositionen und
+			Knotentypen) zur Verfügung.
+			\paragraph*{\textbf{Positioning}} ist eine Containerklasse, die den aktuellen Zustand des \textit{Puck}s sowie dessen aktuelle Position
+			speichert.
+			\paragraph*{\textbf{GridMap}} wird als Struktur zur Speicherung der Karte verwendet.
+			\paragraph*{\textbf{MapNode}s} sind die Bausteine der \textit{GridMap}. Sie speichern u.a. Koordinaten, Referenzen auf Nachbarknoten und die Art
+			des Knotens.
+			\paragraph*{\textbf{AStarNode}} ist eine Erweiterung der Klasse \textit{MapNode} und wird für den A*-Algorithmus verwendet.
+			\paragraph*{\textbf{LogicThread}} ist für die Ausführung der zustandsabhängigen Verhaltenslogik und zuständig und steuert die Kommunikation des
+			zugehörigen \textit{Puck}s.
+			\paragraph*{\textbf{ConcreteBehaviour}-Klassen} implementieren das Interface \textit{IBehaviour} und enthalten die zustandsabhängige
+			Verhaltenslogik der \textit{Puck}s.
+			\paragraph*{\textbf{AStarPathFinder}} implementiert das Interface \textit{IPathFinder} und enthält den A*-Algorithmus.
+			\paragraph*{\textbf{Handler}} ist eine abstrakte Klasse, die als Oberklasse für konkrete \textit{Handler}-Klassen zur Behandlung von eingehenden
+			Nachrichten verwendet wird.
+			\paragraph*{\textbf{ConcreteHandler}} erben von der abstrakten \textit{Handler}-Klasse und implementieren die konkrete Behandlung je eines
+			speziellen Nachrichtentyps.
+			\paragraph*{Controller}
+			überwacht alle Views auf Eingaben durch den Benutzers, verarbeitet diese und reicht sie an das Environment weiter.
+			\paragraph*{Steer}
+			erbt von Activity und bietet Funktionen zur Auswahl, sowie zwei Arten zur Steuerung der Roboter an.
+			\paragraph*{Statistics}
+			erbt ebenfalls von Activity. Hier wird der Erkundungsvorgang aller Roboter in einer Statistik aufbereitet und dargestellt.
+			\paragraph*{Map}
+			erbt von Activity und stellt die Auswahl aller angemeldeten Roboter zur Verfügung. Außerdem beinhaltet sie die MapSurfaceView.
+			\paragraph*{MapSurfaceView}
+			erbt von der Klasse SurfaceView und implementiert die Interfaces SurfaceHolder.Callback und View.OnTouchListener.
+			Sie ist eine innere Klasse von Map und dient der Visualisierung der bereits erkundeten Fläche durch die Roboter.
+			\paragraph*{SurfaceDrawThread}
+			ist eine innere Klasse der MapSurfaceView. Sie erbt von der Klasse Thread und implementiert das Interface Observer. 
+			Sie reagiert auf Änderungen in der Datenstruktur der Karte und stellt diese grafisch dar.
+			\subsection{Beschreibung der verwendeten Interfaces}
+			\paragraph*{IComMan}
+			Klassen die dieses Interface implementieren sind dadurch in der Lage den Broadcast von Nachrichten durchzuführen.
+			\paragraph*{IRobot}
+			Dieses Interface sichert die Möglichkeit der Anbindung unterschiedlicher Robotertypen an den Communication Manager.
+			\paragraph*{IPathFinder}
+			Das Interface IPathFinder dient zur Implementierung von Klassen, welche Knoten finden und die Kosten zwischen diesen berechnen müssen. 
+			\paragraph*{IBehaviour}
+			Dieses Interface regelt das Verhalten der Roboter im Bezug auf Kollisionsvermeidung und Wegfindung.
 
-				\paragraph{Controller}
-				Die Controller Klasse überwacht alle Views auf Eingaben durch den Benutzers, verarbeitet diese und reicht sie an das Environment weiter.
-				
-				\paragraph{Steer}
-				Diese Klasse Steer erbt von Activity und bietet Funktionen zur Auswahl, sowie zwei Arten zur Steuerung der Roboter an.
-				
-				\paragraph{Statistics}
-				Diese Klasse erbt ebenfalls von Activity. Hier wird der Erkundungsvorgang aller Roboter in einer Statistik aufbereitet und dargestellt.
-				
-				\paragraph{Map}
-				Map erbt von Activity und stellt die Auswahl aller angemeldeten Roboter zur Verfügung. Außerdem beinhaltet sie die MapSurfaceView.
-				
-				\paragraph{MapSurfaceView}
-				Die Klasse MapSurfaceView erbt von der Klasse SurfaceView und implementiert die Interfaces SurfaceHolder.Callback und View.OnTouchListener.
-				Sie ist eine innere Klasse von Map und dient der Visualisierung der bereits erkundeten Fläche durch die Roboter.
-				
-				\paragraph{SurfaceDrawThread}
-				Die Klasse SurfaceDrawThread ist eine innere Klasse der MapSurfaceView. Sie erbt von der Klasse Thread und implementiert das Interface Observer. 
-				Sie reagiert auf Änderungen in der Datenstruktur der Karte und stellt diese grafisch dar.
-						
-			\subsection{Beschreibung der verwendeten Klassen}
-						
-				\paragraph{IComMan}
-				Klassen die dieses Interface implementieren sind dadurch in der Lage den Broadcast von Nachrichten durchzuführen.
-				
-				\paragraph{IRobot}
-				Dieses Interface sichert die Möglichkeit der Anbindung unterschiedlicher Robotertypen an den Communication Manager.
-				
-				\paragraph{IPathFinder}
-				Das Interface IPathFinder dient zur Implementierung von Klassen, welche Knoten finden und die Kosten zwischen diesen berechnen müssen.			
-				
-				\paragraph{IBehaviour}
-				Dieses Interface regelt das Verhalten der Roboter im Bezug auf Kollisionsvermeidung und Wegfindung.
 
 			\subsection{Model-View-Controller (MVC) Architektur}
 				Die Daten- bzw. Benutzer-Interaktion der Android-Anwendung wird mit einer MVC-Architektur aufgebaut. Dies ermöglicht ein
@@ -514,11 +487,12 @@ typedef struct {
 	Außerdem erstellt sie Referenzen auf die in der Datei beschriebenen Steuerelemente und belegt diese mit benötigten EventListenern. Die Referenzen
 	werden durch die \textit{findViewById()}-Methode der Activities und den eindeutigen IDs der Steuerelemente erstellt. Die EventListener werden
 	durch innere Klassen der Activity realisiert. Klick-Ereignisse auf Einträge des Hauptmenüs werden durch die geerbte Methode 
-	\textit{onOptionsItemSelected()} verarbeitet. \\ \\
+	\textit{onOptionsItemSelected()} verarbeitet.
 	
 	\paragraph*{Model-Schicht}
-	Mit Ausnahme des Dialogs `Connect' bzw. der zugehörigen Activity registrieren sich alle Activities als Observer des \textit{Environment}. Diese
-	Klasse bildet die globale Model-Schicht.
+	Die Activites `Map', `Steer' und `Statistics' registrieren sich alle Activities als Observer des \textit{Environment}. Diese Klasse bildet die
+	globale Model-Schicht. Die Activities `Connect', `Import' und `Simulation' besitzen nur wenige Attribute und speichern ihren aktuellen Zustand
+	deshalb selbst.
 	
 	\subsection*{Dialog `Connect'}
 	
@@ -529,9 +503,8 @@ typedef struct {
   			\label{fig:dialog_connect}
   	\end{figure}
 	
-	\paragraph*{Kurzbeschreibung} Der Dialog `Connect' (Abbildung \ref{fig:dialog_connect}) ist der Einsprungspunkt der gesamten Anwendung. Er dient der 
-	Auswahl der an der Erkundung teilnehmenden e-puck Roboter. Außerdem können über die Import-Funktion abgespeicherte Karten aus vorhergehenden
-	Erkundungen geladen und im Dialog `Map' dargestellt werden.
+	\paragraph*{Kurzbeschreibung} Der Dialog `Connect' (Abbildung \ref{fig:dialog_connect}) ist der Einsprungspunkt der gesamten Anwendung. Er dient
+	der Auswahl der an der Erkundung teilnehmenden e-puck Roboter. 
 	
 	\paragraph*{Bluetooth-Schnittstelle} Die Activity verwaltet eine Referenz auf einen \textit{""Blue\-tooth-A\-dap\-ter}, eine Klasse der Android
 	eigenen Bluetooth-API. Mit diesem kann nach verbindungsbereiten Robotern gesucht werden. Gefundene Geräte werden über Broadcast-Nachrichten des
@@ -565,6 +538,27 @@ typedef struct {
 	ist), wird die Herstellung der Verbindungen abgebrochen. Bereits aufgebaute Verbindungen werden beendet. Der Benutzer erhält eine entsprechende
 	Hinweismeldung und hat die Möglichkeit eine neue Suche zu starten.
 	
+	\subsection*{Dialog `Simulation'}
+	\label{subsec:dialog_sim}
+	
+	\begin{figure}[h]
+			\centering
+			\includegraphics[width=10cm]{images/entwurf_sim.eps}
+  			\caption{Klassendiagramm - Dialog `Simulation'}
+  			\label{fig:dialog_sim}
+  	\end{figure}
+	
+	\paragraph*{Kurzbeschreibung} Der Dialog `Simulation' (Abbildung \ref{fig:dialog_sim}) ermöglicht die Ausführung der Anwendung im
+	Simulationsmodus. Sie bietet Funktionen zum Laden einer vordefinierten Karte und zum Festlegen der Anzahl der teilnehmenden virtuellen Roboter.
+	
+	\paragraph*{Auswahl und Laden einer vordefinierten Karte} Mit Hilfe des Button `Import' kann eine vordefinierte Karte aus dem Dateisystem des
+	Smartphones ausgewählt und geladen werden. Die abgespeicherte Karte wird anschließend in eine \textit{GridMap} konvertiert und im Attribut
+	\textit{map} temporär gespeichert.
+	
+	\paragraph*{Festlegung der Anzahl der teilnehmenden Roboter}
+	Mit Hilfe eines ""Drop\-Down-Steu\-er\-ele\-ments kann der Benutzer die Anzahl der teilnehmenden e-puck Roboter festlegen. Die Maximalzahl
+	beträgt sechs. Die Anzahl wird temporär in der Variablen \textit{numberOfRobots} gespeichert.
+	
 	\subsection*{Dialog `Map'}
 	\label{subsec:dialog_map}
 	
@@ -575,8 +569,8 @@ typedef struct {
   			\label{fig:dialog_map}
   	\end{figure}
 	
-	\paragraph*{Kurzbeschreibung} Der Dialog `Map' (Abbildung \ref{fig:dialog_map}) stellt das bereits erkundete Gebiet und die Positionen der Roboter
-	grafisch dar. Zusätzlich werden die Felder der Karte je nach Häugfigkeit der Befahrung unterschiedlich transparent dargestellt.
+	\paragraph*{Kurzbeschreibung} Der Dialog `Map' (Abbildung \ref{fig:dialog_map}) stellt das bereits erkundete Gebiet und die Positionen der
+	Roboter grafisch dar. Zusätzlich werden die Felder der Karte je nach Häugfigkeit der Befahrung unterschiedlich transparent dargestellt.
 	
 	\paragraph*{Zeichnung der Karte und der Roboterpositionen}
 	Die Darstellung erfolgt mit Hilfe der Klasse \textit{MapSurfaceView}, die von der Klasse \textit{SurfaceView} der Android-API erbt. Diese Klasse
@@ -614,10 +608,6 @@ typedef struct {
 	entsprechende Hinweismeldung. Durch die Entfernung des zugehörigen RealPucks aus dem \textit{Environment} ist gewährleistet, dass der Roboter aus
 	dem ""Drop\-Down-Steu\-er\-ele\-ment entfernt und nicht mehr auf der Karte dargestellt wird. War der ausgefallene e-Puck gerade ausgewählt, wird
 	am ""Drop\-Down-Steu\-er\-ele\-ment der Eintrag `none' eingestellt.
-	
-	\paragraph*{Hauptmenü} Über das Hauptmenü kann zu den Dialogen `Steer' und `Statistics' gewechselt werden. Dies ist jedoch erst nach
-	erfolgreicher Lokalisierung der Roboter möglich. Versucht der Benutzer vorher zu wechseln, erhält er eine entsprechende Hinweismeldung.
-	Wurde der Dialog durch die Import-Funktion des `Connect'-Dialogs gestartet, ist kein Wechsel zum Dialog `Steer' möglich.
 
 	\subsection*{Dialog `Steer'}
 	
@@ -670,9 +660,7 @@ typedef struct {
 	\paragraph*{Verhalten bei Verbindungsverlust} Tritt während der Steuerung ein Fehler durch den Verlust der Verbindung zum e-puck auf, so wird die
 	manuelle Steuerung deaktiviert. Der Benutzer erhält eine entsprechende Hinweismeldung. Der Roboter wird aus dem DropDown-Steuerelement entfernt.
 	Statt dessen wird `none' eingestellt.
-	
-	\paragraph*{Hauptmenü} Über das Hauptmenü kann zu den Dialogen `Map' und `Statistics' gewechselt werden.
-	
+		
 	\subsection*{Dialog `Statistics'}
 	
 	\begin{figure}[h]
@@ -695,9 +683,7 @@ typedef struct {
 	\end{itemize}
 	
 	\paragraph*{Verhalten bei Verbindungsverlust} Tritt während der Steuerung ein Fehler durch den Verlust der Verbindung zum e-puck auf, so erhält
-	 der Benutzer eine entsprechende Hinweismeldung.
-	
-	\paragraph*{Hauptmenü} Über das Hauptmenü kann zu den Dialogen `Map' und 'Steer' gewechselt werden.        
+	 der Benutzer eine entsprechende Hinweismeldung.        
       		
 		\subsection{Repräsentation der e-puck Roboter}
 			\label{sec:repraesentation}
