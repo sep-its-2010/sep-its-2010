@@ -67,6 +67,8 @@
 	\end{tabular}
 }
 
+\date{5. November 2010}
+
 	\urldef{\astern}{\url}{http://de.wikipedia.org/wiki/A*#Funktionsweise}
 	
 \begin{document}
@@ -623,7 +625,7 @@ typedef struct {
 				Über den Bluetooth-Socket werden Daten vom e-puck Roboter empfangen und gesendet.
 			\item Senden von Broadcast-Nachrichten \\
 				Mit Hilfe der \textit{broadcast()}-Methode der \textit{CommunicationManager}-Klasse können Nachrichten an alle
-				VirtualPucks sowie an das \textit{Environment} selbst, übermittelt werden. \\
+				VirtualPucks sowie an das \textit{Environment} selbst übermittelt werden. \\
 				Diese Nachrichten enthalten	Zustandsupdates, die für alle Teilnehmer relevant sind. Darunter fallen z.B.
 				Positionsupdates, Kartenupdates oder Nachrichten der abstrakten Logik.
 			\item Empfangen von Nachrichten  \\
@@ -636,7 +638,9 @@ typedef struct {
 				Geschwindigkeitsänderungen sowie Fahrtanweisungen durch den Benutzer werden verarbeitet und gegebenenfalls
 				an den e-puck weitergeleitet.
 			\item Management der künstlichen Intelligenz \\
-				Hierunter fällt die Anwendung der abstrakten Logik wie z.B. Erkundung und Kollisionsvermeidung.
+				Hierunter fällt die Anwendung der abstrakten Logik wie z.B. Erkundung und Kollisionsvermeidung. Diese Verhaltensweisen werden durch
+				spezielle Verhaltensklassen (\textit{ConcreteBehaviour}) modelliert. Alle Verhaltensklassen implementieren das Interface
+				\textit{IBehavoir}
 		\end{itemize} 
   		
   		\subsection{Nachrichtenbehandlung}
