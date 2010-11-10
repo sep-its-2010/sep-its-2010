@@ -1,0 +1,662 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VisualStudioToolFile
+	Name="dsPIC30 Toolchain"
+	Version="8,00"
+	>
+	<Rules>
+		<CustomBuildRule
+			Name="dsPIC30 C Compiler"
+			DisplayName="dsPIC30 C Compiler"
+			CommandLine="setlocal enabledelayedexpansion&#x0D;&#x0A;&#x0D;&#x0A;if &quot;[$OutputObjectFilePath]&quot; equ &quot;&quot; (&#x0D;&#x0A;    echo &quot;Invalid object file path for $(InputFileName)^!&quot;&#x0D;&#x0A;    exit 1&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;:: Check whether output files are outdated or missing&#x0D;&#x0A;(set Rebuild=true)&#x0D;&#x0A;if exist &quot;$(IntDir)\$(ProjectName)_int.tag&quot; (&#x0D;&#x0A;    if not exist &quot;[$OutputObjectFilePath]&quot; (&#x0D;&#x0A;        goto :skipDepCheck&#x0D;&#x0A;    )&#x0D;&#x0A;    if &quot;[$OutputPreprocessedFilePath]&quot; neq &quot;&quot; (&#x0D;&#x0A;        if not exist &quot;[$OutputPreprocessedFilePath]&quot; (&#x0D;&#x0A;            goto :skipDepCheck&#x0D;&#x0A;        )&#x0D;&#x0A;    )&#x0D;&#x0A;    if &quot;[$OutputAssemblyFilePath]&quot; neq &quot;&quot; (&#x0D;&#x0A;        if not exist &quot;[$OutputAssemblyFilePath]&quot; (&#x0D;&#x0A;            goto :skipDepCheck&#x0D;&#x0A;        )&#x0D;&#x0A;    )&#x0D;&#x0A;&#x0D;&#x0A;    if &quot;[$DetectDependencies]&quot; neq &quot;0&quot; (&#x0D;&#x0A;        if exist &quot;[$OutputDependencyFilePath]&quot; (&#x0D;&#x0A;            make -q -s -f &quot;[$OutputDependencyFilePath]&quot;&#x0D;&#x0A;            if &quot;!ERRORLEVEL!&quot; equ &quot;0&quot; (&#x0D;&#x0A;                (set Rebuild=false)&#x0D;&#x0A;            )&#x0D;&#x0A;        )&#x0D;&#x0A;    )&#x0D;&#x0A;)&#x0D;&#x0A;:skipDepCheck&#x0D;&#x0A;&#x0D;&#x0A;:: Skip build if !Rebuild! is false and update &apos;last modified&apos; of the output files if existent&#x0D;&#x0A;if &quot;!Rebuild!&quot; equ &quot;false&quot; (&#x0D;&#x0A;    echo Nothing to be done for $(InputFileName)&#x0D;&#x0A;    touch -c &quot;[$OutputObjectFilePath]&quot;&#x0D;&#x0A;    if &quot;[$OutputPreprocessedFilePath]&quot; neq &quot;&quot; (&#x0D;&#x0A;        touch -c &quot;[$OutputPreprocessedFilePath]&quot;&#x0D;&#x0A;    )&#x0D;&#x0A;    if &quot;[$OutputAssemblyFilePath]&quot; neq &quot;&quot; (&#x0D;&#x0A;        touch -c &quot;[$OutputAssemblyFilePath]&quot;&#x0D;&#x0A;    )&#x0D;&#x0A;    goto :skipAll&#x0D;&#x0A;) else (&#x0D;&#x0A;    echo Compiling $(InputFileName) ...&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;:: Generate dependency file if required&#x0D;&#x0A;(set DetectDep= )&#x0D;&#x0A;if &quot;[$DetectDependencies]&quot; equ &quot;1&quot; (&#x0D;&#x0A;    (set DetectDep=-MD -MP -MF &quot;[$OutputDependencyFilePath]&quot; -MQ &quot;[$OutputObjectFilePath]&quot;)&#x0D;&#x0A;) else ( if &quot;[$DetectDependencies]&quot; equ &quot;2&quot; (&#x0D;&#x0A;    (set DetectDep=-MMD -MP -MF &quot;[$OutputDependencyFilePath]&quot; -MQ &quot;[$OutputObjectFilePath]&quot;)&#x0D;&#x0A;))&#x0D;&#x0A;&#x0D;&#x0A;:: Set Language dependent options&#x0D;&#x0A;(set Additional=-x c)&#x0D;&#x0A;&#x0D;&#x0A;:: Preprocess separately if required&#x0D;&#x0A;if &quot;[$OutputPreprocessedFilePath]&quot; neq &quot;&quot; (&#x0D;&#x0A;    pic30-gcc -pass-exit-codes !Additional! !DetectDep! -fworking-directory -E &quot;-omf=$(OMF)&quot; &quot;-mcpu=$(MCPU)&quot; [AllOptions] [AdditionalOptions] -o &quot;[$OutputPreprocessedFilePath]&quot; [Inputs] 2&gt;&amp;1 | sed -e &quot;s/\(\w\+\):\([0-9]\+\):/\1(\2):/&quot;&#x0D;&#x0A;    if &quot;!ERRORLEVEL!&quot; neq &quot;0&quot; (&#x0D;&#x0A;        exit !ERRORLEVEL!&#x0D;&#x0A;    )&#x0D;&#x0A;&#x0D;&#x0A;    pic30-gcc -pass-exit-codes !Additional! -fpreprocessed -c &quot;-omf=$(OMF)&quot; &quot;-mcpu=$(MCPU)&quot; [AllOptions] [AdditionalOptions] -o &quot;[$OutputObjectFilePath]&quot; &quot;[$OutputPreprocessedFilePath]&quot; 2&gt;&amp;1 | sed -e &quot;s/\(\w\+\):\([0-9]\+\):/\1(\2):/&quot;&#x0D;&#x0A;) else (&#x0D;&#x0A;    pic30-gcc -pass-exit-codes !Additional! !DetectDep! -c &quot;-omf=$(OMF)&quot; &quot;-mcpu=$(MCPU)&quot; [AllOptions] [AdditionalOptions] -o &quot;[$OutputObjectFilePath]&quot; [Inputs] 2&gt;&amp;1 | sed -e &quot;s/\(\w\+\):\([0-9]\+\):/\1(\2):/&quot;&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;if &quot;!ERRORLEVEL!&quot; neq &quot;0&quot; (&#x0D;&#x0A;    exit !ERRORLEVEL!&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;:: Modify dependency file after generation; replace backslash in paths  &amp; add a command for the primary rule (otherwise &quot;question mode&quot; would not work as expected)&#x0D;&#x0A;if exist &quot;[$OutputDependencyFilePath]&quot; (&#x0D;&#x0A;    if &quot;[$DetectDependencies]&quot; neq &quot;0&quot; (&#x0D;&#x0A;        sed -n -e &quot;s#\\\\\([^^ ]\)#/\1#g&quot; -e &quot;1h;1^!H;${;g;s#\\\\\n##g;s#\([^^\n]*\)#\1 ; echo#;p;}&quot; &quot;[$OutputDependencyFilePath]&quot; &gt; &quot;[$OutputDependencyFilePath].tmp__&quot;&#x0D;&#x0A;        move /Y &quot;[$OutputDependencyFilePath].tmp__&quot; &quot;[$OutputDependencyFilePath]&quot; &gt; NUL&#x0D;&#x0A;    )&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;:skipAll&#x0D;&#x0A;:: Remove dependency file if no longer needed&#x0D;&#x0A;if exist &quot;[$OutputDependencyFilePath]&quot; (&#x0D;&#x0A;    if &quot;[$DetectDependencies]&quot; equ &quot;0&quot; (&#x0D;&#x0A;        del /F &quot;[$OutputDependencyFilePath]&quot;&#x0D;&#x0A;    )&#x0D;&#x0A;)"
+			Outputs="[$OutputPreprocessedFilePath];[$OutputAssemblyFilePath];[$OutputObjectFilePath]"
+			AdditionalDependencies="$(IntDir)\$(ProjectName)_int.bdc"
+			FileExtensions="*.c"
+			BatchingSeparator=""
+			>
+			<Properties>
+				<BooleanProperty
+					Name="Piped"
+					IsReadOnly="true"
+					DisplayName="Use Pipes"
+					Description="NOT SUPPORTED! Use pipes rather than temporary files for communication between the various stages of compilation."
+					Switch="-pipe"
+				/>
+				<StringProperty
+					Name="DefineMacro"
+					DisplayName="Define Macro"
+					Switch="-D [value]"
+					DefaultValue="_$(ConfigurationName);FCY=$(FCY)"
+					Delimited="true"
+				/>
+				<StringProperty
+					Name="UndefineMacro"
+					DisplayName="Undefine Macro"
+					Switch="-U &quot;[value]&quot;"
+					Delimited="true"
+				/>
+				<StringProperty
+					Name="IncludeDirectory"
+					DisplayName="Include File Search Directory"
+					Description="Directory where additional include files can be found"
+					Switch="-I &quot;[value]&quot;"
+					Delimited="true"
+				/>
+				<StringProperty
+					Name="OutputObjectFilePath"
+					DisplayName="Object File Path"
+					PropertyPageName="Output"
+					Description="Specifies the output file path of the object"
+					DefaultValue="$(IntDir)\$(InputName)_int.obj"
+				/>
+				<BooleanProperty
+					Name="OutputWithDebug"
+					DisplayName="Include Debugging Information"
+					PropertyPageName="Output"
+					Switch="-g"
+				/>
+				<StringProperty
+					Name="OutputAssemblyFilePath"
+					DisplayName="Intermediate Assembly File Path"
+					PropertyPageName="Output"
+					Switch="&quot;-Wa,-ahl=[value]&quot;"
+					DefaultValue="$(IntDir)\$(InputName)_int.asm"
+				/>
+				<StringProperty
+					Name="OutputPreprocessedFilePath"
+					DisplayName="Preproccessed Source File Path"
+					PropertyPageName="Output"
+					DefaultValue="$(IntDir)\$(InputName)_int$(InputExt)"
+				/>
+				<StringProperty
+					Name="OutputDependencyFilePath"
+					DisplayName="Dependency File Path"
+					PropertyPageName="Output"
+					Description="Specifies the target of the rule emitted by dependency generation."
+					DefaultValue="$(IntDir)\$(InputName)_int.d"
+				/>
+				<EnumProperty
+					Name="DetectDependencies"
+					DisplayName="Detect Dependencies"
+					PropertyPageName="Output"
+					Description="Specifies the rebuild type for changed headers."
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							DisplayName="Disabled"
+						/>
+						<EnumValue
+							Value="1"
+							DisplayName="For all dependent headers"
+						/>
+						<EnumValue
+							Value="2"
+							DisplayName="For dependent custom headers"
+						/>
+					</Values>
+				</EnumProperty>
+				<BooleanProperty
+					Name="DataSections"
+					IsReadOnly="true"
+					DisplayName="Separate Data Sections"
+					PropertyPageName="Output"
+					Description="NOT SUPPORTED! Puts each data entity into its own section and defines &quot;GCC_SEPARATE_DATA_SECTIONS&quot;. Should only be used with corresponding linker optimization."
+					Switch="-fdata-sections -D GCC_SEPARATE_DATA_SECTIONS"
+				/>
+				<BooleanProperty
+					Name="FunctionSections"
+					IsReadOnly="true"
+					DisplayName="Separate Function Sections"
+					PropertyPageName="Output"
+					Description="NOT SUPPORTED! Puts each function into its own section and defines &quot;GCC_SEPARATE_FUNCTION_SECTIONS&quot;. Should only be used with corresponding linker optimization."
+					Switch="-ffunction-sections -D GCC_SEPARATE_FUNCTION_SECTIONS"
+				/>
+				<EnumProperty
+					Name="CLangStd"
+					DisplayName="C Language Conformance"
+					PropertyPageName="Language"
+					DefaultValue="3"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="-std=c89"
+							DisplayName="ISO 1990 C standard"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="-std=c99"
+							DisplayName="ISO 1999 C standard"
+						/>
+						<EnumValue
+							Value="2"
+							Switch="-std=gnu89"
+							DisplayName="ISO 1990 C standard with GNU"
+						/>
+						<EnumValue
+							Value="3"
+							Switch="-std=gnu99"
+							DisplayName="ISO 1999 C standard with GNU"
+						/>
+					</Values>
+				</EnumProperty>
+				<EnumProperty
+					Name="Optimizer"
+					DisplayName="Optimization"
+					Description="Level of Optimization"
+					DefaultValue="2"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="-O0"
+							DisplayName="None"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="-O1"
+							DisplayName="Optimize For Speed (1)"
+						/>
+						<EnumValue
+							Value="2"
+							Switch="-O2"
+							DisplayName="Optimize For Speed (2)"
+						/>
+						<EnumValue
+							Value="3"
+							Switch="-O3"
+							DisplayName="Optimize For Speed (3)"
+						/>
+						<EnumValue
+							Value="4"
+							Switch="-Os"
+							DisplayName="Optimize For Space"
+						/>
+					</Values>
+				</EnumProperty>
+				<EnumProperty
+					Name="CharSignment"
+					DisplayName="Char Default Sign"
+					PropertyPageName="Language"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="-funsigned-char"
+							DisplayName="Unsigned"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="-fsigned-char"
+							DisplayName="Signed"
+						/>
+					</Values>
+				</EnumProperty>
+				<EnumProperty
+					Name="BitfieldSignment"
+					DisplayName="Bitfleld Default Sign"
+					PropertyPageName="Language"
+					Description="/W0"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="-funsigned-bitfields"
+							DisplayName="Unsigned"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="-fsigned-bitfields"
+							DisplayName="Signed"
+						/>
+					</Values>
+				</EnumProperty>
+				<BooleanProperty
+					Name="PackStruct"
+					DisplayName="Struct Packing"
+					PropertyPageName="Language"
+					Description="Pack structure members together without holes"
+					Switch="-fpack-struct"
+				/>
+				<BooleanProperty
+					Name="ShortEnum"
+					DisplayName="Short Enums"
+					PropertyPageName="Language"
+					Description="Use the narrowest integer type possible for enumeration types"
+					Switch="-fshort-enums"
+				/>
+				<BooleanProperty
+					Name="WarningGeneral"
+					DisplayName="Enable Most Warnings"
+					PropertyPageName="Warning"
+					Switch="-Wall"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningExtra"
+					DisplayName="Enable Additional Warnings"
+					PropertyPageName="Warning"
+					Description="These warnings are not covered by -Wall."
+					Switch="-Wextra"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningAsErrors"
+					IsReadOnly="true"
+					DisplayName="Warnings as Errors"
+					PropertyPageName="Warning"
+					Description="NOT SUPPORTED! Treat all warnings as errors"
+					Switch="-Werror"
+				/>
+				<EnumProperty
+					Name="WarningPedantic"
+					DisplayName="Pedantic Code Conformance"
+					PropertyPageName="Warning"
+					Description="Issue warnings or errors needed for strict compliance to the standard"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							DisplayName="Disabled"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="-pedantic"
+							DisplayName="Warnings"
+						/>
+						<EnumValue
+							Value="2"
+							Switch="-pedantic-errors"
+							DisplayName="Errors"
+						/>
+					</Values>
+				</EnumProperty>
+				<BooleanProperty
+					Name="WarningParentheses"
+					DisplayName="Warn On Vague Parentheses"
+					PropertyPageName="Warning"
+					Description="Warn if parentheses are omitted in certain contexts, such as when there is an assignment in a context where a truth value is expected, or when operators are nested whose precedence people often get confused about."
+					Switch="-Wparentheses"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningOnUndefinedInIf"
+					DisplayName="Warn On Undefined Label"
+					PropertyPageName="Warning"
+					Description="Warn if an undefined identifier is evaluated in an #if directive."
+					Switch="-Wundef"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningOnConversion"
+					DisplayName="Warn On Value Conversion"
+					PropertyPageName="Warning"
+					Description="Warn for implicit conversions that may alter a value."
+					Switch="-Wconversion"
+				/>
+				<BooleanProperty
+					Name="WarningOnShadow"
+					DisplayName="Warn On Variable Shadowing"
+					PropertyPageName="Warning"
+					Description="Warn whenever a local variable shadows another local variable, parameter or global variable or whenever a built-in function is shadowed."
+					Switch="-Wshadow"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningFloatEqual"
+					DisplayName="Warn On Float Equality Test"
+					PropertyPageName="Warning"
+					Description="Warn if floating point values are used in equality comparisons. "
+					Switch="-Wfloat-equal"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningArchDep"
+					DisplayName="Warn On Arch. Dependencies"
+					PropertyPageName="Warning"
+					Description="Warn about anything that depends on the &quot;size of&quot; a function type or of void."
+					Switch="-Wpointer-arith"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningAlignmentCast"
+					DisplayName="Warn On Alignment Casts"
+					PropertyPageName="Warning"
+					Description="Warn whenever a pointer is cast such that the required alignment of the target is increased."
+					Switch="-Wcast-align"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningStrictPrototype"
+					DisplayName="Warn On Non-Strict Prototype"
+					PropertyPageName="Warning"
+					Description="Warn if a function is declared or defined without specifying the argument types."
+					Switch="-Wstrict-prototypes"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningMissingDeclaration"
+					DisplayName="Warn On Missing Declarations"
+					PropertyPageName="Warning"
+					Description="Warn if a global function is defined without a previous declaration."
+					Switch="-Wmissing-declarations"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningWriteStrings"
+					DisplayName="Warn On Writable Strings"
+					PropertyPageName="Warning"
+					Description="Warn whenever a string constant is asigned to a non-const char*."
+					Switch="-Wwrite-strings"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningUnreachableCode"
+					DisplayName="Warn On Unreachable Code"
+					PropertyPageName="Warning"
+					Description="Warn if the compiler detects that code will never be executed. "
+					Switch="-Wunreachable-code"
+				/>
+				<BooleanProperty
+					Name="WarningSwitchDefault"
+					DisplayName="Warn On Missing Switch Default"
+					PropertyPageName="Warning"
+					Description="Warn whenever a switch statement does not have a default case. "
+					Switch="-Wswitch-default"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningCastQualifier"
+					DisplayName="Warn On Unsafe Qualifier Casting"
+					PropertyPageName="Warning"
+					Description="Warn whenever a pointer is cast so as to remove a type qualifier from the target type. Also warn when making a cast which introduces a type qualifier in an unsafe way."
+					Switch="-Wcast-qual"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningPadding"
+					DisplayName="Warn On Padding"
+					PropertyPageName="Warning"
+					Description="Warn if padding is included in a structure, either to align an element of the structure or to align the whole structure."
+					Switch="-Wpadded"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="WarningNoLongLong"
+					DisplayName="Disable &apos;long long&apos; Usage Warnings"
+					PropertyPageName="Warning"
+					Description="The C++ 1998 standard does not support the &apos;long long&apos; type and thus the compiler generates a warning. Either enable this flag or change the language standard to C++0x to avoid the warning."
+					Switch="-Wno-long-long"
+				/>
+				<BooleanProperty
+					Name="WarningOnVariadic"
+					DisplayName="Disable Variadic Macro Warnings"
+					PropertyPageName="Warning"
+					Description="Do not warn if variadic macros are used in pedantic ISO C90 mode, or the GNU alternate syntax when in pedantic ISO C99 mode."
+					Switch="-Wno-variadic-macros"
+					DefaultValue="true"
+				/>
+			</Properties>
+		</CustomBuildRule>
+		<CustomBuildRule
+			Name="dsPIC30 Linker"
+			DisplayName="dsPIC30 Linker"
+			CommandLine="setlocal enabledelayedexpansion&#x0D;&#x0A;&#x0D;&#x0A;if exist &quot;$(IntDir)\$(ProjectName)_int.tag&quot; (&#x0D;&#x0A;    del /F &quot;$(IntDir)\$(ProjectName)_int.tag&quot;&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;if [$HeapSize] lss 0 (&#x0D;&#x0A;    echo &quot;Error: Invalid heap size (Value: [$HeapSize])^!&quot;&#x0D;&#x0A;    exit 1&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;if &quot;[$OutputPath]&quot; equ &quot;&quot; (&#x0D;&#x0A;    echo &quot;Error: Invalid linker output file path^!&quot;&#x0D;&#x0A;    exit 2&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;:: Generate object file list&#x0D;&#x0A;(set directories=&quot;[$ObjectFileSearchPaths]&quot;)&#x0D;&#x0A;(set directories=!directories:;=&quot; &quot;!)&#x0D;&#x0A;(set directories=!directories:,=&quot; &quot;!)&#x0D;&#x0A;(set SpacedExt=[$ObjectFileSearchExt])&#x0D;&#x0A;(set SpacedExt=!SpacedExt:;= !)&#x0D;&#x0A;(set SpacedExt=!SpacedExt:,= !)&#x0D;&#x0A;for /D %%i in (!directories!) do (&#x0D;&#x0A;    (set directory=%%i)&#x0D;&#x0A;    set directory=!directory:&quot;=!&#x0D;&#x0A;    if exist &quot;!directory!&quot; (&#x0D;&#x0A;        pushd &quot;!directory!&quot;&#x0D;&#x0A;        for %%j in (!SpacedExt!) do (&#x0D;&#x0A;            (set FileStream=!FileStream! &quot;!directory!\%%j&quot;)&#x0D;&#x0A;        )&#x0D;&#x0A;        popd&#x0D;&#x0A;    )&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;if &quot;!FileStream!&quot; == &quot;&quot; (&#x0D;&#x0A;    echo &quot;Error: No object files found (Search spec: [$ObjectFileSearchPaths], [$ObjectFileSearchExt])^!&quot;&#x0D;&#x0A;    exit 3&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;:: Link&#x0D;&#x0A;pic30-gcc.exe &quot;-omf=$(OMF)&quot; &quot;-mcpu=$(MCPU)&quot; [AllOptions] [AdditionalOptions] !FileStream!&#x0D;&#x0A;if &quot;!ERRORLEVEL!&quot; neq &quot;0&quot; (&#x0D;&#x0A;    exit !ERRORLEVEL!&#x0D;&#x0A;)"
+			Outputs="$dummy1$;[$OutputPath];[$GenerateMapFile]"
+			FileExtensions="*.EnableLinker"
+			ExecutionDescription="Linking Object Files ..."
+			>
+			<Properties>
+				<StringProperty
+					Name="LibraryPath"
+					DisplayName="Library Search Path"
+					Switch="-Wl,-L&quot;[value]&quot;"
+					Delimited="true"
+				/>
+				<StringProperty
+					Name="ObjectFileSearchExt"
+					DisplayName="Object File Extensions"
+					Description="Specifies which extensions should be used by the object file scanner"
+					DefaultValue="*.obj;*.o"
+					Delimited="true"
+				/>
+				<StringProperty
+					Name="GenerateMapFile"
+					DisplayName="Map File Path"
+					Switch="&quot;-Wl,-Map=[value]&quot;"
+					DefaultValue="$(IntDir)\$(ProjectName)_int.map"
+				/>
+				<StringProperty
+					Name="ObjectFileSearchPaths"
+					DisplayName="Object File Search Path"
+					Description="Specifies where to look for object files. Path separators: ,;"
+					DefaultValue="$(IntDir)"
+				/>
+				<BooleanProperty
+					Name="Relax"
+					IsReadOnly="true"
+					DisplayName="Relaxation"
+					Description="NOT SUPPORTED! Use RCALL instead of CALL where possible."
+					Switch="-Wl,--relax"
+				/>
+				<BooleanProperty
+					Name="StripSections"
+					IsReadOnly="true"
+					DisplayName="Strip Unused Sections"
+					Description="NOT SUPPORTED! Removes unused sections. Enable this if using separate function and data enitity sections."
+					Switch="-Wl,--gc-sections"
+				/>
+				<StringProperty
+					Name="OutputPath"
+					IsReadOnly="true"
+					DisplayName="ELF Output Path"
+					Description="Specifies the path to the ELF file."
+					Switch="-o &quot;[value]&quot;"
+					DefaultValue="$(OutDir)\$(ProjectName).$(OMF)"
+				/>
+				<StringProperty
+					Name="LinkerScript"
+					DisplayName="Linker Script"
+					Description="Specifies a linker script. On some targets, such as bare-board targets without an operating system, the -T option may be required when linking to avoid references to undefined symbols."
+					Switch="&quot;-Wl,-T[value]&quot;"
+					DefaultValue="p$(MCPU).gld"
+				/>
+				<BooleanProperty
+					Name="ShowMemoryReport"
+					DisplayName="Show Memory Usage"
+					Description="Report memory usage to console."
+					Switch="-Wl,--report-mem"
+					DefaultValue="true"
+				/>
+				<IntegerProperty
+					Name="HeapSize"
+					DisplayName="Heap Size"
+					Description="Specifies the heap size in bytes."
+					Switch="-Wl,--heap,[value]"
+				/>
+			</Properties>
+		</CustomBuildRule>
+		<CustomBuildRule
+			Name="dsPIC30 Post Processing"
+			DisplayName="dsPIC30 Post Processing"
+			CommandLine="if &quot;[$GenerateListing]&quot; neq &quot;&quot; (&#x0D;&#x0A;    pic30-objdump &quot;-omf=$(OMF)&quot; [ListingSections] [ListingOptions] &quot;[$TargetPath]&quot; &gt; &quot;[$GenerateListing]&quot;&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;if &quot;[$GenerateProgSize]&quot; neq &quot;&quot; (&#x0D;&#x0A;    echo ################################################# &gt;  &quot;[$GenerateProgSize]&quot;&#x0D;&#x0A;    echo # $(ProjectName) Size File &gt;&gt;  &quot;[$GenerateProgSize]&quot;&#x0D;&#x0A;    echo ################################################# &gt;&gt;  &quot;[$GenerateProgSize]&quot;&#x0D;&#x0A;    pic30-nm &quot;-omf=$(OMF)&quot; [UnmangleFunctions] --size-sort -S &quot;[$TargetPath]&quot; &gt;&gt; &quot;[$GenerateProgSize]&quot;&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;if &quot;[$GenerateHexFile]&quot; neq &quot;0&quot; (&#x0D;&#x0A;    pic30-bin2hex &quot;-omf=$(OMF)&quot; &quot;[$TargetPath]&quot;&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;echo This project was created with dsPIC30Project from http://www.brownout.de by Martin Freund&#x0D;&#x0A;"
+			Outputs="[$GenerateFlashFile];[$GenerateEEPROMFile];[$GenerateCOFFFile];[$GenerateProgSize];[$GenerateListing]"
+			AdditionalDependencies="$(OutDir)\$(ProjectName).elf"
+			FileExtensions="*.EnablePostProcessing"
+			ExecutionDescription="Performing Post-Processing Steps ..."
+			>
+			<Properties>
+				<StringProperty
+					Name="GenerateProgSize"
+					DisplayName="Program Size File Path"
+					Description="Specifies the path to the program size file. Leave this blank to skip program size file generation."
+					DefaultValue="$(IntDir)\$(ProjectName)_size_int.lst"
+				/>
+				<StringProperty
+					Name="GenerateListing"
+					DisplayName="Listing File Path"
+					PropertyPageName="Listing"
+					Description="Specifies the path to the listing file. Leave this blank to skip listing file generation."
+					DefaultValue="$(IntDir)\$(ProjectName)_int.lst"
+				/>
+				<StringProperty
+					Name="ListingSections"
+					DisplayName="Sections"
+					PropertyPageName="Listing"
+					Description="Specifies the sections to be listed"
+					Switch="-j [value]"
+					DefaultValue=".data;.text"
+					Delimited="true"
+				/>
+				<StringProperty
+					Name="ListingOptions"
+					DisplayName="Listing Options"
+					PropertyPageName="Listing"
+					Description="Default: Section headers with contents"
+					Switch="[value]"
+					DefaultValue="-h -s"
+				/>
+				<BooleanProperty
+					Name="UnmangleFunctions"
+					DisplayName="Unmangle Functions"
+					Description="Unmangles function names in the size file."
+					Switch="--demangle"
+					DefaultValue="true"
+				/>
+				<BooleanProperty
+					Name="ShowSizeList"
+					DisplayName="Show Size List"
+					Description="Prints the size list to the output window."
+					DefaultValue="true"
+				/>
+				<EnumProperty
+					Name="ShowSizeListRadix"
+					DisplayName="Number Radix"
+					Description="Specifies the number radix of the avr-size output."
+					DefaultValue="2"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="-o"
+							DisplayName="Octal"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="-d"
+							DisplayName="Decimal"
+						/>
+						<EnumValue
+							Value="2"
+							Switch="-x"
+							DisplayName="Hex"
+						/>
+					</Values>
+				</EnumProperty>
+				<StringProperty
+					Name="TargetPath"
+					IsReadOnly="true"
+					DisplayName="ELF File PATH"
+					Description="Specifies the path to the ELF file."
+					DefaultValue="$(OutDir)\$(ProjectName).$(OMF)"
+				/>
+				<BooleanProperty
+					Name="GenerateHexFile"
+					DisplayName="Generate Hex File"
+					Description="Generates the hex file from the linker output using pic30-bin2hex."
+					DefaultValue="true"
+				/>
+			</Properties>
+		</CustomBuildRule>
+		<CustomBuildRule
+			Name="dsPIC30 Assembler"
+			DisplayName="dsPIC30 Assembler"
+			CommandLine="if &quot;[$OutputPath]&quot; equ &quot;&quot; (&#x0D;&#x0A;    echo &quot;Invalid object file path for $(InputFileName)!&quot;&#x0D;&#x0A;    exit 1&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;pic30-gcc.exe -c -x assembler-with-cpp &quot;-omf=$(OMF)&quot; &quot;-mcpu=$(MCPU)&quot; [AllOptions] [AdditionalOptions] [Inputs]&#x0D;&#x0A;"
+			Outputs="[$OutputPath]"
+			AdditionalDependencies="$(IntDir)\$(ProjectName)_int.bdc"
+			FileExtensions="*.asm;*.S"
+			ExecutionDescription="Assembling $(InputFileName) ..."
+			>
+			<Properties>
+				<StringProperty
+					Name="OutputPath"
+					DisplayName="Output Path"
+					Description="Specifies the output path"
+					Switch="-o &quot;[value]&quot;"
+					DefaultValue="$(IntDir)\$(InputName)_int.obj"
+				/>
+				<EnumProperty
+					Name="DebugFormat"
+					DisplayName="Debugging Format"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							DisplayName="None"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="-Wa,-gdwarf-2"
+							DisplayName="DWARF v2"
+						/>
+						<EnumValue
+							Value="2"
+							Switch="-Wa,-gstabs"
+							DisplayName="STABS"
+						/>
+						<EnumValue
+							Value="3"
+							Switch="-Wa,-gstabs+"
+							DisplayName="Extended STABS"
+						/>
+					</Values>
+				</EnumProperty>
+				<StringProperty
+					Name="IncludeDirectory"
+					DisplayName="Include File Search Directory"
+					Description="Directory where additional include files can be found"
+					Switch="-I &quot;[value]&quot;"
+					Delimited="true"
+				/>
+				<BooleanProperty
+					Name="ReduceMemOverhead"
+					DisplayName="Reduce Memory Overheads"
+					Description="Prefer smaller memory use at the cost of longer"
+					Switch="-Wa,--reduce-memory-overheads"
+				/>
+				<BooleanProperty
+					Name="WarningAsError"
+					DisplayName="Treat Warnings As Errors"
+					Switch="-Wa,--fatal-warnings"
+				/>
+				<StringProperty
+					Name="DefineSymbol"
+					DisplayName="Predefined Symbols"
+					Switch="&quot;-Wa,--defsym=[value]&quot;"
+					DefaultValue="_$(ConfigurationName);FCY=$(FCY);"
+					Delimited="true"
+				/>
+			</Properties>
+		</CustomBuildRule>
+		<CustomBuildRule
+			Name="dsPIC30 Build Dependency Check"
+			DisplayName="dsPIC30 Build Dependency Check"
+			CommandLine="touch &quot;$(IntDir)\$(ProjectName)_int.bdc&quot;"
+			Outputs="$(IntDir)\$(ProjectName)_int.bdc"
+			FileExtensions="*.EnableDependencyCheck;*.h;*.hpp;*.hxx"
+			>
+			<Properties>
+			</Properties>
+		</CustomBuildRule>
+		<CustomBuildRule
+			Name="dsPIC30 Project Build Tagger"
+			DisplayName="dsPIC30 Build Tagger"
+			CommandLine="touch &quot;$(IntDir)\$(ProjectName)_int.tag&quot;"
+			Outputs="$dummy0$;$(IntDir)\$(ProjectName)_int.tag"
+			FileExtensions="*.EnableBuildTagger"
+			>
+			<Properties>
+			</Properties>
+		</CustomBuildRule>
+	</Rules>
+</VisualStudioToolFile>
