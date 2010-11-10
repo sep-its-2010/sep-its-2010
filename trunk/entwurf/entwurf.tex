@@ -365,7 +365,7 @@ typedef struct {
 
 			\subsection{Beschreibung der verwendeten Klassen}
 			\paragraph*{\textbf{Connect}} erbt von der Klasse \textit{Activity} und ermöglicht die Suche nach verfügbaren e-puck Robotern. Diese werden
-			aufgelistet angezeigt Außerdem stellt die Activity die Verbindung zu den ausgewählten e-pucks her.
+			aufgelistet angezeigt und stellt die Verbindung zu den ausgewählten e-pucks her.
 			\paragraph*{\textbf{Import}} erbt von der Klasse \textit{Activity} und ermöglicht das Auswählen und Öffnen einer abgespeicherten Karte.
 			\paragraph*{\textbf{Simulation}} erbt von der Klasse \textit{Activity} und ermöglicht die Ausführung der Anwendung im Simulationsmodus.
 			Es kann die zu simulierende Karte und die Anzahl der teilnehmenden e-puck Roboter eingestellt werden.
@@ -423,6 +423,12 @@ typedef struct {
 
 
 			\subsection{Model-View-Controller (MVC) Architektur}
+	  			\begin{figure}[htbp]
+					\centering
+					\includegraphics[width=10cm]{images/android_mvc.eps}
+  					\caption{Model-View Controller Architektur}
+  					\label{fig:mvc}
+ 	 			\end{figure}					
 				Die Daten- bzw. Benutzer-Interaktion der Android-Anwendung wird mit einer MVC-Architektur aufgebaut. Dies ermöglicht ein
 				flexibles Programmdesign, das eine Wiederverwendbarkeit von Komponenten sowie eine reduzierte Komplexität gewährleistet.
 				Die Daten, wie z.B. Karteninformationen oder Roboterpositionen, können dadurch von den zugehörigen Darstellungen getrennt werden
@@ -433,13 +439,7 @@ typedef struct {
 				View logisch zum	Controller. Die Model-Schicht (\textit{RealPuck}) erhält über die Bluetooth-Schnittstelle Aktualisierungen der e-puck Roboter,
 				welche den Zustand ändern.\\
 				Die beschriebenen Steuerungs- und Dialogabläufe werden hier nur rudimentär zum Verständnis erwähnt. Eine genauere Erläuterung ist in
-				Kapitel \ref{sec:aufbau_dialoge} zu finden
-	  			\begin{figure}
-					\centering
-					\includegraphics[width=10cm]{images/android_mvc.eps}
-  					\caption{Model-View Controller Architektur}
-  					\label{fig:mvc}
- 	 			\end{figure}					
+				Kapitel \ref{sec:aufbau_dialoge} zu finden			
 			\paragraph*{Model}
   				Die Model-Schicht der Architektur speichert als zentrale Komponente sämtliche Daten bzgl. Karten- und e-puck-Informationen. 
   				Sie beinhaltet außerdem die Applikationslogik der Android-Anwendung. Die Kommunikation nach außen findet im Erkundungsmodus
@@ -448,7 +448,7 @@ typedef struct {
   				für die Anzeige gespeichert werden. Informationen der einzelnen Roboter, sowie deren Ablaufsteuerung, werden in den Instanzen
   				der Klasse \textit{RealPuck} verwaltet (siehe Kapitel \ref{sec:repraesentation}). Diese Instanzen werden in einer Attributsliste der Klasse
   				\textit{CommunicationManager} gehalten und besitzen auch selbst einen Verweis auf den Kommunikations-Manager. Bei Zustandsänderung
-  				der \textit{RealPuck}-Instanzen bzw. bei Änderung der Kartendaten werden die registrierten Views benachrichtigt.
+  				der \textit{RealPuck}-Instanzen bzw. bei Änderung der Kartendaten werden die registrierten Views benachrichtigt.	
   			\paragraph*{View}
   				Die Präsentationskomponenten der MVC-Architektur sind für die Ausgabe der Model-Daten zuständig und bilden eine
   				Abstraktionsschicht zwischen der Präsentation der Anwendung, dem Model und dem Benutzer. Die Schicht besteht aus den drei
@@ -466,7 +466,26 @@ typedef struct {
   				Der Controller nimmt Eingaben aus den verschiedenen View Klassen entgegen und leitet diese bereinigt und normalisiert an die
   				Model-Schicht weiter. Hier wird also eine Abstraktionsschicht eingeführt, welche die Verbindung zwischen Benutzer-Interaktionen
   				und dem Model beschreibt. Zur Controller-Schicht gehört neben den Ereignisbehandler-Methoden der View Klassen die Klasse
-  				\textit{Controller}, welche für die zentrale Steuerung der Model Schicht verantwortlich ist.  				
+  				\textit{Controller}, welche für die zentrale Steuerung der Model Schicht verantwortlich ist.  		
+		\subsection{Environment}
+			  	\begin{figure}[htbp]
+					\centering
+					\includegraphics[width=10cm]{images/sequenzdiagramm_environment.eps}
+  					\caption{Sequenzdiagramm - Environment}
+  					\label{fig:environment}
+ 	 			\end{figure}				
+				Die Klasse \textit{Environment} stellt das Model für die Dialoge (Observer) dar. Alle Nachrichten bezüglich Karte und Roboter werden
+				hier zentral an die entsprechenden Empfänger weitergeleitet.\\
+				Zur Veranschaulichung kann  man in Abbildung \ref{fig:environment} zwei übliche Abläufe des Models sehen. Als Voraussetzung zum 
+				oberen Fall, erkennt ein realer e-puck Roboter einen Knoten. Diesen übergibt er über eine Bluetooth-Nachricht an das Smartphone; diese
+				landet schließlich in der entsprechenden Instanz der Klasse \textit{RealPuck}.\\
+				Der \textit{RealPuck} gibt wie im Sequenzdiagramm (oben) zu sehen seine neue Position, mit seiner ID als Identifikation, an den
+				\textit{CommunicationManager}. Es findet eine Broadcast-Nachrichtenübertragung an alle angemeldeten Teilnehmer (andere \textit{RealPucks}
+				sowie \textit{Environment}) statt. Das \textit{Environment} hat nun zwei Aufgaben, zum Einen werden die registrierten Observer benachrichtigt.
+				Zum Anderen wird die Karte über den neuen Knoten informiert.\\
+				Im Zweiten Fall wird eine Richtungsanweisung des Benutzers auf dem Dialog entgegengenommen. Diese wird (über den \textit{Controller}) an
+				das \textit{Environment} weitergereicht. Dieses verteilt die Steuerungsinformationen über den \textit{CommunicationManager} an alle (und
+				insbesondere an den passenden) \textit{RealPuck}.	
 		\subsection{Aufbau der Dialoge}
   		\label{sec:aufbau_dialoge}
 	Die Realisierung aller Dialoge erfolgt nach dem oben beschriebenen Model-View-Controller-Pattern.
