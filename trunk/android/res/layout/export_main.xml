@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content" android:layout_height="wrap_content">
+
+	<EditText android:id="@+id/etxtFilename" android:maxLines="1"
+		android:inputType="textNoSuggestions" android:layout_width="fill_parent"
+		android:layout_height="wrap_content"></EditText>
+
+	<Button android:id="@+id/btnSave" android:text="Save" 
+		android:layout_below="@id/etxtFilename" android:layout_width="wrap_content"
+		android:layout_height="wrap_content"></Button>
+</RelativeLayout>
