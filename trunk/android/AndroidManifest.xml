@@ -7,6 +7,6 @@
 
 
     </application>
-    <uses-sdk android:minSdkVersion="2.1" />
+    <uses-sdk/>
 
 </manifest> 
