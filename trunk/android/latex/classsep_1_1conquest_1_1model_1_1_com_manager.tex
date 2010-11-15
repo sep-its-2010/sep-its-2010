@@ -1,0 +1,163 @@
+\hypertarget{classsep_1_1conquest_1_1model_1_1_com_manager}{
+\section{sep.conquest.model.ComManager Class Reference}
+\label{classsep_1_1conquest_1_1model_1_1_com_manager}\index{sep::conquest::model::ComManager@{sep::conquest::model::ComManager}}
+}
+
+
+Inherits \hyperlink{interfacesep_1_1conquest_1_1model_1_1_i_com_man}{sep::conquest::model::IComMan}.
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{classsep_1_1conquest_1_1model_1_1_com_manager_ac0fd1e3e02c51cb13f8696c7139bab0b}{addClient} (String ID, \hyperlink{interfacesep_1_1conquest_1_1model_1_1_i_com_client}{IComClient} client)
+\item 
+void \hyperlink{classsep_1_1conquest_1_1model_1_1_com_manager_a99b3bc0da7eb0a2d9f1456d336e7064e}{removeClient} (String ID)
+\item 
+void \hyperlink{classsep_1_1conquest_1_1model_1_1_com_manager_a32b20666fb0ad023a17addc36b24c2b6}{broadcast} (\hyperlink{interfacesep_1_1conquest_1_1model_1_1_i_com_client}{IComClient} sender, \hyperlink{interfacesep_1_1conquest_1_1model_1_1_i_request}{IRequest} request)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classsep_1_1conquest_1_1model_1_1_com_manager}{ComManager} \hyperlink{classsep_1_1conquest_1_1model_1_1_com_manager_a8db465879daec5e6c738b0138a66e0b9}{getInstance} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classsep_1_1conquest_1_1model_1_1_com_manager_a94907d33e691691ab2feb6da41dc1c64}{ComManager} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+ConcurrentMap$<$ String, \hyperlink{interfacesep_1_1conquest_1_1model_1_1_i_com_client}{IComClient} $>$ \hyperlink{classsep_1_1conquest_1_1model_1_1_com_manager_abf9f5b6006505c5b6c24aed64fd21a93}{clients}
+\end{DoxyCompactItemize}
+\subsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static final \hyperlink{classsep_1_1conquest_1_1model_1_1_com_manager}{ComManager} \hyperlink{classsep_1_1conquest_1_1model_1_1_com_manager_acc2236ac5d69116e7b91d7add3699da7}{INSTANCE} = new \hyperlink{classsep_1_1conquest_1_1model_1_1_com_manager}{ComManager}()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classsep_1_1conquest_1_1model_1_1_com_manager}{ComManager} class is the global communication-\/manager to provide broadcast-\/communication. It has a (thread-\/safe) list with all clients who are registered. Every registered participant will get the request-\/messages from others. Classes which have implemented the IComClient-\/interface can be registered by the addClient-\/method. Requests will be sent by the broadcast-\/ method.
+
+\begin{DoxyAuthor}{Author}
+Andreas Wilhelm 
+\end{DoxyAuthor}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classsep_1_1conquest_1_1model_1_1_com_manager_a94907d33e691691ab2feb6da41dc1c64}{
+\index{sep::conquest::model::ComManager@{sep::conquest::model::ComManager}!ComManager@{ComManager}}
+\index{ComManager@{ComManager}!sep::conquest::model::ComManager@{sep::conquest::model::ComManager}}
+\subsubsection[{ComManager}]{\setlength{\rightskip}{0pt plus 5cm}sep.conquest.model.ComManager.ComManager (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}
+\label{classsep_1_1conquest_1_1model_1_1_com_manager_a94907d33e691691ab2feb6da41dc1c64}
+The private constructor to realize the singleton pattern. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classsep_1_1conquest_1_1model_1_1_com_manager_ac0fd1e3e02c51cb13f8696c7139bab0b}{
+\index{sep::conquest::model::ComManager@{sep::conquest::model::ComManager}!addClient@{addClient}}
+\index{addClient@{addClient}!sep::conquest::model::ComManager@{sep::conquest::model::ComManager}}
+\subsubsection[{addClient}]{\setlength{\rightskip}{0pt plus 5cm}void sep.conquest.model.ComManager.addClient (
+\begin{DoxyParamCaption}
+\item[{String}]{ ID, }
+\item[{{\bf IComClient}}]{ client}
+\end{DoxyParamCaption}
+)}}
+\label{classsep_1_1conquest_1_1model_1_1_com_manager_ac0fd1e3e02c51cb13f8696c7139bab0b}
+addClient registers a client for participating the broadcast-\/ communication by the communication-\/manager.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & the ID of the client. \\
+\hline
+{\em client} & the client which has to be added. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{interfacesep_1_1conquest_1_1model_1_1_i_com_man_a7ef0cc971fee10900985553e260717eb}{sep.conquest.model.IComMan}.
+
+\hypertarget{classsep_1_1conquest_1_1model_1_1_com_manager_a32b20666fb0ad023a17addc36b24c2b6}{
+\index{sep::conquest::model::ComManager@{sep::conquest::model::ComManager}!broadcast@{broadcast}}
+\index{broadcast@{broadcast}!sep::conquest::model::ComManager@{sep::conquest::model::ComManager}}
+\subsubsection[{broadcast}]{\setlength{\rightskip}{0pt plus 5cm}void sep.conquest.model.ComManager.broadcast (
+\begin{DoxyParamCaption}
+\item[{{\bf IComClient}}]{ sender, }
+\item[{{\bf IRequest}}]{ request}
+\end{DoxyParamCaption}
+)}}
+\label{classsep_1_1conquest_1_1model_1_1_com_manager_a32b20666fb0ad023a17addc36b24c2b6}
+Initiate a broadcast message to all registered participants at the communication-\/manager.
+
+
+\begin{DoxyParams}{Parameters}
+{\em sender} & the sender of the broadcast-\/message. \\
+\hline
+{\em request} & the request-\/message. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{interfacesep_1_1conquest_1_1model_1_1_i_com_man_a946a5a220a09cb25043dac290a1ecab4}{sep.conquest.model.IComMan}.
+
+\hypertarget{classsep_1_1conquest_1_1model_1_1_com_manager_a8db465879daec5e6c738b0138a66e0b9}{
+\index{sep::conquest::model::ComManager@{sep::conquest::model::ComManager}!getInstance@{getInstance}}
+\index{getInstance@{getInstance}!sep::conquest::model::ComManager@{sep::conquest::model::ComManager}}
+\subsubsection[{getInstance}]{\setlength{\rightskip}{0pt plus 5cm}static {\bf ComManager} sep.conquest.model.ComManager.getInstance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{classsep_1_1conquest_1_1model_1_1_com_manager_a8db465879daec5e6c738b0138a66e0b9}
+The getInstance method returns the singleton object of the \hyperlink{classsep_1_1conquest_1_1model_1_1_com_manager}{ComManager} class.
+
+\begin{DoxyReturn}{Returns}
+the singleton instance of \hyperlink{classsep_1_1conquest_1_1model_1_1_com_manager}{ComManager}. 
+\end{DoxyReturn}
+\hypertarget{classsep_1_1conquest_1_1model_1_1_com_manager_a99b3bc0da7eb0a2d9f1456d336e7064e}{
+\index{sep::conquest::model::ComManager@{sep::conquest::model::ComManager}!removeClient@{removeClient}}
+\index{removeClient@{removeClient}!sep::conquest::model::ComManager@{sep::conquest::model::ComManager}}
+\subsubsection[{removeClient}]{\setlength{\rightskip}{0pt plus 5cm}void sep.conquest.model.ComManager.removeClient (
+\begin{DoxyParamCaption}
+\item[{String}]{ ID}
+\end{DoxyParamCaption}
+)}}
+\label{classsep_1_1conquest_1_1model_1_1_com_manager_a99b3bc0da7eb0a2d9f1456d336e7064e}
+removeClient removes a participant from the communication-\/manager.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & the ID of the client which has to be removed. \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{interfacesep_1_1conquest_1_1model_1_1_i_com_man_a275bd938fd5fde4cf99c302c5ae5b85b}{sep.conquest.model.IComMan}.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classsep_1_1conquest_1_1model_1_1_com_manager_abf9f5b6006505c5b6c24aed64fd21a93}{
+\index{sep::conquest::model::ComManager@{sep::conquest::model::ComManager}!clients@{clients}}
+\index{clients@{clients}!sep::conquest::model::ComManager@{sep::conquest::model::ComManager}}
+\subsubsection[{clients}]{\setlength{\rightskip}{0pt plus 5cm}ConcurrentMap$<$String, {\bf IComClient}$>$ {\bf sep.conquest.model.ComManager.clients}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}
+\label{classsep_1_1conquest_1_1model_1_1_com_manager_abf9f5b6006505c5b6c24aed64fd21a93}
+{\bfseries Initial value:}
+\begin{DoxyCode}
+ 
+        new ConcurrentHashMap<String, IComClient>()
+\end{DoxyCode}
+\hypertarget{classsep_1_1conquest_1_1model_1_1_com_manager_acc2236ac5d69116e7b91d7add3699da7}{
+\index{sep::conquest::model::ComManager@{sep::conquest::model::ComManager}!INSTANCE@{INSTANCE}}
+\index{INSTANCE@{INSTANCE}!sep::conquest::model::ComManager@{sep::conquest::model::ComManager}}
+\subsubsection[{INSTANCE}]{\setlength{\rightskip}{0pt plus 5cm}final {\bf ComManager} {\bf sep.conquest.model.ComManager.INSTANCE} = new {\bf ComManager}()\hspace{0.3cm}{\ttfamily  \mbox{[}static, private\mbox{]}}}}
+\label{classsep_1_1conquest_1_1model_1_1_com_manager_acc2236ac5d69116e7b91d7add3699da7}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+src/sep/conquest/model/\hyperlink{_com_manager_8java}{ComManager.java}\end{DoxyCompactItemize}

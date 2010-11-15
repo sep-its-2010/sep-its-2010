@@ -1,0 +1,127 @@
+\hypertarget{classsep_1_1conquest_1_1model_1_1_drive_request}{
+\section{sep.conquest.model.DriveRequest Class Reference}
+\label{classsep_1_1conquest_1_1model_1_1_drive_request}\index{sep::conquest::model::DriveRequest@{sep::conquest::model::DriveRequest}}
+}
+
+
+Inherits \hyperlink{interfacesep_1_1conquest_1_1model_1_1_i_request}{sep::conquest::model::IRequest}.
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classsep_1_1conquest_1_1model_1_1_drive_request_a12d9d9b3f14c426386568b88d11a18ce}{DriveRequest} (String ID, \hyperlink{namespacesep_1_1conquest_1_1model_ad9908b97350fd824462db2d10c17794c}{Drive} command)
+\item 
+\hyperlink{namespacesep_1_1conquest_1_1model_a9d4115ef068e2fe4bc233f43008aa095}{MessageType} \hyperlink{classsep_1_1conquest_1_1model_1_1_drive_request_abf97103a289cba2ebcb417c9141402bb}{getKind} ()
+\item 
+String\mbox{[}$\,$\mbox{]} \hyperlink{classsep_1_1conquest_1_1model_1_1_drive_request_ac182e73be128d0caf602d12405747cf3}{getReceiver} ()
+\item 
+\hyperlink{namespacesep_1_1conquest_1_1model_ad9908b97350fd824462db2d10c17794c}{Drive} \hyperlink{classsep_1_1conquest_1_1model_1_1_drive_request_a969d84b84f25e05a1ab9d111045259f1}{getCommand} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{namespacesep_1_1conquest_1_1model_ad9908b97350fd824462db2d10c17794c}{Drive} \hyperlink{classsep_1_1conquest_1_1model_1_1_drive_request_a9a957adc86e4e4ca930084715ea93ebc}{driveCommand}
+\item 
+String\mbox{[}$\,$\mbox{]} \hyperlink{classsep_1_1conquest_1_1model_1_1_drive_request_a2f687bbf8761c850b1fae3f6050211b6}{clients}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classsep_1_1conquest_1_1model_1_1_drive_request}{DriveRequest} class is a message object for \hyperlink{interfacesep_1_1conquest_1_1model_1_1_i_com_client}{IComClient} clients. It represents a drive command for a specific robot. Therefore the command will be returned by the getCommand method.
+
+\begin{DoxyAuthor}{Author}
+Andreas Wilhelm 
+\end{DoxyAuthor}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classsep_1_1conquest_1_1model_1_1_drive_request_a12d9d9b3f14c426386568b88d11a18ce}{
+\index{sep::conquest::model::DriveRequest@{sep::conquest::model::DriveRequest}!DriveRequest@{DriveRequest}}
+\index{DriveRequest@{DriveRequest}!sep::conquest::model::DriveRequest@{sep::conquest::model::DriveRequest}}
+\subsubsection[{DriveRequest}]{\setlength{\rightskip}{0pt plus 5cm}sep.conquest.model.DriveRequest.DriveRequest (
+\begin{DoxyParamCaption}
+\item[{String}]{ ID, }
+\item[{{\bf Drive}}]{ command}
+\end{DoxyParamCaption}
+)}}
+\label{classsep_1_1conquest_1_1model_1_1_drive_request_a12d9d9b3f14c426386568b88d11a18ce}
+The constructor expects a drive-\/command and a corresponding robot.
+
+
+\begin{DoxyParams}{Parameters}
+{\em ID} & the robot ID. \\
+\hline
+{\em command} & the drive-\/command. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classsep_1_1conquest_1_1model_1_1_drive_request_a969d84b84f25e05a1ab9d111045259f1}{
+\index{sep::conquest::model::DriveRequest@{sep::conquest::model::DriveRequest}!getCommand@{getCommand}}
+\index{getCommand@{getCommand}!sep::conquest::model::DriveRequest@{sep::conquest::model::DriveRequest}}
+\subsubsection[{getCommand}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Drive} sep.conquest.model.DriveRequest.getCommand (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classsep_1_1conquest_1_1model_1_1_drive_request_a969d84b84f25e05a1ab9d111045259f1}
+getCommand returns the drive-\/command which should be executed.
+
+\begin{DoxyReturn}{Returns}
+the drive-\/command. 
+\end{DoxyReturn}
+\hypertarget{classsep_1_1conquest_1_1model_1_1_drive_request_abf97103a289cba2ebcb417c9141402bb}{
+\index{sep::conquest::model::DriveRequest@{sep::conquest::model::DriveRequest}!getKind@{getKind}}
+\index{getKind@{getKind}!sep::conquest::model::DriveRequest@{sep::conquest::model::DriveRequest}}
+\subsubsection[{getKind}]{\setlength{\rightskip}{0pt plus 5cm}{\bf MessageType} sep.conquest.model.DriveRequest.getKind (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classsep_1_1conquest_1_1model_1_1_drive_request_abf97103a289cba2ebcb417c9141402bb}
+getKind returns the type of the request-\/message.
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Implements \hyperlink{interfacesep_1_1conquest_1_1model_1_1_i_request_a3fa93a9e1e87cb8d6169cc51db03887a}{sep.conquest.model.IRequest}.
+
+\hypertarget{classsep_1_1conquest_1_1model_1_1_drive_request_ac182e73be128d0caf602d12405747cf3}{
+\index{sep::conquest::model::DriveRequest@{sep::conquest::model::DriveRequest}!getReceiver@{getReceiver}}
+\index{getReceiver@{getReceiver}!sep::conquest::model::DriveRequest@{sep::conquest::model::DriveRequest}}
+\subsubsection[{getReceiver}]{\setlength{\rightskip}{0pt plus 5cm}String \mbox{[}$\,$\mbox{]} sep.conquest.model.DriveRequest.getReceiver (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classsep_1_1conquest_1_1model_1_1_drive_request_ac182e73be128d0caf602d12405747cf3}
+getReceiver returns the list of client (IDs) which have to receive the message.
+
+\begin{DoxyReturn}{Returns}
+the list of destinations. 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{interfacesep_1_1conquest_1_1model_1_1_i_request_a347a4e91ba0f7edb895805eeb014a28f}{sep.conquest.model.IRequest}.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classsep_1_1conquest_1_1model_1_1_drive_request_a2f687bbf8761c850b1fae3f6050211b6}{
+\index{sep::conquest::model::DriveRequest@{sep::conquest::model::DriveRequest}!clients@{clients}}
+\index{clients@{clients}!sep::conquest::model::DriveRequest@{sep::conquest::model::DriveRequest}}
+\subsubsection[{clients}]{\setlength{\rightskip}{0pt plus 5cm}String \mbox{[}$\,$\mbox{]} {\bf sep.conquest.model.DriveRequest.clients}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}
+\label{classsep_1_1conquest_1_1model_1_1_drive_request_a2f687bbf8761c850b1fae3f6050211b6}
+\hypertarget{classsep_1_1conquest_1_1model_1_1_drive_request_a9a957adc86e4e4ca930084715ea93ebc}{
+\index{sep::conquest::model::DriveRequest@{sep::conquest::model::DriveRequest}!driveCommand@{driveCommand}}
+\index{driveCommand@{driveCommand}!sep::conquest::model::DriveRequest@{sep::conquest::model::DriveRequest}}
+\subsubsection[{driveCommand}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Drive} {\bf sep.conquest.model.DriveRequest.driveCommand}\hspace{0.3cm}{\ttfamily  \mbox{[}private\mbox{]}}}}
+\label{classsep_1_1conquest_1_1model_1_1_drive_request_a9a957adc86e4e4ca930084715ea93ebc}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+src/sep/conquest/model/\hyperlink{_drive_request_8java}{DriveRequest.java}\end{DoxyCompactItemize}

@@ -49,7 +49,6 @@ public class Environment extends Observable implements IComClient {
     /* (non-Javadoc)
      * @see sep.conquest.model.IComClient#deliver(sep.conquest.model.IComClient)
      */
-    @Override
     public void deliver(IComClient sender, IRequest request) {
         // TODO request-handler
 

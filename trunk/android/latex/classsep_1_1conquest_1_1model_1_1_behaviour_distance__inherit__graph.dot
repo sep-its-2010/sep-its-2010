@@ -1,0 +1,10 @@
+digraph G
+{
+  edge [fontname="FreeSans.ttf",fontsize="10",labelfontname="FreeSans.ttf",labelfontsize="10"];
+  node [fontname="FreeSans.ttf",fontsize="10",shape=record];
+  Node1 [label="{sep.conquest.model.BehaviourDistance\n||+ execute()\l# BehaviourDistance()\l}",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled" fontcolor="black"];
+  Node2 -> Node1 [dir=back,color="midnightblue",fontsize="10",style="solid",arrowtail="empty"];
+  Node2 [label="{sep.conquest.model.Behaviour\n|- nextBehaviour\l|+ execute()\l# Behaviour()\l}",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classsep_1_1conquest_1_1model_1_1_behaviour.html"];
+  Node3 -> Node2 [dir=back,color="midnightblue",fontsize="10",style="solid",arrowtail="empty"];
+  Node3 [label="{sep.conquest.model.IBehaviour\n||~ execute()\l}",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$interfacesep_1_1conquest_1_1model_1_1_i_behaviour.html"];
+}
