@@ -7,7 +7,7 @@ import java.util.Map;
  * due to have a centralized logic-approach. It forces a chain of logic-classes
  * and the corresponding chain-handling.
  * 
- * @author Ande
+ * @author Andreas Wilhelm
  *
  */
 public abstract class Behaviour implements IBehaviour {
@@ -27,7 +27,6 @@ public abstract class Behaviour implements IBehaviour {
     /* (non-Javadoc)
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
      */
-    @Override
     public Map<int[], Object> execute(Map<int[], Object> map) {
         if (nextBehaviour != null) {
             return nextBehaviour.execute(map);

@@ -30,7 +30,6 @@ public class DriveRequest implements IRequest {
     /* (non-Javadoc)
      * @see sep.conquest.model.IRequest#getKind()
      */
-    @Override
     public MessageType getKind() {
         return MessageType.CONTROL_DIR;
     }
@@ -38,7 +37,6 @@ public class DriveRequest implements IRequest {
     /* (non-Javadoc)
      * @see sep.conquest.model.IRequest#getReceiver()
      */
-    @Override
     public String[] getReceiver() {
         return clients;
     }    

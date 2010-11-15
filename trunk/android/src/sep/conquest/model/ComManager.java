@@ -36,17 +36,14 @@ public class ComManager implements IComMan {
         return INSTANCE;
     }    
     
-    @Override
     public void addClient(String ID, IComClient client) {
         clients.put(ID, client);
     }
     
-    @Override
     public void removeClient(String ID) {
         clients.remove(ID);
     }
     
-    @Override
     public void broadcast(IComClient sender, IRequest request) { 
         Iterator<String> it = clients.keySet().iterator();
         
