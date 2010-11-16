@@ -96,8 +96,9 @@ public class Connect extends Activity {
 	 * 
 	 * Overrides Activity.onCreate().
 	 * 
-	 * @param savedInstanceState Bundle of state information, saved when
-	 * 							 Activity was executed before.
+	 * @param savedInstanceState
+	 *            Bundle of state information, saved when Activity was executed
+	 *            before.
 	 */
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -146,10 +147,13 @@ public class Connect extends Activity {
 	 * 
 	 * Overrides Activity.onActivityResult().
 	 * 
-	 * @param requestCode The code needed to identify the result message. The
-	 *        			  code is set when calling startActivityForResult().
-	 * @param resultCode  Identifies the result the Activity has returned.
-	 * @param data		  Intent message containing extra data.
+	 * @param requestCode
+	 *            The code needed to identify the result message. The code is
+	 *            set when calling startActivityForResult().
+	 * @param resultCode
+	 *            Identifies the result the Activity has returned.
+	 * @param data
+	 *            Intent message containing extra data.
 	 */
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -165,14 +169,15 @@ public class Connect extends Activity {
 	 * 
 	 * Overrides Activity.onCreateOptionsMenu().
 	 * 
-	 * @param menu Reference on menu that has to be set.
+	 * @param menu
+	 *            Reference on menu that has to be set.
 	 */
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.connect_menu, menu);
 		return true;
 	}
-	
+
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		// Intent message to start other Activities.
@@ -216,18 +221,17 @@ public class Connect extends Activity {
 	}
 
 	/**
-	 * @brief Initialize control elements of the activity and set the
-	 *        EventListener.
+	 * Initializes control elements of the activity and sets EventListeners.
 	 */
 	private void initializeControlElements() {
 
 		// Get reference on "Search"-Button and set OnClickListener
 		btnSearch = (Button) findViewById(R.id.btnSearch);
-		btnSearch.setOnClickListener(new mOnClickListener());
+		btnSearch.setOnClickListener(new ConnectOnClickListener());
 
 		// Get reference on ListView and set OnItemClickListener
 		lsRobots = (ListView) findViewById(R.id.lsRobots);
-		lsRobots.setOnItemClickListener(new mOnItemClickListener());
+		lsRobots.setOnItemClickListener(new ConnectOnItemClickListener());
 
 		// Initialize ArrayAdapter holding data for ListView
 		robotList = new ArrayAdapter<String>(this, R.layout.list_item);
@@ -278,14 +282,33 @@ public class Connect extends Activity {
 		startActivityForResult(intent, REQUEST_ENABLE_BLUETOOTH);
 	}
 
+	/**
+	 * Displays a message on top of the Activity.
+	 * 
+	 * @param message The message to display.
+	 */
 	private void displayMessage(String message) {
 		Toast mtoast = Toast.makeText(this, message, Toast.LENGTH_LONG);
 		mtoast.setGravity(Gravity.CENTER, 0, 0);
 		mtoast.show();
 	}
 
+	/**
+	 * Handles broadcast messages of BluetoothAdapter. Specialized on 'device
+	 * found'- and 'discovery finished'-messages.
+	 * Inherits from abstract class BroadCastreceiver.
+	 * 
+	 * @author Andreas Poxrucker
+	 * 
+	 */
 	private final class BluetoothBroadcastReceiver extends BroadcastReceiver {
 
+		/**
+		 * Called when class receives broadcast message.
+		 * 
+		 * @param context Current context.
+		 * @param intent  Intent containing message and data.
+		 */
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
 
@@ -305,9 +328,27 @@ public class Connect extends Activity {
 
 	/**
 	 * ItemClickListener for ListView lsRobots.
+	 * 
+	 * Implements OnItemClickListener.
+	 * 
+	 * @author Andreas Poxrucker
 	 */
-	private final class mOnItemClickListener implements OnItemClickListener {
+	private final class ConnectOnItemClickListener implements
+			OnItemClickListener {
 
+		/**
+		 * Handles clicks on items of ListView containing the discovered robots.
+		 * 
+		 * If an item is selected, its text color changes and the robot is added
+		 * or removed from the set of selected robots.
+		 * 
+		 * @param parent
+		 *            AdapterView containing the list item.
+		 * @param view
+		 *            List item that has been clicked.
+		 * @param position
+		 *            Position of the list item within the AdapterView.
+		 */
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
 			TextView txtDevice = (TextView) view;
@@ -321,8 +362,21 @@ public class Connect extends Activity {
 		}
 	}
 
-	private final class mOnClickListener implements OnClickListener {
+	/**
+	 * Handles click events of the Activity.
+	 * 
+	 * Implements OnClickListener.
+	 * 
+	 * @author Andreas Poxrucker
+	 * 
+	 */
+	private final class ConnectOnClickListener implements OnClickListener {
 
+		/**
+		 * Called when registered button receives OnClick-Event.
+		 * 
+		 * @param view View that has been clicked.
+		 */
 		public void onClick(View v) {
 			int viewId = v.getId();
 
