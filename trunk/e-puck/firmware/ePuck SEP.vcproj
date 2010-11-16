@@ -172,6 +172,38 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Logic Subsumption"
+				>
+				<File
+					RelativePath=".\subs.c"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_abyss.c"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_analyse.c"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_calibrate.c"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_collision.c"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_move.c"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_pid.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -179,6 +211,10 @@
 			>
 			<File
 				RelativePath=".\common.h"
+				>
+			</File>
+			<File
+				RelativePath=".\resource.h"
 				>
 			</File>
 			<Filter
@@ -253,6 +289,38 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Logic Subsumption"
+				>
+				<File
+					RelativePath=".\subs.h"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_abyss.h"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_analyse.h"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_calibrate.h"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_collision.h"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_move.h"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_pid.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Toolchain Files"
@@ -291,6 +359,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\ePuck SEP.rc"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
