@@ -91,10 +91,10 @@ public class Connect extends Activity {
 	private ProgressDialog pDialog;
 
 	/**
+	 * Called when Activity is initially created.
+	 * 
 	 * Initializes layout of Activity, its control elements, the
 	 * BroadcastReceiver and the Bluetooth-Adapter of the device.
-	 * 
-	 * Overrides Activity.onCreate().
 	 * 
 	 * @param savedInstanceState
 	 *            Bundle of state information, saved when Activity was executed
@@ -124,8 +124,6 @@ public class Connect extends Activity {
 
 	/**
 	 * Registers the BroadcastReceiver when Activity comes into foreground.
-	 * 
-	 * Overrides Activity.onResume().
 	 */
 	public void onResume() {
 		super.onResume();
@@ -134,8 +132,6 @@ public class Connect extends Activity {
 
 	/**
 	 * Unregisters the BroadcastReceiver when Activity goes to background.
-	 * 
-	 * Overrides Activity.onPause().
 	 */
 	public void onPause() {
 		unregisterReceiver(bcReceiver);
@@ -144,8 +140,6 @@ public class Connect extends Activity {
 
 	/**
 	 * Handles result value of Activity that enables Bluetooth.
-	 * 
-	 * Overrides Activity.onActivityResult().
 	 * 
 	 * @param requestCode
 	 *            The code needed to identify the result message. The code is
@@ -167,8 +161,6 @@ public class Connect extends Activity {
 	/**
 	 * Sets the menu of the Activity.
 	 * 
-	 * Overrides Activity.onCreateOptionsMenu().
-	 * 
 	 * @param menu
 	 *            Reference on menu that has to be set.
 	 */
@@ -178,6 +170,11 @@ public class Connect extends Activity {
 		return true;
 	}
 
+	/**
+	 * Handles selections of the menu of the Activity.
+	 * 
+	 * @param item The MenuItem that has been selected.
+	 */
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		// Intent message to start other Activities.
@@ -327,9 +324,7 @@ public class Connect extends Activity {
 	}
 
 	/**
-	 * ItemClickListener for ListView lsRobots.
-	 * 
-	 * Implements OnItemClickListener.
+	 * Handles clicks on items of ListView.
 	 * 
 	 * @author Andreas Poxrucker
 	 */
@@ -363,9 +358,7 @@ public class Connect extends Activity {
 	}
 
 	/**
-	 * Handles click events of the Activity.
-	 * 
-	 * Implements OnClickListener.
+	 * Handles click events on control elements of the Activity.
 	 * 
 	 * @author Andreas Poxrucker
 	 * 
