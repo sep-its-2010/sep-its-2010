@@ -128,7 +128,7 @@ uint16_t ringbuf_getRange(
 		ui16Index -= _lppodContext->ui16Size;
 	}
 
-	// Read until warp around
+	// Read until wrap around
 	while( ui16Index < _lppodContext->ui16Size && ui16Remaining) {
 		*lpui8++ = _lppodContext->lpui8Storage[ui16Index++];
 		ui16Remaining--;

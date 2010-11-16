@@ -20,7 +20,7 @@
  * subs_calibrate_init
  */
 bool subs_calibrate_execute( void) {
-	//TODO remarks in den Dokumentation von init und execute
+	//TODO remarks in den Dokumentation von init und execute, Kalibrierung sollte nur 1mal bei Systemstart und nach Reset erfolgen
 }
 
 /*!
