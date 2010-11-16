@@ -213,7 +213,7 @@ public class MapSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 	 * suitable methods. The data structure of the map is received by the 
 	 * update method and forwarded to the draw method.
 	 * 
-	 * @author Florian Bürchner
+	 * @author Florian Buerchner
 	 *
 	 */
 	private class DrawThread extends Thread implements Observer {
