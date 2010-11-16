@@ -17,13 +17,13 @@ public class GridMap {
 	 * Saves all instances of the class MapNode, which haven't not been explored
 	 * yet, but which has got at least one visited neighbour of the type MapNode
 	 */
-	private LinkedList<MapNode> frontierList = new LinkedList<MapNode>();
+	private LinkedList<GraphNode> frontierList = new LinkedList<GraphNode>();
 
 	/**
 	 * Saves all references of the instances of the class MapNode, ordered in a
 	 * binary tree
 	 */
-	private TreeMap<Integer, MapNode> mapTree = new TreeMap<Integer, MapNode>();
+	private TreeMap<Integer, GraphNode> mapTree = new TreeMap<Integer, GraphNode>();
 
 	/**
 	 * default constructor
@@ -47,8 +47,8 @@ public class GridMap {
 	 * 
 	 * @return returns the deep copy of the attribut frontierList
 	 */
-	public LinkedList<MapNode> getFrontierList() {
-
+	public LinkedList<GraphNode> getFrontierList() {
+		return null;
 	}
 
 	/**
@@ -58,8 +58,8 @@ public class GridMap {
 	 * @return returns a LinkedList which contents all Nodes saved in the
 	 *         GridMap
 	 */
-	public LinkedList<OtherNode> getMapAsList() {
-
+	public LinkedList<MapNode> getMapAsList() {
+		return null;
 	}
 
 	/**
@@ -67,8 +67,8 @@ public class GridMap {
 	 * 
 	 * @return returns a LinkedList which is a copy of frontierList
 	 */
-	private LinkedList<MapNode> cloneFrontierList() {
-
+	private LinkedList<GraphNode> cloneFrontierList() {
+		return null;
 	}
 
 	/**
@@ -76,8 +76,8 @@ public class GridMap {
 	 * 
 	 * @return return a LinkedList which contains all nodes saved in the Gridmap
 	 */
-	private LinkedList<OtherNode> cloneMapTreeIntoList() {
-
+	private LinkedList<MapNode> cloneMapTreeIntoList() {
+		return null;
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class GridMap {
 	 *         returns null
 	 */
 	private MapNode getNode(int x, int y) {
-
+		return null;
 	}
 
 	/**
@@ -127,13 +127,12 @@ public class GridMap {
 	 * changeState changes the state of a node and increments the visitCounter.
 	 * The method is called when a node already exists in the structure.
 	 * 
-	 * @param x
-	 *            the x-coordinate of the node
-	 * @param y
-	 *            the y-coordinate of the node
-	 * @param state
+	 * @param x the x-coordinate of the node      
+	 * @param y	the y-coordinate of the node        
+	 * @param newNodeType the actual NodeType
+	 * 				
 	 */
-	private void changeState(int x, int y, Status state) {
+	private void changeState(int x, int y, NodeType newNodeType) {
 
 	}
 
