@@ -11,23 +11,37 @@ import java.util.Map;
  *
  */
 public abstract class Behaviour implements IBehaviour {
-    
-    // local definitions
+    	
+    /**
+     * A reference to the successor-behaviour.
+     */
     private IBehaviour nextBehaviour;
+    
+    private State stateLevel;
     
     /**
      * The constructor sets the reference to the next behaviour in the chain.
      * 
-     * @param next
+     * @param next The reference to the next Behaviour.
      */
-    protected Behaviour(IBehaviour next) {
+    protected Behaviour(State stateLevel, IBehaviour next) {
+    	this.stateLevel = stateLevel;
         nextBehaviour = next;
+    }
+    
+    /**
+     * Returns the level of the behaviour.
+     * 
+     * @return The 
+     */
+    public State getStateLevel() {
+    	return stateLevel;
     }
     
     /* (non-Javadoc)
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
      */
-    public Map<int[], Object> execute(Map<int[], Object> map) {
+    public Map<int[], GridMap> execute(Map<int[], GridMap> map) {
         if (nextBehaviour != null) {
             return nextBehaviour.execute(map);
         } else {

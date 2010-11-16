@@ -1,7 +1,10 @@
 package sep.conquest.controller;
 
+import java.util.UUID;
+
 import sep.conquest.model.Drive;
 import sep.conquest.model.Environment;
+import sep.conquest.model.SpeedLevel;
 
 /**
  * The Controller class represents the controller corresponding to the model-
@@ -12,8 +15,15 @@ import sep.conquest.model.Environment;
  */
 public class Controller {
 
-    // local declarations and definitions
+    /**
+     * The singleton instance for the Controller class.
+     */
     private static final Controller INSTANCE = new Controller();
+    
+    /**
+     * The used environment which represents the model according to the
+     * model-view-controller pattern
+     */
     private Environment environment;
     
     /**
@@ -45,18 +55,18 @@ public class Controller {
     /**
      * Initiates a left-command at the environment for a specific robot.
      * 
-     * @param ID the ID of the robot.
+     * @param ID The ID of the robot.
      */
-    public void left(String ID) {
+    public void left(UUID ID) {
         environment.driveCommand(ID, Drive.LEFT);
     }
 
     /**
      * Initiates a right-command at the environment for a specific robot.
      * 
-     * @param ID the ID of the robot.
+     * @param ID The ID of the robot.
      */
-    public void right(String ID) {
+    public void right(UUID ID) {
         environment.driveCommand(ID, Drive.RIGHT);
     }
     
@@ -65,27 +75,27 @@ public class Controller {
      * 
      * @param ID the ID of the robot.
      */
-    public void forward(String ID) {
+    public void forward(UUID ID) {
         environment.driveCommand(ID, Drive.FORWARD);
     }    
     
     /**
      * Initiates a turn-command at the environment for a specific robot.
      * 
-     * @param ID the ID of the robot.
+     * @param ID The ID of the robot.
      */
-    public void turn(String ID) {
+    public void turn(UUID ID) {
         environment.driveCommand(ID, Drive.TURN);
     }    
     
     /**
      * Sets the speed of a specific robot at the environment.
      * 
-     * @param ID the ID of the robot.
-     * @param speed the speed of the robot (0-100)
+     * @param ID The ID of the robot.
+     * @param speed The speed of the robot.
      */
-    public void setSpeed(String ID, int speed) {
-        
+    public void setSpeed(UUID ID, SpeedLevel speed) {
+        environment.setSpeed(ID, speed);
     }    
     
     /**
@@ -94,7 +104,7 @@ public class Controller {
      * @param ID the ID of the robot.
      * @param enabled true, if the robot should be controlled, otherwise false.
      */
-    public void setControlled(String ID, boolean enabled) {
-        
+    public void setControlled(UUID ID, boolean enabled) {
+        environment.setControlled(ID, enabled);
     }        
 }

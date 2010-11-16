@@ -7,8 +7,23 @@ package sep.conquest.model;
  */
 public enum Drive {
     
+    /**
+     * Drive into the left direction.
+     */
     LEFT,
+    
+    /**
+     * Drive into the right direction.
+     */
     RIGHT,
+    
+    /**
+     * Drive forward.
+     */
     FORWARD,
+    
+    /**
+     * Turn around.
+     */
     TURN;    
 }

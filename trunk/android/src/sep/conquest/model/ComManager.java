@@ -1,6 +1,7 @@
 package sep.conquest.model;
 
 import java.util.Iterator;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -16,8 +17,16 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class ComManager implements IComMan {
 
-    // local declarations
+    /**
+     * The ComManager instance to realize the singleton pattern.
+     */
     private static final ComManager INSTANCE = new ComManager();
+    
+    
+    /**
+     * The list of registered IComClient participants who can communicate
+     * via broadcast.
+     */
     private ConcurrentMap<String, IComClient> clients = 
         new ConcurrentHashMap<String, IComClient>();
     
@@ -36,14 +45,24 @@ public class ComManager implements IComMan {
         return INSTANCE;
     }    
     
+
+    /* (non-Javadoc)
+     * @see sep.conquest.model.IComMan#addClient(java.lang.String, sep.conquest.model.IComClient)
+     */
     public void addClient(String ID, IComClient client) {
         clients.put(ID, client);
     }
     
+    /* (non-Javadoc)
+     * @see sep.conquest.model.IComMan#removeClient(java.lang.String)
+     */
     public void removeClient(String ID) {
         clients.remove(ID);
     }
     
+    /* (non-Javadoc)
+     * @see sep.conquest.model.IComMan#broadcast(sep.conquest.model.IComClient, sep.conquest.model.IRequest)
+     */
     public void broadcast(IComClient sender, IRequest request) { 
         Iterator<String> it = clients.keySet().iterator();
         
@@ -53,5 +72,21 @@ public class ComManager implements IComMan {
             client.deliver(sender, request);
         }
     }
+
+	/* (non-Javadoc)
+	 * @see sep.conquest.model.IComMan#addClient(java.util.UUID, sep.conquest.model.IComClient)
+	 */
+	public void addClient(UUID ID, IComClient client) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see sep.conquest.model.IComMan#removeClient(java.util.UUID)
+	 */
+	public void removeClient(UUID ID) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

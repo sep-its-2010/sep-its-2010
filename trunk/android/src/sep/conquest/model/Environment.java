@@ -1,7 +1,7 @@
 package sep.conquest.model;
 
 import java.util.Observable;
-
+import java.util.UUID;
 
 /**
  * The class Environment represents the model corresponding to the Model-View-
@@ -9,7 +9,7 @@ import java.util.Observable;
  * graphical user interface. Every <code>Activity</code> has to register in
  * order to be notified. 
  * 
- * @author Ande
+ * @author Andreas Wilhelm
  */
 public class Environment extends Observable implements IComClient {
     
@@ -33,18 +33,36 @@ public class Environment extends Observable implements IComClient {
         return INSTANCE;
     }
     
-    
     /**
      * Initiate a drive-command to a specific robot by broadcast. In order to
-     * do this a new request object will be created.
+     * do this a new request object will be created and sent.
      * 
-     * @param ID the ID of the robot.
-     * @param command the drive command to send.
+     * @param ID The ID of the robot.
+     * @param command The drive command to send.
      */
-    public void driveCommand(String ID, Drive command) {
+    public void driveCommand(UUID ID, Drive command) {
         DriveRequest driveReq = new DriveRequest(ID, command);
         comManager.broadcast(this, driveReq);
     }
+    
+    /**
+     * Sets the speed of a specific robot by broadcast. In order to do this a
+     * new request object will be created and sent.
+     * 
+     * @param ID The ID of the robot.
+     * @param speed The speed level of the robots.
+     */
+    public void setSpeed(UUID ID, SpeedLevel speed) { }
+    
+    /**
+     * Enables (or disables) a specific robot to be controlled by the user.
+     * 
+     * @param ID The UUID of the specific robot.
+     * @param cotnrolled <code>true</code> if the robot should be controlled,
+     *  otherwise false.
+     */
+    public void setControlled(UUID ID, boolean enabled) { }
+    
 
     /* (non-Javadoc)
      * @see sep.conquest.model.IComClient#deliver(sep.conquest.model.IComClient)

@@ -17,8 +17,8 @@ public interface IBehaviour {
      * in order to navigation-decisions. It will return the resulting map
      * with new values. 
      *  
-     * @param map the input map.
-     * @return the map with new values.
+     * @param map The input map.
+     * @return The map with new values.
      */
-    Map<int[], Object> execute(Map<int[], Object> map);    
+    Map<int[], GridMap> execute(Map<int[], GridMap> map);    
 }

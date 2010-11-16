@@ -1,5 +1,7 @@
 package sep.conquest.model;
 
+import java.util.UUID;
+
 /**
  * The IRequest-interface determines, that every request-object must implement
  * the getKind-method to identify the request-type.
@@ -19,7 +21,7 @@ public interface IRequest {
      * getReceiver returns the list of client (IDs) which have to receive the
      * message.
      * 
-     * @return the list of destinations.
+     * @return The list of destinations.
      */
-    String[] getReceiver();
+    UUID[] getReceiver();
 }

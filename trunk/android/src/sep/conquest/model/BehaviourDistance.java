@@ -15,16 +15,16 @@ public final class BehaviourDistance extends Behaviour {
      * The constructor enables chain-handling by calling the constructor of
      * the super-class (Behaviour).
      * 
-     * @param next
+     * @param next A Reference to the next behaviour.
      */
-    protected BehaviourDistance(IBehaviour next) {
-        super(next);
+    protected BehaviourDistance(State stateLevel, IBehaviour next) {
+        super(stateLevel, next);
     }
 
     /* (non-Javadoc)
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
      */
-    public Map<int[], Object> execute(Map<int[], Object> map) {
+    public Map<int[], GridMap> execute(Map<int[], GridMap> map) {
         return super.execute(map);
     }
 

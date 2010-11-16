@@ -7,7 +7,17 @@ package sep.conquest.model;
  *
  */
 public class LogicThread implements Runnable {
-
+	
+	/**
+	 * A instance of the AStarPathFinder class for shortest-path-finding.
+	 */
+	private AStarPathFinder aStar = AStarPathFinder.getInstance();
+	
+	/**
+	 * The current 
+	 */
+	private IBehaviour stateBehaviour;
+	
     /* (non-Javadoc)
      * @see java.lang.Runnable#run()
      */

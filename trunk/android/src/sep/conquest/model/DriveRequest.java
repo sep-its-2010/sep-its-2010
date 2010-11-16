@@ -1,5 +1,7 @@
 package sep.conquest.model;
 
+import java.util.UUID;
+
 
 /**
  * The DriveRequest class is a message object for IComClient clients. It
@@ -11,19 +13,26 @@ package sep.conquest.model;
  */
 public class DriveRequest implements IRequest {
     
-    // local definitions
+    /**
+     * The specific drive command of the request message.
+     */
     private Drive driveCommand;
-    private String[] clients;
+    
+    
+    /**
+     * The list of clients that should receive the message.
+     */
+    private UUID[] clients;
     
     /**
      * The constructor expects a drive-command and a corresponding robot.
      * 
-     * @param ID the robot ID.
-     * @param command the drive-command.
+     * @param ID The robot ID.
+     * @param command The drive-command.
      */
-    public DriveRequest(String ID, Drive command) {
+    public DriveRequest(UUID ID, Drive command) {
         driveCommand = command;
-        clients = new String[1];
+        clients = new UUID[1];
         clients[0] = ID;
     }
 
@@ -37,14 +46,14 @@ public class DriveRequest implements IRequest {
     /* (non-Javadoc)
      * @see sep.conquest.model.IRequest#getReceiver()
      */
-    public String[] getReceiver() {
+    public UUID[] getReceiver() {
         return clients;
     }    
     
     /**
      * getCommand returns the drive-command which should be executed.
      * 
-     * @return the drive-command.
+     * @return The drive-command.
      */
     public Drive getCommand() {
         return driveCommand;
