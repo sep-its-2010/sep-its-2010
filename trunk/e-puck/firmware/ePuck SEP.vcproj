@@ -173,7 +173,7 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Logic Subsumption"
+				Name="Subsumption"
 				>
 				<File
 					RelativePath=".\subs.c"
@@ -184,11 +184,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\subs_analyse.c"
-					>
-				</File>
-				<File
-					RelativePath=".\subs_calibrate.c"
+					RelativePath=".\subs_calibration.c"
 					>
 				</File>
 				<File
@@ -196,11 +192,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\subs_move.c"
+					RelativePath=".\subs_line.c"
 					>
 				</File>
 				<File
-					RelativePath=".\subs_pid.c"
+					RelativePath=".\subs_movement.c"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_node.c"
 					>
 				</File>
 			</Filter>
@@ -286,7 +286,7 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Logic Subsumption"
+				Name="Subsumption"
 				>
 				<File
 					RelativePath=".\subs.h"
@@ -297,11 +297,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\subs_analyse.h"
-					>
-				</File>
-				<File
-					RelativePath=".\subs_calibrate.h"
+					RelativePath=".\subs_calibration.h"
 					>
 				</File>
 				<File
@@ -309,11 +305,19 @@
 					>
 				</File>
 				<File
-					RelativePath=".\subs_move.h"
+					RelativePath=".\subs_line.h"
 					>
 				</File>
 				<File
-					RelativePath=".\subs_pid.h"
+					RelativePath=".\subs_movement.h"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_node.h"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_types.h"
 					>
 				</File>
 			</Filter>

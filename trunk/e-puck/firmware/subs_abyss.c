@@ -1,7 +1,9 @@
+#include "subs_abyss.h"
+
 #include "com.h"
 #include "hal_motors.h"
 #include "hal_led.h"
-#include "sen_line.h"
+//#include "sen_line.h"
 
 /*!
  * \brief
@@ -14,4 +16,6 @@
  * Afterwards a message is created and sent to the Smartphone via BlueTooth.
  */
 bool subs_abyss_execute( void) {
+
+	return false;
 }

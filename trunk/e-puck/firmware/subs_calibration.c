@@ -1,7 +1,9 @@
+#include "subs_calibration.h"
+
 #include "hal_motors.h"
 #include "hal_sel.h"
 #include "hal_led.h"
-#include "sen_line.h"
+//#include "sen_line.h"
 
 
 /*!
@@ -21,6 +23,8 @@
  */
 bool subs_calibrate_execute( void) {
 	//TODO remarks in den Dokumentation von init und execute, Kalibrierung sollte nur 1mal bei Systemstart und nach Reset erfolgen
+
+	return false;
 }
 
 /*!

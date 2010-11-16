@@ -1,7 +1,9 @@
+#include "subs_collision.h"
+
 #include "com.h"
 #include "hal_motors.h"
 #include "hal_led.h"
-#include "sen_prox.h"
+//#include "sen_prox.h"
 
 /*!
  * \brief
@@ -14,4 +16,6 @@
  * and the motors are stopped. After that a message, which contains the direction of the obstacle is created and sent to the Smartphone via BlueTooth.
  */
 bool subs_collision_execute (void) {
+
+	return false;
 }
