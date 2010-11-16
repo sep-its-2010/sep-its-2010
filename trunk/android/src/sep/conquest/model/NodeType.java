@@ -1,7 +1,7 @@
 package sep.conquest.model;
 
 /**
- * The enum NodeType saves the
+ * The enum NodeType saves the different types of the node
  * 
  * @author Florian Lorenz
  */
