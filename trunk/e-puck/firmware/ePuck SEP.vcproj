@@ -213,10 +213,6 @@
 				RelativePath=".\common.h"
 				>
 			</File>
-			<File
-				RelativePath=".\resource.h"
-				>
-			</File>
 			<Filter
 				Name="Hardware Abstraction Layer"
 				>
@@ -359,10 +355,6 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\ePuck SEP.rc"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

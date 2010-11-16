@@ -68,6 +68,24 @@ static inline void hal_motors_setSteps(
 	);
 
 
+/*!
+ * \brief
+ * Sets the phase of the left motor.
+ * 
+ * \param _ePhase
+ * Specifies the phase to be set.
+ * 
+ * \remarks
+ * - Changing the phase takes effect immediately.
+ * - The user must assure the correctness of the phase sequences.
+ * - The driver needs to be initialized.
+ *
+ * \warning
+ * This function is not interrupt safe.
+ * 
+ * \see
+ * hal_motors_init | hal_motors_setPhaseRight
+ */
 void hal_motors_setPhaseLeft(
 	IN const hal_motors_EPhase_t _ePhase
 	) {
@@ -75,6 +93,24 @@ void hal_motors_setPhaseLeft(
 	LATD = ( LATD & ~HAL_MOTORS_LEFT_MASK) | ( _ePhase << HAL_MOTORS_LEFT_DATA_OFFSET);
 }
 
+/*!
+ * \brief
+ * Sets the phase of the right motor.
+ * 
+ * \param _ePhase
+ * Specifies the phase to be set.
+ * 
+ * \remarks
+ * - Changing the phase takes effect immediately.
+ * - The user must assure the correctness of the phase sequences.
+ * - The driver needs to be initialized.
+ *
+ * \warning
+ * This function is not interrupt safe.
+ * 
+ * \see
+ * hal_motors_init | hal_motors_setPhaseLeft
+ */
 void hal_motors_setPhaseRight(
 	IN const hal_motors_EPhase_t _ePhase
 	) {
@@ -83,6 +119,21 @@ void hal_motors_setPhaseRight(
 }
 
 
+/*!
+ * \brief
+ * Gets the amount of steps of the left motor.
+ * 
+ * \returns
+ * The current step counter of the left motor.
+ * 
+ * \remarks
+ * - The step counter is incremented by the associated interrupt and can be changed with #hal_motors_setStepsLeft()
+ * or #hal_motors_setSteps().
+ * - This function is interrupt safe.
+ * 
+ * \see
+ * hal_motors_getStepsRight | hal_motors_setStepsLeft
+ */
 uint16_t hal_motors_getStepsLeft( void) {
 
 	extern volatile uint16_t hal_motors_ui16StepsLeft;
@@ -91,6 +142,21 @@ uint16_t hal_motors_getStepsLeft( void) {
 }
 
 
+/*!
+ * \brief
+ * Gets the amount of steps of the right motor.
+ * 
+ * \returns
+ * The current step counter of the right motor.
+ * 
+ * \remarks
+ * - The step counter is incremented by the associated interrupt and can be changed with #hal_motors_setStepsRight()
+ * or #hal_motors_setSteps().
+ * - This function is interrupt safe.
+ * 
+ * \see
+ * hal_motors_getStepsLeft | hal_motors_setStepsRight
+ */
 uint16_t hal_motors_getStepsRight( void) {
 
 	extern volatile uint16_t hal_motors_ui16StepsRight;
@@ -99,6 +165,19 @@ uint16_t hal_motors_getStepsRight( void) {
 }
 
 
+/*!
+ * \brief
+ * Sets the step counter of the left motor.
+ * 
+ * \param _ui16Steps
+ * Specifies the new counter value.
+ * 
+ * \remarks
+ * This function is interrupt safe.
+ * 
+ * \see
+ * hal_motors_setStepsRight | hal_motors_getStepsLeft | hal_motors_setSteps
+ */
 void hal_motors_setStepsLeft(
 	IN const uint16_t _ui16Steps
 	) {
@@ -109,6 +188,19 @@ void hal_motors_setStepsLeft(
 }
 
 
+/*!
+ * \brief
+ * Sets the step counter of the right motor.
+ * 
+ * \param _ui16Steps
+ * Specifies the new counter value.
+ * 
+ * \remarks
+ * This function is interrupt safe.
+ * 
+ * \see
+ * hal_motors_setStepsLeft | hal_motors_getStepsRight | hal_motors_setSteps
+ */
 void hal_motors_setStepsRight(
 	IN const uint16_t _ui16Steps
 	) {
@@ -119,6 +211,24 @@ void hal_motors_setStepsRight(
 }
 
 
+/*!
+ * \brief
+ * Sets the step counters of the left and right motors.
+ * 
+ * \param _ui16StepsLeft
+ * Specifies the new value of the left step counter.
+ * 
+ * \param _ui16StepsRight
+ * Specifies the new value of the left step counter.
+ * 
+ * Write detailed description for hal_motors_setSteps here.
+ * 
+ * \warning
+ * This function is not interrupt safe.
+ * 
+ * \see
+ * hal_motors_setStepsRight | hal_motors_setStepsLeft | hal_motors_getStepsLeft | hal_motors_getStepsRight
+ */
 void hal_motors_setSteps(
 	IN const uint16_t _ui16StepsLeft,
 	IN const uint16_t _ui16StepsRight
@@ -130,6 +240,5 @@ void hal_motors_setSteps(
 	hal_motors_ui16StepsLeft = _ui16StepsLeft;
 	hal_motors_ui16StepsRight = _ui16StepsRight;
 }
-
 
 #endif /* hal_motors_h__ */
