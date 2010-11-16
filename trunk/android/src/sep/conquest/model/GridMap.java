@@ -5,7 +5,7 @@ import java.util.TreeMap;
 
 /**
  * The class GridMap manages the saving of nodes which have been explored by the
- * e-puck. Nodes of the type Graphnode can be added to the structure and the
+ * e-puck roboter. Nodes of the type GraphNode can be added to the structure and the
  * access is managed with a binary tree. Additionaly the class GridMap has got a
  * attribute frontierList which saves the unexplored nodes with explored
  * neighbours.
@@ -14,14 +14,14 @@ import java.util.TreeMap;
  */
 public class GridMap {
 	/**
-	 * Saves all instances of the class MapNode, which haven't not been explored
-	 * yet, but which has got at least one visited neighbour of the type MapNode
+	 * Saves all instances of the class MapNode, which haven't been explored
+	 * yet, but which has got at least one visited neighbour of the type GraphNode
 	 */
 	private LinkedList<GraphNode> frontierList = new LinkedList<GraphNode>();
 
 	/**
-	 * Saves all references of the instances of the class MapNode, ordered in a
-	 * binary tree
+	 * Saves all references of the instances of the class GraphNode, ordered in a
+	 * binary tree.
 	 */
 	private TreeMap<Integer, GraphNode> mapTree = new TreeMap<Integer, GraphNode>();
 
@@ -33,9 +33,9 @@ public class GridMap {
 	}
 
 	/**
-	 * Creates an instance of the type MapNode, inserts it in the attribute
+	 * Creates an instance of the type GraphNode, inserts it in the attribute
 	 * mapTree and if necessary sets references on neighbours. With the assigned
-	 * enumeration new frontiernodes (nodes which hasen't been visited yet) will
+	 * enumeration new frontierNodes (nodes which hasen't been visited yet) will
 	 * be created an add to the structure.
 	 */
 	public void addNode(int x, int y, NodeType status) {
@@ -43,19 +43,20 @@ public class GridMap {
 	}
 
 	/**
-	 * Makes a deep copy of the attribut frontierList with a private method
+	 * Makes a deep copy of the attribute frontierList using a private method
 	 * 
-	 * @return returns the deep copy of the attribut frontierList
+	 * @return returns the deep copy of the attribute frontierList
 	 */
 	public LinkedList<GraphNode> getFrontierList() {
 		return null;
 	}
 
 	/**
-	 * Makes a deep copy of the attribut mapTree with a private method and saves
-	 * it in a LinkedList
+	 * Makes a copy of the attribute mapTree using the private method cloneMapTreeIntoList
+	 * and saves the nodes of the tree as instances of the class MapNodes 
+	 * in a LinkedList
 	 * 
-	 * @return returns a LinkedList which contents all Nodes saved in the
+	 * @return returns a LinkedList which contains all Nodes saved in the
 	 *         GridMap
 	 */
 	public LinkedList<MapNode> getMapAsList() {
@@ -63,7 +64,7 @@ public class GridMap {
 	}
 
 	/**
-	 * Makes a deep copy of the frontierList and saves the nodes in a LinkedList
+	 * Makes a deep copy of the frontierList and saves the GraphNodes in a LinkedList
 	 * 
 	 * @return returns a LinkedList which is a copy of frontierList
 	 */
@@ -72,9 +73,10 @@ public class GridMap {
 	}
 
 	/**
-	 * Iterates trough the TreeMap mapTree and saves the nodes into a LinkedList
+	 * Iterates trough the TreeMap mapTree, creates MapNodes using the GraphNodes
+	 * and saves them into a LinkedList
 	 * 
-	 * @return return a LinkedList which contains all nodes saved in the Gridmap
+	 * @return return a LinkedList which contains all nodes saved in the GridMap
 	 */
 	private LinkedList<MapNode> cloneMapTreeIntoList() {
 		return null;
