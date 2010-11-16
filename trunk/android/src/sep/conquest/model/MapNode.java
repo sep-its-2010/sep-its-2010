@@ -40,7 +40,7 @@ public class MapNode {
 	 * @return returns the attribute xValue
 	 */
 	public int getXValue(){
-		
+	  return 0;
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public class MapNode {
 	 * @return returns the attribute yValue
 	 */
 	public int getYValue(){
-		
+	  return 0;	
 	}
 	
 	/**
@@ -56,7 +56,7 @@ public class MapNode {
 	 * @return returns the attribute nodeType
 	 */
 	public NodeType getNodeType(){
-		
+	  return null;
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public class MapNode {
 	 * @return returns the attribute  
 	 */
 	public int getVisitCounter(){
-		
+	  return 0;
 	}
 	
 	/**

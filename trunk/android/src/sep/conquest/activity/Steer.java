@@ -333,7 +333,7 @@ public class Steer extends Activity implements Observer {
 			switch (id) {
 			case R.id.btn_up:
 				break;
-			case R.id.btn_down:
+			case R.id.btn_down:		
 				break;
 			case R.id.btn_left:
 				break;

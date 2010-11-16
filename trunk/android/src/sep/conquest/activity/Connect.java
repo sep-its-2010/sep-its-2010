@@ -31,7 +31,8 @@ import android.widget.AdapterView.OnItemClickListener;
 
 /**
  * Searches for available e-puck robots and lists them. The user can select
- * robots and connect to them via Bluetooth.
+ * robots and connect to them via Bluetooth. 
+ * The application then runs in exploration mode.
  * 
  * @author Andreas Poxrucker
  * 
@@ -173,7 +174,8 @@ public class Connect extends Activity {
 	/**
 	 * Handles selections of the menu of the Activity.
 	 * 
-	 * @param item The MenuItem that has been selected.
+	 * @param item
+	 *            The MenuItem that has been selected.
 	 */
 	public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -282,7 +284,8 @@ public class Connect extends Activity {
 	/**
 	 * Displays a message on top of the Activity.
 	 * 
-	 * @param message The message to display.
+	 * @param message
+	 *            The message to display.
 	 */
 	private void displayMessage(String message) {
 		Toast mtoast = Toast.makeText(this, message, Toast.LENGTH_LONG);
@@ -292,8 +295,8 @@ public class Connect extends Activity {
 
 	/**
 	 * Handles broadcast messages of BluetoothAdapter. Specialized on 'device
-	 * found'- and 'discovery finished'-messages.
-	 * Inherits from abstract class BroadCastreceiver.
+	 * found'- and 'discovery finished'-messages. Inherits from abstract class
+	 * BroadCastreceiver.
 	 * 
 	 * @author Andreas Poxrucker
 	 * 
@@ -303,8 +306,10 @@ public class Connect extends Activity {
 		/**
 		 * Called when class receives broadcast message.
 		 * 
-		 * @param context Current context.
-		 * @param intent  Intent containing message and data.
+		 * @param context
+		 *            Current context.
+		 * @param intent
+		 *            Intent containing message and data.
 		 */
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
@@ -368,7 +373,8 @@ public class Connect extends Activity {
 		/**
 		 * Called when registered button receives OnClick-Event.
 		 * 
-		 * @param view View that has been clicked.
+		 * @param view
+		 *            View that has been clicked.
 		 */
 		public void onClick(View v) {
 			int viewId = v.getId();

@@ -15,9 +15,9 @@ public class GraphNode extends MapNode {
 	
 	/**
 	 * This method returns a reference on the direct neighbours of the node
-	 * @return the attribute neighbours
+	 * @return The attribute neighbours
 	 */
 	public MapNode[] getNeighbours(){
-		
+	 return null;
 	}
 }
