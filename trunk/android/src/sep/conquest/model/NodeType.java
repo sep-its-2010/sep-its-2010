@@ -47,7 +47,7 @@ public enum NodeType{
 	RIGHTT,
 
 	/**
-	 * Two-line cross
+	 * A cross with two lines
 	 */
 	CROSS,
 	
