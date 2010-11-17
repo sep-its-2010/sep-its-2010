@@ -349,7 +349,7 @@ uint16_t ringbuf_pushRange(
 		ui16Remaining--;
 	}
 
-	// Push remaining bytes after warp around
+	// Push remaining bytes after wrap around
 	ui16Index = 0;
 	while( ui16Remaining) {
 		_lppodContext->lpui8Storage[ui16Index++] = *lpui8++;

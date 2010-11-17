@@ -18,9 +18,9 @@
  * \remarks
  * 
  * \see
- * subs_calibrate_init
+ * subs_calibrate_reset
  */
-bool subs_calibrate_execute( void) {
+bool subs_calibrate_run( void) {
 	//TODO remarks in den Dokumentation von init und execute, Kalibrierung sollte nur 1mal bei Systemstart und nach Reset erfolgen
 
 	return false;
@@ -33,5 +33,5 @@ bool subs_calibrate_execute( void) {
  * \remarks
  * Write remarks for subs_calibrate_init here.
  */
-void subs_calibrate_init( void) {
+void subs_calibrate_reset( void) {
 }

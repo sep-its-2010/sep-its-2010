@@ -16,7 +16,7 @@
  * supposed to be above a node and computes the nodes shape. After that a message with the shape of the node is created and sent to the Smartphone
  * via BlueTooth. The robot will stop with its center above the node.
  */
-bool subs_node_execute( void) {
+bool subs_node_run( void) {
 
 	return false;
 }
