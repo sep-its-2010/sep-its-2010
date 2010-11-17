@@ -17,7 +17,20 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 
-public class MapSurfaceView extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
+/**
+ * The class MapSurfaceView represents the map which is shown in the Map class
+ * and dynamically reacts on changes in the data structure. It contains an
+ * inner class, which is responsible for the drawings on the surface view from
+ * which this class extends of. It implements the interfaces
+ * SurfaceHolder.Callback, which implements methods to control the surface
+ * view and View.OnTouchListener, which fires an event by every touch on the
+ * display.
+ *
+ * @author Florian Buerchner
+ *
+ */
+public class MapSurfaceView extends SurfaceView 
+			 implements SurfaceHolder.Callback, View.OnTouchListener {
 
 	/**
 	 * This rectangle is static and always on the same size as the actual drawn 
@@ -58,12 +71,20 @@ public class MapSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 	 * on the right position.
 	 */
 	private float currentOffsetX = 0;
+	
+	/**
+	 * @see sep.conquest.activity.MapSurfaceView.currentOffsetX
+	 */
 	private float currentOffsetY = 0;
 	
 	/**
 	 * Contains the actual offset which is necessary for the scroll function.
 	 */
 	private float previousOffsetX = 0;
+	
+	/**
+	 * @see sep.conquest.activity.MapSurfaceView.previousOffsetX
+	 */
 	private float previousOffsetY = 0;
 	
 	/**
@@ -84,8 +105,12 @@ public class MapSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 	 * Presents the values of the screen size depending on the used smartphone.
 	 * This values are set by the setDimensions method.
 	 */
-	private int displayX = Map.x;
-	private int displayY = Map.y - 50;
+	private int displayX;
+	
+	/**
+	 * @see sep.conquest.activity.MapSurfaceView.displayX
+	 */
+	private int displayY;
 	
 	/**
 	 * The constructor resgisters the interface SurfaceHolder.Callback on the
@@ -218,21 +243,48 @@ public class MapSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 	 */
 	private class DrawThread extends Thread implements Observer {
 		
+		/**
+		 * Is initially set to false and is used to pause the thread. This case
+		 * occurs when an intent is created and the method surfaceDestroyed is
+		 * called.
+		 */
 		private boolean paused = false;
+		
+		/**
+		 * Paint must be visible for all methods to set the color for multiple
+		 * crossed nodes, which differ to the other ones. It is also required
+		 * to draw the e-pucks and in another color for selected ones.
+		 */
 		private Paint paint = new Paint();
 		
-		
+		/**
+		 * This class extends of Thread and this method must be implemented.
+		 * It runs persistently in the background and executes an infinite loop.
+		 * This is necessary to react permanently on changes on the map, which
+		 * are provided by the update method. This infinite loop is only be
+		 * stopped when the thread is paused.
+		 */
 		@Override
 		public void run() {
 			while(!paused){
 				
 			}
 		}
-		
+
 		/**
-		 * Main Drawing Method
+		 * As attribute this method gets the whole map as LinkedList assigned
+		 * by the update method. At first it is checked if the size of map
+		 * must be scaled to fit into the screen. This case can only occur
+		 * if the map isn't scrollable yet. Otherwise when the map was scrolled
+		 * the actual and correct sector is displayed by using a matrix which
+		 * calculates the new position. Then it iterates through the list and
+		 * for every single node type the right draw method is called. How
+		 * often this node was crossed by e-pucks is painted previously. At the
+		 * last layer the positions of the e-pucks are painted.
+		 * 
+		 * @param map Complete map explored by roboters.
 		 */
-		private void doDraw(LinkedList map){
+		private void doDraw(LinkedList<ePuckPosition> map){
 			//hier noch Attribute anlegen um die Größe des SurfaceViews festzulegen
 			//sowas wie getMinY, getMaxY, getMinX, getMaxX
 			//und ein Offset Attribut um negative Werte umzurechnen
@@ -281,10 +333,26 @@ public class MapSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 			getHolder().unlockCanvasAndPost(c);
 		}
 
+		/**
+		 * Sets the attribute paused depending on exigency to true or false.
+		 * The run method is halted or continued and so the whole thread is
+		 * paused or not.
+		 * 
+		 * @param paused If true the thread is paused.
+		 */
 		public void setPaused(boolean paused) {
 			this.paused = paused;
 		}
 
+		/**
+		 * Implemented by the interface Observer this method is called by the
+		 * observables and a message object is assigned. This object has to be
+		 * casted to the correct type and contains new node informations and
+		 * e-puck positions. Subsequently the draw method is called with the
+		 * map object to draw the new events into the surface view. Additionally
+		 * the new e-puck positions are are added to the list positions. They
+		 * are required to select an e-puck directly out of the map.
+		 */
 		public void update(Observable obs, Object map) {
 			//dodraw aufrufen
 			//anschließend drawEpucks aufrufen
