@@ -15,7 +15,7 @@
  * A marker to define denoting function parameters which are only read but not modified.
  * 
  * \see
- * OUT | INOUT
+ * OUT | INOUT | OPT
  */
 #define IN
 
@@ -24,7 +24,7 @@
  * A marker to define denoting function parameters which are only modified but not read.
  * 
  * \see
- * IN | INOUT
+ * IN | INOUT | OPT
  */
 #define OUT
 
@@ -33,9 +33,19 @@
  * A marker to define denoting function parameters which are read and modified.
  * 
  * \see
- * IN | OUT
+ * IN | OUT | OPT
  */
 #define INOUT
+
+
+/*!
+ * \brief
+ * A marker to define denoting function parameters which are optional.
+ * 
+ * \see
+ * IN | OUT | INOUT
+ */
+#define OPT
 
 
 #define ISR					__attribute__( ( __interrupt__))

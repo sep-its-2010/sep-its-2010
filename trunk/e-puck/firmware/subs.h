@@ -16,8 +16,8 @@ void subs_run( void);
 void subs_reset( void);
 
 bool subs_register(
-	IN const subs_fnReset_t _fnResetCallback,
 	IN const subs_fnRun_t _fnRunCallback,
+	IN OPT const subs_fnReset_t _fnResetCallback,
 	IN const uint16_t _ui16Priority
 	);
 
