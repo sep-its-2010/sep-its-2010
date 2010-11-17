@@ -1,9 +1,9 @@
-#include "subs_collision.h"
-
 #include "com.h"
 #include "hal_motors.h"
 #include "hal_led.h"
 //#include "sen_prox.h"
+
+#include "subs_collision.h"
 
 /*!
  * \brief
