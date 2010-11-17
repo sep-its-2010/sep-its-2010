@@ -199,7 +199,7 @@ public class MapSurfaceView extends SurfaceView
 				if (touchDuration > 800) {
 					//wie rausfinden ob das geht?!
 					//vllt im thread eine neue methode erstellen 
-					autoScaling(35);
+					autoScaling(35, 20);
 				} else if (scrollAble) {
 					// Clear starting point
 					downTouchPoint = null;
@@ -290,7 +290,7 @@ public class MapSurfaceView extends SurfaceView
 			//und ein Offset Attribut um negative Werte umzurechnen
 			
 			if (!scrollAble) {
-				autoScaling(60);
+				autoScaling(60, 35);
 			}
 			
 			Canvas c = getHolder().lockCanvas();
@@ -310,21 +310,21 @@ public class MapSurfaceView extends SurfaceView
 			Iterator mapItr = map.iterator();
 			while (mapItr.hasNext()) 
 			{
-				/**
+				
 				//drawVisited(c, paint, no.getXvalue(), no.getYvalue(), no.getVisited());
-				Status st = no.getState();
-				switch(st) {
-				case BottomLeftEdge: drawBottomLeftEdge(c, paint, no.getXvalue()*scaleValue, no.getYvalue()*scaleValue); break;
-				case BottomT: drawBottomT(c, paint, no.getXvalue()*scaleValue, no.getYvalue()*scaleValue); break;
-				case Cross: drawCross(c, paint, no.getXvalue()*scaleValue, no.getYvalue()*scaleValue); break;
-				case BottomRightEdge: drawBottomRightEdge(c, paint, no.getXvalue()*scaleValue, no.getYvalue()*scaleValue); break;
-				case LeftT: drawLeftT(c, paint, no.getXvalue()*scaleValue, no.getYvalue()*scaleValue); break;
-				case RightT: drawRightT(c, paint, no.getXvalue()*scaleValue, no.getYvalue()*scaleValue); break;
-				case TopLeftEdge: drawTopLeftEdge(c, paint, no.getXvalue()*scaleValue, no.getYvalue()*scaleValue); break;
-				case TopRightEdge: drawTopRightEdge(c, paint, no.getXvalue()*scaleValue, no.getYvalue()*scaleValue); break;
-				case TopT: drawTopT(c, paint, no.getXvalue()*scaleValue, no.getYvalue()*scaleValue); break;
-				}
-				*/
+				//Status st = no.getState();
+				//switch(st) {
+				//case BottomLeftEdge: break;
+				//case BottomT: break;
+				//case Cross: break;
+				//case BottomRightEdge: break;
+				//case LeftT: break;
+				//case RightT: break;
+				//case TopLeftEdge: break;
+				//case TopRightEdge: break;
+				//case TopT: break;
+				//}
+				
 			}
 			
 			
@@ -361,51 +361,161 @@ public class MapSurfaceView extends SurfaceView
 			
 		}
 		
+		/**
+		 * This method gets a canvas as attribute, which provides drawing
+		 * operations on the surface view. The values x and y define the 
+		 * position of the node. This method is called by the method doDraw
+		 * when the node type is Cross and draws a cross as node. 
+		 * 
+		 * @param c Canvas offers drawing operations on surface view.
+		 * @param x	X coordinate of the node.
+		 * @param y Y coordinate of the node.
+		 */
 		public void drawCross(Canvas c, int x, int y) {
 			c.drawLine(x, y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
 			c.drawLine(x + (scaleValue/2), y, x + (scaleValue/2), y + scaleValue, paint);
 		}
 		
+		/**
+		 * This method gets a canvas as attribute, which provides drawing
+		 * operations on the surface view. The values x and y define the 
+		 * position of the node. This method is called by the doDraw method
+		 * when the node type is TopLeftEdge. It draws a edge node with the 
+		 * corner in the top left angle. The edge consists of two lines with 
+		 * equal length, which are 90 degrees towards each other.
+		 * 
+		 * @param c Canvas offers drawing operations on surface view.
+		 * @param x	X coordinate of the node.
+		 * @param y Y coordinate of the node.
+		 */
 		public void drawTopLeftEdge(Canvas c, int x, int y) {
 			c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
 			c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + (scaleValue/2), y + scaleValue, paint);
 		}
 		
+		/**
+		 * This method gets a canvas as attribute, which provides drawing
+		 * operations on the surface view. The values x and y define the 
+		 * position of the node. This method is called by the doDraw method
+		 * when the node type is TopRightEdge. It draws a edge node with the 
+		 * corner in the top right angle. The edge consists of two lines with 
+		 * equal length, which are 90 degrees towards each other.
+		 * 
+		 * @param c Canvas offers drawing operations on surface view.
+		 * @param x	X coordinate of the node.
+		 * @param y Y coordinate of the node.
+		 */
 		public void drawTopRightEdge(Canvas c, int x, int y) {
 			c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
 			c.drawLine(x + scaleValue, y + (scaleValue/2), x + scaleValue, y + scaleValue, paint);
 		}
 		
+		/**
+		 * This method gets a canvas as attribute, which provides drawing
+		 * operations on the surface view. The values x and y define the 
+		 * position of the node. This method is called by the doDraw method
+		 * when the node type is DrawBottomRightEdge. It draws a edge node with 
+		 * the corner in the bottom right angle. The edge consists of two lines 
+		 * with equal length, which are 90 degrees towards each other.
+		 * 
+		 * @param c Canvas offers drawing operations on surface view.
+		 * @param x	X coordinate of the node.
+		 * @param y Y coordinate of the node.
+		 */
 		public void drawBottomRightEdge(Canvas c, int x, int y) {
 			c.drawLine(x + (scaleValue/2), y + scaleValue, x + scaleValue, y + scaleValue, paint);
 			c.drawLine(x + scaleValue, y + (scaleValue/2), x + scaleValue, y + scaleValue, paint);
 		}
 		
+		/**
+		 * This method gets a canvas as attribute, which provides drawing
+		 * operations on the surface view. The values x and y define the 
+		 * position of the node. This method is called by the doDraw method
+		 * when the node type is DrawBottomLeftEdge. It draws a edge node with 
+		 * the corner in the bottom left angle. The edge consists of two lines 
+		 * with equal length, which are 90 degrees towards each other.
+		 * 
+		 * @param c Canvas offers drawing operations on surface view.
+		 * @param x	X coordinate of the node.
+		 * @param y Y coordinate of the node.
+		 */
 		public void drawBottomLeftEdge(Canvas c, int x, int y) {
 			c.drawLine(x, y + (scaleValue/2), x, y + scaleValue, paint);
 			c.drawLine(x, y + scaleValue, x + (scaleValue/2), y + scaleValue, paint);
 		}
 		
+		/**
+		 * This method gets a canvas as attribute, which provides drawing
+		 * operations on the surface view. The values x and y define the 
+		 * position of the node. This method is called by the doDraw method
+		 * when the node type is TopT. It draws a node, which looks like a T.
+		 * 
+		 * @param c Canvas offers drawing operations on surface view.
+		 * @param x	X coordinate of the node.
+		 * @param y Y coordinate of the node.
+		 */
 		public void drawTopT(Canvas c, int x, int y) {
 			c.drawLine(x, y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
 			c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + (scaleValue/2), y + (scaleValue), paint);
 		}
 		
+		/**
+		 * This method gets a canvas as attribute, which provides drawing
+		 * operations on the surface view. The values x and y define the 
+		 * position of the node. This method is called by the doDraw method
+		 * when the node type is RightT. It draws a T node, which is rotated
+		 * 90 degrees clockwise.
+		 * 
+		 * @param c Canvas offers drawing operations on surface view.
+		 * @param x	X coordinate of the node.
+		 * @param y Y coordinate of the node.
+		 */
 		public void drawRightT(Canvas c, int x, int y) {
 			c.drawLine(x + scaleValue, y, x + scaleValue, y + scaleValue, paint);
 			c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
 		}
 		
+		/**
+		 * This method gets a canvas as attribute, which provides drawing
+		 * operations on the surface view. The values x and y define the 
+		 * position of the node. This method is called by the doDraw method
+		 * when the node type is BottomT. It draws a T node, which is rotated
+		 * 180 degrees clockwise.
+		 * 
+		 * @param c Canvas offers drawing operations on surface view.
+		 * @param x	X coordinate of the node.
+		 * @param y Y coordinate of the node.
+		 */
 		public void drawBottomT(Canvas c, int x, int y) {
 			c.drawLine(x, y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
 			c.drawLine(x + (scaleValue/2), y, x + (scaleValue/2), y + (scaleValue/2), paint);
 		}
 		
+		/**
+		 * This method gets a canvas as attribute, which provides drawing
+		 * operations on the surface view. The values x and y define the 
+		 * position of the node. This method is called by the doDraw method
+		 * when the node type is RightT. It draws a T node, which is rotated
+		 * 90 degrees anti-clockwise.
+		 * 
+		 * @param c Canvas offers drawing operations on surface view.
+		 * @param x	X coordinate of the node.
+		 * @param y Y coordinate of the node.
+		 */
 		public void drawLeftT(Canvas c, int x, int y) {
 			c.drawLine(x + (scaleValue/2), y, x + (scaleValue/2), y + scaleValue, paint);
 			c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
 		}
 		
+		/**
+		 * This method draws the rectangles for multiple crossed nodes in
+		 * different red intensities. 
+		 * 
+		 * @param c Canvas offers drawing operations on surface view.
+		 * @param x	X coordinate of the node.
+		 * @param y Y coordinate of the node.
+		 * @param visitedCounter Number of crossings over one node.
+		 */
 		public void drawVisited(Canvas c, int x, int y, int visitedCounter) {
 			//switch color by visited index
 			switch(visitedCounter) {
@@ -418,6 +528,13 @@ public class MapSurfaceView extends SurfaceView
 			c.drawRect(new Rect(x, y, x + scaleValue, y + scaleValue), paint);
 		}
 		
+		/**
+		 * This method draws the e-pucks into the map.
+		 * 
+		 * @param c Canvas offers drawing operations on surface view.
+		 * @param x	X coordinate of the node.
+		 * @param y Y coordinate of the node.
+		 */
 		public void drawEpuck(Canvas c, int x, int y) {
 			paint.setColor(0xffcccccc);
 			c.drawCircle(x, y, (scaleValue/2), paint);
@@ -425,6 +542,14 @@ public class MapSurfaceView extends SurfaceView
 			c.drawCircle(x, y, (scaleValue/4), paint);
 		}
 		
+		/**
+		 * If a e-puck is selected it is drawn in another color that we can
+		 * differ it from the other ones.
+		 * 
+		 * @param c Canvas offers drawing operations on surface view.
+		 * @param x	X coordinate of the node.
+		 * @param y Y coordinate of the node.
+		 */
 		public void selectEpuck(Canvas c, int x, int y) {
 			
 		}
@@ -432,10 +557,17 @@ public class MapSurfaceView extends SurfaceView
 	}
 	
 	/**
+	 * If the explored map is bigger than the display size this method 
+	 * calculates a new scaleValue to get a map size, which fits the screen
+	 * ideal. If the scaleValue under-runs a threshold, e.g. when the e-pucks
+	 * aren't visible any more on the display, the scaleValue is set to 20 and 
+	 * the map is set to scrollable then.
 	 * 
-	 * @param maxFieldSize
+	 * @param fieldSizeX The maximal expansion in width.
+	 * @param fieldSizeY The maximal expansion in height.
 	 */
-	public void autoScaling(int maxFieldSize) {
+	public void autoScaling(int fieldSizeX, int fieldSizeY) {
+		int maxFieldSize = fieldSizeX;
 		int surfaceSize = maxFieldSize *scaleValue;
 		//hier muss noch implementiert werden wenn die kästchen displayY übersteigen bevor sie displayX übersteigen
 		if (surfaceSize > displayX) {
@@ -457,9 +589,18 @@ public class MapSurfaceView extends SurfaceView
 		
 	}
 	
+	/**
+	 * This method sets the attributes displayX and displayY to the actual
+	 * display size depending on the smartphone. It is called by the Map class
+	 * because you need a class, which extends Activity to get access to the
+	 * default window manager.
+	 * 
+	 * @param x This is the x value of the display.
+	 * @param y This is the y value of the display.
+	 */
 	public void setDimensions(int x, int y) {
 		displayX = x;
-		displayY = y;
+		displayY = y - 50;
 	}
 	
 
