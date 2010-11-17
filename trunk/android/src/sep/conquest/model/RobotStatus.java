@@ -1,6 +1,10 @@
 package sep.conquest.model;
 
 /**
+ * The RobotState represents the current status of a specific Puck. It contains
+ * the position, the orientation, the indicator whether the robot is moving
+ * as well as the current state.
+ * 
  * @author Andreas Wilhelm
  *
  */
@@ -9,22 +13,22 @@ public class RobotStatus {
 	/**
 	 * The current position of the robot within the map.
 	 */
-	private final int[] POSITION;
+	private int[] position;
 	
 	/**
 	 * The current orientation of the robot within the map.
 	 */
-	private final Orientation ORIENTATION;
+	private Orientation orientation;
 	
 	/**
 	 * Indicates if the robot is currently moving.
 	 */
-	private final boolean MOVING;
+	private boolean moving;
 	
 	/**
 	 * The current state of the robot.
 	 */
-	private final State STATE;
+	private State state;
 	
 	/**
 	 * The constructor takes every needed parameter to fill the ModelData 
@@ -35,12 +39,23 @@ public class RobotStatus {
 	 * @param moving Indicates if the robot is moving.
 	 * @param state The current state of the robot.
 	 */
-	public RobotStatus(int[] pos, Orientation orientation, boolean moving, 
+	public RobotStatus(int[] position, Orientation orientation, boolean moving, 
 			State state) {
-		POSITION = pos;
-		ORIENTATION = orientation;
-		MOVING = moving;
-		STATE = state;
+		this.position = position;
+		this.orientation = orientation;
+		this.moving = moving;
+		this.state = state;
+	}
+	
+	/**
+	 * The constructor with initial values.
+	 */
+	public RobotStatus() {
+		position = new int[2];
+		position[0] = position[1] = 0;
+		orientation = Orientation.UNKNOWN;
+		moving = false;
+		state = State.IDLE;
 	}
 	
 	/**
@@ -49,7 +64,7 @@ public class RobotStatus {
 	 * @return An int-array with x and y position.
 	 */
 	public int[] getPosition() {
-		return POSITION;
+		return position;
 	}
 	
 	/**
@@ -58,7 +73,7 @@ public class RobotStatus {
 	 * @return The orientation data.
 	 */
 	public Orientation getOrientation() {
-		return ORIENTATION;
+		return orientation;
 	}
 	
 	/**
@@ -67,7 +82,7 @@ public class RobotStatus {
 	 * @return A boolean value which indicates the moving state of the robot.
 	 */
 	public boolean isMoving() {
-		return MOVING;
+		return moving;
 	}
 	
 	/**
@@ -76,6 +91,43 @@ public class RobotStatus {
 	 * @return The state value.
 	 */
 	public State getState() {
-		return STATE;
+		return state;
+	}
+	
+	
+	/**
+	 * Sets the position of the robot.
+	 * 
+	 * @param position The position (x and y value).
+	 */
+	public void setPosition(int[] position) {
+		this.position = position;
+	}
+	
+	/**
+	 * Sets the orientation of the robot.
+	 * 
+	 * @param orientation The orientation.
+	 */
+	public void setOrientation(Orientation orientation) {
+		this.orientation = orientation;
+	}
+	
+	/**
+	 * Sets the state of the robot.
+	 * 
+	 * @param state The state.
+	 */
+	public void setState(State state) {
+		this.state = state;
+	}
+	
+	/**
+	 * Sets the moving-state of the robot.
+	 * 
+	 * @param moving Indicates if the robot is moving.
+	 */
+	public void setMoving(boolean moving) {
+		this.moving = moving;
 	}
 }
