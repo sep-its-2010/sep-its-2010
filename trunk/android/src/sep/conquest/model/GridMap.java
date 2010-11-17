@@ -6,7 +6,7 @@ import java.util.TreeMap;
 /**
  * The class GridMap manages the saving of nodes which have been explored by the
  * e-puck roboter. Nodes of the type GraphNode can be added to the structure and the
- * access is managed with a binary tree. Additionaly the class GridMap has got a
+ * access is managed with a binary tree. Additionally the class GridMap has got a
  * attribute frontierList which saves the unexplored nodes with explored
  * neighbours.
  * 
@@ -45,7 +45,7 @@ public class GridMap {
 	/**
 	 * Makes a deep copy of the attribute frontierList using a private method
 	 * 
-	 * @return returns the deep copy of the attribute frontierList
+	 * @return Returns the deep copy of the attribute frontierList
 	 */
 	public LinkedList<GraphNode> getFrontierList() {
 		return null;
@@ -56,7 +56,7 @@ public class GridMap {
 	 * and saves the nodes of the tree as instances of the class MapNodes 
 	 * in a LinkedList
 	 * 
-	 * @return returns a LinkedList which contains all Nodes saved in the
+	 * @return Returns a LinkedList which contains all Nodes saved in the
 	 *         GridMap
 	 */
 	public LinkedList<MapNode> getMapAsList() {
@@ -66,7 +66,7 @@ public class GridMap {
 	/**
 	 * Makes a deep copy of the frontierList and saves the GraphNodes in a LinkedList
 	 * 
-	 * @return returns a LinkedList which is a copy of frontierList
+	 * @return Returns a LinkedList which is a copy of frontierList
 	 */
 	private LinkedList<GraphNode> cloneFrontierList() {
 		return null;
@@ -76,7 +76,7 @@ public class GridMap {
 	 * Iterates trough the TreeMap mapTree, creates MapNodes using the GraphNodes
 	 * and saves them into a LinkedList
 	 * 
-	 * @return return a LinkedList which contains all nodes saved in the GridMap
+	 * @return Return a LinkedList which contains all nodes saved in the GridMap
 	 */
 	private LinkedList<MapNode> cloneMapTreeIntoList() {
 		return null;
@@ -87,10 +87,10 @@ public class GridMap {
 	 * mapTree
 	 * 
 	 * @param x
-	 *            is the x-coordinate
+	 *            Is the x-coordinate
 	 * @param y
-	 *            is the y-coordinate
-	 * @return returns the node if it exists in the TreeMap mapTree, otherwise
+	 *            Is the y-coordinate
+	 * @return Returns the node if it exists in the TreeMap mapTree, otherwise
 	 *         returns null
 	 */
 	private MapNode getNode(int x, int y) {
@@ -103,9 +103,9 @@ public class GridMap {
 	 * the reference is set to null.
 	 * 
 	 * @param x
-	 *            the x-coordinate
+	 *            Is the x-coordinate
 	 * @param y
-	 *            the y-coordinate
+	 *            Is the y-coordinate
 	 */
 	private void setNeighbours(int x, int y) {
 
@@ -117,9 +117,9 @@ public class GridMap {
 	 * neighbourreferences
 	 * 
 	 * @param x
-	 *            the x-coordinate of the node
+	 *            Is the x-coordinate of the node
 	 * @param y
-	 *            the y-coordinate of the node
+	 *            Is the y-coordinate of the node
 	 */
 	private void setFrontierNodes(int x, int y) {
 
@@ -129,9 +129,9 @@ public class GridMap {
 	 * changeState changes the state of a node and increments the visitCounter.
 	 * The method is called when a node already exists in the structure.
 	 * 
-	 * @param x the x-coordinate of the node      
-	 * @param y	the y-coordinate of the node        
-	 * @param newNodeType the actual NodeType
+	 * @param x Is the x-coordinate of the node      
+	 * @param y	Is the y-coordinate of the node        
+	 * @param newNodeType Is the actual NodeType
 	 * 				
 	 */
 	private void changeState(int x, int y, NodeType newNodeType) {
