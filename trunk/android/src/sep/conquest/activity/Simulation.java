@@ -3,7 +3,6 @@ package sep.conquest.activity;
 import java.util.Map;
 
 import sep.conquest.R;
-import sep.conquest.controller.Controller;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;

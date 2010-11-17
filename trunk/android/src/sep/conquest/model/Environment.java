@@ -1,6 +1,7 @@
 package sep.conquest.model;
 
 import java.util.Observable;
+import java.util.Observer;
 import java.util.UUID;
 
 /**
@@ -13,9 +14,8 @@ import java.util.UUID;
  */
 public class Environment extends Observable implements IComClient {
     
-    // local declarations and definitions
+	// local declarations and definitions
     private static final Environment INSTANCE = new Environment();
-    private ComManager comManager;
     
     /**
      * The private constructor to realize the singleton pattern. It gets a
@@ -41,6 +41,7 @@ public class Environment extends Observable implements IComClient {
      * @param command The drive command to send.
      */
     public void driveCommand(UUID ID, Drive command) {
+    	ComManager comManager = ComManager.getInstance();
         DriveRequest driveReq = new DriveRequest(ID, command);
         comManager.broadcast(this, driveReq);
     }
@@ -69,6 +70,14 @@ public class Environment extends Observable implements IComClient {
      */
     public void deliver(IComClient sender, IRequest request) {
         // TODO request-handler
-
     }  
+    
+    /* (non-Javadoc)
+	 * @see java.util.Observable#addObserver(java.util.Observer)
+	 */
+	@Override
+	public void addObserver(Observer observer) {
+		super.addObserver(observer);
+		notifyObservers();
+	}
 }
