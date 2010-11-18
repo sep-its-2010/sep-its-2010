@@ -13,7 +13,7 @@
  * True if an abyss has been detected, false otherwise.
  * 
  * Reads the values of the ground-sensors and stops the motors if the data is below a critical value.
- * Afterwards a message is created and sent to the Smartphone via BlueTooth.
+ * Afterwards a message is created and sent to the Smartphone via bluetooth.
  */
 bool subs_abyss_run( void) {
 

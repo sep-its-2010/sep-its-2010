@@ -235,7 +235,7 @@ void hal_uart1_clearRxOverflow( void) {
  * 
  * \returns
  * - true: The transmitter is inactive.
- * - false: There is at least one byte which is shifted out of/into the hardware buffer.
+ * - false: There is at least one byte  being shifted or in the hardware buffer.
  * 
  * This function is especially useful to allow a clean shutdown of the UART.
  * Shutting down an active transmitter would terminate the operation.

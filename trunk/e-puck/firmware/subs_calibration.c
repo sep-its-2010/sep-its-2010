@@ -12,8 +12,9 @@
  * \returns
  * True if the calibration has been performed, false otherwise.
  * 
- * If the e-puck is correctly set up above a black line and its selector is at position '0' sensordata are collected. After driving a few cm's the robot
- * is supposed to be above a white pane and collects again sensordata for the calibration. These values are stored in the EEPROM.
+ * If the e-puck is correctly set up above a black line and its selector is at position '0' sensor data are collected.
+ * After driving a few centimeters the robot is supposed to be above a white pane and collects again sensor data for the calibration.
+ * These values are stored in the EEPROM.
  *
  * \see
  * subs_calibrate_reset
@@ -31,4 +32,5 @@ bool subs_calibration_run( void) {
  * Deletes all former calibration-data from the EEPROM.
  */
 void subs_calibration_reset( void) {
+
 }

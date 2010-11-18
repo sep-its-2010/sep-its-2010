@@ -48,7 +48,7 @@ static uint8_t s_aui8TxBufferSpace[COM_TX_BUFFER_SIZE];
 
 /*!
  * \brief
- * Initializes the Bluetooth communication interface.
+ * Initializes the bluetooth communication interface.
  * 
  * The following actions are taken:
  * - Receiver and transmitter ring buffer initialization
@@ -74,7 +74,7 @@ void com_init( void) {
 
 /*!
  * \brief
- * Processes incoming Bluetooth messages.
+ * Processes incoming bluetooth messages.
  * 
  * \returns
  * - true: dispatched a message.

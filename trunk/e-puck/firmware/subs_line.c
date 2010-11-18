@@ -11,7 +11,8 @@
  * \returns
  * True, as this is the last subsumption-behavior and will always be performed.
  * 
- * Collects data from the ground-sensors and uses these values to compute slight movement changes, which shall keep the robot above the line he is currently following.
+ * Collects data from the ground-sensors and uses these values to compute slight movement changes,
+ * which shall keep the robot above the line he is currently following.
  * Therefor a PID-controlling-algorithm is deployed.
  */
 bool subs_line_run( void) {
@@ -26,4 +27,5 @@ bool subs_line_run( void) {
  * Sets all parameter, which are used to compute the movement-adjustments of the robot back to default values.
  */
 void subs_line_reset( void) {
+
 }
