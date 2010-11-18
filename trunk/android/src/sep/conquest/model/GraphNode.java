@@ -10,6 +10,11 @@ package sep.conquest.model;
 public class GraphNode extends MapNode {
 	
 	/**
+	 * An unique serialVersionUID to identify the class
+	 */
+	private static final long serialVersionUID = 5636347010678057109L;
+
+	/**
 	 * This constant exists for the access to the attribute neighbours. Position
 	 * 0 represents the left neighbour
 	 */
@@ -34,15 +39,26 @@ public class GraphNode extends MapNode {
 	public final static int TOPNEIGHBOUR = 3;
 	
 	/**
-	 * Saves the references on the direct neighbours of the node
+	 * Saves the references on the direct neighbours of the node in an array
 	 */
 	private MapNode[] neighbours = new MapNode[4];
 	
 	/**
+	 * Constructor creates an instance of the GraphNode and needs the coordinates
+	 * and the NodeType of the new node.
+	 * @param newXValue Is the x-coordinate of the new Node
+	 * @param newYValue Is the y-coordinate of the new Node
+	 * @param newNodeState Is the NodeType of the new Node
+	 */
+	public GraphNode(int newXValue, int newYValue, NodeType newNodeState){
+		super(newXValue,newYValue,newNodeState);
+	}
+	
+	/**
 	 * This method returns a reference on the direct neighbours of the node
-	 * @return The attribute neighbours
+	 * @return Returns the attribute neighbours
 	 */
 	public MapNode[] getNeighbours(){
-	 return null;
+	 return this.neighbours;
 	}
 }
