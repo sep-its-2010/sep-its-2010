@@ -5,8 +5,4 @@
 
 bool subs_abyss_run( void);
 
-void subs_abyss_reset( void);
-
-void subs_abyss_visualize( void);
-
 #endif /* subs_abyss_h__ */

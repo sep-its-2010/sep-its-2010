@@ -1,7 +1,7 @@
 #include "com.h"
 #include "hal_motors.h"
 #include "hal_led.h"
-//#include "sen_line.h"
+#include "sen_line.h"
 
 #include "subs_abyss.h"
 
@@ -18,28 +18,4 @@
 bool subs_abyss_run( void) {
 
 	return false;
-}
-
-/*!
- * \brief
- * Resets the abyss-detected-state.
- * 
- * Disables all LEDs, which are used to visualize the different states of the robot behavior.
- * 
- * \see
- * subs_abyss_visualize
- */
-void subs_abyss_reset( void) {
-}
-
-/*!
- * \brief
- * Visualizes the abyss-detected-state.
- * 
- * Enables the four LEDs, which are located on the front-half of the e-puck. This indicates that an abyss has been detected.
- *
- * \see
- * subs_abyss_reset
- */
-void subs_abyss_visualize( void) {
 }

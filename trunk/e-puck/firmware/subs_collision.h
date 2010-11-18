@@ -7,6 +7,4 @@ bool subs_collision_run( void);
 
 void subs_collision_reset( void);
 
-void subs_collision_visualize( void);
-
 #endif /* subs_collision_h__ */

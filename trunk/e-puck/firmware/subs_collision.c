@@ -1,7 +1,7 @@
 #include "com.h"
 #include "hal_motors.h"
 #include "hal_led.h"
-//#include "sen_prox.h"
+#include "sen_prox.h"
 
 #include "subs_collision.h"
 
@@ -27,19 +27,7 @@ bool subs_collision_run( void) {
  * \brief
  * Reset all collision-data to default values.
  * 
- * Disables the blinking of LEDs, which visualizes that a collision has happened.
+ * Deletes all values of the IR-sensors concerning the last collision.
  */
 void subs_collision_reset( void) {
-}
-
-/*!
- * \brief
- * Visualizes that a collision happened.
- * 
- * After a collision has been detected all eight LEDs which are located around the e-puck begin to blink.
- *
- * \see
- * subs_collision_reset
- */
-void subs_collision_visualize( void) {
 }
