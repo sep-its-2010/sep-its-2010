@@ -1,6 +1,7 @@
 package sep.conquest.model;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 import android.os.Environment;
 
@@ -17,6 +18,11 @@ public class MapFileHandler {
    */
   private static final File PATH = Environment.getDataDirectory()
       .getAbsoluteFile();
+  
+  /**
+   * Describes valid file names.
+   */
+  public static Pattern FILE_NAME_FORMAT = Pattern.compile("\\w+\\.sep");
 
   /**
    * Opens a file containing a map of type GridMap a reconstructs the GridMap.

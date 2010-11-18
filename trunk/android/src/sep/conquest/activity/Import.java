@@ -1,5 +1,6 @@
 package sep.conquest.activity;
 
+import java.io.File;
 import java.util.Map;
 
 import sep.conquest.R;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -36,7 +38,17 @@ public class Import extends Activity {
    * Used to list available maps.
    */
   private ListView lsMaps;
-
+  
+  /**
+   * Used to display names of found map files.
+   */
+  private ArrayAdapter<String> fileList;
+  
+  /**
+   * Used to temporary save found files.
+   */
+  private Map<String, File> files;
+  
   /**
    * Called when Activity is initially created.
    * 
