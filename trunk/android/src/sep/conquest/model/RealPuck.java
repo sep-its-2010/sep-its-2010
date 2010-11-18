@@ -4,6 +4,7 @@ package sep.conquest.model;
 import java.util.UUID;
 
 import android.bluetooth.BluetoothSocket;
+
 /**
  * This class inherits from the class puck and represents an e-puck
  * roboter on the smartphone. This class supports the communication via
@@ -34,9 +35,9 @@ public class RealPuck extends Puck {
 	 * This method sends a message over the BluetoothSocket to an e-puck roboter. 
 	 * It calls the method getOutputStream on mybtSocket.
 	 * 
-	 * @param buffer The Message that will be sent.
+	 * @param message The Message that will be sent.
 	 */
-	public void writeSocket(byte[] buffer){
+	public void writeSocket(byte[] message){
 		
 	}
 	
