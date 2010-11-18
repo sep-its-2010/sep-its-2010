@@ -15,23 +15,20 @@
  * If the e-puck is correctly set up above a black line and its selector is at position '0' sensordata are collected. After driving a few cm's the robot
  * is supposed to be above a white pane and collects again sensordata for the calibration. These values are stored in the EEPROM.
  *
- * \remarks
- * 
  * \see
  * subs_calibrate_reset
  */
-bool subs_calibrate_run( void) {
-	//TODO remarks in den Dokumentation von init und execute, Kalibrierung sollte nur 1mal bei Systemstart und nach Reset erfolgen
+bool subs_calibration_run( void) {
+	//TODO remarks in den Dokumentation , Kalibrierung sollte nur 1 mal bei Systemstart und nach Reset erfolgen -> bool "isCalibrated"
 
 	return false;
 }
 
 /*!
  * \brief
- * Initializes the calibration of the robot.
+ * Resets the calibration-data of the robot.
  *
- * \remarks
- * Write remarks for subs_calibrate_init here.
+ * Deletes all former calibration-data from the EEPROM.
  */
-void subs_calibrate_reset( void) {
+void subs_calibration_reset( void) {
 }

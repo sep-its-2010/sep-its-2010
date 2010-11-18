@@ -20,3 +20,27 @@ bool subs_node_run( void) {
 
 	return false;
 }
+
+/*!
+ * \brief
+ * kdjhjfhg
+ * 
+ * Write detailed description for subs_node_reset here.
+ * 
+ * \see
+ * subs_node_visualize
+ */
+void subs_node_reset( void) {
+}
+
+/*!
+ * \brief
+ * Visualizes the shape of the detected node.
+ * 
+ * Enables those LEDs which are above an existing line while the e-puck is at a node.
+ *
+ * \see
+ * subs_node_reset
+ */
+void subs_node_visualize( void) {
+}
