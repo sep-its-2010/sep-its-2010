@@ -37,7 +37,7 @@ public class Environment extends Observable implements IComClient {
      * The getInstance method returns the singleton object of the Environment
      * class.
      * 
-     * @return the singleton instance of Environment.
+     * @return The singleton instance of Environment.
      */
     public static Environment getInstance() {
         return INSTANCE;
@@ -61,19 +61,19 @@ public class Environment extends Observable implements IComClient {
      * Sets the speed of a specific robot by broadcast. In order to do this a
      * new request object will be created and sent.
      * 
-     * @param ID The ID of the robot.
+     * @param id The ID of the robot.
      * @param speed The speed level of the robots.
      */
-    public void setSpeed(UUID ID, SpeedLevel speed) { }
+    public void setSpeed(UUID id, SpeedLevel speed) { }
     
     /**
      * Enables (or disables) a specific robot to be controlled by the user.
      * 
-     * @param ID The UUID of the specific robot.
+     * @param id The UUID of the specific robot.
      * @param cotnrolled <code>true</code> if the robot should be controlled,
      *  otherwise false.
      */
-    public void setControlled(UUID ID, boolean enabled) { }
+    public void setControlled(UUID id, boolean enabled) { }
     
     /* (non-Javadoc)
      * @see sep.conquest.model.IComClient#getID()
