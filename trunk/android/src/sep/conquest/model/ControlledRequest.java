@@ -41,7 +41,7 @@ public class ControlledRequest extends Request {
      * isControlled indicates whether the receiver of the message shall be
      * controlled.
      * 
-     * @return The IR-sensor.
+     * @return The indicator if the robot is controlled.
      */
     public boolean isControlled() {
         return controlled;
