@@ -8,7 +8,7 @@
  * \brief
  * Provides the UART data configuration options.
  * 
- * The word length is currently restricted to 8 data bits, an optional parity and one or two stop bits.
+ * The word length is currently restricted to 8 data-bits, an optional parity-bit and one or two stop-bits.
  * 
  * \see
  * hal_uart1_configure

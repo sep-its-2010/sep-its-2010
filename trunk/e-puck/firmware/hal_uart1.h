@@ -71,7 +71,7 @@ void hal_uart1_forceRxMove( void);
  * \remarks
  * - This function is interrupt safe.
  * - The hardware buffers, the baud rate counter, error and status flags will be reset.
- * - The configuration will will not be reset.
+ * - The configuration will not be reset.
  *
  * \warning
  * Disabling the UART during operation will abort all pending transmissions and receptions.
@@ -213,7 +213,7 @@ bool hal_uart1_hasRxOverflow( void) {
  * \brief
  * Clears the hardware buffer overflow flags of the primary UART receiver.
  * 
- * A buffer overflow will happen whenever the hardware and ring buffer are full and byte is moved in by the shift register.
+ * A buffer overflow will happen whenever the hardware and ring buffers are full and a byte is moved in by the shift register.
  * The overflow flag can be checked with #hal_uart1_hasRxOverflow().
  * 
  * \remarks
@@ -235,7 +235,7 @@ void hal_uart1_clearRxOverflow( void) {
  * 
  * \returns
  * - true: The transmitter is inactive.
- * - false: There is at least one byte  being shifted or in the hardware buffer.
+ * - false: There is at least one byte which is shifted out of/into the hardware buffer.
  * 
  * This function is especially useful to allow a clean shutdown of the UART.
  * Shutting down an active transmitter would terminate the operation.

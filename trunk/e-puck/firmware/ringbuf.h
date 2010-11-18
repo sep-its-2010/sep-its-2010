@@ -279,7 +279,7 @@ bool ringbuf_isFull(
  * \param _lppodContext
  * Specifies the ring buffer to operate on.
  *
- * If the buffer is linear then all bytes can be directly addressed with a read index because no wrap-around must be taken into
+ * If the buffer is linear all bytes can be addressed directly with a read index because no wrap-around must be taken into
  * account. This is especially useful when using memcpy of memcmp on the buffer.
  * 
  * \returns
