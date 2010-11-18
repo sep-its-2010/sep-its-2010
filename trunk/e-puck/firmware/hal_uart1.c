@@ -68,7 +68,7 @@ void _U1RXInterrupt( void) {
  * Enables the primary UART.
  *
  * \param _blWithTransmitter
- * Specifies whether or not to enable the transmitter sub module.
+ * Specifies whether or not to enable the transmitter sub-module.
  * 
  * Once enabled, the U1TX and U1RX pins are configured as an output and an input respectively,
  * overriding the TRIS and LATCH register bit settings for the corresponding I/O port pins.
@@ -90,7 +90,7 @@ void _U1RXInterrupt( void) {
  * \remarks
  * - This function is interrupt safe concerning UART1 interrupts.
  * - The UART should be configured before enabling it.
- * - The Tx and Rx interrupts will not trigger until they their priority is set with #hal_int_setPriority().
+ * - The Tx and Rx interrupts will not trigger until their priority is set with #hal_int_setPriority().
  *
  * \warning
  * - Using uninitialized ring buffers can cause unpredictable results.
@@ -136,7 +136,7 @@ void hal_uart1_open(
  * \param _cValue
  * Specifies the byte to be written.
  * 
- * Blocks until the primary UART Tx buffer is not full, then pushes the specified byte onto the buffer.
+ * Blocks until the primary UART Tx buffer is not full any more, then pushes the specified byte onto the buffer.
  * Transmission starts immediately after pushing the byte.
  * 
  * \remarks
@@ -427,7 +427,7 @@ void hal_uart1_generateBreak( void) {
  * \brief
  * Forces the primary UART transmitter hardware buffer content to be moved to the associated ring buffer.
  * 
- * This function acts like the transmitter interrupt. It is especially useful when one wants to operate on the transmitter
+ * This function acts like the transmitter interrupt. It is especially useful if one wants to operate on the transmitter
  * ring buffer directly without relying on #hal_uart1_putch(), #hal_uart1_puts() or #hal_uart1_write().
  * 
  * \remarks
@@ -454,7 +454,7 @@ void hal_uart1_forceTxMove( void) {
  * \brief
  * Forces the primary UART receiver hardware buffer content to be moved to the associated ring buffer.
  * 
- * This function acts like the receiver interrupt. It is especially useful when one wants to operate on the receiver
+ * This function acts like the receiver interrupt. It is especially useful if one wants to operate on the receiver
  * ring buffer directly without relying on #hal_uart1_getch() or #hal_uart1_read().
  * 
  * \remarks

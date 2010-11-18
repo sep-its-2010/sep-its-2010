@@ -11,11 +11,11 @@
  * \returns
  * The oldest element or 0xFF if there is none.
  * 
- * This function contains an under run prevention. In case the buffer is empty, 0xFF is returned.
+ * This function contains an under run prevention. If the buffer is empty 0xFF is returned.
  *
  * \warning
  * - This function is not interrupt safe.
- * - The ring buffer must be initialized or results are unpredictable.
+ * - The ring buffer must be initialized otherwise results are unpredictable.
  * 
  * \see
  * ringbuf_init | ringbuf_isEmpty | ringbuf_pop | ringbuf_popRange | 
@@ -43,12 +43,12 @@ uint8_t ringbuf_get(
  * Specifies the ring buffer to operate on.
  *
  * \param _ui16Position
- * Specifies the position of the element relative to the oldest element.
+ * Specifies the position of the element in relation to the oldest element.
  * 
  * \returns
  * The specified element or 0xFF if there is none.
  * 
- * This function contains an under run prevention. In case the element index is out of bound, 0xFF is returned.
+ * This function contains an under run prevention. If the element index is out of bound 0xFF is returned.
  *
  * \warning
  * - This function is not interrupt safe.
@@ -238,7 +238,7 @@ uint16_t ringbuf_popRange(
 		_lppodContext->ui16ReadIndex = ui16Index - ui16Remaining;
 	}
 
-	// Read until warp around
+	// Read until wrap around
 	while( ui16Index < _lppodContext->ui16Size && ui16Remaining) {
 		*lpui8++ = _lppodContext->lpui8Storage[ui16Index++];
 		ui16Remaining--;
