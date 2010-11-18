@@ -41,6 +41,13 @@ public class Export extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.export_main);
   }
+  
+  /**
+   * Initializes control elements of the activity and sets EventListeners.
+   */
+  private void initializeControlElements() {
+
+  }
 
   /**
    * Handles click events on control elements of the Activity.
@@ -60,6 +67,5 @@ public class Export extends Activity {
       // TODO Auto-generated method stub
       
     }
-    
   }
 }

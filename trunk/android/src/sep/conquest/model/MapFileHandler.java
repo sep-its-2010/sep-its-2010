@@ -16,13 +16,12 @@ public class MapFileHandler {
   /**
    * The path where the maps will be saved.
    */
-  private static final File PATH = Environment.getDataDirectory()
-      .getAbsoluteFile();
-  
+  private static File PATH = Environment.getDataDirectory().getAbsoluteFile();
+
   /**
    * Describes valid file names.
    */
-  public static Pattern FILE_NAME_FORMAT = Pattern.compile("\\w+\\.sep");
+  private static Pattern FILE_NAME_FORMAT = Pattern.compile("\\w+\\.sep");
 
   /**
    * Opens a file containing a map of type GridMap a reconstructs the GridMap.
