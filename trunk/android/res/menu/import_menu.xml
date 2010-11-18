@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:title="@string/MNU_START" android:id="@+id/mnuStart"></item>
+	
+<item android:title="@string/MNU_CONNECT" android:id="@+id/mnuConnect"></item><item android:title="@string/MNU_SIMULATION" android:id="@+id/mnuSimulation"></item>
+</menu>
