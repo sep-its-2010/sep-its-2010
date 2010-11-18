@@ -13,6 +13,11 @@ import java.util.UUID;
  * @author Andreas Wilhelm
  */
 public class Environment extends Observable implements IComClient {
+	
+	/**
+	 * The local id of the Environment.
+	 */
+	private UUID id;
     
     /**
      * The static instance to implement the singleton pattern.
@@ -20,9 +25,13 @@ public class Environment extends Observable implements IComClient {
     private static final Environment INSTANCE = new Environment();
     
     /**
-     * The private constructor to realize the singleton pattern.
+     * The private constructor to realize the singleton pattern. It will create
+     * a local id and registers itself at the communication manager
      */
-    private Environment(){ }
+    private Environment(){
+    	this.id = UUID.randomUUID();
+    	// TODO register at the communication manager
+    }
     
     /**
      * The getInstance method returns the singleton object of the Environment
@@ -38,12 +47,13 @@ public class Environment extends Observable implements IComClient {
      * Initiate a drive-command to a specific robot by broadcast. In order to
      * do this a new request object will be created and sent.
      * 
-     * @param ID The ID of the robot.
+     * @param id The ID of the robot.
      * @param command The drive command to send.
      */
-    public void driveCommand(UUID ID, Drive command) {
+    public void driveCommand(UUID id, Drive command) {
+    	UUID[] receiver = {id};    	
     	ComManager comManager = ComManager.getInstance();
-        DriveRequest driveReq = new DriveRequest(ID, command);
+        DriveRequest driveReq = new DriveRequest(id, receiver, command);
         comManager.broadcast(this, driveReq);
     }
     
@@ -64,6 +74,13 @@ public class Environment extends Observable implements IComClient {
      *  otherwise false.
      */
     public void setControlled(UUID ID, boolean enabled) { }
+    
+    /* (non-Javadoc)
+     * @see sep.conquest.model.IComClient#getID()
+     */
+    public UUID getID() {
+    	return id;
+    }
     
 
     /* (non-Javadoc)

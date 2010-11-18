@@ -15,5 +15,36 @@ public enum MessageType {
     /**
      * Specifies a message in order to control the speed of a robot.
      */
-    CONTROL_SPEED;    
+    CONTROL_SPEED,
+    
+    /**
+     * Specifies a message to provide a status update of robots.
+     */
+    STATUS_UPDATE,
+    
+    /**
+     * Specifies a message in case of a collision of robots.
+     */
+    COLLISION,
+    
+    /**
+     * Specifies a message in case of enabling or disabling the manual control
+     * of a participant.
+     */
+    CONTROL_ENABLE,
+    
+    /**
+     * Specifies a message in case of a failure.
+     */
+    FAILURE,
+    
+    /**
+     * Specifies a message which represents a drive-intent of a robot.
+     */
+    INTENT,
+    
+    /**
+     * Specifies a message to introduce a participant to others.
+     */
+    HELLO;
 }

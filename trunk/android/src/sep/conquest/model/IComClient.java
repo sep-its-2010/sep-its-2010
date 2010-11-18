@@ -1,5 +1,7 @@
 package sep.conquest.model;
 
+import java.util.UUID;
+
 /**
  * The interface IComClient enables clients to receive messages from others
  * by the communication-manager.
@@ -15,4 +17,11 @@ public interface IComClient {
      * @param request The message which has to be delivered.
      */
     void deliver(IComClient sender, IRequest request);
+    
+    /**
+     * Returns the id of the client.
+     * 
+     * @return The id
+     */
+    UUID getID();
 }
