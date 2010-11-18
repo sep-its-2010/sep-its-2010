@@ -1,5 +1,6 @@
 package sep.conquest.model;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
@@ -8,16 +9,23 @@ import java.util.TreeMap;
  * e-puck roboter. Nodes of the type GraphNode can be added to the structure and the
  * access is managed with a binary tree. Additionally the class GridMap has got a
  * attribute frontierList which saves the unexplored nodes with explored
- * neighbours.
+ * neighbours. GridMap implements the interface Serializable to serialize the data
+ * structure.
  * 
  * @author Florian Lorenz
  */
-public class GridMap {
+public class GridMap implements Serializable{
+	
+	/**
+	 * An unique serialVersionUID to identify the class
+	 */
+	private static final long serialVersionUID = -7600637766534768588L;
+
 	/**
 	 * Saves all instances of the class MapNode, which haven't been explored
 	 * yet, but which has got at least one visited neighbour of the type GraphNode
 	 */
-	private LinkedList<GraphNode> frontierList = new LinkedList<GraphNode>();
+	private LinkedList<GraphNode> frontierList = new LinkedList<GraphNode>();;
 
 	/**
 	 * Saves all references of the instances of the class GraphNode, ordered in a
@@ -29,14 +37,14 @@ public class GridMap {
 	 * default constructor
 	 */
 	public GridMap() {
-
+		
 	}
 
 	/**
 	 * Creates an instance of the type GraphNode, inserts it in the attribute
 	 * mapTree and if necessary sets references on neighbours. With the assigned
 	 * enumeration new frontierNodes (nodes which hasen't been visited yet) will
-	 * be created an add to the structure.
+	 * be created and add to the structure.
 	 */
 	public void addNode(int x, int y, NodeType status) {
 
@@ -60,7 +68,8 @@ public class GridMap {
 	 *         GridMap
 	 */
 	public LinkedList<MapNode> getMapAsList() {
-		return null;
+		LinkedList<MapNode> mapNodeList = new LinkedList<MapNode>();
+		return mapNodeList;
 	}
 
 	/**
@@ -69,7 +78,8 @@ public class GridMap {
 	 * @return Returns a LinkedList which is a copy of frontierList
 	 */
 	private LinkedList<GraphNode> cloneFrontierList() {
-		return null;
+		LinkedList<GraphNode> graphNodeList = new LinkedList<GraphNode>();
+		return graphNodeList;
 	}
 
 	/**
@@ -83,13 +93,11 @@ public class GridMap {
 	}
 
 	/**
-	 * Searches whether a node with the coordinates x and y is in the TreeMap
+	 * Searches whether a node with the coordinates x and y exists in the TreeMap
 	 * mapTree
 	 * 
-	 * @param x
-	 *            Is the x-coordinate
-	 * @param y
-	 *            Is the y-coordinate
+	 * @param x Is the x-coordinate 
+	 * @param y Is the y-coordinate          
 	 * @return Returns the node if it exists in the TreeMap mapTree, otherwise
 	 *         returns null
 	 */
@@ -99,13 +107,11 @@ public class GridMap {
 
 	/**
 	 * The private method setNeighbours sets the references the neighbours of
-	 * the node with the coordinates x and y. If a neighbournode does not exists
+	 * the node with the coordinates x and y. If a neighbournode does not exist,
 	 * the reference is set to null.
 	 * 
-	 * @param x
-	 *            Is the x-coordinate
-	 * @param y
-	 *            Is the y-coordinate
+	 * @param x Is the x-coordinate     
+	 * @param y Is the y-coordinate     
 	 */
 	private void setNeighbours(int x, int y) {
 
@@ -116,10 +122,8 @@ public class GridMap {
 	 * created at the node with the coordinates x and y and sets the
 	 * neighbourreferences
 	 * 
-	 * @param x
-	 *            Is the x-coordinate of the node
-	 * @param y
-	 *            Is the y-coordinate of the node
+	 * @param x Is the x-coordinate of the node   
+	 * @param y Is the y-coordinate of the node         
 	 */
 	private void setFrontierNodes(int x, int y) {
 
