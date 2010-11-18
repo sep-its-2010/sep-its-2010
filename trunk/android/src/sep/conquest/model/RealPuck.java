@@ -16,14 +16,16 @@ import android.bluetooth.BluetoothSocket;
 public class RealPuck extends Puck {
 
 	/**
-	 * Saves the BluetoothSocket which is consigned on the constructor and connects
-	 * the e-puck roboter and the RealPuck.
+	 * Saves the BluetoothSocket which is consigned on the constructor and 
+	 * connects the e-puck roboter and the RealPuck.
 	 */
 	private BluetoothSocket mybtSocket;
 	
 	/**
 	 * Constructor which generates an instance of the class RealPuck.
-	 * @param btSocket This is the BluetoothSocket which is hand over by the PuckFactory.
+	 * 
+	 * @param btSocket This is the BluetoothSocket which is hand over by the 
+	 * PuckFactory.
 	 * @param ID The unique identifying number of an instance of the RealPuck. 
 	 */
 	public RealPuck(BluetoothSocket btSocket, UUID ID){
@@ -32,7 +34,8 @@ public class RealPuck extends Puck {
 	}
 	
 	/**
-	 * This method sends a message over the BluetoothSocket to an e-puck roboter. 
+	 * This method sends a message over the BluetoothSocket to an e-puck 
+	 * roboter. 
 	 * It calls the method getOutputStream on mybtSocket.
 	 * 
 	 * @param message The Message that will be sent.
@@ -48,10 +51,6 @@ public class RealPuck extends Puck {
 	 * @return Returns the message sent by the e-puck.
 	 */
 	public byte[] readSocket(){
-		return null;
-	}
-
-	public UUID getID() {
 		return null;
 	}
 }

@@ -10,16 +10,20 @@ import java.util.UUID;
  * between the simulator and the virtual roboter.
  * 
  * @author Florian Lorenz
- * 
  */
 public class VirtualPuck extends Puck {
 	
-	Simulator mySimulator;
+	/**
+	 * Saves an instance of the class simulator.
+	 */
+	private Simulator mySimulator;
 	
 	/**
 	 * Constructor which generates an instance of the class VirtualPuck.
-	 * @param puckSimulator This is the puckSimulator which is hand over by the PuckFactory.
-	 * @param ID The unique identifying number of an instance of the VirtualPuck. 
+	 * @param puckSimulator This is the puckSimulator which is hand over by the 
+	 * PuckFactory.
+	 * @param ID The unique identifying number of an instance of the 
+	 * VirtualPuck. 
 	 */
 	public VirtualPuck(UUID ID){
 		super(ID);
@@ -27,7 +31,8 @@ public class VirtualPuck extends Puck {
 	}
 	
 	/**
-	 * This method sends a message to the Simulator
+	 * This method sends a message to the Simulator.
+	 * 
 	 * @param buffer The Message that will be sent.
 	 */
 	public void writeSocket(byte[] buffer){
@@ -36,13 +41,10 @@ public class VirtualPuck extends Puck {
 	
 	/**
 	 * This method receives a message sent from the simulator.
+	 * 
 	 * @return Returns the message sent by the simulator.
 	 */
 	public byte[] readSocket(){
-		return null;
-	}
-
-	public UUID getID() {
 		return null;
 	}
 }

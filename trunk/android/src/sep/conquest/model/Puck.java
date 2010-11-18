@@ -69,6 +69,10 @@ public abstract class Puck implements IComClient {
 	  
   }
   
+  public UUID getID() {
+		return this.ID;
+	}
+  
   /**
    * This method sends a message in form of a byte-array via socket.
    * @param buffer The message that will be sent.
