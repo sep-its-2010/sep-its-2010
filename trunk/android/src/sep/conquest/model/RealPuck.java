@@ -33,6 +33,7 @@ public class RealPuck extends Puck {
 	/**
 	 * This method sends a message over the BluetoothSocket to an e-puck roboter. 
 	 * It calls the method getOutputStream on mybtSocket.
+	 * 
 	 * @param buffer The Message that will be sent.
 	 */
 	public void writeSocket(byte[] buffer){
@@ -42,6 +43,7 @@ public class RealPuck extends Puck {
 	/**
 	 * This method receives a message over the BluetoothSocket from an e-puck
 	 * roboter. It calls the method getInputStream on mybtSocket.
+	 * 
 	 * @return Returns the message sent by the e-puck.
 	 */
 	public byte[] readSocket(){

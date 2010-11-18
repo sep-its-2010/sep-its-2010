@@ -21,9 +21,9 @@ public class VirtualPuck extends Puck {
 	 * @param puckSimulator This is the puckSimulator which is hand over by the PuckFactory.
 	 * @param ID The unique identifying number of an instance of the VirtualPuck. 
 	 */
-	public VirtualPuck(Simulator puckSimulator, UUID ID){
+	public VirtualPuck(UUID ID){
 		super(ID);
-		mySimulator = puckSimulator;
+		mySimulator = Simulator.getInstance();
 	}
 	
 	/**
