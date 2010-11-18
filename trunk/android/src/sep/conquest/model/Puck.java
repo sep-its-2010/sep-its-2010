@@ -58,4 +58,14 @@ public abstract class Puck implements IComClient {
     
     // firstBCHandler = new PositionUpdateHandler();
   }
+  
+  /**
+   * The method delivers a message from a specific sender.
+   * 
+   * @param sender The sender of the broadcast message.
+   * @param request The message which has to be delivered.
+   */
+  public void deliver(IComClient sender, IRequest request){
+	  
+  }
 }
