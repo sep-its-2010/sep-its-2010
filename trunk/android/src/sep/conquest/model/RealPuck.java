@@ -50,4 +50,8 @@ public class RealPuck extends Puck {
 	public byte[] readSocket(){
 		return null;
 	}
+
+	public UUID getID() {
+		return null;
+	}
 }
