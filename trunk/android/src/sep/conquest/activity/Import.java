@@ -42,7 +42,7 @@ public class Import extends Activity {
 	 */
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.connect_menu, menu);
+		inflater.inflate(R.menu.import_menu, menu);
 		return true;
 	}
 

@@ -1,36 +1,38 @@
 package sep.conquest.activity;
 
+import java.util.UUID;
+
 public class ePuckPosition {
 	
-	private int x;
-	private int y;
-	private int id;
+  private final UUID ROBOT_ID;
+
+	private int posX;
+	private int posY;
 	
-	public ePuckPosition(int _x, int _y, int _id) {
-		x = _x;
-		y = _y;
-		id = _id;
+	public ePuckPosition(int x, int y, UUID ID) {
+		posX = x;
+		posY = y;
+		ROBOT_ID = ID;
 	}
 	
-	public void setX(int _x) {
-		x = _x;
+	public void setX(int x) {
+		posX = x;
 	}
 	
-	public void setY(int _y) {
-		y = _y;
+	public void setY(int y) {
+		posY = y;
 	}
 	
 	public int getX() {
-		return x;
+		return posX;
 	}
 	
 	public int getY() {
-		return y;
+		return posY;
 	}
 	
-	public int getID() {
-		return id;
+	public UUID getID() {
+		return ROBOT_ID;
 	}
-
 }
 
