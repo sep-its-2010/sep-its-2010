@@ -68,4 +68,16 @@ public abstract class Puck implements IComClient {
   public void deliver(IComClient sender, IRequest request){
 	  
   }
+  
+  /**
+   * This method sends a message in form of a byte-array via socket.
+   * @param buffer The message that will be sent.
+   */
+  public abstract void writeSocket(byte[] buffer);
+  
+  /**
+   * This method read if an incoming message has arrived at the socket.
+   * @return Returns the message that was sent by an e-puck roboter.
+   */
+  public abstract byte[] readSocket();
 }
