@@ -46,5 +46,30 @@ public enum MessageType {
     /**
      * Specifies a message to introduce a participant to others.
      */
-    HELLO;
+    HELLO,
+    
+    /**
+     * Specifies a collision-message of the robot.
+     */
+    PUCK_COLLISION,
+    
+    /**
+     * Specifies an information-message of the robot for visited nodes.
+     */
+    PUCK_HITNODE,
+    
+    /**
+     * Specifies an status-message of a robot.
+     */
+    PUCK_STATUS,
+    
+    /**
+     * Specifies an acknowledge-message of a robot.
+     */
+    PUCK_OK,
+    
+    /**
+     * Specifies an abyss-message of a robot.
+     */
+    PUCK_ABYSS;
 }
