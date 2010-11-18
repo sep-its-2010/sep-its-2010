@@ -1,7 +1,7 @@
 package sep.conquest.model;
 
 /**
- * @class Abstract class representing a Handler to handle messages.
+ * Abstract class representing a Handler to handle messages.
  * 
  * @author Andreas Poxrucker
  */
