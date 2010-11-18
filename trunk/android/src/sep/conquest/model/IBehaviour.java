@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  * Every single logic-stage of the navigation has to implement the IBehaviour
- * interface. The execute method will be used to do calcualtions on a given
+ * interface. The execute method will be used to do calculations on a given
  * map in order to the specific behaviour.
  * 
  * @author Andreas Wilhelm

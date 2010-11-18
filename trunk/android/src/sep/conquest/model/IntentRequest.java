@@ -4,7 +4,7 @@ import java.util.UUID;
 
 
 /**
- * The ControlledRequest represents message objects that are sent by 
+ * The IntentRequest represents message objects that are sent by 
  * IComClient clients. It will be sent from a participant if it's up to
  * drive to a new node.
  * 

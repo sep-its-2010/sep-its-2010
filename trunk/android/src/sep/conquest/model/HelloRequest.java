@@ -1,7 +1,7 @@
 package sep.conquest.model;
 
 /**
- * The ControlledRequest represents message objects that are sent by 
+ * The HelloRequest represents message objects that are sent by 
  * IComClient clients. It will be sent from a participant after a defined
  * period of time during the init-process to all participants of the
  * communication-network.

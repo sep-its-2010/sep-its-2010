@@ -23,15 +23,15 @@ public interface IComMan {
      * addClient registers a client for participating the broadcast-
      * communication by the communication-manager.
      * 
-     * @param ID The ID of the client.
+     * @param id The ID of the client.
      * @param client The client which has to be added.
      */    
-    void addClient(UUID ID, IComClient client);
+    void addClient(UUID id, IComClient client);
 
     /**
      * removeClient removes a participant from the communication-manager.
      * 
-     * @param ID The ID of the client which has to be removed.
+     * @param id The ID of the client which has to be removed.
      */
-    void removeClient(UUID ID);
+    void removeClient(UUID id);
 }

@@ -13,7 +13,7 @@ public interface IRequest {
     /**
      * getKind returns the type of the request-message.
      * 
-     * @return
+     * @return The type of request-message.
      */
     MessageType getKind();
     

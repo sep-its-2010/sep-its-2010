@@ -1,7 +1,7 @@
 package sep.conquest.model;
 
 /**
- * Handles DriveRequest messages.
+ * Handles IntentRequest messages.
  * 
  * @author Andreas Poxrucker
  *

@@ -17,6 +17,9 @@ public abstract class Behaviour implements IBehaviour {
      */
     private IBehaviour nextBehaviour;
     
+    /**
+     * The logical level of the behaviour.
+     */
     private State stateLevel;
     
     /**
@@ -32,7 +35,7 @@ public abstract class Behaviour implements IBehaviour {
     /**
      * Returns the level of the behaviour.
      * 
-     * @return The 
+     * @return The  level of the behaviour.
      */
     public State getStateLevel() {
     	return stateLevel;
