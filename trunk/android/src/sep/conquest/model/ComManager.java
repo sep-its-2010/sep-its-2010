@@ -39,7 +39,7 @@ public class ComManager implements IComMan {
      * The getInstance method returns the singleton object of the ComManager
      * class.
      * 
-     * @return the singleton instance of ComManager.
+     * @return The singleton instance of ComManager.
      */
     public static ComManager getInstance() {
         return INSTANCE;
