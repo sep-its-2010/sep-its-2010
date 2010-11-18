@@ -16,23 +16,23 @@
  * com_SMessage_t | com_send
  */
 typedef enum {
-	COM_MESSAGE_TYPE__REQUEST_RESET, ///< Reset epuck logic.
-	COM_MESSAGE_TYPE__REQUEST_STATUS, ///< Get epuck status.
-	COM_MESSAGE_TYPE__REQUEST_TURN, ///< Turn epuck by the specified degrees.
-	COM_MESSAGE_TYPE__REQUEST_MOVE, ///< Move epuck in view direction until a node is found.
-	COM_MESSAGE_TYPE__REQUEST_SET_SPEED, ///< Change the epuck speed.
+	COM_MESSAGE_TYPE__REQUEST_RESET, ///< Reset e-puck logic.
+	COM_MESSAGE_TYPE__REQUEST_STATUS, ///< Get e-puck status.
+	COM_MESSAGE_TYPE__REQUEST_TURN, ///< Turn e-puck by the specified degrees.
+	COM_MESSAGE_TYPE__REQUEST_MOVE, ///< Move e-puck in view direction until a node is found.
+	COM_MESSAGE_TYPE__REQUEST_SET_SPEED, ///< Change the e-puck speed.
 	COM_MESSAGE_TYPE__REQUEST_SET_LED, ///< Set the specified LEDs.
 
 	COM_MESSAGE_TYPE__RESPONSE_OK, ///< Request acknowledged.
-	COM_MESSAGE_TYPE__RESPONSE_STATUS, ///< Current epuck status.
-	COM_MESSAGE_TYPE__RESPONSE_HIT_NODE, ///< epuck has hit a node.
-	COM_MESSAGE_TYPE__RESPONSE_COLLISION, ///< epuck detected a collision while moving.
-	COM_MESSAGE_TYPE__RESPONSE_ABYSS, ///< epuck detected an abyss while moving.
+	COM_MESSAGE_TYPE__RESPONSE_STATUS, ///< Current e-puck status.
+	COM_MESSAGE_TYPE__RESPONSE_HIT_NODE, ///< e-puck has hit a node.
+	COM_MESSAGE_TYPE__RESPONSE_COLLISION, ///< e-puck has detected a collision while moving.
+	COM_MESSAGE_TYPE__RESPONSE_ABYSS, ///< e-puck has detected an abyss while moving.
 
 	COM_MESSAGE_TYPE__BTM_REQUEST, ///< Bluetooth module request message.
 	COM_MESSAGE_TYPE__BTM_RESPONSE, ///< Bluetooth module response message.
 	COM_MESSAGE_TYPE__BTM_INDICATION, ///< Bluetooth module indication message.
-	COM_MESSAGE_TYPE__BTM_REPLY ///< Bluetooth module replay message.
+	COM_MESSAGE_TYPE__BTM_REPLY ///< Bluetooth module reply message.
 } com_EMessageType_t;
 
 
