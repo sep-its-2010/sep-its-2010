@@ -8,7 +8,7 @@
 enum {
 	COM_TX_BUFFER_SIZE = 128, ///< Specifies the amount of transmitter buffer space in bytes.
 	COM_RX_BUFFER_SIZE = 128, ///< Specifies the amount of receiver buffer space in bytes.
-	COM_MAX_HANDLERS = 16
+	COM_MAX_HANDLERS = 16 ///< Specifies the maximal amount of message handler callbacks.
 };
 
 void com_init( void);

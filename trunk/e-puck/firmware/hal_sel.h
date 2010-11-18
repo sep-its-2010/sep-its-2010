@@ -20,11 +20,31 @@ static inline void hal_sel_init( void);
 
 static inline uint8_t hal_sel_getPosition( void);
 
+/*!
+ * \brief
+ * Initializes the selector port pins.
+ * 
+ * \see
+ * hal_sel_getPosition
+ */
 void hal_sel_init( void) {
 
 	TRISG |= HAL_SEL_PIN_MASK;
 }
 
+/*!
+ * \brief
+ * Gets the current selector position.
+ * 
+ * \returns
+ * A value between 0x00 and 0x0F which represents the epuck selector position labeling.
+ * 
+ * \remarks
+ * The selector abstraction layer needs to be initialized before being used.
+ * 
+ * \see
+ * hal_sel_init
+ */
 uint8_t hal_sel_getPosition( void) {
 
 	return ( PORTG & HAL_SEL_PIN_MASK) >> HAL_SEL_DATA_OFFSET;

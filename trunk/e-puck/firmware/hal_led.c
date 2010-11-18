@@ -1,6 +1,24 @@
 #include "hal_led.h"
 
 
+/*!
+ * \brief
+ * Toggles the specified LEDs.
+ * 
+ * \param _ui16EnableMask
+ * Specifies the LED toggle mask based on #HAL_LED_PIN_BV__0 to #HAL_LED_PIN_BV__B.
+ * 
+ * The specified LEDs are toggled; the others remain unchanged.
+ * 
+ * \remarks
+ * The LED abstraction layer needs to be initialized before being used.
+ *
+ * \warning
+ * This function is not interrupt safe.
+ * 
+ * \see
+ * hal_led_init | hal_led_switchOn | hal_led_switchOff | hal_led_set
+ */
 void hal_led_toggle(
 	IN const uint16_t _ui16ToggleMask
 	) {

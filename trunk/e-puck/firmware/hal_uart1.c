@@ -4,7 +4,18 @@
 
 #include "hal_uart1.h"
 
+
+/*!
+ * \brief
+ * Transmitter ring buffer context.
+ */
 ringbuf_SContext_t hal_uart1_podTxBuffer = { NULL, 0, 0, 0 };
+
+
+/*!
+ * \brief
+ * Receiver ring buffer context.
+ */
 ringbuf_SContext_t hal_uart1_podRxBuffer = { NULL, 0, 0, 0 };
 
 

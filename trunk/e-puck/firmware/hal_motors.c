@@ -1,6 +1,23 @@
 #include "hal_motors.h"
 
+
+/*!
+ * \brief
+ * Holds the current step count of the left motor.
+ * 
+ * \see
+ * hal_motors_setStepsLeft | hal_motors_getStepsLeft | hal_motors_setSteps
+ */
 volatile uint16_t hal_motors_ui16StepsLeft;
+
+
+/*!
+ * \brief
+ * Holds the current step count of the right motor.
+ * 
+ * \see
+ * hal_motors_setStepsRight | hal_motors_setStepsRight | hal_motors_setSteps
+ */
 volatile uint16_t hal_motors_ui16StepsRight;
 
 /*!

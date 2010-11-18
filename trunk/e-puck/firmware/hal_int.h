@@ -27,6 +27,22 @@ static inline void hal_int_clearFlag(
 	);
 
 
+/*!
+ * \brief
+ * Enables the specified interrupt source.
+ * 
+ * \param _eSource
+ * Specifies the interrupt source to be enabled.
+ *
+ * In order for the interrupts to trigger, they need to be enabled and their priorities need to be higher than the CPU priority.
+ * 
+ * \remarks
+ * - Only constant parameters should be used to allow proper inlining.
+ * - This function is interrupt safe.
+ * 
+ * \see
+ * hal_int_disable | hal_int_setPriority
+ */
 void hal_int_enable(
 	IN const hal_int_ESource_t _eSource
 	) {
@@ -202,6 +218,21 @@ void hal_int_enable(
 	}
 }
 
+
+/*!
+ * \brief
+ * Disables the specified interrupt source.
+ * 
+ * \param _eSource
+ * Specifies the interrupt source to be disabled.
+ * 
+ * \remarks
+ * - Only constant parameters should be used to allow proper inlining.
+ * - This function is interrupt safe.
+ * 
+ * \see
+ * hal_int_enable
+ */
 void hal_int_disable(
 	IN const hal_int_ESource_t _eSource
 	) {
@@ -377,6 +408,25 @@ void hal_int_disable(
 	}
 }
 
+/*!
+ * \brief
+ * Changes the priority for the specified interrupt.
+ * 
+ * \param _eSource
+ * Specifies the interrupt source whose priority is to be changed.
+ * 
+ * \param _ePriority
+ * Specifies the new priority.
+ * 
+ * In order for the interrupts to trigger, they need to be enabled and their priorities need to be higher than the CPU priority.
+ * 
+ * \remarks
+ * - Only constant parameters should be used to allow proper inlining.
+ * - This function is interrupt safe.
+ * 
+ * \see
+ * hal_int_enable
+ */
 void hal_int_setPriority(
 	IN const hal_int_ESource_t _eSource,
 	IN const hal_int_EPriority_t _ePriority
@@ -554,6 +604,28 @@ void hal_int_setPriority(
 }
 
 
+/*!
+ * \brief
+ * Checks whether the specified interrupt flag is set.
+ * 
+ * \param _eSource
+ * Specifies the interrupt source to query.
+ * 
+ * \returns
+ * - true: the associated flag is set.
+ * - false: the associated flag is not set.
+ * 
+ * In order for the interrupts to trigger, they need to be enabled and their priorities need to be higher than the CPU priority.
+ * 
+ * If no ISRs are used, this function can be used for a polling driven approach.
+ * 
+ * \remarks
+ * - Only constant parameters should be used to allow proper inlining.
+ * - This function is interrupt safe.
+ * 
+ * \see
+ * hal_int_clearFlag
+ */
 bool hal_int_isFlagSet(
 	IN const hal_int_ESource_t _eSource
 	) {
@@ -734,6 +806,21 @@ bool hal_int_isFlagSet(
 }
 
 
+/*!
+ * \blears the specified interrupt flag.
+ * 
+ * \param _eSource
+ * Specifies the interrupt source whose flags should be cleared.
+ * 
+ * Most ISRs require their flag to be cleared.
+ * 
+ * \remarks
+ * - Only constant parameters should be used to allow proper inlining.
+ * - This function is interrupt safe.
+ * 
+ * \see
+ * hal_int_isFlagSet
+ */
 void hal_int_clearFlag(
 	IN const hal_int_ESource_t _eSource
 	) {

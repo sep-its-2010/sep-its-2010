@@ -7,29 +7,29 @@
 
 #include "hal_motors_types.h"
 
-#define HAL_MOTORS_PIN__LEFT_A _LATD0
-#define HAL_MOTORS_PIN__LEFT_B _LATD1
-#define HAL_MOTORS_PIN__LEFT_C _LATD2
-#define HAL_MOTORS_PIN__LEFT_D _LATD3
-#define HAL_MOTORS_PIN__RIGHT_A _LATD4
-#define HAL_MOTORS_PIN__RIGHT_B _LATD5
-#define HAL_MOTORS_PIN__RIGHT_C _LATD6
-#define HAL_MOTORS_PIN__RIGHT_D _LATD7
+#define HAL_MOTORS_PIN__LEFT_A _LATD0 ///< epuck left motor driver pin A.
+#define HAL_MOTORS_PIN__LEFT_B _LATD1 ///< epuck left motor driver pin B.
+#define HAL_MOTORS_PIN__LEFT_C _LATD2 ///< epuck left motor driver pin C.
+#define HAL_MOTORS_PIN__LEFT_D _LATD3 ///< epuck left motor driver pin D.
+#define HAL_MOTORS_PIN__RIGHT_A _LATD4 ///< epuck right motor driver pin A.
+#define HAL_MOTORS_PIN__RIGHT_B _LATD5 ///< epuck right motor driver pin B.
+#define HAL_MOTORS_PIN__RIGHT_C _LATD6 ///< epuck right motor driver pin C.
+#define HAL_MOTORS_PIN__RIGHT_D _LATD7 ///< epuck right motor driver pin D.
 
-#define HAL_MOTORS_PIN_DIR__LEFT_A _TRISD0
-#define HAL_MOTORS_PIN_DIR__LEFT_B _TRISD1
-#define HAL_MOTORS_PIN_DIR__LEFT_C _TRISD2
-#define HAL_MOTORS_PIN_DIR__LEFT_D _TRISD3
-#define HAL_MOTORS_PIN_DIR__RIGHT_A _TRISD4
-#define HAL_MOTORS_PIN_DIR__RIGHT_B _TRISD5
-#define HAL_MOTORS_PIN_DIR__RIGHT_C _TRISD6
-#define HAL_MOTORS_PIN_DIR__RIGHT_D _TRISD7
+#define HAL_MOTORS_PIN_DIR__LEFT_A _TRISD0 ///< epuck left motor pin A direction.
+#define HAL_MOTORS_PIN_DIR__LEFT_B _TRISD1 ///< epuck left motor pin B direction.
+#define HAL_MOTORS_PIN_DIR__LEFT_C _TRISD2 ///< epuck left motor pin C direction.
+#define HAL_MOTORS_PIN_DIR__LEFT_D _TRISD3 ///< epuck left motor pin D direction.
+#define HAL_MOTORS_PIN_DIR__RIGHT_A _TRISD4 ///< epuck right motor pin A direction.
+#define HAL_MOTORS_PIN_DIR__RIGHT_B _TRISD5 ///< epuck right motor pin B direction.
+#define HAL_MOTORS_PIN_DIR__RIGHT_C _TRISD6 ///< epuck right motor pin C direction.
+#define HAL_MOTORS_PIN_DIR__RIGHT_D _TRISD7 ///< epuck right motor pin D direction.
 
 enum {
-	HAL_MOTORS_LEFT_MASK = ( 1 << 0) | ( 1 << 1) | ( 1 << 2) | ( 1 << 3),
-	HAL_MOTORS_LEFT_DATA_OFFSET = 0,
-	HAL_MOTORS_RIGHT_MASK = ( 1 << 4) | ( 1 << 5) | ( 1 << 6) | ( 1 << 7),
-	HAL_MOTORS_RIGHT_DATA_OFFSET = 4
+	HAL_MOTORS_LEFT_MASK = ( 1 << 0) | ( 1 << 1) | ( 1 << 2) | ( 1 << 3), ///< Left motor port bit mask.
+	HAL_MOTORS_LEFT_DATA_OFFSET = 0, ///< Port data offset of the right motor.
+	HAL_MOTORS_RIGHT_MASK = ( 1 << 4) | ( 1 << 5) | ( 1 << 6) | ( 1 << 7), ///< Right motor port bit mask.
+	HAL_MOTORS_RIGHT_DATA_OFFSET = 4 ///< Port data offset of the right motor.
 };
 
 
