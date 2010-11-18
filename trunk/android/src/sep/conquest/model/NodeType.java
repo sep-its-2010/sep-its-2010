@@ -1,58 +1,58 @@
 package sep.conquest.model;
 
 /**
- * The enum NodeType saves the different types of the node
+ * The enum NodeType saves the different types of the node.
  * 
  * @author Florian Lorenz
  */
 public enum NodeType{
 	/**
-	 * Left upper corner
+	 * Left upper corner.
 	 */
 	TOPLEFTEDGE,
 	
 	/**
-	 * Right upper corner
+	 * Right upper corner.
 	 */
 	TOPRIGHTEDGE,
 	
 	/**
-	 * Left lower corner
+	 * Left lower corner.
 	 */
 	BOTTOMLEFTEDGE,
 	
 	/**
-	 * Right lower corner
+	 * Right lower corner.
 	 */
 	BOTTOMRIGHTEDGE,
 	
 	/**
-	 * T-Cross
+	 * T-Cross.
 	 */
 	TOPT,
 	
 	/**
-	 * T-Cross turned 180 degrees
-	 */
-	BOTTOMT,
-	
-	/**
-	 * T-Cross turned 270 degrees
-	 */
-	LEFTT,
-	
-	/**
-	 * T-Cross turned 90 degrees
+	 * T-Cross turned 90 degrees.
 	 */
 	RIGHTT,
 
 	/**
-	 * A cross with two lines
+	 * T-Cross turned 180 degrees.
+	 */
+	BOTTOMT,
+	
+	/**
+	 * T-Cross turned 270 degrees.
+	 */
+	LEFTT,
+	
+	/**
+	 * A cross with two lines.
 	 */
 	CROSS,
 	
 	/**
-	 * The node hasen't been visited yet
+	 * The node hasen't been visited yet.
 	 */
 	FRONTIERNODE;
 }
