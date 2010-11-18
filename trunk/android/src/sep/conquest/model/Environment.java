@@ -14,12 +14,13 @@ import java.util.UUID;
  */
 public class Environment extends Observable implements IComClient {
     
-	// local declarations and definitions
+    /**
+     * The static instance to implement the singleton pattern.
+     */
     private static final Environment INSTANCE = new Environment();
     
     /**
-     * The private constructor to realize the singleton pattern. It gets a
-     * a reference to the communication-manager for broadcast-communication.
+     * The private constructor to realize the singleton pattern.
      */
     private Environment(){ }
     

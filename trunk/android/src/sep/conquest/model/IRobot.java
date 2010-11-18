@@ -34,4 +34,12 @@ public interface IRobot {
    * @param level The speed to set.
    */
   void setSpeed(SpeedLevel level);
+  
+  /**
+   * Enables (or disables) the manual control of the robot.
+   * 
+   * @param enabled <code>true</code> if the robot is controlled by the user,
+   * 	otherwise <code>false</code>.
+   */
+  void setControlled(boolean enabled);
 }
