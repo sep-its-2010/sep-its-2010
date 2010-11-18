@@ -144,11 +144,19 @@
 				Name="Hardware Abstraction Layer"
 				>
 				<File
+					RelativePath=".\hal_adc.c"
+					>
+				</File>
+				<File
 					RelativePath=".\hal_led.c"
 					>
 				</File>
 				<File
 					RelativePath=".\hal_motors.c"
+					>
+				</File>
+				<File
+					RelativePath=".\hal_rtc.c"
 					>
 				</File>
 				<File
@@ -229,6 +237,14 @@
 				Name="Hardware Abstraction Layer"
 				>
 				<File
+					RelativePath=".\hal_adc.h"
+					>
+				</File>
+				<File
+					RelativePath=".\hal_i2c.h"
+					>
+				</File>
+				<File
 					RelativePath=".\hal_int.h"
 					>
 				</File>
@@ -246,6 +262,14 @@
 				</File>
 				<File
 					RelativePath=".\hal_motors_types.h"
+					>
+				</File>
+				<File
+					RelativePath=".\hal_rtc.h"
+					>
+				</File>
+				<File
+					RelativePath=".\hal_rtc_types.h"
 					>
 				</File>
 				<File
