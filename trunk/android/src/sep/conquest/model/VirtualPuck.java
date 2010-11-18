@@ -41,4 +41,8 @@ public class VirtualPuck extends Puck {
 	public byte[] readSocket(){
 		return null;
 	}
+
+	public UUID getID() {
+		return null;
+	}
 }
