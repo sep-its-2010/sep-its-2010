@@ -40,7 +40,7 @@ public class MapSurfaceView extends SurfaceView
      * you actual really move the rectangle on which the new position is
      * calculated.
      */
-    private static Rect BOUNDS = new Rect(0, 0, 1000, 1000);
+    private static Rect BOUNDS = new Rect(0, 0, 0, 0);
 
     /**
      * This LinkedList saves the id of the roboters and there x and y
@@ -86,13 +86,19 @@ public class MapSurfaceView extends SurfaceView
      * @see sep.conquest.activity.MapSurfaceView.previousOffsetX
      */
     private float previousOffsetY = 0;
+    
+    /**
+     * This is the start value for drawn objects at the beginning of an
+     * exploration. It is used by the attribute scaleValue.
+     */
+    private static int STARTVALUE = 80;
 
     /**
      * All draw methods use this value to scale the size of their drawable
      * object. This value is constantly reduced in autoScaling mode to ensure
      * an ideal display design.
      */
-    private int scaleValue = 80;
+    private int scaleValue = STARTVALUE;
 
     /**
      * This value is initially set to false and is activated when scallValue
@@ -133,14 +139,9 @@ public class MapSurfaceView extends SurfaceView
     /**
      * Must be implemented by the interface SurfaceHolder.Callback, but isn't
      * used here.
-     *
-     * @param holder
-     * @param format
-     * @param width
-     * @param height
      */
-    public void surfaceChanged(final SurfaceHolder holder, final int format,
-    						   final int width, final int height) {
+    public void surfaceChanged(SurfaceHolder holder, int format,
+    						   						 int width, int height) {
         // Do Nothing
     }
 
@@ -290,7 +291,7 @@ public class MapSurfaceView extends SurfaceView
          * 
          * @param map Complete map explored by roboters.
          */
-        private void doDraw(LinkedList<EpuckPosition> map){
+        private void doDraw(LinkedList map){
             //hier noch Attribute anlegen um die Größe des SurfaceViews festzulegen
             //sowas wie getMinY, getMaxY, getMinX, getMaxX
             //und ein Offset Attribut um negative Werte umzurechnen
@@ -607,6 +608,16 @@ public class MapSurfaceView extends SurfaceView
     public void setDimensions(int x, int y) {
         displayX = x;
         displayY = y - 50;
+    }
+    
+    /**
+     * This is a getter method for the e-puck positions and ids to be 
+     * synchronized with the map and the spinner in the map class.
+     * 
+     * @return Epuck position list.
+     */
+    public LinkedList<EpuckPosition> getEpuckPositions() {
+    	return positions;
     }
     
 
