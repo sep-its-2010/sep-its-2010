@@ -37,7 +37,7 @@ typedef struct subs_SBehaviorPriorityList {
 	subs_fnReset_t fnReset; ///< Holds an optional reset callback.
 	subs_fnRun_t fnRun; ///< Holds the required action callback.
 	struct subs_SBehaviorPriorityList* lppodNext; ///< Holds a pointer to the next node.
-	uint8_t ui16Priotity; ///< Holds the priority of this node.
+	uint16_t ui16Priotity; ///< Holds the priority of this node.
 } subs_SBehaviorPriorityList_t;
 
 #endif /* subs_types_h__ */

@@ -1,6 +1,8 @@
 #ifndef hal_uart_types_h__
 #define hal_uart_types_h__
 
+#include "common.h"
+
 
 /*!
  * \brief

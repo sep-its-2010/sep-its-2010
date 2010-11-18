@@ -1,6 +1,8 @@
 #ifndef hal_int_types_h__
 #define hal_int_types_h__
 
+#include "common.h"
+
 
 typedef enum {
 	HAL_INT_PRIORITY__0 = 0,

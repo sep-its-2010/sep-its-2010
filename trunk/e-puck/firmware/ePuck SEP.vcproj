@@ -204,6 +204,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Sensors"
+				>
+				<File
+					RelativePath=".\sen_line.c"
+					>
+				</File>
+				<File
+					RelativePath=".\sen_prox.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -318,6 +330,26 @@
 				</File>
 				<File
 					RelativePath=".\subs_types.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Sensors"
+				>
+				<File
+					RelativePath=".\sen_line.h"
+					>
+				</File>
+				<File
+					RelativePath=".\sen_line_types.h"
+					>
+				</File>
+				<File
+					RelativePath=".\sen_prox.h"
+					>
+				</File>
+				<File
+					RelativePath=".\sen_prox_types.h"
 					>
 				</File>
 			</Filter>
