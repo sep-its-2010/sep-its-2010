@@ -3,15 +3,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
           
     <item android:id="@+id/mnuControl"
-          android:icon="@drawable/joystick"
+          android:icon="@drawable/mnu_control"
           android:title="@string/MNU_CONTROL" />
           
     <item android:id="@+id/mnuStatistic"
-          android:icon="@drawable/stats"
+          android:icon="@drawable/mnu_statistics"
           android:title="@string/MNU_STATISTICS" />
           
     <item android:id="@+id/mnuExport"
-          android:icon="@drawable/export_icon"
+          android:icon="@drawable/mnu_export"
           android:title="@string/MNU_EXPORT" />                
           
 </menu>
