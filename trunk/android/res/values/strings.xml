@@ -15,6 +15,7 @@
 <string name="MNU_START">Start</string>
 <string name="MNU_CONNECT">Connect</string>
 <string name="MNU_STATISTICS">Statistics</string>
+<string name="TXT_AVAILABLE_MAPS">Available maps:</string>
 <string name="MNU_CONTROL">Control</string>
 <string name="MNU_EXPORT">Export</string>
 </resources>
