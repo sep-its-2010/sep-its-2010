@@ -15,7 +15,7 @@ public final class BehaviourDistance extends Behaviour {
      * The constructor enables chain-handling by calling the constructor of
      * the super-class (Behaviour).
      * 
-     * @param next A Reference to the next behaviour.
+     * @param next A reference to the next behaviour.
      */
     protected BehaviourDistance(State stateLevel, IBehaviour next) {
         super(stateLevel, next);
