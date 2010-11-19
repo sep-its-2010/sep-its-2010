@@ -1,6 +1,7 @@
 package sep.conquest.model;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * The abstract class Behaviour should be derived by all concrete behaviours
@@ -11,7 +12,7 @@ import java.util.Map;
  *
  */
 public abstract class Behaviour implements IBehaviour {
-    	
+	
     /**
      * A reference to the successor-behaviour.
      */
@@ -21,24 +22,47 @@ public abstract class Behaviour implements IBehaviour {
      * The logical level of the behaviour.
      */
     private State stateLevel;
+
+	/**
+	 * A map for the first behaviours per state-level.
+	 */
+	private static TreeMap <State, IBehaviour> entryBehaviours;    
     
     /**
-     * The constructor sets the reference to the next behaviour in the chain.
+     * The constructor sets the reference to the next Behaviour in the chain
+     * as well as its state-level. If this is the first entry for a specific
+     * state level, this Behaviour will set as the agent for it. 
      * 
+	 * @param stateLevel The corresponding state-level.
      * @param next The reference to the next Behaviour.
      */
     protected Behaviour(State stateLevel, IBehaviour next) {
+    	if (!entryBehaviours.containsKey(stateLevel)) {
+    		entryBehaviours.put(stateLevel, this);
+    	}
+    	
     	this.stateLevel = stateLevel;
         nextBehaviour = next;
     }
     
     /**
-     * Returns the level of the behaviour.
+     * Returns the level of the Behaviour.
      * 
-     * @return The  level of the behaviour.
+     * @return The  level of the Behaviour.
      */
     public State getStateLevel() {
     	return stateLevel;
+    }
+    
+    /**
+     * Returns the first Behaviour of a given state. If there's no Behaviour,
+     * a null pointer will be returned.
+     * 
+     * @param stateLevel The state-level for the expected Behaviour.
+     * @return The first Behaviour of the specified state-level.
+     */
+    public static IBehaviour getFirstBehaviour(State stateLevel) {
+    	return entryBehaviours.get(stateLevel);
     }
     
     /* (non-Javadoc)
@@ -52,5 +76,4 @@ public abstract class Behaviour implements IBehaviour {
         }
             
     }
-
 }

@@ -3,21 +3,22 @@ package sep.conquest.model;
 import java.util.Map;
 
 /**
- * BehaviourDistance represents a behaviour to identify the next frontier-nodes
+ * DistanceBehaviour represents a behaviour to identify the next frontier-nodes
  * of a given map. It extends the Behaviour class for enabling a behaviour-
  * chain.
  * 
  * @author Andreas Wilhelm
  */
-public final class BehaviourDistance extends Behaviour {
+public final class DistanceBehaviour extends Behaviour {
 
     /**
      * The constructor enables chain-handling by calling the constructor of
      * the super-class (Behaviour).
      * 
+     * @param stateLevel The level of the state.
      * @param next A reference to the next behaviour.
      */
-    protected BehaviourDistance(State stateLevel, IBehaviour next) {
+    protected DistanceBehaviour(State stateLevel, IBehaviour next) {
         super(stateLevel, next);
     }
 

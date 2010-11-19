@@ -84,4 +84,5 @@ public abstract class Puck implements IComClient {
    * @return Returns the message that was sent by an e-puck roboter.
    */
   public abstract byte[] readSocket();
+
 }
