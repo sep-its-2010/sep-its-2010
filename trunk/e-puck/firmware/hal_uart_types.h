@@ -14,12 +14,12 @@
  * hal_uart1_configure
  */
 typedef enum {
-	HAL_UART_CONFIG__8N1,
-	HAL_UART_CONFIG__8N2,
-	HAL_UART_CONFIG__8E1,
-	HAL_UART_CONFIG__8E2,
-	HAL_UART_CONFIG__8O1,
-	HAL_UART_CONFIG__8O2
+	HAL_UART_CONFIG__8N1, ///< Data format: 8 data bits, no parity, 1 stop bit
+	HAL_UART_CONFIG__8N2, ///< Data format: 8 data bits, no parity, 2 stop bits
+	HAL_UART_CONFIG__8E1, ///< Data format: 8 data bits, even parity, 1 stop bit
+	HAL_UART_CONFIG__8E2, ///< Data format: 8 data bits, even parity, 2 stop bits
+	HAL_UART_CONFIG__8O1, ///< Data format: 8 data bits, odd parity, 1 stop bit
+	HAL_UART_CONFIG__8O2 ///< Data format: 8 data bits, odd parity, 2 stop bits
 } hal_uart_EConfig_t;
 
 

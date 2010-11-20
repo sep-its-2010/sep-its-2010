@@ -148,6 +148,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\hal_i2c.c"
+					>
+				</File>
+				<File
 					RelativePath=".\hal_led.c"
 					>
 				</File>
@@ -238,6 +242,10 @@
 				>
 				<File
 					RelativePath=".\hal_adc.h"
+					>
+				</File>
+				<File
+					RelativePath=".\hal_adc_types.h"
 					>
 				</File>
 				<File

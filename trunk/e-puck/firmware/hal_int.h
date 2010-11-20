@@ -807,7 +807,8 @@ bool hal_int_isFlagSet(
 
 
 /*!
- * \blears the specified interrupt flag.
+ * \brief
+ * Clears the specified interrupt flag.
  * 
  * \param _eSource
  * Specifies the interrupt source whose flags should be cleared.

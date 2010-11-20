@@ -5,7 +5,7 @@
  * \brief
  * Toggles the specified LEDs.
  * 
- * \param _ui16EnableMask
+ * \param _ui16ToggleMask
  * Specifies the LED toggle mask based on #HAL_LED_PIN_BV__0 to #HAL_LED_PIN_BV__B.
  * 
  * The specified LEDs are toggled; the others remain unchanged.

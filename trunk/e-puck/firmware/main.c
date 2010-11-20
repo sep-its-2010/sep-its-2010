@@ -15,7 +15,7 @@ int main( void) {
 	hal_sel_init();
 	com_init();
 
-//	hal_uart1_puts( "SEP 2010 ITS ePuck & Android Project\n\r");
+//	hal_uart1_puts( "SEP 2010 ITS e-puck & Android Project\n\r");
 
 	for( uint16_t ui16 = 0; ; ui16++) {
 
