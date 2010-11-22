@@ -116,8 +116,6 @@ void subs_reset( void) {
  * Registers a new behavior which is uniquely identified by its action callback. Optionally, a reset callback can be
  * specified. The behavior is inserted into the list right behind the last entry with a higher or equal priority.
  *
- * The reset callback - if it exists - is called after a successful registration.
- *
  * \remarks
  * An action callback must return true if it triggered and false otherwise.
  * 
@@ -136,21 +134,9 @@ bool subs_register(
 	bool blSuccess = false;
 
 	if( _fnRunCallback) {
-		if( s_lppodFirstBehavior) {
-			subs_SBehaviorPriorityList_t* lppodNextFree = NULL;
-			for( uint16_t ui16 = 0; !lppodNextFree && ui16 < SUBS_MAX_BEHAVIORS; ui16++) {
-				if( !s_apodBehaviors[ui16].fnRun || s_apodBehaviors[ui16].fnRun == _fnRunCallback) {
-					lppodNextFree = &s_apodBehaviors[ui16];
-				}
-			}
 
-			if( lppodNextFree && lppodNextFree->fnRun != _fnRunCallback) {
-				subs_SBehaviorPriorityList_t* lppodPrev = s_lppodFirstBehavior;
-//TODO: sorted insert
-
-				blSuccess = true;
-			}
-		} else {
+		// List empty?
+		if( !s_lppodFirstBehavior) {
 			s_lppodFirstBehavior = s_apodBehaviors;
 			s_lppodFirstBehavior->fnReset = _fnResetCallback;
 			s_lppodFirstBehavior->fnRun = _fnRunCallback;
@@ -158,11 +144,42 @@ bool subs_register(
 			s_lppodFirstBehavior->ui16Priotity = _ui16Priority;
 
 			blSuccess = true;
-		}
-	}
+		} else {
 
-	if( blSuccess && _fnResetCallback) {
-		_fnResetCallback();
+			// Find free space
+			subs_SBehaviorPriorityList_t* lppodNextFree = NULL;
+			for( uint16_t ui16 = 0; !lppodNextFree && ui16 < SUBS_MAX_BEHAVIORS; ui16++) {
+				if( !s_apodBehaviors[ui16].fnRun || s_apodBehaviors[ui16].fnRun == _fnRunCallback) {
+					lppodNextFree = &s_apodBehaviors[ui16];
+				}
+			}
+
+			// Found free space?
+			if( lppodNextFree && lppodNextFree->fnRun != _fnRunCallback) {
+				lppodNextFree->fnReset = _fnResetCallback;
+				lppodNextFree->fnRun = _fnRunCallback;
+				lppodNextFree->ui16Priotity = _ui16Priority;
+
+				// Find insertion point
+				subs_SBehaviorPriorityList_t* lppodPrev = NULL;
+				subs_SBehaviorPriorityList_t* lppodCurrent = s_lppodFirstBehavior;
+				while( lppodCurrent->ui16Priotity >= _ui16Priority) {
+					lppodPrev = lppodCurrent;
+					lppodCurrent = lppodCurrent->lppodNext;
+				}
+
+				// Insert at list head?
+				if( !lppodPrev) {
+					lppodNextFree->lppodNext = lppodCurrent;
+					s_lppodFirstBehavior = lppodNextFree;
+				} else {
+					lppodNextFree->lppodNext = lppodCurrent;
+					lppodPrev->lppodNext = lppodNextFree;
+				}
+
+				blSuccess = true;
+			}
+		}
 	}
 
 	return blSuccess;
@@ -189,4 +206,24 @@ void subs_unregister(
 	IN const subs_fnRun_t _fnRunCallback
 	) {
 
+	if( _fnRunCallback && s_lppodFirstBehavior) {
+		subs_SBehaviorPriorityList_t* lppodCurrent = s_lppodFirstBehavior;
+		subs_SBehaviorPriorityList_t* lppodPrev = NULL;
+		while( lppodCurrent && lppodCurrent->fnRun != _fnRunCallback) {
+			lppodPrev = lppodCurrent;
+			lppodCurrent = lppodCurrent->lppodNext;
+		}
+
+		// Found it?
+		if( lppodCurrent) {
+
+			// List head?
+			if( !lppodPrev) {
+				s_lppodFirstBehavior = NULL;
+			} else {
+				lppodPrev->lppodNext = lppodCurrent->lppodNext;
+			}
+			memset( lppodCurrent, 0, sizeof( *lppodCurrent));
+		}
+	}
 }

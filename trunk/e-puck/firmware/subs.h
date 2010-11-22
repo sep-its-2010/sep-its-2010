@@ -6,7 +6,7 @@
 #include "subs_types.h"
 
 enum {
-	SUBS_MAX_BEHAVIORS = 16
+	SUBS_MAX_BEHAVIORS = 16 ///< Specifies the maximal amount of behaviors.
 };
 
 void subs_init( void);
