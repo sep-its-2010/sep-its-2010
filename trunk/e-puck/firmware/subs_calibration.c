@@ -2,11 +2,11 @@
 #include "hal_sel.h"
 #include "hal_led.h"
 #include "sen_line.h"
+#define _EEDATA(N) __attribute__((section(".eedata,r"),aligned(N)))
 
 #include "subs_calibration.h"
 
 bool isNotCalibrated = true;
-static int	l_calibrate[3] = {0,0,0};	// soll im EEPROM gespeichert werden
 int l_buffer[3];						// speichert Kalibrierungsdaten temporär
 
 /*!
@@ -45,9 +45,10 @@ bool subs_calibration_run( void) {
 		l_buffer[1] = (unsigned int) (buffer[2] & 0xff) + ((unsigned int) buffer[3] << 8);
 		l_buffer[2] = (unsigned int) (buffer[4] & 0xff) + ((unsigned int) buffer[5] << 8);
 
-		l_calibrate[0] = l_buffer[0];
-		l_calibrate[1] = l_buffer[1];
-		l_calibrate[2] = l_buffer[2];
+		int _EEDATA(2) calibrationValues[]; // To declare an initialized array in data EEPROM without special alignment (C30 manual page 81)
+		calibrationValues[0] = l_buffer[0];
+		calibrationValues[1] = l_buffer[1];
+		calibrationValues[2] = l_buffer[2];
 
 		isNotCalibrated = false;
 	} else if( !isNotCalibrated) {
