@@ -69,7 +69,11 @@ public class GridMap implements Serializable{
 	 * default constructor
 	 */
 	public GridMap() {
-		
+		//init the borders of the map 
+		mapBorders[this.MAXYVALUEONMAP]=0;
+		mapBorders[this.MAXXVALUEONMAP]=0;
+		mapBorders[this.MINYVALUEONMAP]=0;
+		mapBorders[this.MINXVALUEONMAP]=0;
 	}
 
 	/**
@@ -79,7 +83,24 @@ public class GridMap implements Serializable{
 	 * be created and add to the structure.
 	 */
 	public void addNode(int x, int y, NodeType status) {
-
+		//updates the borders of the map
+		this.updateMapBorders(x, y);
+		MapNode existingNode = this.getNode(x, y);
+		//If the Node already exists in the structure, existingNode is not null
+		if(existingNode != null){
+			//updates the state of the existing node
+			this.changeState(x, y, status);
+		} else {
+			//creates a new node
+			GraphNode newNode = new GraphNode(x,y,status);
+			//add to tree
+			int key = this.makeKey(x,y);
+			this.mapTree.put(key, newNode);
+			//set neighbours
+			this.setNeighbours(newNode);
+			//set frontiernodes
+			this.setFrontierNodes(x,y);
+		}
 	}
 
 	/**
@@ -121,7 +142,22 @@ public class GridMap implements Serializable{
 	 * @param yCoordinate The y-coordinate of the new inserted MapNode
 	 */
 	private void updateMapBorders(int xCoordinate, int yCoordinate){
-		
+		//updates the biggest x-coordinate
+		if(xCoordinate > mapBorders[this.MAXXVALUEONMAP]){
+			mapBorders[this.MAXXVALUEONMAP] = xCoordinate;
+		}
+		//updates the biggest y-coordinate
+		if(yCoordinate > mapBorders[this.MAXYVALUEONMAP]){
+			mapBorders[this.MAXYVALUEONMAP] = yCoordinate;
+		}
+		//updates the smallest x-coordinate
+		if(xCoordinate < mapBorders[this.MINXVALUEONMAP]){
+			mapBorders[this.MINXVALUEONMAP] = xCoordinate;
+		}
+		//updates the smallest y-coordinate
+		if(yCoordinate < mapBorders[this.MINYVALUEONMAP]){
+			mapBorders[this.MINYVALUEONMAP] = yCoordinate;
+		}
 	}
 	
 	/**
@@ -154,8 +190,9 @@ public class GridMap implements Serializable{
 	 * @return The node if it exists in the TreeMap mapTree, otherwise
 	 *         returns null
 	 */
-	private MapNode getNode(int x, int y) {
-		return null;
+	private GraphNode getNode(int x, int y) {
+		int key = this.makeKey(x,y);
+		return mapTree.get(key);
 	}
 
 	/**
@@ -163,11 +200,56 @@ public class GridMap implements Serializable{
 	 * the node with the coordinates x and y. If a neighbournode does not exist,
 	 * the reference is set to null.
 	 * 
-	 * @param x The x-coordinate     
-	 * @param y The y-coordinate     
+	 * @param newNode The Node which gets new neighbours    
 	 */
-	private void setNeighbours(int x, int y) {
-
+	private void setNeighbours(GraphNode newNode) {
+		//Is the actual neighbour
+		GraphNode actNeighbour;
+		//Search and set the bottom neighbour
+		actNeighbour = this.mapTree.get(
+					this.makeKey(newNode.getXValue(),newNode.getYValue()+1));
+		//If the neighbour exists set neighbours
+		if(actNeighbour != null){
+			newNode.setNeighbours(newNode.BOTTOMNEIGHBOUR,actNeighbour);
+			actNeighbour.setNeighbours(actNeighbour.TOPNEIGHBOUR,newNode);
+		}
+		
+		//Search and set the top neighbour
+		actNeighbour = this.mapTree.get(
+					this.makeKey(newNode.getXValue(),newNode.getYValue()-1));
+		//If the neighbour exists set neighbours
+		if(actNeighbour != null){
+			newNode.setNeighbours(newNode.TOPNEIGHBOUR,actNeighbour);
+			actNeighbour.setNeighbours(actNeighbour.BOTTOMNEIGHBOUR,newNode);
+		}
+		
+		//Search and set the left neighbour
+		actNeighbour = this.mapTree.get(
+					this.makeKey(newNode.getXValue()-1,newNode.getYValue()));
+		//If the neighbour exists set neighbours
+		if(actNeighbour != null){
+			newNode.setNeighbours(newNode.LEFTNEIGHBOUR,actNeighbour);
+			actNeighbour.setNeighbours(actNeighbour.RIGHTNEIGHBOUR,newNode);
+		}
+		
+		//Search and set the right neighbour
+		actNeighbour = this.mapTree.get(
+					this.makeKey(newNode.getXValue()+1,newNode.getYValue()));
+		//If the neighbour exists set neighbours
+		if(actNeighbour != null){
+			newNode.setNeighbours(newNode.RIGHTNEIGHBOUR,actNeighbour);
+			actNeighbour.setNeighbours(actNeighbour.LEFTNEIGHBOUR,newNode);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private int makeKey(int x, int y){
+		return (x ^ y << 16) | (x & 0xFFFF);
 	}
 
 	/**
@@ -192,7 +274,8 @@ public class GridMap implements Serializable{
 	 * 				
 	 */
 	private void changeState(int x, int y, NodeType newNodeType) {
-
+		this.getNode(x,y).setNodeType(newNodeType);
+		this.getNode(x,y).increaseVisitCounter();
 	}
 
 }
