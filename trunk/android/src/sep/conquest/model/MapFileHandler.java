@@ -1,6 +1,7 @@
 package sep.conquest.model;
 
 import java.io.File;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.os.Environment;
@@ -21,7 +22,7 @@ public class MapFileHandler {
   /**
    * Describes valid file names.
    */
-  private static Pattern FILE_NAME_FORMAT = Pattern.compile("\\w+\\.sep");
+  public static Pattern FILE_NAME_FORMAT = Pattern.compile("\\w+\\.sep");
 
   /**
    * Opens a file containing a map of type GridMap a reconstructs the GridMap.
@@ -39,7 +40,13 @@ public class MapFileHandler {
    *          The map that has to be saved.
    * @return True, if map was successfully saved, false otherwise.
    */
-  public boolean saveMap(GridMap map) {
-    return true;
+  public static boolean saveMap(GridMap map, String filename) {
+    Matcher m = FILE_NAME_FORMAT.matcher(filename);
+    return m.matches();
+  }
+  
+  public static boolean isValidFilename(String filename) {
+    Matcher m = FILE_NAME_FORMAT.matcher(filename);
+    return m.matches();
   }
 }

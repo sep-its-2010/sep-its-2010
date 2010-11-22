@@ -1,12 +1,15 @@
 package sep.conquest.activity;
 
 import sep.conquest.R;
+import sep.conquest.model.MapFileHandler;
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * Saves a map to the file system of the smartphone.
@@ -40,13 +43,30 @@ public class Export extends Activity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.export_main);
+    
+    initializeControlElements();
   }
   
   /**
    * Initializes control elements of the activity and sets EventListeners.
    */
   private void initializeControlElements() {
-
+    btnSave = (Button) findViewById(R.id.btnSave);
+    btnSave.setOnClickListener(new ExportOnClickListener());
+    
+    etxtFilename = (EditText) findViewById(R.id.etxtFilename);
+  }
+  
+  /**
+   * Displays a message on top of the Activity.
+   * 
+   * @param message
+   *          The message to display.
+   */
+  private void displayMessage(String message) {
+    Toast mtoast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+    mtoast.setGravity(Gravity.CENTER, 0, 0);
+    mtoast.show();
   }
 
   /**
@@ -64,7 +84,12 @@ public class Export extends Activity {
      *          View that has been clicked.
      */
     public void onClick(View v) {
-      // TODO Auto-generated method stub
+      switch(v.getId()) {
+      case R.id.btnSave:
+        String filename = etxtFilename.getText().toString();
+        displayMessage(String.valueOf(MapFileHandler.saveMap(null, filename)));
+        break;
+      }
       
     }
   }

@@ -1,14 +1,19 @@
 package sep.conquest.activity;
 
-import java.util.Map;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.UUID;
 
 import sep.conquest.R;
+import sep.conquest.model.PuckFactory;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -45,6 +50,17 @@ public class Connect extends Activity {
   private final int REQUEST_ENABLE_BLUETOOTH = 0;
 
   /**
+   * Identifies messages that indicate, that connecting has been successful.
+   */
+  public static final String CONNECTION_SUCCESSFUL = "ConnectionSuccessful";
+  
+  /**
+   * Identifies messages that indicate, that opening a certain connection 
+   * has failed.
+   */
+  public static final String CONNECTION_ERROR = "ConnectionError";
+
+  /**
    * Reference on BluetoothAdapter of the device.
    */
   private BluetoothAdapter bluetoothAdapter;
@@ -60,7 +76,8 @@ public class Connect extends Activity {
   private IntentFilter messageFilter;
 
   /**
-   * Saves Bluetooth devices found by the BluetoothAdapter.
+   * Saves Bluetooth devices found by the BluetoothAdapter. The key is the
+   * Bluetooth name of the device.
    */
   private java.util.Map<String, BluetoothDevice> discoveredRobots;
 
@@ -68,7 +85,7 @@ public class Connect extends Activity {
    * Saves robots selected to open a Bluetooth connection. The key is the
    * Bluetooth name of the device.
    */
-  private java.util.Set<String> selectedRobots;
+  private java.util.Map<String, BluetoothDevice> selectedRobots;
 
   /**
    * Used to display names of discovered devices in the ListView.
@@ -86,7 +103,7 @@ public class Connect extends Activity {
   private ListView lsRobots;
 
   /**
-   * Indeterminate progress dialog shown during Bluetooth search and connet
+   * Indeterminate progress dialog shown during Bluetooth search and connect
    * action
    */
   private ProgressDialog pDialog;
@@ -120,7 +137,7 @@ public class Connect extends Activity {
 
     // Initialize fields saving the discovered devices and the selected
     discoveredRobots = new TreeMap<String, BluetoothDevice>();
-    selectedRobots = new TreeSet<String>();
+    selectedRobots = new TreeMap<String, BluetoothDevice>();
   }
 
   /**
@@ -154,7 +171,7 @@ public class Connect extends Activity {
 
     if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
       if (resultCode == RESULT_CANCELED) {
-        displayMessage("Error: Bluetooth has not been turned on. Bluetooth must be enabled to search for robots.");
+        displayMessage(getString(R.string.ERR_MSG_BLUETOOTH_NOT_ENABLED));
       }
     }
   }
@@ -192,11 +209,15 @@ public class Connect extends Activity {
     case R.id.mnuStart:
 
       if (selectedRobots.size() > 0) {
-        start.setComponent(new ComponentName(getApplicationContext()
-            .getPackageName(), Map.class.getName()));
-        startActivity(start);
+        pDialog = ProgressDialog.show(Connect.this,
+            getString(R.string.TXT_CONNECTING),
+            getString(R.string.MSG_CONNECTING), true);
+
+        // Start Thread that opens connections
+        Thread conThread = new connectToRobotsThread(selectedRobots.values());
+        conThread.start();
       } else {
-        displayMessage("No robot selected!");
+        displayMessage(getString(R.string.MSG_NO_ROBOT));
       }
       break;
 
@@ -248,6 +269,8 @@ public class Connect extends Activity {
     messageFilter = new IntentFilter();
     messageFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
     messageFilter.addAction(BluetoothDevice.ACTION_FOUND);
+    messageFilter.addAction(CONNECTION_SUCCESSFUL);
+    messageFilter.addAction(CONNECTION_ERROR);
   }
 
   /**
@@ -257,12 +280,12 @@ public class Connect extends Activity {
   private void initializeBluetooth() {
     bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-    // If bluetoothAdapter equals null then Smartphone does not support
+    // If bluetoothAdapter equals null then smartphone does not support
     // Bluetooth.
     // In this case, display message and disable "Search"-Button.
     // Otherwise check, if Bluetooth is enabled.
     if (bluetoothAdapter == null) {
-      displayMessage("Error: Device does not support Bluetooth.");
+      displayMessage(getString(R.string.ERR_MSG_BLUETOOTH_NOT_SUPPORTED));
       btnSearch.setEnabled(false);
     } else if (!bluetoothAdapter.isEnabled()) {
       enableBluetooth();
@@ -313,15 +336,33 @@ public class Connect extends Activity {
     public void onReceive(Context context, Intent intent) {
       String action = intent.getAction();
 
+      // If device has been found add it to discovered devices.
       if (BluetoothDevice.ACTION_FOUND.equals(action)) {
         BluetoothDevice device = (BluetoothDevice) intent
             .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
         discoveredRobots.put(device.getName(), device);
         robotList.add(device.getName());
 
+        // If discovery is finished display the discovered devices.
       } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
         lsRobots.setAdapter(robotList);
         pDialog.dismiss();
+
+        // If connecting to all devices has been successful start Map Activity.
+      } else if (CONNECTION_SUCCESSFUL.equals(action)) {
+        pDialog.dismiss();
+        Intent start = new Intent();
+        start.setComponent(new ComponentName(getApplicationContext()
+            .getPackageName(), Export.class.getName()));
+        startActivity(start);
+
+        // If an error occurs during one of the connect actions, show error
+        // message.
+      } else if (CONNECTION_ERROR.equals(action)) {
+        pDialog.dismiss();
+        String deviceName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
+        displayMessage("Connection to " + deviceName
+            + " not successful esthablished");
       }
     }
   }
@@ -351,10 +392,10 @@ public class Connect extends Activity {
       TextView txtDevice = (TextView) view;
       String deviceName = txtDevice.getText().toString();
 
-      if (selectedRobots.contains(deviceName)) {
+      if (selectedRobots.containsKey(deviceName)) {
         selectedRobots.remove(deviceName);
       } else {
-        selectedRobots.add(deviceName);
+        selectedRobots.put(deviceName, discoveredRobots.get(deviceName));
       }
     }
   }
@@ -388,11 +429,86 @@ public class Connect extends Activity {
           discoveredRobots.clear();
           robotList.clear();
           selectedRobots.clear();
-          pDialog = ProgressDialog.show(Connect.this, "Searching...",
-              "Searching for e-pucks...", true);
+          pDialog = ProgressDialog.show(Connect.this,
+              getString(R.string.TXT_SEARCHING),
+              getString(R.string.MSG_SEARCHING), true);
           bluetoothAdapter.startDiscovery();
         }
       }
+    }
+  }
+
+  /**
+   * 
+   * @author Andreas Poxrucker
+   * 
+   */
+  private class connectToRobotsThread extends Thread {
+
+    /**
+     * Standard UUID used to connect to standard Bluetooth modules.
+     */
+    private UUID STD_UUID = UUID
+        .fromString("00001101-0000-1000-8000-00805F9B34FB");
+    
+    /**
+     * Devices that should be connected.
+     */
+    Collection<BluetoothDevice> devices;
+
+    /**
+     * Constructor.
+     * 
+     * @param robots The BluetoothDevices that should be connected.
+     */
+    public connectToRobotsThread(Collection<BluetoothDevice> robots) {
+      devices = robots;
+    }
+
+    /**
+     * Called when Thread is executed.
+     * 
+     * Opens connections to BluetoothDevices passed in the Constructor and
+     * finally creates RealPuck instances.
+     * 
+     * If opening a connection fails and an IOException occurs, all connections
+     * are closed and error message is sent.
+     */
+    public void run() {
+      List<BluetoothSocket> sockets = new LinkedList<BluetoothSocket>();
+      Intent intent = new Intent();
+
+      for (BluetoothDevice device : devices) {
+        try {
+          // Open RFCommSocket with standard UUID.
+          BluetoothSocket socket = device
+              .createRfcommSocketToServiceRecord(STD_UUID);
+
+          socket.connect();
+          sockets.add(socket);
+        } catch (IOException connectException) {
+          // If IOException occurs during opening RfCommSocket, cancel all
+          // connections that have been opend so far and send error message.
+
+          for (BluetoothSocket socket : sockets) {
+            try {
+              socket.close();
+            } catch (IOException closeException) {
+              // do to?!
+            }
+          }
+          intent.putExtra(BluetoothDevice.EXTRA_NAME, device.getName());
+          intent.setAction(Connect.CONNECTION_ERROR);
+          sendBroadcast(intent);
+          return;
+        }
+      }
+
+      // When all sockets are connected properly create RealPuckInstances
+      // and send success message
+      PuckFactory.createRealPucks(sockets);
+      intent.setAction(CONNECTION_SUCCESSFUL);
+      sendBroadcast(intent);
     }
   }
 }

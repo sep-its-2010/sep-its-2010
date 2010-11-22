@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World!</string>
-    <string name="app_name">epuck_conquest</string>
-<string name="BTN_SAVE">Save</string>
-<string name="TXT_DISCOVERED_ROBOTS">Discovered e-pucks:</string>
-<string name="BTN_SEARCH">Search</string>
-<string name="TXT_PREVIEW">Map preview:</string>
-<string name="MSG_SEARCHING">Searching for e-pucks...</string>
-<string name="TXT_SEARCHING">Searching...</string>
-<string name="MNU_MAP">Map</string>
-<string name="MNU_SIMULATION">Simulation</string>
-<string name="MNU_IMPORT">Import</string>
-<string name="MNU_STEER">Steer</string>
-<string name="MNU_START">Start</string>
-<string name="MNU_CONNECT">Connect</string>
-<string name="MNU_STATISTICS">Statistics</string>
-<string name="TXT_AVAILABLE_MAPS">Available maps:</string>
-<string name="MNU_CONTROL">Control</string>
-<string name="MNU_EXPORT">Export</string>
+	<string name="hello">Hello World!</string>
+	<string name="app_name">epuck_conquest</string>
+	<string name="BTN_SAVE">Save</string>
+	<string name="TXT_DISCOVERED_ROBOTS">Discovered e-pucks:</string>
+	<string name="BTN_SEARCH">Search</string>
+	<string name="TXT_PREVIEW">Map preview:</string>
+	<string name="MSG_SEARCHING">Searching for e-pucks...</string>
+	<string name="TXT_SEARCHING">Searching...</string>
+	<string name="MNU_MAP">Map</string>
+	<string name="MNU_SIMULATION">Simulation</string>
+	<string name="MNU_IMPORT">Import</string>
+	<string name="MNU_STEER">Steer</string>
+	<string name="MNU_START">Start</string>
+	<string name="MNU_CONNECT">Connect</string>
+	<string name="MNU_STATISTICS">Statistics</string>
+	<string name="TXT_AVAILABLE_MAPS">Available maps:</string>
+	<string name="MNU_CONTROL">Control</string>
+	<string name="MNU_EXPORT">Export</string>
+	<string name="MSG_NO_ROBOT">No robot selected.</string>
+	<string name="ERR_MSG_BLUETOOTH_NOT_SUPPORTED">Your smartphone does not support Bluetooth.
+		Application can only be run in simulation or import mode.</string>
+	<string name="ERR_MSG_BLUETOOTH_NOT_ENABLED">"Bluetooth has not been turned on. Bluetooth must
+		be enabled to search for robots."</string>
+	<string name="TXT_CONNECTING">Connecting...</string>
+	<string name="MSG_CONNECTING">Connecting to selected e-pucks...</string>
 </resources>
