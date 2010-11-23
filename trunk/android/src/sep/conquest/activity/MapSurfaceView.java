@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
 
+import sep.conquest.R;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -106,7 +108,6 @@ public class MapSurfaceView extends SurfaceView
      * scroll function.
      */
     private boolean scrollAble = false;
-
     /**
      * Presents the values of the screen size depending on the used smartphone.
      * This values are set by the setDimensions method.
@@ -158,6 +159,9 @@ public class MapSurfaceView extends SurfaceView
     public void surfaceCreated(SurfaceHolder holder) {
         thread = new DrawThread();
         thread.start();
+        positions = new LinkedList<EpuckPosition>();
+        positions.add(new EpuckPosition(2, 2, 1224));
+        //for testing only
     }
 
     /**
@@ -197,54 +201,40 @@ public class MapSurfaceView extends SurfaceView
      * @param v View the touch was made on.
      * @param event Event to get x and y coordinates.
      */
-    public boolean onTouch(View v, MotionEvent event) {
-        if (scrollAble) {
-            long touchDuration = 0;
-            long touchTime = 0;
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                // Track starting point
-                downTouchPoint = new PointF(event.getX(), event.getY());
-                touchTime = System.currentTimeMillis();
-
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                touchDuration = System.currentTimeMillis() - touchTime;
-
-                if (touchDuration > 800) {
-                    //wie rausfinden ob das geht?!
-                    //vllt im thread eine neue methode erstellen
-                    autoScaling(35, 20);
-                } else if (scrollAble) {
-                    // Clear starting point
-                    downTouchPoint = null;
-                    previousOffsetX = currentOffsetX;
-                    previousOffsetY = currentOffsetY;
-                }
-
-            } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                if (scrollAble) {
-                    currentOffsetX = previousOffsetX
-                            + ((event.getX() - downTouchPoint.x));
-                    currentOffsetY = previousOffsetY
-                            + ((event.getY() - downTouchPoint.y));
-
-                    if (currentOffsetX < -(bounds.width() - getWidth())) {
-                        currentOffsetX = -(bounds.width() - getWidth());
-                    } else if (currentOffsetX > 0) {
-                        currentOffsetX = 0;
-                    }
-
-                    if (currentOffsetY < -(bounds.height() - getHeight())) {
-                        currentOffsetY = -(bounds.height() - getHeight());
-                    } else if (currentOffsetY > 0) {
-                        currentOffsetY = 0;
-                    }
-                }
-            }
-        }
-        return true;
-
-    }
+	public boolean onTouch(View v, MotionEvent event) {
+		if (scrollAble) {
+		if(event.getAction() == MotionEvent.ACTION_DOWN){
+			// Track starting point
+			downTouchPoint = new PointF(event.getX(), event.getY());
+			
+		} else if(event.getAction() == MotionEvent.ACTION_UP){
+			// Clear starting point
+			downTouchPoint = null;
+			previousOffsetX = currentOffsetX;
+			previousOffsetY = currentOffsetY;
+			
+		} else if(event.getAction() == MotionEvent.ACTION_MOVE){
+			
+			currentOffsetX = previousOffsetX + ((event.getX() - downTouchPoint.x));
+			currentOffsetY = previousOffsetY + ((event.getY() - downTouchPoint.y));
+			
+			if(currentOffsetX < -(bounds.width() - getWidth())){
+				currentOffsetX = -(bounds.width() - getWidth());
+			} else if(currentOffsetX > 0){
+				currentOffsetX = 0;
+			}
+			
+			if(currentOffsetY < -(bounds.height() - getHeight())){
+				currentOffsetY = -(bounds.height() - getHeight());
+			} else if(currentOffsetY > 0){
+				currentOffsetY = 0;
+			}
+			
+		}
+		}
+		return true;
+		
+	}
 
     /**
      * The inner class extends from Thread and implements the interface
@@ -281,9 +271,9 @@ public class MapSurfaceView extends SurfaceView
         @Override
         public void run() {
             while(!paused){
-
+            	doDraw(null);
             }
-        }
+        } 
 
         /**
          * As attribute this method gets the whole map as LinkedList assigned
@@ -299,21 +289,36 @@ public class MapSurfaceView extends SurfaceView
          * @param map Complete map explored by robots.
          */
         private void doDraw(LinkedList map){
-            //hier noch Attribute anlegen um die Größe des SurfaceViews festzulegen
-            //sowas wie getMinY, getMaxY, getMinX, getMaxX
-            //und ein Offset Attribut um negative Werte umzurechnen
+            //lock the canvas to do draw operations on it
+        	int testX = 20;
+        	int testY = 30;
+        	Canvas c = getHolder().lockCanvas();
             
-            if (!scrollAble) {
-                autoScaling(60, 35);
-            }
-            
-            Canvas c = getHolder().lockCanvas();
-            
+        	displayX = c.getWidth();
+        	displayY = c.getHeight();
             // Translate the drawing matrix to the current drag offset
             Matrix m = new Matrix();
             m.setTranslate(currentOffsetX, currentOffsetY);
             c.setMatrix(m);
-            //hier die Skalierung mit c.scale einfügen.
+            
+            //check if map is scrollable otherwise scale it
+            if (!scrollAble) {
+                autoScaling(c, testX, testY);
+            } else {
+            	int boundX = 0;
+            	int boundY = 0;
+            	if (displayX < testX*scaleValue) {
+            		boundX = testX*scaleValue;
+            	} else {
+            		boundX = displayX;
+            	}
+            	if (displayY < testY*scaleValue) {
+            		boundY = testY * scaleValue;
+            	} else {
+            		boundY = displayY;
+            	}
+            	bounds.set(0, 0, boundX, boundY);
+            }
             
             // Sample drawing
             paint.setColor(0xff000000);
@@ -322,29 +327,14 @@ public class MapSurfaceView extends SurfaceView
             //draw shapes and visited rectangles
             paint.setColor(0xff00ff00);
 
-            Iterator mapItr = map.iterator();
-            while (mapItr.hasNext()) 
-            {
-                
-                //drawVisited(c, paint, no.getXvalue(), no.getYvalue(), no.getVisited());
-                //Status st = no.getState();
-                //switch(st) {
-                //case BottomLeftEdge: break;
-                //case BottomT: break;
-                //case Cross: break;
-                //case BottomRightEdge: break;
-                //case LeftT: break;
-                //case RightT: break;
-                //case TopLeftEdge: break;
-                //case TopRightEdge: break;
-                //case TopT: break;
-                //}
-                
+            
+            for (int k = 0; k < testY; k++) {
+            	for (int l = 0; l < testX; l++) {
+            		drawCross(c, l*scaleValue, k*scaleValue);
+            	}
             }
+            drawEpuck(c, 3*(scaleValue/2), 3*(scaleValue/2));
             
-            
-            //drawEpuck(c, paint, 140, 140);
-            //drawVisited(c, paint, 140, 140);
             getHolder().unlockCanvasAndPost(c);
         }
 
@@ -581,26 +571,38 @@ public class MapSurfaceView extends SurfaceView
      * @param fieldSizeX The maximal expansion in width.
      * @param fieldSizeY The maximal expansion in height.
      */
-    public void autoScaling(int fieldSizeX, int fieldSizeY) {
-        int maxFieldSize = fieldSizeX;
-        int surfaceSize = maxFieldSize *scaleValue;
-        //hier muss noch implementiert werden wenn die kästchen displayY übersteigen bevor sie displayX übersteigen
-        if (surfaceSize > displayX) {
-            scaleValue = displayX/maxFieldSize;
-            if (scaleValue < 20) {
-                scaleValue = 20;
-                if (maxFieldSize*scaleValue < displayY) {
-                    bounds.set(0, 0, maxFieldSize*scaleValue, displayY);
-                } else if (maxFieldSize*scaleValue < displayX) {
-                    bounds.set(0, 0, displayX, maxFieldSize*scaleValue);
-                } else {
-                    bounds.set(0, 0, maxFieldSize*scaleValue, maxFieldSize*scaleValue);
-                }
-                scrollAble = true;
-            } else {
-                bounds.set(0, 0, displayX, displayY);
-            }
-        }
+    public void autoScaling(Canvas c, int fieldSizeX, int fieldSizeY) {
+		int xSize = fieldSizeX * scaleValue;
+		int ySize = fieldSizeY * scaleValue;
+		
+		if (xSize > displayX && ySize < displayY) {
+			float newX = (float) displayX/xSize;
+			if (newX < 0.4f) {
+				scaleValue = 40;
+				scrollAble = true;
+				bounds.set(0, 0, xSize, ySize);
+			} else {
+				c.scale(newX, newX);
+			}
+		} else if (ySize > displayY && xSize < displayX) {
+			float newY = (float) displayY/ySize;
+			if (newY < 0.4f) {
+				scaleValue = 40;
+				scrollAble = true;
+			} else {
+				c.scale(newY, newY);
+			}
+		} else if (ySize > displayY && xSize > displayX) {
+			float newX = (float) displayX/xSize;
+			float newY = (float) displayY/ySize;
+			float newSize = Math.min(newX, newY);
+			if (newSize < 0.4f) {
+				scaleValue = 40;
+				scrollAble = true;
+			} else {
+				c.scale(newSize, newSize);
+			}
+		}
         
     }
     

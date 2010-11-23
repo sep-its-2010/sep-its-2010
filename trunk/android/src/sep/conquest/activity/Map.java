@@ -24,6 +24,7 @@ import android.widget.Spinner;
  */
 public class Map extends Activity{
 	
+
 	/**
 	 * Is implemented by Activity and is called when the map class is accessed.
 	 * It initializes the spinner control element for the selection of the 
@@ -36,17 +37,8 @@ public class Map extends Activity{
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        /**
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int x = metrics.widthPixels;
-        int y = metrics.heightPixels;
-        */
-        
-        setContentView(R.layout.map_main); 
-        
+        setContentView(R.layout.map_main);         
         Spinner ePuckSelect = (Spinner) findViewById(R.id.epuck_selector);
-        
     }
     
     /**
