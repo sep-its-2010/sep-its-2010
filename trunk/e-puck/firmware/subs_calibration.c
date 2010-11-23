@@ -6,8 +6,8 @@
 
 #include "subs_calibration.h"
 
-bool isNotCalibrated = true;
-int l_buffer[3];						// speichert Kalibrierungsdaten tempor‰r
+bool isNotCalibrated;
+int l_buffer[3];						// saves calibration-values temporary
 
 /*!
  * \brief
@@ -24,38 +24,22 @@ int l_buffer[3];						// speichert Kalibrierungsdaten tempor‰r
  * subs_calibrate_reset
  */
 bool subs_calibration_run( void) {
-
 	uint8_t selector = hal_sel_getPosition( void);
 
 	if( isNotCalibrated && (selector == 0)) {
+		char buffer[50];
 
 		//perform calibration
-		const unsigned char I2C_address = 0xC0; // adress of ground sensors
-		e_i2cp_enable();  //TODO e_i2cp_enable() : heiﬂt das bei uns anders?
-
-        for(j = 0; j < 6; j++) {
-			if( j % 2 == 0) {
-				buffer[j] = e_i2cp_read(I2C_address, j + 1);
-			} else if( j % 2 != 0) {
-				buffer[j] = e_i2cp_read(I2C_address, j - 1);
-			}
-        }
-        e_i2cp_disable();
-		l_buffer[0] = (unsigned int) (buffer[0] & 0xff) + ((unsigned int) buffer[1] << 8);
-		l_buffer[1] = (unsigned int) (buffer[2] & 0xff) + ((unsigned int) buffer[3] << 8);
-		l_buffer[2] = (unsigned int) (buffer[4] & 0xff) + ((unsigned int) buffer[5] << 8);
-
-		int _EEDATA(2) calibrationValues[]; // To declare an initialized array in data EEPROM without special alignment (C30 manual page 81)
+			//sen_line_read etc
+		
+		// To declare an initialized array in data EEPROM without special alignment (C30 manual page 81)
+		int _EEDATA(2) calibrationValues[];
 		calibrationValues[0] = l_buffer[0];
 		calibrationValues[1] = l_buffer[1];
 		calibrationValues[2] = l_buffer[2];
 
 		isNotCalibrated = false;
-	} else if( !isNotCalibrated) {
-		// groundsensors are already calibrated => next behavior can be run		
 	}
-	//TODO Kalibrierung sollte nur 1 mal bei Systemstart und nach Reset erfolgen
-
 	return isNotCalibrated;
 }
 
@@ -66,5 +50,9 @@ bool subs_calibration_run( void) {
  * Deletes all former calibration-data from the EEPROM.
  */
 void subs_calibration_reset( void) {
+		isNotCalibrated = true;
 
+		for( int i = 0; i < sizeof(l_buffer); i++) {
+			l_buffer[i] = 0;
+		}
 }
