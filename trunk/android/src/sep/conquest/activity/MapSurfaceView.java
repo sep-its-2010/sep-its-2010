@@ -281,7 +281,7 @@ public class MapSurfaceView extends SurfaceView
         @Override
         public void run() {
             while(!paused){
-                
+
             }
         }
 

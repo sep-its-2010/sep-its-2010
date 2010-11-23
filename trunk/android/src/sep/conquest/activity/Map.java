@@ -2,10 +2,10 @@ package sep.conquest.activity;
 
 import sep.conquest.R;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,7 +45,7 @@ public class Map extends Activity{
         
         setContentView(R.layout.map_main); 
         
-        //Spinner ePuckSelect = (Spinner) findViewById(R.id.epuck_selector);
+        Spinner ePuckSelect = (Spinner) findViewById(R.id.epuck_selector);
         
     }
     
@@ -78,19 +78,30 @@ public class Map extends Activity{
         // Handle item selection
         switch (item.getItemId()) {
         case R.id.mnuStatistics:
-            //karte
-            return true;
-        case R.id.mnuControl:
-            //steuerung
-        	Intent control = new Intent();
-        	//control.setClass(Map.this, Control.class);
-        	//startActivityForResult(control, 3);
-            return true;
+			Intent stats = new Intent();
+			stats.setComponent(new ComponentName(getApplicationContext()
+					.getPackageName(), Statistics.class.getName()));
+			startActivity(stats);
+			break;
+
+		case R.id.mnuControl:
+			Intent steer = new Intent();
+			steer.setComponent(new ComponentName(getApplicationContext()
+					.getPackageName(), Steer.class.getName()));
+			startActivity(steer);
+			break;
+			
         case R.id.mnuExport:
-            return true;
+			Intent export = new Intent();
+			export.setComponent(new ComponentName(getApplicationContext()
+					.getPackageName(), Export.class.getName()));
+			startActivity(export);
+			break;
+
         default:
             return super.onOptionsItemSelected(item);
         }
+        return true;
     }
     
     /**
