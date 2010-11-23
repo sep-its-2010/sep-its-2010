@@ -11,11 +11,21 @@
 				<category android:name="android.intent.category.LAUNCHER"></category>
 			</intent-filter>
 		</activity>
-		<activity android:name=".activity.Simulation"></activity>
-		<activity android:name=".activity.Import"></activity>
-		<activity android:name=".activity.Steer"></activity>
-		<activity android:name=".activity.Map"></activity>
-		<activity android:name=".activity.Export"></activity>
+		<activity android:name=".activity.Simulation"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
+</intent-filter>
+</activity>
+		<activity android:name=".activity.Import"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
+</intent-filter>
+</activity>
+		<activity android:name=".activity.Steer"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
+</intent-filter>
+</activity>
+		<activity android:name=".activity.Map"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
+</intent-filter>
+</activity>
+		<activity android:name=".activity.Export"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
+</intent-filter>
+</activity>
 	</application>
 	<uses-sdk android:minSdkVersion="7" />
 

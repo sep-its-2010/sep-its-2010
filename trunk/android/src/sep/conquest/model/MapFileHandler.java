@@ -22,7 +22,7 @@ public class MapFileHandler {
   /**
    * Describes valid file names.
    */
-  public static Pattern FILE_NAME_FORMAT = Pattern.compile("\\w+\\.sep");
+  public static Pattern fileNameFormat = Pattern.compile("\\w+\\.sep");
 
   /**
    * Opens a file containing a map of type GridMap a reconstructs the GridMap.
@@ -41,12 +41,12 @@ public class MapFileHandler {
    * @return True, if map was successfully saved, false otherwise.
    */
   public static boolean saveMap(GridMap map, String filename) {
-    Matcher m = FILE_NAME_FORMAT.matcher(filename);
+    Matcher m = fileNameFormat.matcher(filename);
     return m.matches();
   }
   
   public static boolean isValidFilename(String filename) {
-    Matcher m = FILE_NAME_FORMAT.matcher(filename);
+    Matcher m = fileNameFormat.matcher(filename);
     return m.matches();
   }
 }

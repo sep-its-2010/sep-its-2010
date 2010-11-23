@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import sep.conquest.R;
 import sep.conquest.model.PuckFactory;
@@ -42,7 +43,7 @@ import android.widget.AdapterView.OnItemClickListener;
  * @author Andreas Poxrucker
  * 
  */
-public class Connect extends Activity {
+public final class Connect extends Activity {
 
   /**
    * Used to identify message to enable Bluetooth.
@@ -53,10 +54,10 @@ public class Connect extends Activity {
    * Identifies messages that indicate, that connecting has been successful.
    */
   public static final String CONNECTION_SUCCESSFUL = "ConnectionSuccessful";
-  
+
   /**
-   * Identifies messages that indicate, that opening a certain connection 
-   * has failed.
+   * Identifies messages that indicate, that opening a certain connection has
+   * failed.
    */
   public static final String CONNECTION_ERROR = "ConnectionError";
 
@@ -195,7 +196,6 @@ public class Connect extends Activity {
    *          The MenuItem that has been selected.
    */
   public boolean onOptionsItemSelected(MenuItem item) {
-
     // Intent message to start other Activities.
     Intent start = new Intent();
 
@@ -214,7 +214,7 @@ public class Connect extends Activity {
             getString(R.string.MSG_CONNECTING), true);
 
         // Start Thread that opens connections
-        Thread conThread = new connectToRobotsThread(selectedRobots.values());
+        Thread conThread = new ConnectThread(selectedRobots.values());
         conThread.start();
       } else {
         displayMessage(getString(R.string.MSG_NO_ROBOT));
@@ -233,6 +233,7 @@ public class Connect extends Activity {
     case R.id.mnuImport:
       start.setComponent(new ComponentName(getApplicationContext()
           .getPackageName(), Import.class.getName()));
+      start.putExtra(ImportMode.class.toString(), ImportMode.DISPLAY_MAP);
       startActivity(start);
       break;
     }
@@ -326,6 +327,11 @@ public class Connect extends Activity {
   private final class BluetoothBroadcastReceiver extends BroadcastReceiver {
 
     /**
+     * Pattern that Bluetooth names of discovered devices have to match
+     */
+    private Pattern ePuckName = Pattern.compile("e-puck_\\d\\d\\d\\d");
+
+    /**
      * Called when class receives broadcast message.
      * 
      * @param context
@@ -336,12 +342,16 @@ public class Connect extends Activity {
     public void onReceive(Context context, Intent intent) {
       String action = intent.getAction();
 
-      // If device has been found add it to discovered devices.
+      // If device has been found check its name. If name matches pattern
+      // add it to discovered devices.
       if (BluetoothDevice.ACTION_FOUND.equals(action)) {
         BluetoothDevice device = (BluetoothDevice) intent
             .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-        discoveredRobots.put(device.getName(), device);
-        robotList.add(device.getName());
+
+        if (ePuckName.matcher(device.getName()).matches()) {
+          discoveredRobots.put(device.getName(), device);
+          robotList.add(device.getName());
+        }
 
         // If discovery is finished display the discovered devices.
       } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
@@ -352,8 +362,9 @@ public class Connect extends Activity {
       } else if (CONNECTION_SUCCESSFUL.equals(action)) {
         pDialog.dismiss();
         Intent start = new Intent();
+        start.putExtra(MapMode.class.toString(), MapMode.EXPLORATION);
         start.setComponent(new ComponentName(getApplicationContext()
-            .getPackageName(), Export.class.getName()));
+            .getPackageName(), Map.class.getName()));
         startActivity(start);
 
         // If an error occurs during one of the connect actions, show error
@@ -439,18 +450,26 @@ public class Connect extends Activity {
   }
 
   /**
+   * Opens Bluetooth connection for each device that has been passed in the
+   * Constructor.
+   * 
+   * If all connections are established, it initiates the creation of the 
+   * RealPuck instances.
+   * 
+   * If an error occurs during connecting, all connections that have been
+   * opened so far are closed and Thread returns error message.
    * 
    * @author Andreas Poxrucker
    * 
    */
-  private class connectToRobotsThread extends Thread {
+  private class ConnectThread extends Thread {
 
     /**
      * Standard UUID used to connect to standard Bluetooth modules.
      */
     private UUID STD_UUID = UUID
         .fromString("00001101-0000-1000-8000-00805F9B34FB");
-    
+
     /**
      * Devices that should be connected.
      */
@@ -459,9 +478,10 @@ public class Connect extends Activity {
     /**
      * Constructor.
      * 
-     * @param robots The BluetoothDevices that should be connected.
+     * @param robots
+     *          The BluetoothDevices that should be connected.
      */
-    public connectToRobotsThread(Collection<BluetoothDevice> robots) {
+    public ConnectThread(Collection<BluetoothDevice> robots) {
       devices = robots;
     }
 
@@ -488,8 +508,7 @@ public class Connect extends Activity {
           sockets.add(socket);
         } catch (IOException connectException) {
           // If IOException occurs during opening RfCommSocket, cancel all
-          // connections that have been opend so far and send error message.
-
+          // connections that have been opened so far and send error message.
           for (BluetoothSocket socket : sockets) {
             try {
               socket.close();

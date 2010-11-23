@@ -38,17 +38,17 @@ public class Import extends Activity {
    * Used to list available maps.
    */
   private ListView lsMaps;
-  
+
   /**
    * Used to display names of found map files.
    */
   private ArrayAdapter<String> fileList;
-  
+
   /**
    * Used to temporary save found files.
    */
   private Map<String, File> files;
-  
+
   /**
    * Called when Activity is initially created.
    * 
@@ -82,23 +82,30 @@ public class Import extends Activity {
    *          The MenuItem that has been selected.
    */
   public boolean onOptionsItemSelected(MenuItem item) {
-
+    // Intent message to start other Activities.
     Intent start = new Intent();
 
     switch (item.getItemId()) {
+
+    // If "Connect" has been chosen, start Connect-Activity via Intent.
     case R.id.mnuConnect:
       start.setComponent(new ComponentName(getApplicationContext()
           .getPackageName(), Connect.class.getName()));
       startActivity(start);
       break;
+
+    // If "Simulation" has been chosen, start Simulation-Activity via Intent.
     case R.id.mnuSimulation:
       start.setComponent(new ComponentName(getApplicationContext()
           .getPackageName(), Simulation.class.getName()));
       startActivity(start);
       break;
+
+    // If "Start" has been chosen, start Map-Activity via Intent.
     case R.id.mnuStart:
       start.setComponent(new ComponentName(getApplicationContext()
           .getPackageName(), Map.class.getName()));
+      start.putExtra(MapMode.class.toString(), MapMode.IMPORT);
       startActivity(start);
       break;
     }
