@@ -13,14 +13,15 @@ import java.util.Map;
 public interface IBehaviour {
 
     /**
-     * The execute method will do some logic-dependent calculations on a map
-     * in order to navigation-decisions. It will return the resulting map
-     * with new values. 
+     * The execute method will do some logic-dependent calculations on the map
+     * of a robot in order to navigation-decisions. It will return the resulting
+     * map with new navigation-costs. 
      *  
-     * @param map The input map.
-     * @return The map with new values.
+     * @param map The map with given navigation-costs.
+     * @param robot The robot.
+     * @return The map with new navigation-costs.
      */
-    Map<int[], GridMap> execute(Map<int[], GridMap> map);    
+    Map<int[], Integer> execute(Map<int[], Integer> map, Puck robot);    
     
     /**
      * Sets the following Behaviour.

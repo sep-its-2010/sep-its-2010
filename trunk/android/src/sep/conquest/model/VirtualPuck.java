@@ -55,4 +55,34 @@ public class VirtualPuck extends Puck {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public void forward() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void left() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void right() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setControlled(boolean enabled) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setSpeed(SpeedLevel level) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void turn() {
+		// TODO Auto-generated method stub
+		
+	}
 }

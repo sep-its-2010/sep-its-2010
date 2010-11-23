@@ -6,13 +6,15 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import sep.conquest.util.ConquestLog;
+
 /**
  * Represents an abstract Puck robot.
  * 
  * @author Andreas Poxrucker
  * 
  */
-public abstract class Puck implements IComClient {
+public abstract class Puck implements IComClient, IRobot {
 
   /**
    * Global unique id.
@@ -43,6 +45,11 @@ public abstract class Puck implements IComClient {
    * First Handler to handle broadcast messages.
    */
    private Handler firstBCHandler;
+   
+   /**
+   * Indicates whether the status of the robot has changed.
+   */
+   private boolean changed = false;
 
   /**
    * Constructor initializing ID, local map, own state, logic thread and
@@ -86,6 +93,43 @@ public abstract class Puck implements IComClient {
 	  
   }
   
+  /**
+   * Returns the map of the robot.
+   * 
+   * @return The map.
+   */
+   public GridMap getMap() {
+	  return map;
+  }
+   
+  /**
+   * Returns if the status of the robot has changed.
+   * 
+   * @return True if the the status of the robot has changed, otherwise false.
+   */
+   public boolean hasChanged() {
+	  if (changed) {
+		  changed = false;
+		  return true;
+	  } else return false;
+  }
+   
+   /**
+    * Translates a direction-command in a specific drive-call of the concrete
+    * puck.
+    * 
+    * @param direction
+    */
+    public void driveCommand(Orientation direction) {
+	   switch (direction) {
+	   case UP: this.forward(); break;
+	   case DOWN: this.turn(); break;
+	   case LEFT: this.left(); break;
+	   case RIGHT: this.right(); break;
+	   default: ConquestLog.addMessage(this, "Error in driveCommand()");
+	   }
+    }
+   
   /* (non-Javadoc)
   * @see sep.conquest.model.IComClient#getID()
   */
@@ -104,5 +148,4 @@ public abstract class Puck implements IComClient {
    * @return Returns the message that was sent by an e-puck roboter.
    */
   public abstract byte[] readSocket();
-
 }

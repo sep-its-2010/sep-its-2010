@@ -20,6 +20,16 @@ public interface IPathFinder {
 	PathNode[] find(MapNode start, MapNode[] destinations);
 
 	/**
+	 * The find-method searches for the shortest paths from a specific start
+	 * -node to a number of many other nodes.
+	 * 
+	 * @param start The start-node.
+	 * @param destinations The destination-nodes.
+	 * @return A list of paths to the destination-nodes.
+	 */
+	PathNode[] find(int[] start, int[][] destinations);	
+	
+	/**
 	 * The method calculates the navigation-costs from a specific node to an
 	 * adjacent neighbor.
 	 * 

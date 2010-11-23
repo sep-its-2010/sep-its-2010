@@ -25,8 +25,7 @@ public final class DistanceBehaviour extends Behaviour {
     /* (non-Javadoc)
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
      */
-    public Map<int[], GridMap> execute(Map<int[], GridMap> map) {
-        return super.execute(map);
+    public Map<int[], Integer> execute(Map<int[], Integer> map, Puck robot) {
+        return super.execute(map, robot);
     }
-
 }

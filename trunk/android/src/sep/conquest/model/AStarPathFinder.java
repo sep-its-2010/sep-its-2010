@@ -46,4 +46,12 @@ public class AStarPathFinder implements IPathFinder {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see sep.conquest.model.IPathFinder#find(int[], int[][])
+	 */
+	public PathNode[] find(int[] start, int[][] destinations) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
