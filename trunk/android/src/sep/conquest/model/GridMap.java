@@ -183,7 +183,7 @@ public class GridMap implements Serializable{
 
 	/**
 	 * Searches whether a node with the coordinates x and y exists in the 
-	 * TreeMap mapTree
+	 * TreeMap mapTree.
 	 * 
 	 * @param x The x-coordinate 
 	 * @param y The y-coordinate          
@@ -203,50 +203,133 @@ public class GridMap implements Serializable{
 	 * @param newNode The Node which gets new neighbours    
 	 */
 	private void setNeighbours(GraphNode newNode) {
-		//Is the actual neighbour
-		GraphNode actNeighbour;
-		//Search and set the bottom neighbour
-		actNeighbour = this.mapTree.get(
-					this.makeKey(newNode.getXValue(),newNode.getYValue()+1));
-		//If the neighbour exists set neighbours
-		if(actNeighbour != null){
-			newNode.setNeighbours(newNode.BOTTOMNEIGHBOUR,actNeighbour);
-			actNeighbour.setNeighbours(actNeighbour.TOPNEIGHBOUR,newNode);
-		}
-		
-		//Search and set the top neighbour
-		actNeighbour = this.mapTree.get(
-					this.makeKey(newNode.getXValue(),newNode.getYValue()-1));
-		//If the neighbour exists set neighbours
-		if(actNeighbour != null){
-			newNode.setNeighbours(newNode.TOPNEIGHBOUR,actNeighbour);
-			actNeighbour.setNeighbours(actNeighbour.BOTTOMNEIGHBOUR,newNode);
-		}
-		
-		//Search and set the left neighbour
-		actNeighbour = this.mapTree.get(
-					this.makeKey(newNode.getXValue()-1,newNode.getYValue()));
-		//If the neighbour exists set neighbours
-		if(actNeighbour != null){
-			newNode.setNeighbours(newNode.LEFTNEIGHBOUR,actNeighbour);
-			actNeighbour.setNeighbours(actNeighbour.RIGHTNEIGHBOUR,newNode);
-		}
-		
-		//Search and set the right neighbour
-		actNeighbour = this.mapTree.get(
-					this.makeKey(newNode.getXValue()+1,newNode.getYValue()));
-		//If the neighbour exists set neighbours
-		if(actNeighbour != null){
-			newNode.setNeighbours(newNode.RIGHTNEIGHBOUR,actNeighbour);
-			actNeighbour.setNeighbours(actNeighbour.LEFTNEIGHBOUR,newNode);
+		NodeType type = newNode.getNodeType();
+		switch (type){
+			//There has to be set the right and upper neighbour of the node
+			case BOTTOMLEFTEDGE:
+				this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);				
+				break;
+			//There has to be set the left and upper neighbour of the node
+			case BOTTOMRIGHTEDGE:
+				this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);	
+				break;
+			//There has to be set the right and lower neighbour of the node
+			case TOPLEFTEDGE:
+				this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);	
+				break;
+			//There has to be set the left and lower neighbour of the node
+			case TOPRIGHTEDGE:
+				this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
+				break;
+			//There has to be set the left and right and upper neighbour of the
+			//node
+			case BOTTOMT:
+				this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
+				break;
+			//There has to be set the right and lower and upper neighbour of the
+			//node	
+			case LEFTT:
+				this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
+				break;
+			//There has to be set the left and lower and upper neighbour of the
+			//node	
+			case RIGHTT:
+				this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
+				break;
+			//There has to be set the left and lower and right neighbour of the
+			//node
+			case TOPT:
+				this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
+				break;
+			//There has to be set the left and lower and right and upper 
+			//neighbour of the node
+			case CROSS:
+				this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
+				this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
+				break;
 		}
 	}
 	
 	/**
-	 * 
-	 * @param x
-	 * @param y
-	 * @return
+	 * This method searches the neighbour of the GraphNode and sets it, if it
+	 * exists
+	 * @param direction The orientation of the neighbour
+	 * @param newNode The node with the possible neighbours
+	 */
+	private void searchAndsetNeighbour(int direction, GraphNode newNode){
+		//Helping variable to save the instance of the actual neighbour node
+		GraphNode actNeighbour;
+		switch (direction){
+		//Search and set the left neighbour
+		case 0:
+			actNeighbour = this.mapTree.get(
+					this.makeKey(newNode.getXValue()-1,newNode.getYValue()));
+			//If the neighbour exists set neighbours
+			if(actNeighbour != null){
+				newNode.setNeighbours(newNode.LEFTNEIGHBOUR,actNeighbour);
+				actNeighbour.setNeighbours(actNeighbour.RIGHTNEIGHBOUR,newNode);
+			} else {
+				//A new frontiernode hast to be created
+			}
+			break;
+		//Search and set the right neighbour
+		case 1:
+			actNeighbour = this.mapTree.get(
+					this.makeKey(newNode.getXValue()+1,newNode.getYValue()));
+			//If the neighbour exists set neighbours
+			if(actNeighbour != null){
+				newNode.setNeighbours(newNode.RIGHTNEIGHBOUR,actNeighbour);
+				actNeighbour.setNeighbours(actNeighbour.LEFTNEIGHBOUR,newNode);
+			} else {
+				//A new frontiernode hast to be created
+			}
+			break;
+		//Search and set the bottom neighbour
+		case 2:
+			actNeighbour = this.mapTree.get(
+					this.makeKey(newNode.getXValue(),newNode.getYValue()+1));
+			//If the neighbour exists set neighbours
+			if(actNeighbour != null){
+				newNode.setNeighbours(newNode.BOTTOMNEIGHBOUR,actNeighbour);
+				actNeighbour.setNeighbours(actNeighbour.TOPNEIGHBOUR,newNode);
+			} else {
+				//A new frontiernode hast to be created
+			}
+			break;
+		//Search and set the upper neighbour
+		case 3:
+			actNeighbour = this.mapTree.get(
+					this.makeKey(newNode.getXValue(),newNode.getYValue()-1));
+			//If the neighbour exists set neighbours
+			if(actNeighbour != null){
+				newNode.setNeighbours(newNode.TOPNEIGHBOUR,actNeighbour);
+				actNeighbour.setNeighbours(actNeighbour.BOTTOMNEIGHBOUR,newNode);
+			} else {
+				//A new frontiernode hast to be created
+			}
+			break;
+		}
+	}
+	
+	/**
+	 * Creates the key for the mapping in the TreeMap.
+	 * @param x The x-coordinate of the node
+	 * @param y The y-coordinate of the node
+	 * @return The key for the mapping
 	 */
 	private int makeKey(int x, int y){
 		return (x ^ y << 16) | (x & 0xFFFF);
@@ -255,13 +338,13 @@ public class GridMap implements Serializable{
 	/**
 	 * The private method setFrontierNodes checks if new frontierNodes has to be
 	 * created at the node with the coordinates x and y and sets the
-	 * neighbourreferences
+	 * neighbourreferences.
 	 * 
 	 * @param x The x-coordinate of the node   
 	 * @param y The y-coordinate of the node         
 	 */
 	private void setFrontierNodes(int x, int y) {
-
+		
 	}
 
 	/**
