@@ -1,6 +1,8 @@
 #ifndef hal_int_h__
 #define hal_int_h__
 
+#include <p30f6014A.h>
+
 #include "common.h"
 
 #include "hal_int_types.h"

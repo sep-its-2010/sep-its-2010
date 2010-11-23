@@ -46,12 +46,18 @@ void hal_motors_setSpeed(
 	IN const int16_t _i16AngularStepsPerSecond
 	);
 
+static inline int16_t hal_motors_getSpeedLeft( void);
+static inline int16_t hal_motors_getSpeedRight( void);
+
 static inline void hal_motors_setPhaseLeft(
 	IN const hal_motors_EPhase_t _ePhase
 	);
 static inline void hal_motors_setPhaseRight(
 	IN const hal_motors_EPhase_t _ePhase
 	);
+
+static inline hal_motors_EPhase_t hal_motors_getPhaseLeft( void);
+static inline hal_motors_EPhase_t hal_motors_getPhaseRight( void);
 
 static inline uint16_t hal_motors_getStepsLeft( void);
 static inline uint16_t hal_motors_getStepsRight( void);
@@ -66,6 +72,48 @@ static inline void hal_motors_setSteps(
 	IN const uint16_t _ui16StepsLeft,
 	IN const uint16_t _ui16StepsRight
 	);
+
+
+/*!
+ * \brief
+ * Gets the current speed of the left motor.
+ * 
+ * \returns
+ * The current speed in steps per second. Negative values indicate a reversed direction.
+ * 
+ * \remarks
+ * This function is interrupt safe.
+ * 
+ * \see
+ * hal_motors_getSpeedRight | hal_motors_setSpeed | hal_motors_setSpeedLeft
+ */
+int16_t hal_motors_getSpeedLeft( void) {
+
+	extern volatile int16_t hal_motors_i16SpeedLeft;
+
+	return hal_motors_i16SpeedLeft;
+}
+
+
+/*!
+ * \brief
+ * Gets the current speed of the right motor.
+ * 
+ * \returns
+ * The current speed in steps per second. Negative values indicate a reversed direction.
+ * 
+ * \remarks
+ * This function is interrupt safe.
+ * 
+ * \see
+ * hal_motors_getSpeedLeft | hal_motors_setSpeed | hal_motors_setSpeedRight
+ */
+int16_t hal_motors_getSpeedRight( void) {
+
+	extern volatile int16_t hal_motors_i16SpeedRight;
+
+	return hal_motors_i16SpeedRight;
+}
 
 
 /*!
@@ -90,6 +138,9 @@ void hal_motors_setPhaseLeft(
 	IN const hal_motors_EPhase_t _ePhase
 	) {
 
+	extern volatile hal_motors_EPhase_t hal_motors_ePhaseLeft;
+
+	hal_motors_ePhaseLeft = _ePhase;
 	LATD = ( LATD & ~HAL_MOTORS_LEFT_MASK) | ( _ePhase << HAL_MOTORS_LEFT_DATA_OFFSET);
 }
 
@@ -115,7 +166,52 @@ void hal_motors_setPhaseRight(
 	IN const hal_motors_EPhase_t _ePhase
 	) {
 
+	extern volatile hal_motors_EPhase_t hal_motors_ePhaseRight;
+
+	hal_motors_ePhaseRight = _ePhase;
 	LATD = ( LATD & ~HAL_MOTORS_RIGHT_MASK) | ( _ePhase << HAL_MOTORS_RIGHT_DATA_OFFSET);
+}
+
+
+/*!
+ * \brief
+ * Gets the phase of the left motor.
+ * 
+ * \returns
+ * The phase of the right left motor.
+ * 
+ * \remarks
+ * This function is interrupt safe.
+ * 
+ * \see
+ * hal_motors_getPhaseRight | hal_motors_setPhaseLeft
+ */
+hal_motors_EPhase_t hal_motors_getPhaseLeft( void) {
+
+	extern volatile hal_motors_EPhase_t hal_motors_ePhaseLeft;
+
+	return hal_motors_ePhaseLeft;
+}
+
+
+/*!
+ * \brief
+ * Gets the phase of the right motor.
+ * 
+ * \returns
+ * The phase of the right step motor.
+ * 
+ * \remarks
+ * This function is interrupt safe.
+ * 
+ * \see
+ * hal_motors_getPhaseLeft | hal_motors_setPhaseRight
+ */
+hal_motors_EPhase_t hal_motors_getPhaseRight( void) {
+
+	extern volatile hal_motors_EPhase_t hal_motors_ePhaseRight;
+
+	return hal_motors_ePhaseRight;
 }
 
 
@@ -240,5 +336,6 @@ void hal_motors_setSteps(
 	hal_motors_ui16StepsLeft = _ui16StepsLeft;
 	hal_motors_ui16StepsRight = _ui16StepsRight;
 }
+
 
 #endif /* hal_motors_h__ */
