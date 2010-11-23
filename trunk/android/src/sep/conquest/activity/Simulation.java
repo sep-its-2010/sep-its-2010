@@ -103,7 +103,7 @@ public class Simulation extends Activity {
 	/**
 	 * Draws a preview of the selected map. For this the MapSurfaceView class
 	 * is used and a new DrawThread is started. In the simulation mode it is 
-	 * possible to select the start positions for the virtual roboters.
+	 * possible to select the start positions for the virtual robots.
 	 * 
 	 * @param map Contains an imported map.
 	 */

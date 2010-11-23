@@ -40,12 +40,12 @@ public class MapSurfaceView extends SurfaceView
      * you actual really move the rectangle on which the new position is
      * calculated.
      */
-    private static Rect BOUNDS = new Rect(0, 0, 0, 0);
+    private static Rect bounds = new Rect(0, 0, 0, 0);
 
     /**
-     * This LinkedList saves the id of the roboters and there x and y
+     * This LinkedList saves the id of the robots and there x and y
      * coordinates on the map. This information must be available within the
-     * surface view class to allocate the direct roboter selection by long
+     * surface view class to allocate the direct robot selection by long
      * touching them on the map.
      *
      */
@@ -86,12 +86,12 @@ public class MapSurfaceView extends SurfaceView
      * @see sep.conquest.activity.MapSurfaceView.previousOffsetX
      */
     private float previousOffsetY = 0;
-    
+
     /**
      * This is the start value for drawn objects at the beginning of an
      * exploration. It is used by the attribute scaleValue.
      */
-    private static int STARTVALUE = 80;
+    private static final int STARTVALUE = 80;
 
     /**
      * All draw methods use this value to scale the size of their drawable
@@ -139,9 +139,14 @@ public class MapSurfaceView extends SurfaceView
     /**
      * Must be implemented by the interface SurfaceHolder.Callback, but isn't
      * used here.
+     *
+     * @param holder Allows you to modify the surface.
+     * @param format New pixel format of the surface.
+     * @param width New width of the surface.
+     * @param height New height of the surface.
      */
-    public void surfaceChanged(SurfaceHolder holder, int format,
-    						   						 int width, int height) {
+    public void surfaceChanged(final SurfaceHolder holder, final int format,
+                               final int width, final int height) {
         // Do Nothing
     }
 
@@ -157,7 +162,7 @@ public class MapSurfaceView extends SurfaceView
     }
 
     /**
-     * Is implemented by the interface surfaceHolder.Callback and is called 
+     * Is implemented by the interface surfaceHolder.Callback and is called
      * when the actual view is exited. This could also be caused by an intent,
      * so the thread has to be paused and waits until the end of other threads
      * to be continued.
@@ -171,7 +176,7 @@ public class MapSurfaceView extends SurfaceView
                 thread.join();
                 retry = false;
             } catch (InterruptedException e) {
-
+            	return;
             }
         }
 
@@ -189,6 +194,9 @@ public class MapSurfaceView extends SurfaceView
      * and shown in the spinner menu of the map class. The time measurement is
      * reasonable to differentiate between e-puck selection and the scroll
      * function.
+     * 
+     * @param v View the touch was made on.
+     * @param event Event to get x and y coordinates.
      */
     public boolean onTouch(View v, MotionEvent event) {
         if (scrollAble) {
@@ -221,14 +229,14 @@ public class MapSurfaceView extends SurfaceView
                     currentOffsetY = previousOffsetY
                             + ((event.getY() - downTouchPoint.y));
 
-                    if (currentOffsetX < -(BOUNDS.width() - getWidth())) {
-                        currentOffsetX = -(BOUNDS.width() - getWidth());
+                    if (currentOffsetX < -(bounds.width() - getWidth())) {
+                        currentOffsetX = -(bounds.width() - getWidth());
                     } else if (currentOffsetX > 0) {
                         currentOffsetX = 0;
                     }
 
-                    if (currentOffsetY < -(BOUNDS.height() - getHeight())) {
-                        currentOffsetY = -(BOUNDS.height() - getHeight());
+                    if (currentOffsetY < -(bounds.height() - getHeight())) {
+                        currentOffsetY = -(bounds.height() - getHeight());
                     } else if (currentOffsetY > 0) {
                         currentOffsetY = 0;
                     }
@@ -238,32 +246,32 @@ public class MapSurfaceView extends SurfaceView
         return true;
 
     }
-    
+
     /**
-     * The inner class extends from Thread and implements the interface 
+     * The inner class extends from Thread and implements the interface
      * Observer. It is responsible for drawing on the surface view and contains
-     * suitable methods. The data structure of the map is received by the 
+     * suitable methods. The data structure of the map is received by the
      * update method and forwarded to the draw method.
-     * 
+     *
      * @author Florian Buerchner
      *
      */
     private class DrawThread extends Thread implements Observer {
-        
+
         /**
          * Is initially set to false and is used to pause the thread. This case
          * occurs when an intent is created and the method surfaceDestroyed is
          * called.
          */
         private boolean paused = false;
-        
+
         /**
          * Paint must be visible for all methods to set the color for multiple
          * crossed nodes, which differ to the other ones. It is also required
          * to draw the e-pucks and in another color for selected ones.
          */
         private Paint paint = new Paint();
-        
+
         /**
          * This class extends of Thread and this method must be implemented.
          * It runs persistently in the background and executes an infinite loop.
@@ -289,7 +297,7 @@ public class MapSurfaceView extends SurfaceView
          * often this node was crossed by e-pucks is painted previously. At the
          * last layer the positions of the e-pucks are painted.
          * 
-         * @param map Complete map explored by roboters.
+         * @param map Complete map explored by robots.
          */
         private void doDraw(LinkedList map){
             //hier noch Attribute anlegen um die Größe des SurfaceViews festzulegen
@@ -309,7 +317,7 @@ public class MapSurfaceView extends SurfaceView
             
             // Sample drawing
             paint.setColor(0xff000000);
-            c.drawRect(BOUNDS, paint);
+            c.drawRect(bounds, paint);
             
             //draw shapes and visited rectangles
             paint.setColor(0xff00ff00);
@@ -412,10 +420,10 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-        public void drawTopRightEdge(Canvas c, int x, int y) {
-            c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
-            c.drawLine(x + scaleValue, y + (scaleValue/2), x + scaleValue, y + scaleValue, paint);
-        }
+    	public void drawTopRightEdge(Canvas c, int x, int y) {
+    		c.drawLine(x, y + (scaleValue/2), x + (scaleValue/2), y + (scaleValue/2), paint);
+    		c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + (scaleValue/2), y + scaleValue, paint);
+    	}
         
         /**
          * This method gets a canvas as attribute, which provides drawing
@@ -429,10 +437,10 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-        public void drawBottomRightEdge(Canvas c, int x, int y) {
-            c.drawLine(x + (scaleValue/2), y + scaleValue, x + scaleValue, y + scaleValue, paint);
-            c.drawLine(x + scaleValue, y + (scaleValue/2), x + scaleValue, y + scaleValue, paint);
-        }
+    	public void drawBottomRightEdge(Canvas c, int x, int y) {
+    		c.drawLine(x, y + (scaleValue/2), x + (scaleValue/2), y + (scaleValue/2), paint);
+    		c.drawLine(x + (scaleValue/2), y, x + (scaleValue/2), y + (scaleValue/2), paint);
+    	}
         
         /**
          * This method gets a canvas as attribute, which provides drawing
@@ -446,10 +454,10 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-        public void drawBottomLeftEdge(Canvas c, int x, int y) {
-            c.drawLine(x, y + (scaleValue/2), x, y + scaleValue, paint);
-            c.drawLine(x, y + scaleValue, x + (scaleValue/2), y + scaleValue, paint);
-        }
+    	public void drawBottomLeftEdge(Canvas c, int x, int y) {
+    		c.drawLine(x + (scaleValue/2), y, x + (scaleValue/2), y + (scaleValue/2), paint);
+    		c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
+    	}
         
         /**
          * This method gets a canvas as attribute, which provides drawing
@@ -477,10 +485,10 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-        public void drawRightT(Canvas c, int x, int y) {
-            c.drawLine(x + scaleValue, y, x + scaleValue, y + scaleValue, paint);
-            c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
-        }
+    	public void drawRightT(Canvas c, int x, int y) {
+    		c.drawLine(x + (scaleValue/2), y, x + (scaleValue/2), y + scaleValue, paint);
+    		c.drawLine(x, y + (scaleValue/2), x + (scaleValue/2), y + (scaleValue/2), paint);
+    	}
         
         /**
          * This method gets a canvas as attribute, which provides drawing
@@ -582,15 +590,15 @@ public class MapSurfaceView extends SurfaceView
             if (scaleValue < 20) {
                 scaleValue = 20;
                 if (maxFieldSize*scaleValue < displayY) {
-                    BOUNDS.set(0, 0, maxFieldSize*scaleValue, displayY);
+                    bounds.set(0, 0, maxFieldSize*scaleValue, displayY);
                 } else if (maxFieldSize*scaleValue < displayX) {
-                    BOUNDS.set(0, 0, displayX, maxFieldSize*scaleValue);
+                    bounds.set(0, 0, displayX, maxFieldSize*scaleValue);
                 } else {
-                    BOUNDS.set(0, 0, maxFieldSize*scaleValue, maxFieldSize*scaleValue);
+                    bounds.set(0, 0, maxFieldSize*scaleValue, maxFieldSize*scaleValue);
                 }
                 scrollAble = true;
             } else {
-                BOUNDS.set(0, 0, displayX, displayY);
+                bounds.set(0, 0, displayX, displayY);
             }
         }
         
