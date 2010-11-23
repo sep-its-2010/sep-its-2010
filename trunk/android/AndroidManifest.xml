@@ -26,7 +26,8 @@
 		<activity android:name=".activity.Export"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
 </intent-filter>
 </activity>
-	</application>
+	<activity android:name=".activity.Statistics"></activity>
+</application>
 	<uses-sdk android:minSdkVersion="7" />
 
 
