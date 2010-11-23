@@ -88,7 +88,7 @@ void hal_i2c_writeRegister(
  * Reads the requested data from a given I2C slave.
  * 
  * \param _ui8SlaveAddress
- * Specifies the salve address
+ * Specifies the slave address.
  * 
  * \param _lpui8Data
  * Specifies the destination buffer.

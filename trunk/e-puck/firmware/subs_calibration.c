@@ -6,8 +6,9 @@
 
 #include "subs_calibration.h"
 
-bool isNotCalibrated;
-int l_buffer[3];						// saves calibration-values temporary
+boolean subs_calibration_isNotCalibrated = true;		///< The robot is not calibrated by default.
+uint16_t _EEDATA(2) calibrationValues[2][3] = {0};		///< 2-dimensional array in the EEPROM, which saves 3 line-calibration-values in dimension 1
+														///< and 3 surface-calibration-values in dimension 2 
 
 /*!
  * \brief
@@ -24,23 +25,18 @@ int l_buffer[3];						// saves calibration-values temporary
  * subs_calibrate_reset
  */
 bool subs_calibration_run( void) {
-	uint8_t selector = hal_sel_getPosition( void);
+	uint8_t selector = hal_sel_getPosition();
 
-	if( isNotCalibrated && (selector == 0)) {
-		char buffer[50];
+	if( subs_calibration_isNotCalibrated && (selector == 0)) {
 
 		//perform calibration
-			//sen_line_read etc
-		
-		// To declare an initialized array in data EEPROM without special alignment (C30 manual page 81)
-		int _EEDATA(2) calibrationValues[];
-		calibrationValues[0] = l_buffer[0];
-		calibrationValues[1] = l_buffer[1];
-		calibrationValues[2] = l_buffer[2];
+		sen_line_read( calibrationValues);
+		hal_motors_setSpeed( 500, 500);
+		sen_line_read( calibrationValues);
 
-		isNotCalibrated = false;
+		subs_calibration_isNotCalibrated = false;
 	}
-	return isNotCalibrated;
+	return subs_calibration_isNotCalibrated;
 }
 
 /*!
@@ -50,9 +46,5 @@ bool subs_calibration_run( void) {
  * Deletes all former calibration-data from the EEPROM.
  */
 void subs_calibration_reset( void) {
-		isNotCalibrated = true;
-
-		for( int i = 0; i < sizeof(l_buffer); i++) {
-			l_buffer[i] = 0;
-		}
+		subs_calibration_isNotCalibrated = true;
 }
