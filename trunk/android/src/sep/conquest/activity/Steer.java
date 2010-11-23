@@ -118,28 +118,6 @@ public class Steer extends Activity implements Observer {
 	}
 
 	/**
-	 * Sets the menu of the Activity.
-	 * 
-	 * @param menu
-	 *            Reference on menu that has to be set.
-	 */
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.steer_menu, menu);
-		return true;
-	}
-
-	/**
-	 * Handles selections of the menu of the Activity.
-	 * 
-	 * @param item
-	 *            The MenuItem that has been selected.
-	 */
-	public boolean onOptionsItemSelected(MenuItem item) {
-		return true;
-	}
-
-	/**
 	 * Called by an observed object when its state has changed to notify the
 	 * Activity.
 	 * 
@@ -255,7 +233,7 @@ public class Steer extends Activity implements Observer {
 
 				if (Math.abs(x) > 3 || Math.abs(y) > 2) {
 					if (acos < Math.PI / 4.0) {
-						// Action
+						
 					} else if (Math.PI / 4.0 < acos
 							&& acos <= 3.0 * Math.PI / 4.0 && y < 0) {
 						// Action
@@ -331,13 +309,19 @@ public class Steer extends Activity implements Observer {
 			int id = v.getId();
 
 			switch (id) {
+			
+			// Button 'Up' 
 			case R.id.btn_up:
+			  controller.forward(null);
 				break;
-			case R.id.btn_down:		
+			case R.id.btn_down:	
+			  controller.turn(null);
 				break;
 			case R.id.btn_left:
+	      controller.left(null);
 				break;
 			case R.id.btn_right:
+			  controller.right(null);
 				break;
 			}
 		}

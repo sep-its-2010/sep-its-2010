@@ -20,7 +20,7 @@
 		<activity android:name=".activity.Steer"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
 </intent-filter>
 </activity>
-		<activity android:name=".activity.Map"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
+		<activity android:name=".activity.Map" android:finishOnTaskLaunch="false" android:allowTaskReparenting="false" android:clearTaskOnLaunch="false" android:alwaysRetainTaskState="true"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
 </intent-filter>
 </activity>
 		<activity android:name=".activity.Export"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
