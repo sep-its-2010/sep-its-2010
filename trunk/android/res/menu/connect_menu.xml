@@ -3,4 +3,5 @@
 	<item android:title="@string/MNU_START" android:id="@+id/mnuStart"></item>
 	<item android:title="@string/MNU_SIMULATION" android:id="@+id/mnuSimulation"></item>
 <item android:title="@string/MNU_IMPORT" android:id="@+id/mnuImport"></item>
+<item android:id="@+id/mnuDebug" android:title="Debug"></item>
 </menu>
