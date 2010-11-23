@@ -7,6 +7,11 @@
 #include "com.h"
 
 
+enum {
+	BTM_MIN_FRAME_LEN = 7,
+	BTM_FRAME_DATA_LEN_OFFSET = 3
+};
+
 /*!
  * \brief
  * Holds the message handler slots.
@@ -94,14 +99,38 @@ void com_init( void) {
  */
 bool com_processIncoming( void) {
 
+	bool blHasMessage = false;
+
 	hal_uart1_forceRxMove();
-	com_SMessage_t podMessage;
-	const bool blHasMessage = ringbuf_getUsage( hal_uart1_getRxRingBuffer()) >= sizeof( podMessage);
+	com_EMessageType_t eType;
+	const uint16_t ui16RingBufSize = ringbuf_getUsage( hal_uart1_getRxRingBuffer());
+	if( ui16RingBufSize >= sizeof( eType)) {
+		ringbuf_getRange( hal_uart1_getRxRingBuffer(), &eType, 0, sizeof( eType));
+		switch( eType) {
+			case COM_MESSAGE_TYPE__BTM_REPLY:
+			case COM_MESSAGE_TYPE__BTM_INDICATION:
+			case COM_MESSAGE_TYPE__BTM_RESPONSE:
+			case COM_MESSAGE_TYPE__BTM_REQUEST: {
+				if( ui16RingBufSize >= BTM_MIN_FRAME_LEN) {
+					uint16_t ui16DataLen = 0;
+					ringbuf_getRange( hal_uart1_getRxRingBuffer(), &ui16DataLen, BTM_FRAME_DATA_LEN_OFFSET, sizeof( ui16DataLen));
+					if( ui16RingBufSize >= ui16DataLen + BTM_MIN_FRAME_LEN) {
 
-	if( blHasMessage) {
-		hal_uart1_read( &podMessage, sizeof( podMessage));
+						// TODO: analyze
+						ringbuf_drop( hal_uart1_getRxRingBuffer(), ui16DataLen + BTM_MIN_FRAME_LEN);
+					}
+				}
+				break;
+			}
+			default: {
+				com_SMessage_t podMessage;
+				if( ui16RingBufSize >= sizeof( podMessage)) {
+					hal_uart1_read( &podMessage, sizeof( podMessage));
 
-		// TODO: action
+					// TODO: process
+				}
+			}
+		}
 	}
 
 	return blHasMessage;

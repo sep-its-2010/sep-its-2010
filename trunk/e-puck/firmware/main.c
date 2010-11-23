@@ -19,7 +19,7 @@ int main( void) {
 
 	subs_init();
 	subs_register( subs_abyss_run, NULL, 0xFF);
-	subs_register( subs_calibrate_run, subs_calibrate_reset, 0xEF);
+	subs_register( subs_calibration_run, subs_calibration_reset, 0xEF);
 	subs_register( subs_collision_run, subs_collision_reset, 0xDF);
 	subs_register( subs_movement_run, subs_movement_reset, 0xCF);
 	subs_register( subs_movement_run, subs_movement_reset, 0xBF);
