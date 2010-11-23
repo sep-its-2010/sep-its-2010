@@ -36,15 +36,17 @@ public class Map extends Activity{
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        
+        /**
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int x = metrics.widthPixels;
         int y = metrics.heightPixels;
-        
-        Spinner ePuckSelect = new Spinner(this);
+        */
         
         setContentView(R.layout.map_main); 
+        
+        //Spinner ePuckSelect = (Spinner) findViewById(R.id.epuck_selector);
+        
     }
     
     /**
@@ -55,7 +57,7 @@ public class Map extends Activity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        MapMode mode = (MapMode) getIntent().getSerializableExtra(null);
+        MapMode mode = (MapMode) getIntent().getSerializableExtra(MapMode.class.toString());
         
         switch(mode) {
         case EXPLORATION: inflater.inflate(R.menu.map_exp_menu, menu); break;

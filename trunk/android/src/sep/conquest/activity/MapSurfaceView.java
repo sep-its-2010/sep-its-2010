@@ -158,7 +158,6 @@ public class MapSurfaceView extends SurfaceView
     public void surfaceCreated(SurfaceHolder holder) {
         thread = new DrawThread();
         thread.start();
-
     }
 
     /**
@@ -314,6 +313,7 @@ public class MapSurfaceView extends SurfaceView
             Matrix m = new Matrix();
             m.setTranslate(currentOffsetX, currentOffsetY);
             c.setMatrix(m);
+            //hier die Skalierung mit c.scale einfügen.
             
             // Sample drawing
             paint.setColor(0xff000000);
