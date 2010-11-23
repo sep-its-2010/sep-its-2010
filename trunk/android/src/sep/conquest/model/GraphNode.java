@@ -18,25 +18,25 @@ public class GraphNode extends MapNode {
 	 * This constant exists for the access to the attribute neighbours. Position
 	 * 0 represents the left neighbour.
 	 */
-	public static final int LEFTNEIGHBOUR = 0;
+	public final int LEFTNEIGHBOUR = 0;
 	
 	/**
 	 * This constant exists for the access to the attribute neighbours. Position
 	 * 1 represents the right neighbour.
 	 */
-	public static final int RIGHTNEIGHBOUR = 1;
+	public final int RIGHTNEIGHBOUR = 1;
 	
 	/**
 	 * This constant exists for the access to the attribute neighbours. Position
 	 * 2 represents the lower neighbour.
 	 */
-	public static final int BOTTOMNEIGHBOUR = 2;
+	public  final int BOTTOMNEIGHBOUR = 2;
 	
 	/**
 	 * This constant exists for the access to the attribute neighbours. Position
 	 * 3 represents the upper neighbour.
 	 */
-	public static final int TOPNEIGHBOUR = 3;
+	public final int TOPNEIGHBOUR = 3;
 	
 	/**
 	 * Saves the references on the direct neighbours of the node in an array.
