@@ -63,4 +63,8 @@ public class GraphNode extends MapNode {
 	public MapNode[] getNeighbours(){
 	 return this.neighbours;
 	}
+	
+	public void setNeighbours(int index, GraphNode neighbour){
+		this.neighbours[index] = neighbour;
+	}
 }
