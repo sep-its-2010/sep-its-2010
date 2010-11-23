@@ -1,5 +1,7 @@
 package sep.conquest.model;
 
+import java.util.UUID;
+
 /**
  * Handles PuckCollison messages coming from the Bluetooth Adapter.
  * 
@@ -28,11 +30,12 @@ public class PuckCollisionHandler extends Handler {
    * call handleRequest of next handler. If next handler is null return
    * false.
    * 
+   * @param sender The sender of the request message.
    * @param request The request to handle.
    * @return True, if request was handled, false otherwise.
    */
   @Override
-  public boolean handleRequest(IRequest request) {
+  public boolean handleRequest(UUID sender, IRequest request) {
     // TODO Auto-generated method stub
     return false;
   }

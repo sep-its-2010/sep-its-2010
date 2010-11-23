@@ -29,20 +29,21 @@ public abstract class Behaviour implements IBehaviour {
 	private static TreeMap <State, IBehaviour> entryBehaviours;    
     
     /**
-     * The constructor sets the reference to the next Behaviour in the chain
+     * The constructor sets the reference to the previous Behaviour in the chain
      * as well as its state-level. If this is the first entry for a specific
      * state level, this Behaviour will set as the agent for it. 
      * 
 	 * @param stateLevel The corresponding state-level.
-     * @param next The reference to the next Behaviour.
+     * @param prev The reference to the previous Behaviour.
      */
-    protected Behaviour(State stateLevel, IBehaviour next) {
+    protected Behaviour(State stateLevel, IBehaviour prev) {
     	if (!entryBehaviours.containsKey(stateLevel)) {
     		entryBehaviours.put(stateLevel, this);
-    	}
-    	
+    	}    	
     	this.stateLevel = stateLevel;
-        nextBehaviour = next;
+    	if (prev != null) {
+    		prev.setNextBehaviour(this);
+    	}
     }
     
     /**
@@ -64,6 +65,13 @@ public abstract class Behaviour implements IBehaviour {
     public static IBehaviour getFirstBehaviour(State stateLevel) {
     	return entryBehaviours.get(stateLevel);
     }
+
+    /* (non-Javadoc)
+     * @see sep.conquest.model.IBehaviour#setNextBehaviour(sep.conquest.model.IBehaviour)
+     */
+    public void setNextBehaviour(IBehaviour next) {
+    	nextBehaviour = next;
+    }    
     
     /* (non-Javadoc)
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)

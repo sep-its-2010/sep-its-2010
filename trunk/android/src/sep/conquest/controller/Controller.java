@@ -30,7 +30,9 @@ public class Controller {
      * The private constructor to realize the singleton pattern. It also binds
      * the reference to the environment (<code>Model</code>). 
      */
-    private Controller(){ }
+    private Controller(){
+    	environment = Environment.getInstance();
+    }
     
     /**
      * The getInstance method returns the singleton object of the Controller

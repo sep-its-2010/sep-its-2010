@@ -3,6 +3,8 @@ package sep.conquest.model;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Represents an abstract Puck robot.
@@ -15,7 +17,7 @@ public abstract class Puck implements IComClient {
   /**
    * Global unique id.
    */
-  private UUID ID;
+  private UUID id;
 
   /**
    * Local map.
@@ -31,33 +33,48 @@ public abstract class Puck implements IComClient {
    * Executes logic and behaviour.
    */
   private Thread logicThread;
+  
+  /**
+  * The thread executor for the logic-thread.
+  */
+  private ExecutorService executor;
 
   /**
    * First Handler to handle broadcast messages.
    */
-  private Handler firstBCHandler;
+   private Handler firstBCHandler;
 
   /**
    * Constructor initializing ID, local map, own state, logic thread and
    * broadcast message Handler.
    * 
-   * @param ID The unique universally id of the Puck.
+   * @param id The unique universally id of the Puck.
    */
-  public Puck(UUID ID) {
+  public Puck(UUID id) {
     
     // Set ID.
-    this.ID = ID;
+    this.id = id;
 
     // Initialize map.
     map = new GridMap();
     
     // Initialize state map and add own initial state 'Localizing'.
     states = new TreeMap<UUID, RobotStatus>();
-    //RobotStatus ownState = new RobotStatus();
-    //states.put(ID, ownState);
+    states.put(id, new RobotStatus());
     
-    // firstBCHandler = new PositionUpdateHandler();
+    // start the logic thread
+    executor = Executors.newSingleThreadExecutor();
+    executor.execute(new LogicThread(this));
   }
+  
+  /**
+   * Returns the state-map of the robots.
+   * 
+   * @return The map of robot-states.
+   */
+   public Map<UUID, RobotStatus> getRobotStatus() {
+	  return states;
+   }
   
   /**
    * The method delivers a message from a specific sender.
@@ -69,9 +86,12 @@ public abstract class Puck implements IComClient {
 	  
   }
   
+  /* (non-Javadoc)
+  * @see sep.conquest.model.IComClient#getID()
+  */
   public UUID getID() {
-		return this.ID;
-	}
+	  return this.id;
+  }
   
   /**
    * This method sends a message in form of a byte-array via socket.

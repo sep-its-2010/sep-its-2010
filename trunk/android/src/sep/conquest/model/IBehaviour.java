@@ -21,4 +21,11 @@ public interface IBehaviour {
      * @return The map with new values.
      */
     Map<int[], GridMap> execute(Map<int[], GridMap> map);    
+    
+    /**
+     * Sets the following Behaviour.
+     * 
+     * @param next The next Behaviour.
+     */
+     void setNextBehaviour(IBehaviour next);   
 }

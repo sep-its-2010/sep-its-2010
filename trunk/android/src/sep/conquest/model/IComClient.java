@@ -16,7 +16,7 @@ public interface IComClient {
      * @param sender The sender of the broadcast message.
      * @param request The message which has to be delivered.
      */
-    void deliver(IComClient sender, IRequest request);
+    void deliver(UUID sender, IRequest request);
     
     /**
      * Returns the id of the client.
