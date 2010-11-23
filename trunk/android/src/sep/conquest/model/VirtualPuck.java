@@ -47,4 +47,12 @@ public class VirtualPuck extends Puck {
 	public byte[] readSocket(){
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see sep.conquest.model.IComClient#deliver(java.util.UUID, sep.conquest.model.IRequest)
+	 */
+	public void deliver(UUID sender, IRequest request) {
+		// TODO Auto-generated method stub
+		
+	}
 }
