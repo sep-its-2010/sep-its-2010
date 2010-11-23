@@ -6,7 +6,7 @@
           android:icon="@drawable/mnu_control"
           android:title="@string/MNU_CONTROL" />
           
-    <item android:id="@+id/mnuStatistic"
+    <item android:id="@+id/mnuStatistics"
           android:icon="@drawable/mnu_statistics"
           android:title="@string/MNU_STATISTICS" />
           

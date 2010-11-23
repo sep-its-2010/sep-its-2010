@@ -2,7 +2,7 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/mnuStatistic"
+    <item android:id="@+id/mnuStatistics"
           android:icon="@drawable/mnu_statistics"
           android:title="@string/MNU_STATISTICS" />
 
