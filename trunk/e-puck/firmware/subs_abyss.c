@@ -17,7 +17,15 @@
  */
 bool subs_abyss_run( void) {
 	bool abyssDetected = false;
-	
+	sen_line_SData_t podSensorData;
+	sen_line_SData_t* _lppodSensorData = &podSensorData;
+	sen_line_read( _lppodSensorData);
 
-	return false;
+	if( podSensorData.aui16Data[1] < 75) {
+		hal_motors_setSpeed(0, 0);
+		abyssDetected = true;
+		// sendMessage "Obacht!!"
+	}
+
+	return abyssDetected;
 }
