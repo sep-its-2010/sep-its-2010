@@ -1,6 +1,9 @@
-package sep.conquest.model;
+package sep.conquest.model.handler;
 
 import java.util.UUID;
+
+import sep.conquest.model.IRequest;
+import sep.conquest.model.LogicThread;
 
 /**
  * Handles StatusUpdateRequest messages.
@@ -8,19 +11,13 @@ import java.util.UUID;
  * @author Andreas Poxrucker
  *
  */
-public class StatusUpdateRequestHandler extends Handler {
-
-  /**
-   * The LogicThread that executes the content.
-   */
-  private LogicThread executor;
+public class EnvStatusUpdateRequestHandler extends Handler {
   
   /**
    * Constructor calling constructor of super class.
    */
-  public StatusUpdateRequestHandler(LogicThread exec) {
-    super();
-    executor = exec;
+  public EnvStatusUpdateRequestHandler(Handler prev) {
+    super(prev);
   }
   
   /**
@@ -40,3 +37,5 @@ public class StatusUpdateRequestHandler extends Handler {
   }
 
 }
+
+

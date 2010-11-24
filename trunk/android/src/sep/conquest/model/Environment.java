@@ -4,6 +4,12 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.UUID;
 
+import sep.conquest.model.handler.Handler;
+import sep.conquest.model.handler.HandlerFactory;
+import sep.conquest.model.requests.ControlledRequest;
+import sep.conquest.model.requests.DriveRequest;
+import sep.conquest.model.requests.SpeedRequest;
+
 /**
  * The class Environment represents the model corresponding to the Model-View-
  * Controller-pattern. It is used as interface between robots and the graphical

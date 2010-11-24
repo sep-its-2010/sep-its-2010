@@ -1,14 +1,17 @@
-package sep.conquest.model;
+package sep.conquest.model.handler;
 
 import java.util.UUID;
 
+import sep.conquest.model.IRequest;
+import sep.conquest.model.LogicThread;
+
 /**
- * Handles PuckNodeHit messages coming from the Bluetooth Adapter.
+ * Handles StatusUpdateRequest messages.
  * 
  * @author Andreas Poxrucker
  *
  */
-public class PuckNodeHitHandler extends Handler {
+public class StatusUpdateRequestHandler extends Handler {
 
   /**
    * The LogicThread that executes the content.
@@ -18,13 +21,13 @@ public class PuckNodeHitHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public PuckNodeHitHandler(LogicThread exec) {
-    super();
+  public StatusUpdateRequestHandler(Handler prev, LogicThread exec) {
+    super(prev);
     executor = exec;
   }
   
   /**
-   * Handles PuckNodeHit messages.
+   * Handles StatusUpdateRequest messages.
    * 
    * Returns true, if request was handled. If class is not responsible,
    * call handleRequest of next handler. If next handler is null return
@@ -40,3 +43,5 @@ public class PuckNodeHitHandler extends Handler {
   }
 
 }
+
+

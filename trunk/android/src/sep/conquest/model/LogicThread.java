@@ -1,6 +1,5 @@
 package sep.conquest.model;
 
-import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -8,6 +7,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import sep.conquest.model.handler.Handler;
+import sep.conquest.model.handler.HandlerFactory;
+import sep.conquest.model.requests.PuckRequest;
 import sep.conquest.util.ConquestLog;
 
 /**
@@ -112,6 +114,15 @@ public class LogicThread implements Runnable {
 	 */
 	private RobotStatus getRobotState() {
 		return robot.getRobotStatus().get(robot.getID());
+	}
+	
+	/**
+	 * Returns the robot of the logic thread.
+	 * 
+	 * @return The Puck.
+	 */
+	public Puck getRobot() {
+		return robot;
 	}
 
 	/**

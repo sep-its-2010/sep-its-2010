@@ -1,16 +1,17 @@
-package sep.conquest.model;
+package sep.conquest.model.handler;
 
 import java.util.UUID;
 
-import sep.conquest.model.handler.Handler;
+import sep.conquest.model.IRequest;
+import sep.conquest.model.LogicThread;
 
 /**
- * Handles PuckOK messages coming from the Bluetooth Adapter.
+ * Handles SpeedRequest messages.
  * 
  * @author Andreas Poxrucker
  *
  */
-public class PuckOkHandler extends Handler {
+public class SpeedRequestHandler extends Handler {
 
   /**
    * The LogicThread that executes the content.
@@ -20,18 +21,19 @@ public class PuckOkHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public PuckOkHandler(Handler prev, LogicThread exec) {
+  public SpeedRequestHandler(Handler prev, LogicThread exec) {
     super(prev);
     executor = exec;
   }
   
   /**
-   * Handles PuckOk messages.
+   * Handles SpeedRequest messages.
    * 
    * Returns true, if request was handled. If class is not responsible,
    * call handleRequest of next handler. If next handler is null return
    * false.
    * 
+   * @param sender The sender of the request message.
    * @param request The request to handle.
    * @return True, if request was handled, false otherwise.
    */
@@ -40,5 +42,4 @@ public class PuckOkHandler extends Handler {
     // TODO Auto-generated method stub
     return false;
   }
-
 }

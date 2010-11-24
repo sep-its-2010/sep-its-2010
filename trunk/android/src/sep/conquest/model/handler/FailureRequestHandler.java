@@ -1,14 +1,17 @@
-package sep.conquest.model;
+package sep.conquest.model.handler;
 
 import java.util.UUID;
 
+import sep.conquest.model.IRequest;
+import sep.conquest.model.LogicThread;
+
 /**
- * Handles SpeedRequest messages.
+ * Handles FailureRequest messages.
  * 
  * @author Andreas Poxrucker
  *
  */
-public class ControlledRequestHandler extends Handler {
+public class FailureRequestHandler extends Handler {
 
   /**
    * The LogicThread that executes the content.
@@ -18,13 +21,13 @@ public class ControlledRequestHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public ControlledRequestHandler(LogicThread exec) {
-    super();
+  public FailureRequestHandler(Handler prev, LogicThread exec) {
+    super(prev);
     executor = exec;
   }
   
   /**
-   * Handles ControlledRequest messages.
+   * Handles FailureRequest messages.
    * 
    * Returns true, if request was handled. If class is not responsible,
    * call handleRequest of next handler. If next handler is null return
@@ -38,4 +41,5 @@ public class ControlledRequestHandler extends Handler {
     // TODO Auto-generated method stub
     return false;
   }
+
 }

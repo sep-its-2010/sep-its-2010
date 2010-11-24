@@ -1,14 +1,17 @@
-package sep.conquest.model;
+package sep.conquest.model.handler;
 
 import java.util.UUID;
 
+import sep.conquest.model.IRequest;
+import sep.conquest.model.LogicThread;
+
 /**
- * Handles IntentRequest messages.
+ * Handles request messages from the bluetooth Adapter.
  * 
- * @author Andreas Poxrucker
+ * @author Andreas Wilhelm
  *
  */
-public class IntentRequestHandler extends Handler {
+public class PuckRequestHandler extends Handler {
 
   /**
    * The LogicThread that executes the content.
@@ -18,13 +21,13 @@ public class IntentRequestHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public IntentRequestHandler(LogicThread exec) {
-    super();
+  public PuckRequestHandler(Handler prev, LogicThread exec) {
+    super(prev);
     executor = exec;
   }
   
   /**
-   * Handles IntentRequest messages.
+   * Handles request messages from the puck.
    * 
    * Returns true, if request was handled. If class is not responsible,
    * call handleRequest of next handler. If next handler is null return

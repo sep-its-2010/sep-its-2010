@@ -1,14 +1,17 @@
-package sep.conquest.model;
+package sep.conquest.model.handler;
 
 import java.util.UUID;
 
+import sep.conquest.model.IRequest;
+import sep.conquest.model.LogicThread;
+
 /**
- * Handles DriveRequest messages.
+ * Handles PuckNodeHit messages coming from the Bluetooth Adapter.
  * 
  * @author Andreas Poxrucker
  *
  */
-public class HelloRequestHandler extends Handler {
+public class PuckNodeHitHandler extends Handler {
 
   /**
    * The LogicThread that executes the content.
@@ -18,13 +21,13 @@ public class HelloRequestHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public HelloRequestHandler(LogicThread exec) {
-    super();
+  public PuckNodeHitHandler(Handler prev, LogicThread exec) {
+    super(prev);
     executor = exec;
   }
   
   /**
-   * Handles HelloRequest messages.
+   * Handles PuckNodeHit messages.
    * 
    * Returns true, if request was handled. If class is not responsible,
    * call handleRequest of next handler. If next handler is null return

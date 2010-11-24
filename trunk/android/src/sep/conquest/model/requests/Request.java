@@ -1,6 +1,8 @@
-package sep.conquest.model;
+package sep.conquest.model.requests;
 
 import java.util.UUID;
+
+import sep.conquest.model.IRequest;
 
 /**
  * The class has to be used by request classes, which are needed for the

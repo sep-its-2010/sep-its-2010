@@ -1,6 +1,9 @@
-package sep.conquest.model;
+package sep.conquest.model.requests;
 
 import java.util.UUID;
+
+import sep.conquest.model.FailureType;
+import sep.conquest.model.MessageType;
 
 
 /**

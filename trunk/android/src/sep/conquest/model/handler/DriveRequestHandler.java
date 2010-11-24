@@ -1,6 +1,9 @@
-package sep.conquest.model;
+package sep.conquest.model.handler;
 
 import java.util.UUID;
+
+import sep.conquest.model.IRequest;
+import sep.conquest.model.LogicThread;
 
 /**
  * Handles DriveRequest messages.
@@ -18,8 +21,8 @@ public class DriveRequestHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public DriveRequestHandler(LogicThread exec) {
-    super();
+  public DriveRequestHandler(Handler prev, LogicThread exec) {
+    super(prev);
     executor = exec;
   }
   

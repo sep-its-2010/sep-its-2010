@@ -1,14 +1,17 @@
-package sep.conquest.model;
+package sep.conquest.model.handler;
 
 import java.util.UUID;
 
+import sep.conquest.model.IRequest;
+import sep.conquest.model.LogicThread;
+
 /**
- * Handles FailureRequest messages.
+ * Handles PuckAbyss messages coming from the Bluetooth Adapter.
  * 
  * @author Andreas Poxrucker
  *
  */
-public class FailureRequestHandler extends Handler {
+public class PuckAbyssHandler extends Handler {
 
   /**
    * The LogicThread that executes the content.
@@ -18,13 +21,13 @@ public class FailureRequestHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public FailureRequestHandler(LogicThread exec) {
-    super();
+  public PuckAbyssHandler(Handler prev, LogicThread exec) {
+    super(prev);
     executor = exec;
   }
   
   /**
-   * Handles FailureRequest messages.
+   * Handles PuckAbyss messages.
    * 
    * Returns true, if request was handled. If class is not responsible,
    * call handleRequest of next handler. If next handler is null return
