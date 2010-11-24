@@ -1,5 +1,7 @@
 package sep.conquest.activity;
 
+import java.util.LinkedList;
+
 import sep.conquest.R;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -12,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 
@@ -38,7 +41,14 @@ public class Map extends Activity{
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         setContentView(R.layout.map_main);         
+        
+        MapSurfaceView msv = (MapSurfaceView) findViewById(R.id.map_view);
+        LinkedList<EpuckPosition> epp = msv.getEpuckPositions();
+        
         Spinner ePuckSelect = (Spinner) findViewById(R.id.epuck_selector);
+        //ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, epp);
+        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //ePuckSelect.setAdapter(adapter);
     }
     
     /**
