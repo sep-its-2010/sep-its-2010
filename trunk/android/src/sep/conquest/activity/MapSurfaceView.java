@@ -6,6 +6,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import sep.conquest.R;
+import sep.conquest.model.MapNode;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -101,6 +102,8 @@ public class MapSurfaceView extends SurfaceView
      * an ideal display design.
      */
     private int scaleValue = STARTVALUE;
+    
+    private float scaleFactor;
 
     /**
      * This value is initially set to false and is activated when scallValue
@@ -160,7 +163,8 @@ public class MapSurfaceView extends SurfaceView
         thread = new DrawThread();
         thread.start();
         positions = new LinkedList<EpuckPosition>();
-        positions.add(new EpuckPosition(2, 2, 1224));
+        positions.add(new EpuckPosition(3, 3, 1224));
+        positions.add(new EpuckPosition(10, 10, 1225));
         //for testing only
     }
 
@@ -206,6 +210,20 @@ public class MapSurfaceView extends SurfaceView
 		if(event.getAction() == MotionEvent.ACTION_DOWN){
 			// Track starting point
 			downTouchPoint = new PointF(event.getX(), event.getY());
+			//check e-puck positions
+			if (positions != null) {
+				Iterator it = positions.iterator();
+				while(it.hasNext()) {
+					EpuckPosition e = (EpuckPosition) it.next();
+					int xCoord = (int) (((e.getX()+1)*scaleValue) + currentOffsetX);
+					int yCoord = (int) (((e.getY()+1)*scaleValue) + currentOffsetY);
+					int test = (int) event.getX();
+					int test2 = (int) event.getY();
+					if (Math.abs(xCoord-test) < 40 && Math.abs(yCoord-test2) < 40) {
+						int ha = e.getID();
+					}
+				}
+			}
 			
 		} else if(event.getAction() == MotionEvent.ACTION_UP){
 			// Clear starting point
@@ -327,14 +345,17 @@ public class MapSurfaceView extends SurfaceView
             //draw shapes and visited rectangles
             paint.setColor(0xff00ff00);
 
-            
+            Iterator<MapNode> it = map.iterator();
+            //switch()
+            /**
             for (int k = 0; k < testY; k++) {
             	for (int l = 0; l < testX; l++) {
             		drawCross(c, l*scaleValue, k*scaleValue);
             	}
             }
-            drawEpuck(c, 3*(scaleValue/2), 3*(scaleValue/2));
-            
+            */
+            drawEpuck(c, 3, 3);
+            drawEpuck(c, 10, 10);
             getHolder().unlockCanvasAndPost(c);
         }
 
@@ -542,9 +563,9 @@ public class MapSurfaceView extends SurfaceView
          */
         public void drawEpuck(Canvas c, int x, int y) {
             paint.setColor(0xffcccccc);
-            c.drawCircle(x, y, (scaleValue/2), paint);
+            c.drawCircle(((x*scaleValue)+(scaleValue/2)), ((y*scaleValue)+(scaleValue/2)), (scaleValue/2), paint);
             paint.setColor(0xff0000ff);
-            c.drawCircle(x, y, (scaleValue/4), paint);
+            c.drawCircle(((x*scaleValue)+(scaleValue/2)), ((y*scaleValue)+(scaleValue/2)), (scaleValue/4), paint);
         }
         
         /**
@@ -578,29 +599,29 @@ public class MapSurfaceView extends SurfaceView
 		if (xSize > displayX && ySize < displayY) {
 			float newX = (float) displayX/xSize;
 			if (newX < 0.4f) {
-				scaleValue = 40;
 				scrollAble = true;
 				bounds.set(0, 0, xSize, ySize);
 			} else {
 				c.scale(newX, newX);
+				scaleFactor = newX;
 			}
 		} else if (ySize > displayY && xSize < displayX) {
 			float newY = (float) displayY/ySize;
 			if (newY < 0.4f) {
-				scaleValue = 40;
 				scrollAble = true;
 			} else {
 				c.scale(newY, newY);
+				scaleFactor = newY;
 			}
 		} else if (ySize > displayY && xSize > displayX) {
 			float newX = (float) displayX/xSize;
 			float newY = (float) displayY/ySize;
 			float newSize = Math.min(newX, newY);
 			if (newSize < 0.4f) {
-				scaleValue = 40;
 				scrollAble = true;
 			} else {
 				c.scale(newSize, newSize);
+				scaleFactor = newSize;
 			}
 		}
         
