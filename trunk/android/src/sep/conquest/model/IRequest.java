@@ -2,6 +2,8 @@ package sep.conquest.model;
 
 import java.util.UUID;
 
+import sep.conquest.model.requests.MessageType;
+
 /**
  * The IRequest-interface determines, that every request-object must implement
  * the getKind-method to identify the request-type.

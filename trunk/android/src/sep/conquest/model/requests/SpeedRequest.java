@@ -2,7 +2,6 @@ package sep.conquest.model.requests;
 
 import java.util.UUID;
 
-import sep.conquest.model.MessageType;
 import sep.conquest.model.SpeedLevel;
 
 

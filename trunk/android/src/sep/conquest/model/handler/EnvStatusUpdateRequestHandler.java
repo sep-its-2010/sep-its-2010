@@ -1,9 +1,10 @@
 package sep.conquest.model.handler;
 
-import java.util.UUID;
-
+import sep.conquest.model.Environment;
 import sep.conquest.model.IRequest;
-import sep.conquest.model.LogicThread;
+import sep.conquest.model.RobotStatus;
+import sep.conquest.model.requests.MessageType;
+import sep.conquest.model.requests.StatusUpdateRequest;
 
 /**
  * Handles StatusUpdateRequest messages.
@@ -32,8 +33,14 @@ public class EnvStatusUpdateRequestHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-    // TODO Auto-generated method stub
-    return false;
+    if (request.getKind() != MessageType.STATUS_UPDATE)
+    	return super.handleRequest(request);
+    else {
+    	Environment env = Environment.getInstance();
+    	RobotStatus status = ((StatusUpdateRequest) request).getStatus();
+    	env.getStatus().setRobotStatus(request.getSender(), status);
+    	return true;
+    }
   }
 
 }

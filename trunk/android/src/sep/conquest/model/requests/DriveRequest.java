@@ -3,7 +3,6 @@ package sep.conquest.model.requests;
 import java.util.UUID;
 
 import sep.conquest.model.Drive;
-import sep.conquest.model.MessageType;
 
 
 /**

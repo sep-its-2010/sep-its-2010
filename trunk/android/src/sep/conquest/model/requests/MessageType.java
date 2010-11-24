@@ -1,4 +1,4 @@
-package sep.conquest.model;
+package sep.conquest.model.requests;
 
 /**
  * The enumeration for message-types of the broadcast-communication.

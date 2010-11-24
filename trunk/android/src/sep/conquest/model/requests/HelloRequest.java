@@ -1,6 +1,5 @@
 package sep.conquest.model.requests;
 
-import sep.conquest.model.MessageType;
 
 /**
  * The HelloRequest represents message objects that are sent by 

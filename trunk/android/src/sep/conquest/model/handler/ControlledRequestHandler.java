@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
-import sep.conquest.model.MessageType;
+import sep.conquest.model.requests.MessageType;
 
 /**
  * Handles ControlledRequest messages.
