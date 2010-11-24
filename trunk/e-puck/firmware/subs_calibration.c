@@ -1,3 +1,5 @@
+#include <p30f6014A.h>
+#include "stdio.h"
 #include "hal_motors.h"
 #include "hal_sel.h"
 #include "hal_led.h"
@@ -5,11 +7,10 @@
 
 #include "subs_calibration.h"
 
-//#define _EEDATA(N) __attribute__((section(".eedata,r"),aligned(N)))
-
 bool subs_calibration_isNotCalibrated = true;			///< The robot is not calibrated by default.
 uint16_t _EEDATA(2) aui16LineCalibrationValues[3];		///< Stores calibration-values for line-detection
 uint16_t _EEDATA(2) aui16SurfaceCalibrationValues[3];	///< Stores calibration-values for line-detection
+//uint16_t _EEDATA(2) aui16CalibrationData[2][3];
 
 /*!
  * \brief
@@ -60,4 +61,24 @@ bool subs_calibration_run( void) {
  */
 void subs_calibration_reset( void) {
 		subs_calibration_isNotCalibrated = true;
+}
+
+/*!
+ * \brief
+ * Write the given data into the EEPROM.
+ * 
+ * \param _ui16Value
+ * Specifies the data which will be stored in the EEPROM.
+ * 
+ * \param _aui16EEPROM
+ * Specifies the destination buffer.
+ * 
+ * Saves the given value in the EEPROM permanently. These data will not be lost after resets or power-offs.
+ */
+void writeToEEPROM( 
+			IN const uint16_t _ui16Value,
+			OUT uint16_t* const _lpui16EEPROM
+			) {
+	uint16_t* lpui16EEPROMWritePointer;
+	// Sry Moadl i hab keine Ahnung x.x ...
 }
