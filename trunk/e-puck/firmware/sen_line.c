@@ -24,9 +24,10 @@ enum {
 void sen_line_read(
 	OUT sen_line_SData_t* const _lppodData
 	) {
+		
 		// reads 2 Bytes of data from each ground-sensor
         for( uint8_t i = 0; i < 3; i++) {
-			hal_i2c_read( SENSOR_I2C_ADDRESS, _lppodData, 2);
+			hal_i2c_read( SENSOR_I2C_ADDRESS, _lppodData->aui16Data[i], 2);
 			// TODO Reihenfolge der Bytes überprüfen
         }
 }

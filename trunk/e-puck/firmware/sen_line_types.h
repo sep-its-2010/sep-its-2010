@@ -18,7 +18,7 @@ enum {
  * sen_line_read | SEN_LINE_LEFT_SENSOR | SEN_LINE_RIGHT_SENSOR | SEN_LINE_MIDDLE_SENSOR
  */
 typedef struct {
-	uint16_t aui8Data[SEN_LINE_SENSORS]; ///< Holds the values of the left, middle and right sensor.
+	uint16_t aui16Data[SEN_LINE_SENSORS]; ///< Holds the values of the left, middle and right sensor.
 } sen_line_SData_t;
 
 #endif // sen_line_types_h__

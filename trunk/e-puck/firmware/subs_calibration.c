@@ -5,9 +5,11 @@
 
 #include "subs_calibration.h"
 
-bool subs_calibration_isNotCalibrated = true;		///< The robot is not calibrated by default.
-//uint16_t _EEDATA(2) calibrationValues[2][3] = {0};		///< 2-dimensional array in the EEPROM, which saves 3 line-calibration-values in dimension 1
-														///< and 3 surface-calibration-values in dimension 2 
+//#define _EEDATA(N) __attribute__((section(".eedata,r"),aligned(N)))
+
+bool subs_calibration_isNotCalibrated = true;			///< The robot is not calibrated by default.
+uint16_t _EEDATA(2) aui16LineCalibrationValues[3];		///< Stores calibration-values for line-detection
+uint16_t _EEDATA(2) aui16SurfaceCalibrationValues[3];	///< Stores calibration-values for line-detection
 
 /*!
  * \brief
@@ -29,10 +31,22 @@ bool subs_calibration_run( void) {
 	if( subs_calibration_isNotCalibrated && (selector == 0)) {
 
 		//perform calibration
-//		sen_line_read( calibrationValues);
-		hal_motors_setSpeed( 500, 500);
-//		sen_line_read( calibrationValues);
+		sen_line_SData_t podLineValueBuffer;
+		sen_line_SData_t podSurfaceValueBuffer;
+		sen_line_SData_t* _lppodLineValues = &podLineValueBuffer;
+		sen_line_SData_t* _lppodSurfaceValues = &podSurfaceValueBuffer;
+		sen_line_read( _lppodLineValues);
+		hal_motors_setSpeed( 800, 800);
+		sen_line_read( _lppodSurfaceValues);
 
+		// copy values from buffer to EEPROM
+		for( uint8_t i = 0; sizeof( podLineValueBuffer.aui16Data); i++) {
+			aui16LineCalibrationValues[i] = podLineValueBuffer.aui16Data[i];
+		}
+
+		for( uint8_t i = 0; sizeof( podSurfaceValueBuffer.aui16Data); i++) {
+			aui16SurfaceCalibrationValues[i] = podSurfaceValueBuffer.aui16Data[i];
+		}
 		subs_calibration_isNotCalibrated = false;
 	}
 	return subs_calibration_isNotCalibrated;
