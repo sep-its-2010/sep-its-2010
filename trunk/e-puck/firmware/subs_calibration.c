@@ -2,7 +2,6 @@
 #include "hal_sel.h"
 #include "hal_led.h"
 #include "sen_line.h"
-//#define _EEDATA(N) __attribute__((section(".eedata,r"),aligned(N)))
 
 #include "subs_calibration.h"
 
