@@ -1,4 +1,10 @@
 package sep.conquest.model;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  * The class GraphNode inherits of the class MapNode and saves additionally
@@ -7,7 +13,7 @@ package sep.conquest.model;
  * 
  * @author Florian Lorenz
  */
-public class GraphNode extends MapNode {
+public class GraphNode extends MapNode implements Serializable {
 	
 	/**
 	 * An unique serialVersionUID to identify the class.
@@ -41,7 +47,7 @@ public class GraphNode extends MapNode {
 	/**
 	 * Saves the references on the direct neighbours of the node in an array.
 	 */
-	private MapNode[] neighbours = new MapNode[4];
+	private GraphNode[] neighbours = new GraphNode[4];
 	
 	/**
 	 * Constructor creates an instance of the GraphNode and needs the 
@@ -60,11 +66,39 @@ public class GraphNode extends MapNode {
 	 * 
 	 * @return The attribute neighbours.
 	 */
-	public MapNode[] getNeighbours(){
+	public GraphNode[] getNeighbours(){
 	 return this.neighbours;
 	}
 	
+	/**
+	 * Sets the neighbours in the attribute neighbours
+	 * 
+	 * @param index The Position of the neighbour
+	 * @param neighbour The reference to the neighbour
+	 */
 	public void setNeighbours(int index, GraphNode neighbour){
 		this.neighbours[index] = neighbour;
 	}
+	
+	/**
+	 * Makes a deep copy of the GraphNode and returns the result
+	 * 
+	 * @return The copy of the GraphNode
+	 */
+	  public GraphNode clone() {
+	    try {
+	      ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
+	      ObjectOutputStream oos = new ObjectOutputStream(baos);
+	      oos.writeObject(this);
+	      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+	      ObjectInputStream ois = new ObjectInputStream(bais);
+	      GraphNode deepCopy = (GraphNode) ois.readObject();
+	      return deepCopy;
+	    } catch (IOException e) {
+	      e.printStackTrace();
+	    } catch(ClassNotFoundException e) {
+	      e.printStackTrace();
+	    }
+	    return null;
+	  }
 }
