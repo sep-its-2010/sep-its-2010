@@ -14,10 +14,9 @@ public interface IComMan {
      * Initiate a broadcast message to all registered participants at the
      * communication-manager.
      * 
-     * @param sender The sender of the broadcast-message.
      * @param request The request-message.
      */
-    void broadcast(IComClient sender, IRequest request);
+    void broadcast(IRequest request);
     
     /**
      * addClient registers a client for participating the broadcast-

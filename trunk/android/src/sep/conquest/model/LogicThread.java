@@ -1,10 +1,12 @@
 package sep.conquest.model;
 
+import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import sep.conquest.util.ConquestLog;
 
@@ -15,6 +17,11 @@ import sep.conquest.util.ConquestLog;
  * 
  */
 public class LogicThread implements Runnable {
+
+	/**
+	 * The length of a bluetooth message.
+	 */
+	private static final int MSGLENGTH = 32;
 
 	/**
 	 * A instance of the AStarPathFinder class for shortest-path-finding.
@@ -32,6 +39,36 @@ public class LogicThread implements Runnable {
 	private IBehaviour stateBehaviour;
 
 	/**
+	 * First Handler to handle broadcast messages.
+	 */
+	private Handler bcHandler;
+
+	/**
+	 * First Handler to handle bluetooth-messages.
+	 */
+	private Handler btHandler;
+
+	/**
+	 * The queue for broadcast messages.
+	 */
+	private ConcurrentLinkedQueue<IRequest> bcQueue;
+
+	/**
+	 * Indicates whether a bluetooth messages is expected.
+	 */
+	private boolean expectBTMessage = false;
+
+	/**
+	 * The bluetooth message.
+	 */
+	private byte[] btMessage = new byte[MSGLENGTH];
+	
+	/**
+	 * The length of the current message in buffer.
+	 */
+	private int btMessageLen = 0;
+
+	/**
 	 * The constructor of LogicThread assigns the robot as well as its status to
 	 * attributes.
 	 * 
@@ -41,6 +78,18 @@ public class LogicThread implements Runnable {
 		this.robot = robot;
 		stateBehaviour = Behaviour
 				.getFirstBehaviour(getRobotState().getState());
+		bcHandler = HandlerFactory.getPuckBCChain(this);
+		btHandler = HandlerFactory.getPuckBTChain(this);
+	}
+
+	/**
+	 * Puts a request message of the broadcast-communication on the queue.
+	 * 
+	 * @param request
+	 *            The new request message.
+	 */
+	public void addMessage(IRequest request) {
+		bcQueue.add(request);
 	}
 
 	/**
@@ -155,9 +204,56 @@ public class LogicThread implements Runnable {
 
 		Orientation command = Orientation.addDirection(getRobotState()
 				.getOrientation(), direction);
-		
+
 		robot.driveCommand(command);
 	}
+
+	/**
+	 * Returns a bluetooth message if message-receiving is expected and the 
+	 * byte-length of the message on the socket has reached the desired length.
+	 * 
+	 * @return The message. If no message exists, an empty byte-array will be
+	 * 	returned.
+	 */
+	private IRequest getBTMessage() {
+		
+		// if a message is expected => read socket
+		if (expectBTMessage) {
+			byte[] msg = robot.readSocket();
+			
+			// check message length
+			if ((btMessageLen + msg.length) > MSGLENGTH)
+				throw new IllegalArgumentException("Message from socket is " +
+						"longer than " + MSGLENGTH + " bytes!");
+			
+
+			for (int i = 0; i < msg.length; i++) {
+				btMessage[btMessageLen] = msg[i];
+				btMessageLen++;
+			}
+		}
+		
+		// 
+		if (MSGLENGTH == btMessageLen) {
+			expectBTMessage = false;
+			return new PuckRequest(btMessage);
+		} else
+			return null;
+	}
+	
+	/**
+	 * Writes a message to the socket and enables the receiving capability.
+	 * 
+	 * @param buffer The message to send via a socket.
+	 */
+	private void writeSocket(byte[] buffer) {
+		btMessage = new byte[32];
+		btMessageLen = 0;
+		expectBTMessage = true;
+		
+		robot.writeSocket(buffer);
+	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -166,12 +262,29 @@ public class LogicThread implements Runnable {
 	 */
 	public void run() {
 		while (true) {
-			if (robot.hasChanged()) {
+			
+			boolean changed = false;
+			
+			// handle bluetooth messages			
+			if (getBTMessage() != null) {
+				btHandler.handleRequest(getBTMessage());
+				changed = true;
+			}
+			
+			// handle broadcast messages
+			if (!bcQueue.isEmpty()) {
+				bcHandler.handleRequest(bcQueue.poll());
+				changed = true;
+			}
+			
+			// execute behaviours on changed state
+			if (changed) {
 				Map<int[], Integer> map = initMap();
 				map = stateBehaviour.execute(map, robot);
 				driveTo(getBestNode(map));
-			} // if hasChanged
-		} // while (true)
+			} else
+				Thread.yield();
+		}
 	}
 
 }

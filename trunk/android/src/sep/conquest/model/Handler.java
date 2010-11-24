@@ -54,10 +54,9 @@ public abstract class Handler {
    * Otherwise passes request to next Handler or returns false, if
    * there is no next Handler.
    * 
-   * @param sender The sender of the request message.
    * @param request The request that has to be handled.
    * 
    * @return True, if Handler has handled message, false otherwise.
    */
-  public abstract boolean handleRequest(UUID sender, IRequest request);  
+  public abstract boolean handleRequest(IRequest request);  
 }

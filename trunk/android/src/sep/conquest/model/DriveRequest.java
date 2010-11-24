@@ -24,8 +24,8 @@ public class DriveRequest extends Request {
      * @param receiver The robot IDs that shall receive the command.
      * @param command The drive-command.
      */
-    public DriveRequest(UUID[] receiver, Drive command) {
-        super(receiver);
+    public DriveRequest(UUID sender, UUID[] receiver, Drive command) {
+        super(sender, receiver);
         driveCommand = command;
     }
 

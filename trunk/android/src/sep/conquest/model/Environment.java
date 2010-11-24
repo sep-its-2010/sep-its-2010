@@ -22,23 +22,23 @@ public class Environment extends Observable implements IComClient {
 	/**
 	 * The local id of the Environment.
 	 */
-	private UUID id;	
-	
+	private UUID id;
+
 	/**
 	 * The communication manager to realize broadcast-communication.
 	 */
 	private IComMan comManager;
-	
+
 	/**
 	 * The global map.
 	 */
 	private GridMap gridMap;
-	
+
 	/**
 	 * The update message to notify every observer who's registered.
 	 */
 	private ConquestUpdate update;
-	
+
 	/**
 	 * The handler for incoming broadcast-messages.
 	 */
@@ -79,8 +79,9 @@ public class Environment extends Observable implements IComClient {
 	 */
 	public void driveCommand(UUID id, Drive command) {
 		UUID[] receiver = { id };
-		DriveRequest driveReq = new DriveRequest(receiver, command);
-		comManager.broadcast(this, driveReq);
+		DriveRequest driveReq = new DriveRequest(this.getID(), receiver,
+				command);
+		comManager.broadcast(driveReq);
 	}
 
 	/**
@@ -94,8 +95,8 @@ public class Environment extends Observable implements IComClient {
 	 */
 	public void setSpeed(UUID id, SpeedLevel speed) {
 		UUID[] receiver = { id };
-		SpeedRequest speedReq = new SpeedRequest(receiver, speed);
-		comManager.broadcast(this, speedReq);
+		SpeedRequest speedReq = new SpeedRequest(getID(), receiver, speed);
+		comManager.broadcast(speedReq);
 	}
 
 	/**
@@ -109,11 +110,11 @@ public class Environment extends Observable implements IComClient {
 	 */
 	public void setControlled(UUID id, boolean enabled) {
 		UUID[] receiver = { id };
-		ControlledRequest controlledReq = new ControlledRequest(receiver,
-				enabled);
-		comManager.broadcast(this, controlledReq);
+		ControlledRequest controlledReq = new ControlledRequest(getID(),
+				receiver, enabled);
+		comManager.broadcast(controlledReq);
 	}
-	
+
 	/**
 	 * Returns the global map.
 	 * 
@@ -122,7 +123,7 @@ public class Environment extends Observable implements IComClient {
 	public GridMap getMap() {
 		return gridMap;
 	}
-	
+
 	/**
 	 * Returns the current status of every robot.
 	 * 
@@ -146,8 +147,8 @@ public class Environment extends Observable implements IComClient {
 	 * 
 	 * @see sep.conquest.model.IComClient#deliver(sep.conquest.model.IComClient)
 	 */
-	public void deliver(UUID sender, IRequest request) {
-		handler.handleRequest(sender, request);
+	public void deliver(IRequest request) {
+		handler.handleRequest(request);
 		update.setMapList(gridMap.getMapAsList());
 		notifyObservers(update);
 	}
@@ -160,6 +161,6 @@ public class Environment extends Observable implements IComClient {
 	@Override
 	public void addObserver(Observer observer) {
 		super.addObserver(observer);
-		notifyObservers(((IComClient)observer).getID());
+		notifyObservers(((IComClient) observer).getID());
 	}
 }

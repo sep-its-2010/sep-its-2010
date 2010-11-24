@@ -25,8 +25,8 @@ public class CollisionRequest extends Request {
      * @param receiver The IDs of the receiver.
      * @param speedLevel The speed-level of the command.
      */
-    public CollisionRequest(UUID[] receiver, IRSensor sensor) {
-    	super(receiver);    	
+    public CollisionRequest(UUID sender, UUID[] receiver, IRSensor sensor) {
+    	super(sender, receiver);    	
         this.sensor = sensor;
     }
 

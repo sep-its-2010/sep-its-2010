@@ -25,8 +25,8 @@ public class IntentRequest extends Request {
      * @param receiver The IDs of the receiver.
      * @param node The intended destination.
      */
-    public IntentRequest(UUID[] receiver, int[] node) {
-    	super(receiver);    	
+    public IntentRequest(UUID sender, UUID[] receiver, int[] node) {
+    	super(sender, receiver);    	
         this.intentNode = node;
     }
 

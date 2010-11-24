@@ -23,13 +23,12 @@ public class CollisionRequestHandler extends Handler {
    * Returns true, if request was handled. If class is not responsible,
    * call handleRequest of next handler. If next handler is null return
    * false.
-   * 
-   * @param sender The sender of the request message. 
+   *  
    * @param request The request to handle.
    * @return True, if request was handled, false otherwise.
    */
   @Override
-  public boolean handleRequest(UUID sender, IRequest request) {
+  public boolean handleRequest(IRequest request) {
     // TODO Auto-generated method stub
     return false;
   }

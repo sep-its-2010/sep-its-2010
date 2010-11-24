@@ -25,8 +25,8 @@ public class FailureRequest extends Request {
      * @param receiver The IDs of the receiver.
      * @param type The error type.
      */
-    public FailureRequest(UUID[] receiver, FailureType type) {
-    	super(receiver);    	
+    public FailureRequest(UUID sender, UUID[] receiver, FailureType type) {
+    	super(sender, receiver);    	
         this.type = type;
     }
 

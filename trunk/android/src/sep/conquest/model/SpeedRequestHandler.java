@@ -35,7 +35,7 @@ public class SpeedRequestHandler extends Handler {
    * @return True, if request was handled, false otherwise.
    */
   @Override
-  public boolean handleRequest(UUID sender, IRequest request) {
+  public boolean handleRequest(IRequest request) {
     // TODO Auto-generated method stub
     return false;
   }

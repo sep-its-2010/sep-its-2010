@@ -26,8 +26,8 @@ public class SpeedRequest extends Request {
      * @param receiver The IDs of the receiver.
      * @param speedLevel The speed-level of the command.
      */
-    public SpeedRequest(UUID[] receiver, SpeedLevel speedLevel) {
-    	super(receiver);    	
+    public SpeedRequest(UUID sender, UUID[] receiver, SpeedLevel speedLevel) {
+    	super(sender, receiver);    	
         this.speedLevel = speedLevel;
     }
 

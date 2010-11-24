@@ -25,8 +25,8 @@ public class ControlledRequest extends Request {
      * @param receiver The IDs of the receiver.
      * @param controlled The indicator if the robot shall be controlled.
      */
-    public ControlledRequest(UUID[] receiver, boolean controlled) {
-    	super(receiver);    	
+    public ControlledRequest(UUID sender, UUID[] receiver, boolean controlled) {
+    	super(sender, receiver);    	
         this.controlled = controlled;
     }
 

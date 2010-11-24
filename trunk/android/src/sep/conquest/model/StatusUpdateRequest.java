@@ -22,12 +22,13 @@ public class StatusUpdateRequest extends Request {
      * The constructor expects a sender, a list of receiver as well as the
      * corresponding RobotStatus instance.
      * 
+     * @param sender The sender of the request.
      * @param receiver The IDs of the receiver.
      * @param robotStatus The corresponding state of the robot.
      */
-    public StatusUpdateRequest(UUID[] receiver, 
+    public StatusUpdateRequest(UUID sender, UUID[] receiver, 
     		RobotStatus robotStatus) {
-    	super(receiver);    	
+    	super(sender, receiver);    	
         this.robotStatus = robotStatus;
     }
 

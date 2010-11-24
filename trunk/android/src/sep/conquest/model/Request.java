@@ -11,10 +11,15 @@ import java.util.UUID;
  */
 public abstract class Request implements IRequest {
 	
-    /**
+	/**
      * The list of clients that should receive the message.
      */
     protected UUID[] receiver;	
+    
+    /**
+     * The sender of the request.
+     */
+    protected UUID sender;
     
     /**
      * The constructor expects a list of receivers. It represents a request
@@ -22,7 +27,8 @@ public abstract class Request implements IRequest {
      * 
      * @param receiver
      */
-    protected Request(UUID[] receiver) {
+    protected Request(UUID sender, UUID[] receiver) {
+    	this.sender = sender;
     	this.receiver = receiver;
     }
     
@@ -37,5 +43,12 @@ public abstract class Request implements IRequest {
      */
     public UUID[] getReceiver() {
         return receiver;
-    }    
+    }  
+    
+    /* (non-Javadoc)
+	 * @see sep.conquest.model.IRequest#getSender()
+	 */
+	public UUID getSender() {
+		return sender;
+	}    
 }

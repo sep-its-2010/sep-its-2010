@@ -60,13 +60,13 @@ public class ComManager implements IComMan {
 	 * @see sep.conquest.model.IComMan#broadcast(sep.conquest.model.IComClient,
 	 * sep.conquest.model.IRequest)
 	 */
-	public void broadcast(IComClient sender, IRequest request) {
+	public void broadcast(IRequest request) {
 		Iterator<UUID> it = clients.keySet().iterator();
 
 		while (it.hasNext()) {
 			UUID id = it.next();
 			IComClient client = clients.get(id);
-			client.deliver(sender.getID(), request);
+			client.deliver(request);
 		}
 	}
 

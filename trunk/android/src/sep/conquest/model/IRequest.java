@@ -24,4 +24,11 @@ public interface IRequest {
      * @return The list of destinations.
      */
     UUID[] getReceiver();
+    
+    /**
+     * Returns the sender of the request.
+     * 
+     * @return The sender.
+     */
+    UUID getSender();
 }

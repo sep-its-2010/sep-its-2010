@@ -24,7 +24,7 @@ public abstract class Puck implements IComClient, IRobot {
   /**
    * Local map.
    */
-  private GridMap map;
+  private GridMap map = new GridMap();
 
   /**
    * Saves status for each participating Puck.
@@ -34,22 +34,12 @@ public abstract class Puck implements IComClient, IRobot {
   /**
    * Executes logic and behaviour.
    */
-  private Thread logicThread;
+  private LogicThread logicThread = new LogicThread(this);
   
   /**
   * The thread executor for the logic-thread.
   */
-  private ExecutorService executor;
-
-  /**
-   * First Handler to handle broadcast messages.
-   */
-   private Handler firstBCHandler;
-   
-   /**
-   * Indicates whether the status of the robot has changed.
-   */
-   private boolean changed = false;
+  private ExecutorService executor = Executors.newSingleThreadExecutor();
 
   /**
    * Constructor initializing ID, local map, own state, logic thread and
@@ -62,16 +52,12 @@ public abstract class Puck implements IComClient, IRobot {
     // Set ID.
     this.id = id;
 
-    // Initialize map.
-    map = new GridMap();
-    
-    // Initialize state map and add own initial state 'Localizing'.
+    // initialize state map and add own initial state 'Localizing'.
     states = new TreeMap<UUID, RobotStatus>();
     states.put(id, new RobotStatus());
     
     // start the logic thread
-    executor = Executors.newSingleThreadExecutor();
-    executor.execute(new LogicThread(this));
+    executor.execute(logicThread);
   }
   
   /**
@@ -84,13 +70,14 @@ public abstract class Puck implements IComClient, IRobot {
    }
   
   /**
-   * The method delivers a message from a specific sender.
+   * The method delivers a message from a specific sender and puts it on the
+   * LogicThread-queue.
    * 
    * @param sender The sender of the broadcast message.
    * @param request The message which has to be delivered.
    */
-  public void deliver(IComClient sender, IRequest request){
-	  
+  public void deliver(IRequest request){
+	  logicThread.addMessage(request);
   }
   
   /**
@@ -100,18 +87,6 @@ public abstract class Puck implements IComClient, IRobot {
    */
    public GridMap getMap() {
 	  return map;
-  }
-   
-  /**
-   * Returns if the status of the robot has changed.
-   * 
-   * @return True if the the status of the robot has changed, otherwise false.
-   */
-   public boolean hasChanged() {
-	  if (changed) {
-		  changed = false;
-		  return true;
-	  } else return false;
   }
    
    /**

@@ -1,7 +1,5 @@
 package sep.conquest.model;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.UUID;
 
 
@@ -18,25 +16,19 @@ public class PuckRequest implements IRequest {
     /**
      * The byte-array of the corresponding request-message.
      */
-    private byte[] stream = new byte[30];
+    private byte[] message = new byte[32];
     
     private MessageType type;
     
     /**
-     * The constructor expects an InputStream to identify the type of the
+     * The constructor expects an request message to identify the type of the
      * message as well as its corresponding data. It stores the specific
      * message-type.
      * 
-     * @param stream The InputStream to determine the type and data.
+     * @param message The input-message to determine the type and data.
      */
-    public PuckRequest(InputStream stream) {   	
-    	// TODO InputStream handling
-        try {
-			stream.read(this.stream);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    public PuckRequest(byte[] message) {
+    	message = this.message;
         type = MessageType.PUCK_OK; // TODO determine correct message-type
     }
 
@@ -52,8 +44,8 @@ public class PuckRequest implements IRequest {
      * 
      * @return The InputStream.
      */
-    public byte[] getStream() {
-        return stream;
+    public byte[] getMessage() {
+        return message;
     }
 
 	/* (non-Javadoc)
@@ -61,5 +53,12 @@ public class PuckRequest implements IRequest {
 	 */
 	public UUID[] getReceiver() {
 		return new UUID[0];
+	}
+
+	/* (non-Javadoc)
+	 * @see sep.conquest.model.IRequest#getSender()
+	 */
+	public UUID getSender() {
+		return UUID.randomUUID();
 	}
 }
