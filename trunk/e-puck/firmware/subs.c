@@ -36,7 +36,7 @@ static subs_SBehaviorPriorityList_t* s_lppodFirstBehavior = NULL;
  */
 void subs_init( void) {
 
-	memset( s_apodBehaviors, 0, sizeof( s_apodBehaviors) * sizeof( *s_apodBehaviors));
+	memset( s_apodBehaviors, 0, sizeof( s_apodBehaviors) / sizeof( *s_apodBehaviors));
 	s_lppodFirstBehavior = NULL;
 }
 
@@ -148,14 +148,17 @@ bool subs_register(
 
 			// Find free space
 			subs_SBehaviorPriorityList_t* lppodNextFree = NULL;
-			for( uint16_t ui16 = 0; !lppodNextFree && ui16 < SUBS_MAX_BEHAVIORS; ui16++) {
-				if( !s_apodBehaviors[ui16].fnRun || s_apodBehaviors[ui16].fnRun == _fnRunCallback) {
+			bool blDuplicate = false;
+			for( uint16_t ui16 = 0; !blDuplicate && ui16 < SUBS_MAX_BEHAVIORS; ui16++) {
+				if( s_apodBehaviors[ui16].fnRun == _fnRunCallback) {
+					blDuplicate = true;
+				} else if( !lppodNextFree && !s_apodBehaviors[ui16].fnRun) {
 					lppodNextFree = &s_apodBehaviors[ui16];
 				}
 			}
 
 			// Found free space?
-			if( lppodNextFree && lppodNextFree->fnRun != _fnRunCallback) {
+			if( !blDuplicate && lppodNextFree) {
 				lppodNextFree->fnReset = _fnResetCallback;
 				lppodNextFree->fnRun = _fnRunCallback;
 				lppodNextFree->ui16Priotity = _ui16Priority;
@@ -163,7 +166,7 @@ bool subs_register(
 				// Find insertion point
 				subs_SBehaviorPriorityList_t* lppodPrev = NULL;
 				subs_SBehaviorPriorityList_t* lppodCurrent = s_lppodFirstBehavior;
-				while( lppodCurrent->ui16Priotity >= _ui16Priority) {
+				while( lppodCurrent && lppodCurrent->ui16Priotity >= _ui16Priority) {
 					lppodPrev = lppodCurrent;
 					lppodCurrent = lppodCurrent->lppodNext;
 				}

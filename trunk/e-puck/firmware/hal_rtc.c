@@ -7,7 +7,7 @@
  * \see
  * hal_rtc_init | hal_rtc_getSystemUpTime
  */
-extern volatile uint32_t s_ui32SystemUpTime = 0;
+volatile uint32_t s_ui32SystemUpTime = 0;
 
 
 /*!

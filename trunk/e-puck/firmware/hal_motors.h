@@ -29,7 +29,8 @@ enum {
 	HAL_MOTORS_LEFT_MASK = ( 1 << 0) | ( 1 << 1) | ( 1 << 2) | ( 1 << 3), ///< Left motor port bit mask.
 	HAL_MOTORS_LEFT_DATA_OFFSET = 0, ///< Port data offset of the right motor.
 	HAL_MOTORS_RIGHT_MASK = ( 1 << 4) | ( 1 << 5) | ( 1 << 6) | ( 1 << 7), ///< Right motor port bit mask.
-	HAL_MOTORS_RIGHT_DATA_OFFSET = 4 ///< Port data offset of the right motor.
+	HAL_MOTORS_RIGHT_DATA_OFFSET = 4, ///< Port data offset of the right motor.
+	HAL_MOTORS_MAX_ABS_SPEED = 1000 ///< Maximal absolute step motor speed in steps per second.
 };
 
 
@@ -69,8 +70,7 @@ static inline void hal_motors_setStepsRight(
 	IN const uint16_t _ui16Steps
 	);
 static inline void hal_motors_setSteps(
-	IN const uint16_t _ui16StepsLeft,
-	IN const uint16_t _ui16StepsRight
+	IN const uint16_t _ui16Steps
 	);
 
 
@@ -312,10 +312,7 @@ void hal_motors_setStepsRight(
  * Sets the step counters of the left and right motors.
  * 
  * \param _ui16StepsLeft
- * Specifies the new value of the left step counter.
- * 
- * \param _ui16StepsRight
- * Specifies the new value of the left step counter.
+ * Specifies the new value of the left and right step counters.
  * 
  * Write detailed description for hal_motors_setSteps here.
  * 
@@ -326,15 +323,14 @@ void hal_motors_setStepsRight(
  * hal_motors_setStepsRight | hal_motors_setStepsLeft | hal_motors_getStepsLeft | hal_motors_getStepsRight
  */
 void hal_motors_setSteps(
-	IN const uint16_t _ui16StepsLeft,
-	IN const uint16_t _ui16StepsRight
+	IN const uint16_t _ui16Steps
 	) {
 
 	extern volatile uint16_t hal_motors_ui16StepsLeft;
 	extern volatile uint16_t hal_motors_ui16StepsRight;
 
-	hal_motors_ui16StepsLeft = _ui16StepsLeft;
-	hal_motors_ui16StepsRight = _ui16StepsRight;
+	hal_motors_ui16StepsLeft = _ui16Steps;
+	hal_motors_ui16StepsRight = _ui16Steps;
 }
 
 

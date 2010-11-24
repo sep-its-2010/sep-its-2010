@@ -72,8 +72,12 @@ void com_init( void) {
 
 	ringbuf_init( hal_uart1_getRxRingBuffer(), s_aui8RxBufferSpace, sizeof( s_aui8RxBufferSpace));
 	ringbuf_init( hal_uart1_getTxRingBuffer(), s_aui8TxBufferSpace, sizeof( s_aui8TxBufferSpace));
+	hal_uart1_configure( HAL_UART_CONFIG__8N1, COM_UART1_BAUDRATE_DIVISOR);
+	hal_uart1_open( true);
+	hal_int_setPriority( HAL_INT_SOURCE__UART1_RECEIVER, HAL_INT_PRIORITY__7);
+	hal_int_setPriority( HAL_INT_SOURCE__UART1_TRANSMITTER, HAL_INT_PRIORITY__7);
 
-	memset( s_afnHandlers, 0, sizeof( s_afnHandlers) * sizeof( *s_afnHandlers));
+	memset( s_afnHandlers, 0, sizeof( s_afnHandlers) / sizeof( *s_afnHandlers));
 }
 
 
