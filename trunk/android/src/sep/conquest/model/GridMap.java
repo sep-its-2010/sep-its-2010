@@ -1,8 +1,10 @@
 package sep.conquest.model;
 
-import java.io.Serializable;
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 /**
  * The class GridMap manages the saving of nodes which have been explored by the
@@ -14,7 +16,7 @@ import java.util.TreeMap;
  * 
  * @author Florian Lorenz
  */
-public class GridMap implements Serializable{
+public class GridMap {
 	
 	/**
 	 * An unique serialVersionUID to identify the class
@@ -45,25 +47,25 @@ public class GridMap implements Serializable{
 	 * This constant represents the smallest x-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 0.
 	 */
-	private final static int MINXVALUEONMAP = 0;
+	private final int MINXVALUEONMAP = 0;
 	
 	/**
 	 * This constant represents the smallest y-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 1.
 	 */
-	private final static int MINYVALUEONMAP = 1;
+	private final int MINYVALUEONMAP = 1;
 	
 	/**
 	 * This constant represents the biggest x-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 2.
 	 */
-	private final static int MAXXVALUEONMAP = 2;
+	private final int MAXXVALUEONMAP = 2;
 	
 	/**
 	 * This constant represents the biggest y-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 3.
 	 */
-	private final static int MAXYVALUEONMAP = 3;
+	private final int MAXYVALUEONMAP = 3;
 	
 	/**
 	 * default constructor
@@ -75,7 +77,7 @@ public class GridMap implements Serializable{
 		mapBorders[this.MINYVALUEONMAP]=0;
 		mapBorders[this.MINXVALUEONMAP]=0;
 	}
-
+	
 	/**
 	 * Creates an instance of the type GraphNode, inserts it in the attribute
 	 * mapTree and if necessary sets references on neighbours. With the assigned
@@ -85,21 +87,23 @@ public class GridMap implements Serializable{
 	public void addNode(int x, int y, NodeType status) {
 		//updates the borders of the map
 		this.updateMapBorders(x, y);
-		MapNode existingNode = this.getNode(x, y);
+		GraphNode existingNode = this.getNode(x, y);
 		//If the Node already exists in the structure, existingNode is not null
 		if(existingNode != null){
 			//updates the state of the existing node
 			this.changeState(x, y, status);
+			this.setNeighbours(existingNode);
 		} else {
 			//creates a new node
 			GraphNode newNode = new GraphNode(x,y,status);
 			//add to tree
 			int key = this.makeKey(x,y);
 			this.mapTree.put(key, newNode);
-			//set neighbours
+			//update the state to increase the visitCounter
+			this.changeState(x, y,status);
+			//set neighbours and especially the frontiernodes in this private 
+			//method
 			this.setNeighbours(newNode);
-			//set frontiernodes
-			this.setFrontierNodes(x,y);
 		}
 	}
 
@@ -109,7 +113,16 @@ public class GridMap implements Serializable{
 	 * @return The deep copy of the attribute frontierList
 	 */
 	public LinkedList<GraphNode> getFrontierList() {
-		return null;
+		LinkedList<GraphNode> graphNodeList = new LinkedList<GraphNode>();
+		//Iterator for the attribute frontierList
+		Iterator<GraphNode> it = frontierList.iterator();
+		GraphNode bufferNode;
+		while(it.hasNext()){
+			//makes a copy of the GraphNode and saves it into the LinkedList 
+			bufferNode = it.next().clone();
+			graphNodeList.add(bufferNode);
+		}
+		return graphNodeList;
 	}
 
 	/**
@@ -121,23 +134,40 @@ public class GridMap implements Serializable{
 	 *         GridMap
 	 */
 	public LinkedList<MapNode> getMapAsList() {
-		LinkedList<MapNode> mapNodeList = new LinkedList<MapNode>();
-		return mapNodeList;
+		//Iterator for the TreeMap mapTree
+		Iterator<Entry<Integer, GraphNode>> it = mapTree.entrySet().iterator();
+		LinkedList<MapNode> nodeList = new LinkedList<MapNode>();
+		MapNode newNodeInList;
+		while(it.hasNext()){
+			//copies the GraphNode as an instance of MapNode and saves it in
+			//the LinkedList if they aren't a frontierNode
+			newNodeInList = it.next().getValue().clone();
+			if(newNodeInList.getNodeType() != NodeType.FRONTIERNODE){
+				nodeList.add(newNodeInList);
+			}
+		}
+		return nodeList;
 	}
 
 	/**
 	 * This method returns the smallest and biggest x- and y-coordinates of
-	 * the map saved in an int-array of length 4.
+	 * the map saved in an Integer-array of length 4.
+	 * 
 	 * @return The attribute mapBorders which contains the smallest and
 	 * biggest coordinates. 
 	 */
 	public int[] getMapBorders(){
-		return this.mapBorders;
+		int[] mapBordersToSend = new int[4];
+		for(int i = 0; i<4;i++){
+			mapBordersToSend[i] = this.mapBorders[i];
+		}
+		return mapBordersToSend;
 	}
 	
 	/**
 	 * This method is called by the public method addNode and updates the 
 	 * smallest or biggest coordinates if necessary.
+	 * 
 	 * @param xCoordinate The x-coordinate of the new inserted MapNode
 	 * @param yCoordinate The y-coordinate of the new inserted MapNode
 	 */
@@ -159,27 +189,7 @@ public class GridMap implements Serializable{
 			mapBorders[this.MINYVALUEONMAP] = yCoordinate;
 		}
 	}
-	
-	/**
-	 * Makes a deep copy of the frontierList and saves the GraphNodes in a 
-	 * LinkedList
-	 * 
-	 * @return LinkedList which is a copy of frontierList
-	 */
-	private LinkedList<GraphNode> cloneFrontierList() {
-		LinkedList<GraphNode> graphNodeList = new LinkedList<GraphNode>();
-		return graphNodeList;
-	}
 
-	/**
-	 * Iterates trough the TreeMap mapTree, creates MapNodes using the 
-	 * GraphNodes and saves them into a LinkedList
-	 * 
-	 * @return LinkedList which contains all nodes saved in the GridMap
-	 */
-	private LinkedList<MapNode> cloneMapTreeIntoList() {
-		return null;
-	}
 
 	/**
 	 * Searches whether a node with the coordinates x and y exists in the 
@@ -261,6 +271,9 @@ public class GridMap implements Serializable{
 				this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
 				this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
 				break;
+			case FRONTIERNODE:
+				//If four neighbours exists the frontierNode isn't a frontierNode anymore
+				break;
 		}
 	}
 	
@@ -283,7 +296,8 @@ public class GridMap implements Serializable{
 				newNode.setNeighbours(newNode.LEFTNEIGHBOUR,actNeighbour);
 				actNeighbour.setNeighbours(actNeighbour.RIGHTNEIGHBOUR,newNode);
 			} else {
-				//A new frontiernode hast to be created
+				//A new frontierNode has to be created
+				this.setFrontierNodes(direction, newNode);
 			}
 			break;
 		//Search and set the right neighbour
@@ -295,7 +309,8 @@ public class GridMap implements Serializable{
 				newNode.setNeighbours(newNode.RIGHTNEIGHBOUR,actNeighbour);
 				actNeighbour.setNeighbours(actNeighbour.LEFTNEIGHBOUR,newNode);
 			} else {
-				//A new frontiernode hast to be created
+				//A new frontierNode has to be created
+				this.setFrontierNodes(direction, newNode);
 			}
 			break;
 		//Search and set the bottom neighbour
@@ -307,7 +322,8 @@ public class GridMap implements Serializable{
 				newNode.setNeighbours(newNode.BOTTOMNEIGHBOUR,actNeighbour);
 				actNeighbour.setNeighbours(actNeighbour.TOPNEIGHBOUR,newNode);
 			} else {
-				//A new frontiernode hast to be created
+				//A new frontierNode has to be created
+				this.setFrontierNodes(direction, newNode);
 			}
 			break;
 		//Search and set the upper neighbour
@@ -319,7 +335,8 @@ public class GridMap implements Serializable{
 				newNode.setNeighbours(newNode.TOPNEIGHBOUR,actNeighbour);
 				actNeighbour.setNeighbours(actNeighbour.BOTTOMNEIGHBOUR,newNode);
 			} else {
-				//A new frontiernode hast to be created
+				//A new frontierNode has to be created
+				this.setFrontierNodes(direction, newNode);
 			}
 			break;
 		}
@@ -343,8 +360,61 @@ public class GridMap implements Serializable{
 	 * @param x The x-coordinate of the node   
 	 * @param y The y-coordinate of the node         
 	 */
-	private void setFrontierNodes(int x, int y) {
+	private void setFrontierNodes(int direction, GraphNode newNode) {
+		NodeType type = NodeType.FRONTIERNODE;
+		GraphNode newFrontierNode = null;
 		
+		int key;
+		switch (direction){
+		//left neighbour
+		case 0:
+			//Create new frontierNode
+			newFrontierNode = new GraphNode(newNode.getXValue() - 1, 
+													newNode.getYValue(),type);
+			//Set new neighbourhood
+			newNode.setNeighbours(newNode.LEFTNEIGHBOUR,newFrontierNode);
+			newFrontierNode.setNeighbours(newFrontierNode.RIGHTNEIGHBOUR,newNode);			
+			//insert in mapTree
+			key = this.makeKey(newFrontierNode.getXValue(),newFrontierNode.getYValue());
+			this.mapTree.put(key, newFrontierNode);
+			break;
+		//right neighbour
+		case 1:
+			//Create new frontierNode
+			newFrontierNode = new GraphNode(newNode.getXValue() + 1, 
+													newNode.getYValue(),type);
+			//Set new neighbourhood
+			newNode.setNeighbours(newNode.RIGHTNEIGHBOUR,newFrontierNode);
+			newFrontierNode.setNeighbours(newFrontierNode.LEFTNEIGHBOUR,newNode);			
+			//insert in mapTree
+			key = this.makeKey(newFrontierNode.getXValue(),newFrontierNode.getYValue());
+			this.mapTree.put(key, newFrontierNode);
+			break;
+		//bottom neighbour
+		case 2: 
+			newFrontierNode = new GraphNode(newNode.getXValue(), 
+												newNode.getYValue()+1,type);
+			//Set new neighbourhood
+			newNode.setNeighbours(newNode.BOTTOMNEIGHBOUR,newFrontierNode);
+			newFrontierNode.setNeighbours(newFrontierNode.TOPNEIGHBOUR,newNode);			
+			//insert in mapTree
+			key = this.makeKey(newFrontierNode.getXValue(),newFrontierNode.getYValue());
+			this.mapTree.put(key, newFrontierNode);
+			break;
+		//upper neighbour
+		case 3:
+			newFrontierNode = new GraphNode(newNode.getXValue(), 
+												newNode.getYValue() - 1,type);
+			//Set new neighbourhood
+			newNode.setNeighbours(newNode.TOPNEIGHBOUR,newFrontierNode);
+			newFrontierNode.setNeighbours(newFrontierNode.BOTTOMNEIGHBOUR,newNode);			
+			//insert in mapTree
+			key = this.makeKey(newFrontierNode.getXValue(),newFrontierNode.getYValue());
+			this.mapTree.put(key, newFrontierNode);
+			break;
+		}
+		//add to frontierList //evtl checken ob der doppelt vorkommen tut....
+		this.frontierList.add(newFrontierNode);
 	}
 
 	/**
@@ -357,8 +427,60 @@ public class GridMap implements Serializable{
 	 * 				
 	 */
 	private void changeState(int x, int y, NodeType newNodeType) {
+		//Iteration trough the frontierList for removing the node if it
+		//exists in the LinkedList
+		Iterator<GraphNode> it = frontierList.listIterator();
+		while(it.hasNext()){
+			GraphNode itNode = it.next();
+			if(itNode.getXValue() == x && itNode.getYValue() == y){
+				it.remove();
+			}
+		}
+		//Update the borders of the map and the NodeType as well as the 
+		//visitCounter
+		this.updateMapBorders(x, y);
 		this.getNode(x,y).setNodeType(newNodeType);
 		this.getNode(x,y).increaseVisitCounter();
 	}
 
+	
+	public String serializeMapInString() throws IOException {
+		StringBuilder builder = new StringBuilder();
+		//iterate trough the maptree and saves all nodes in a string
+		Iterator<Entry<Integer, GraphNode>> it = mapTree.entrySet().iterator();
+		MapNode newNodeInList;
+		while(it.hasNext()){
+			newNodeInList = it.next().getValue().clone();
+			builder.append(newNodeInList.getXValue());
+			builder.append(" ");
+			builder.append(newNodeInList.getYValue());
+			builder.append(" ");
+			builder.append(newNodeInList.getNodeType());
+			builder.append(" ");
+			builder.append(newNodeInList.getVisitCounter());
+			builder.append("\n");
+		}
+		String returnString = builder.toString();
+		return returnString;
+	}
+
+	/**
+	 * Makes a deep copy of the frontierList and saves the GraphNodes in a 
+	 * LinkedList
+	 * 
+	 * @return LinkedList which is a copy of frontierList
+	 */
+	/**private LinkedList<GraphNode> cloneFrontierList() {
+		return null;
+	}*/
+
+	/**
+	 * Iterates trough the TreeMap mapTree, creates MapNodes using the 
+	 * GraphNodes and saves them into a LinkedList
+	 * 
+	 * @return LinkedList which contains all nodes saved in the GridMap
+	 */
+	/**private LinkedList<MapNode> cloneMapTreeIntoList() {
+		return null;
+	}*/
 }
