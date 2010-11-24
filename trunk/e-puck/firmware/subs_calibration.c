@@ -2,12 +2,12 @@
 #include "hal_sel.h"
 #include "hal_led.h"
 #include "sen_line.h"
-#define _EEDATA(N) __attribute__((section(".eedata,r"),aligned(N)))
+//#define _EEDATA(N) __attribute__((section(".eedata,r"),aligned(N)))
 
 #include "subs_calibration.h"
 
-boolean subs_calibration_isNotCalibrated = true;		///< The robot is not calibrated by default.
-uint16_t _EEDATA(2) calibrationValues[2][3] = {0};		///< 2-dimensional array in the EEPROM, which saves 3 line-calibration-values in dimension 1
+bool subs_calibration_isNotCalibrated = true;		///< The robot is not calibrated by default.
+//uint16_t _EEDATA(2) calibrationValues[2][3] = {0};		///< 2-dimensional array in the EEPROM, which saves 3 line-calibration-values in dimension 1
 														///< and 3 surface-calibration-values in dimension 2 
 
 /*!
@@ -30,9 +30,9 @@ bool subs_calibration_run( void) {
 	if( subs_calibration_isNotCalibrated && (selector == 0)) {
 
 		//perform calibration
-		sen_line_read( calibrationValues);
+//		sen_line_read( calibrationValues);
 		hal_motors_setSpeed( 500, 500);
-		sen_line_read( calibrationValues);
+//		sen_line_read( calibrationValues);
 
 		subs_calibration_isNotCalibrated = false;
 	}
