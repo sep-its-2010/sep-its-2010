@@ -22,9 +22,14 @@ bool subs_abyss_run( void) {
 	sen_line_read( _lppodSensorData);
 
 	if( podSensorData.aui16Data[1] < 75) {
-		hal_motors_setSpeed(0, 0);
+		hal_motors_setSpeed( 0, 0);
+		hal_motors_setSteps( 0);
 		abyssDetected = true;
-		// sendMessage "Obacht!!"
+		
+		// inform smartphone about abyss
+		com_SMessage_t podAbyssResponse = {COM_MESSAGE_TYPE__RESPONSE_ABYSS, {0}};
+		com_EMessageType_t* _lppodAbyssResponse = &podAbyssResponse;
+		com_send( _lppodAbyssResponse);
 	}
 
 	return abyssDetected;

@@ -14,12 +14,18 @@
  * 
  * Checks the ground-sensors for data. If the robot is currently moving and more than one sensor delivers several times
  * critical values the robot is supposed to be above a node and computes the nodes shape.
- * After that a message with the shape of the node is created and sent to the Smartphone via bluetooth.
+ * After that a message with the shape of the node is created and sent to the Smartphone via BlueTooth.
  * The robot will stop with its center above the node and visualize its state.
  */
 bool subs_node_run( void) {
+	bool nodeHit = false;
+	bool isMoving = (hal_motors_getSpeedLeft() == 0) && (hal_motors_getSpeedRight() == 0);
+	sen_line_SData_t podSensorData;
+	sen_line_SData_t* _lppodSensorData = &podSensorData;
 
-	return false;
+
+	
+	return nodeHit;
 }
 
 /*!
