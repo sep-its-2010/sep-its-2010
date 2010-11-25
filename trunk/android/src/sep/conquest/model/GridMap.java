@@ -31,18 +31,18 @@ public class GridMap {
 	private LinkedList<GraphNode> frontierList = new LinkedList<GraphNode>();
 
 	/**
-	 * Saves all references of the instances of the class GraphNode, ordered in 
+	 * Saves all references of the instances of the class GraphNode, ordered in
 	 * a binary tree.
 	 */
 	private TreeMap<Integer, GraphNode> mapTree = new TreeMap<Integer, 
 																GraphNode>();
 	
 	/**
-	 * Saves the smallest and biggest x- and y-coordinates of the MapNodes in 
-	 * the class GridMap. 
+	 * Saves the smallest and biggest x- and y-coordinates of the MapNodes in
+	 * the class GridMap.
 	 */
 	private int[] mapBorders = new int[4];
-	
+
 	/**
 	 * This constant represents the smallest x-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 0.
@@ -54,7 +54,7 @@ public class GridMap {
 	 * in the attribute mapBorder on position 1.
 	 */
 	private final int MINYVALUEONMAP = 1;
-	
+
 	/**
 	 * This constant represents the biggest x-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 2.
@@ -66,16 +66,16 @@ public class GridMap {
 	 * in the attribute mapBorder on position 3.
 	 */
 	private final int MAXYVALUEONMAP = 3;
-	
+
 	/**
 	 * default constructor
 	 */
 	public GridMap() {
-		//init the borders of the map 
-		mapBorders[this.MAXYVALUEONMAP]=Integer.MIN_VALUE;
-		mapBorders[this.MAXXVALUEONMAP]=Integer.MIN_VALUE;
-		mapBorders[this.MINYVALUEONMAP]=Integer.MAX_VALUE;
-		mapBorders[this.MINXVALUEONMAP]=Integer.MAX_VALUE;
+		// initialize the borders of the map
+		mapBorders[this.MAXYVALUEONMAP] = Integer.MIN_VALUE;
+		mapBorders[this.MAXXVALUEONMAP] = Integer.MIN_VALUE;
+		mapBorders[this.MINYVALUEONMAP] = Integer.MAX_VALUE;
+		mapBorders[this.MINXVALUEONMAP] = Integer.MAX_VALUE;
 	}
 	
 	/**
@@ -85,24 +85,24 @@ public class GridMap {
 	 * be created and add to the structure.
 	 */
 	public void addNode(int x, int y, NodeType status) {
-		//updates the borders of the map
+		// updates the borders of the map
 		this.updateMapBorders(x, y);
 		GraphNode existingNode = this.getNode(x, y);
-		//If the Node already exists in the structure, existingNode is not null
-		if(existingNode != null){
-			//updates the state of the existing node
+		// If the Node already exists in the structure, existingNode is not null
+		if (existingNode != null) {
+			// updates the state of the existing node
 			this.changeState(x, y, status);
 			this.setNeighbours(existingNode);
 		} else {
-			//creates a new node
-			GraphNode newNode = new GraphNode(x,y,status);
-			//add to tree
-			int key = this.makeKey(x,y);
+			// creates a new node
+			GraphNode newNode = new GraphNode(x, y, status);
+			// add to tree
+			int key = this.makeKey(x, y);
 			this.mapTree.put(key, newNode);
-			//update the state to increase the visitCounter
-			this.changeState(x, y,status);
-			//set neighbours and especially the frontiernodes in this private 
-			//method
+			// update the state to increase the visitCounter
+			this.changeState(x, y, status);
+			// set neighbours and especially the frontiernodes in this private
+			// method
 			this.setNeighbours(newNode);
 		}
 	}
@@ -114,96 +114,92 @@ public class GridMap {
 	 */
 	public LinkedList<GraphNode> getFrontierList() {
 		LinkedList<GraphNode> graphNodeList = new LinkedList<GraphNode>();
-		//Iterator for the attribute frontierList
+		// Iterator for the attribute frontierList
 		Iterator<GraphNode> it = frontierList.iterator();
 		GraphNode bufferNode;
-		while(it.hasNext()){
-			//makes a copy of the GraphNode and saves it into the LinkedList 
-			bufferNode = it.next();
-			GraphNode newNodeInList = new GraphNode(bufferNode.getXValue(),bufferNode.getYValue(), bufferNode.getNodeType());
-			graphNodeList.add(newNodeInList);
+		while (it.hasNext()) {
+			// makes a copy of the GraphNode and saves it into the LinkedList
+			bufferNode = it.next().clone();
+			graphNodeList.add(bufferNode);
 		}
 		return graphNodeList;
 	}
 
 	/**
-	 * Makes a copy of the attribute mapTree using the private method 
+	 * Makes a copy of the attribute mapTree using the private method
 	 * cloneMapTreeIntoList and saves the nodes of the tree as instances of the
 	 * class MapNodes in a LinkedList
 	 * 
-	 * @return LinkedList which contains all Nodes saved in the
-	 *         GridMap
+	 * @return LinkedList which contains all Nodes saved in the GridMap
 	 */
 	public LinkedList<MapNode> getMapAsList() {
-		//Iterator for the TreeMap mapTree
+		// Iterator for the TreeMap mapTree
 		Iterator<Entry<Integer, GraphNode>> it = mapTree.entrySet().iterator();
 		LinkedList<MapNode> nodeList = new LinkedList<MapNode>();
 		MapNode bufferNode;
-		while(it.hasNext()){
-			//copies the GraphNode as an instance of MapNode and saves it in
-			//the LinkedList if they aren't a frontierNode
-			bufferNode = it.next().getValue();
-			MapNode newNodeInList = new MapNode(bufferNode.getXValue(), bufferNode.getYValue(), bufferNode.getNodeType());
-			if(newNodeInList.getNodeType() != NodeType.FRONTIERNODE){
-				nodeList.add(newNodeInList);
+		while (it.hasNext()) {
+			// copies the GraphNode as an instance of MapNode and saves it in
+			// the LinkedList if they aren't a frontierNode
+			bufferNode = it.next().getValue().clone();
+			if (bufferNode.getNodeType() != NodeType.FRONTIERNODE) {
+				nodeList.add(bufferNode);
 			}
 		}
 		return nodeList;
 	}
 
 	/**
-	 * This method returns the smallest and biggest x- and y-coordinates of
-	 * the map saved in an Integer-array of length 4.
+	 * This method returns the smallest and biggest x- and y-coordinates of the
+	 * map saved in an Integer-array of length 4.
 	 * 
-	 * @return The attribute mapBorders which contains the smallest and
-	 * biggest coordinates. 
+	 * @return The attribute mapBorders which contains the smallest and biggest
+	 *         coordinates.
 	 */
-	public int[] getMapBorders(){
+	public int[] getMapBorders() {
 		int[] mapBordersToSend = new int[4];
-		for(int i = 0; i<4;i++){
+		for (int i = 0; i < 4; i++) {
 			mapBordersToSend[i] = this.mapBorders[i];
 		}
 		return mapBordersToSend;
 	}
-	
+
 	/**
-	 * This method is called by the public method addNode and updates the 
+	 * This method is called by the public method addNode and updates the
 	 * smallest or biggest coordinates if necessary.
 	 * 
 	 * @param xCoordinate The x-coordinate of the new inserted MapNode
 	 * @param yCoordinate The y-coordinate of the new inserted MapNode
 	 */
-	private void updateMapBorders(int xCoordinate, int yCoordinate){
-		//updates the biggest x-coordinate
-		if(xCoordinate > mapBorders[this.MAXXVALUEONMAP]){
+	private void updateMapBorders(int xCoordinate, int yCoordinate) {
+		// updates the biggest x-coordinate
+		if (xCoordinate > mapBorders[this.MAXXVALUEONMAP]) {
 			mapBorders[this.MAXXVALUEONMAP] = xCoordinate;
 		}
-		//updates the biggest y-coordinate
-		if(yCoordinate > mapBorders[this.MAXYVALUEONMAP]){
+		// updates the biggest y-coordinate
+		if (yCoordinate > mapBorders[this.MAXYVALUEONMAP]) {
 			mapBorders[this.MAXYVALUEONMAP] = yCoordinate;
 		}
-		//updates the smallest x-coordinate
-		if(xCoordinate < mapBorders[this.MINXVALUEONMAP]){
+		// updates the smallest x-coordinate
+		if (xCoordinate < mapBorders[this.MINXVALUEONMAP]) {
 			mapBorders[this.MINXVALUEONMAP] = xCoordinate;
 		}
-		//updates the smallest y-coordinate
-		if(yCoordinate < mapBorders[this.MINYVALUEONMAP]){
+		// updates the smallest y-coordinate
+		if (yCoordinate < mapBorders[this.MINYVALUEONMAP]) {
 			mapBorders[this.MINYVALUEONMAP] = yCoordinate;
 		}
 	}
 
-
 	/**
-	 * Searches whether a node with the coordinates x and y exists in the 
+	 * Searches whether a node with the coordinates x and y exists in the
 	 * TreeMap mapTree.
 	 * 
-	 * @param x The x-coordinate 
-	 * @param y The y-coordinate          
-	 * @return The node if it exists in the TreeMap mapTree, otherwise
-	 *         returns null
+	 * @param x The x-coordinate
+	 * @param y The y-coordinate
+	 * @return The node if it exists in the TreeMap mapTree, otherwise returns
+	 *         null
 	 */
 	private GraphNode getNode(int x, int y) {
-		int key = this.makeKey(x,y);
+		int key = this.makeKey(x, y);
 		return mapTree.get(key);
 	}
 
@@ -212,132 +208,136 @@ public class GridMap {
 	 * the node with the coordinates x and y. If a neighbournode does not exist,
 	 * the reference is set to null.
 	 * 
-	 * @param newNode The Node which gets new neighbours    
+	 * @param newNode The Node which gets new neighbours
 	 */
 	private void setNeighbours(GraphNode newNode) {
 		NodeType type = newNode.getNodeType();
-		switch (type){
-			//There has to be set the right and upper neighbour of the node
-			case BOTTOMLEFTEDGE:
-				this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);				
-				break;
-			//There has to be set the left and upper neighbour of the node
-			case BOTTOMRIGHTEDGE:
-				this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);	
-				break;
-			//There has to be set the right and lower neighbour of the node
-			case TOPLEFTEDGE:
-				this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);	
-				break;
-			//There has to be set the left and lower neighbour of the node
-			case TOPRIGHTEDGE:
-				this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
-				break;
-			//There has to be set the left and right and upper neighbour of the
-			//node
-			case BOTTOMT:
-				this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
-				break;
-			//There has to be set the right and lower and upper neighbour of the
-			//node	
-			case LEFTT:
-				this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
-				break;
-			//There has to be set the left and lower and upper neighbour of the
-			//node	
-			case RIGHTT:
-				this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
-				break;
-			//There has to be set the left and lower and right neighbour of the
-			//node
-			case TOPT:
-				this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
-				break;
-			//There has to be set the left and lower and right and upper 
-			//neighbour of the node
-			case CROSS:
-				this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
-				this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
-				break;
-			case FRONTIERNODE:
-				//If four neighbours exists the frontierNode isn't a frontierNode anymore
-				break;
+		switch (type) {
+		// There has to be set the right and upper neighbour of the node
+		case BOTTOMLEFTEDGE:
+			this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
+			break;
+		// There has to be set the left and upper neighbour of the node
+		case BOTTOMRIGHTEDGE:
+			this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
+			break;
+		// There has to be set the right and lower neighbour of the node
+		case TOPLEFTEDGE:
+			this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
+			break;
+		// There has to be set the left and lower neighbour of the node
+		case TOPRIGHTEDGE:
+			this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
+			break;
+		// There has to be set the left and right and upper neighbour of the
+		// node
+		case BOTTOMT:
+			this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
+			break;
+		// There has to be set the right and lower and upper neighbour of the
+		// node
+		case LEFTT:
+			this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
+			break;
+		// There has to be set the left and lower and upper neighbour of the
+		// node
+		case RIGHTT:
+			this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
+			break;
+		// There has to be set the left and lower and right neighbour of the
+		// node
+		case TOPT:
+			this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
+			break;
+		// There has to be set the left and lower and right and upper
+		// neighbour of the node
+		case CROSS:
+			this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
+			this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
+			break;
+		case FRONTIERNODE:
+			// If four neighbours exists the frontierNode isn't a frontierNode
+			// anymore
+			break;
 		}
 	}
 	
 	/**
 	 * This method searches the neighbour of the GraphNode and sets it, if it
 	 * exists
+	 * 
 	 * @param direction The orientation of the neighbour
 	 * @param newNode The node with the possible neighbours
 	 */
-	private void searchAndsetNeighbour(int direction, GraphNode newNode){
-		//Helping variable to save the instance of the actual neighbour node
+	private void searchAndsetNeighbour(int direction, GraphNode newNode) {
+		// Helping variable to save the instance of the actual neighbour node
 		GraphNode actNeighbour;
-		switch (direction){
-		//Search and set the left neighbour
+		switch (direction) {
+		// Search and set the left neighbour
 		case 0:
-			actNeighbour = this.mapTree.get(
-					this.makeKey(newNode.getXValue()-1,newNode.getYValue()));
-			//If the neighbour exists set neighbours
-			if(actNeighbour != null){
-				newNode.setNeighbours(newNode.LEFTNEIGHBOUR,actNeighbour);
-				actNeighbour.setNeighbours(actNeighbour.RIGHTNEIGHBOUR,newNode);
+			actNeighbour = this.mapTree.get(this.makeKey(
+					newNode.getXValue() - 1, newNode.getYValue()));
+			// If the neighbour exists set neighbours
+			if (actNeighbour != null) {
+				newNode.setNeighbours(newNode.LEFTNEIGHBOUR, actNeighbour);
+				actNeighbour
+						.setNeighbours(actNeighbour.RIGHTNEIGHBOUR, newNode);
 			} else {
-				//A new frontierNode has to be created
+				// A new frontierNode has to be created
 				this.setFrontierNodes(direction, newNode);
 			}
 			break;
-		//Search and set the right neighbour
+		// Search and set the right neighbour
 		case 1:
-			actNeighbour = this.mapTree.get(
-					this.makeKey(newNode.getXValue()+1,newNode.getYValue()));
-			//If the neighbour exists set neighbours
-			if(actNeighbour != null){
-				newNode.setNeighbours(newNode.RIGHTNEIGHBOUR,actNeighbour);
-				actNeighbour.setNeighbours(actNeighbour.LEFTNEIGHBOUR,newNode);
+			actNeighbour = this.mapTree.get(this.makeKey(
+					newNode.getXValue() + 1, newNode.getYValue()));
+			// If the neighbour exists set neighbours
+			if (actNeighbour != null) {
+				newNode.setNeighbours(newNode.RIGHTNEIGHBOUR, actNeighbour);
+				actNeighbour.setNeighbours(actNeighbour.LEFTNEIGHBOUR, newNode);
 			} else {
-				//A new frontierNode has to be created
+				// A new frontierNode has to be created
 				this.setFrontierNodes(direction, newNode);
 			}
 			break;
-		//Search and set the bottom neighbour
+		// Search and set the bottom neighbour
 		case 2:
-			actNeighbour = this.mapTree.get(
-					this.makeKey(newNode.getXValue(),newNode.getYValue()+1));
-			//If the neighbour exists set neighbours
-			if(actNeighbour != null){
-				newNode.setNeighbours(newNode.BOTTOMNEIGHBOUR,actNeighbour);
-				actNeighbour.setNeighbours(actNeighbour.TOPNEIGHBOUR,newNode);
+			actNeighbour = this.mapTree.get(this.makeKey(newNode.getXValue(),
+					newNode.getYValue() + 1));
+			// If the neighbour exists set neighbours
+			if (actNeighbour != null) {
+				newNode.setNeighbours(newNode.BOTTOMNEIGHBOUR, actNeighbour);
+				actNeighbour.setNeighbours(actNeighbour.TOPNEIGHBOUR, newNode);
 			} else {
-				//A new frontierNode has to be created
+				// A new frontierNode has to be created
 				this.setFrontierNodes(direction, newNode);
 			}
 			break;
-		//Search and set the upper neighbour
+		// Search and set the upper neighbour
 		case 3:
-			actNeighbour = this.mapTree.get(
-					this.makeKey(newNode.getXValue(),newNode.getYValue()-1));
-			//If the neighbour exists set neighbours
-			if(actNeighbour != null){
-				newNode.setNeighbours(newNode.TOPNEIGHBOUR,actNeighbour);
-				actNeighbour.setNeighbours(actNeighbour.BOTTOMNEIGHBOUR,newNode);
+			actNeighbour = this.mapTree.get(this.makeKey(newNode.getXValue(),
+					newNode.getYValue() - 1));
+			// If the neighbour exists set neighbours
+			if (actNeighbour != null) {
+				newNode.setNeighbours(newNode.TOPNEIGHBOUR, actNeighbour);
+				actNeighbour.setNeighbours(actNeighbour.BOTTOMNEIGHBOUR,
+						newNode);
 			} else {
-				//A new frontierNode has to be created
+				// A new frontierNode has to be created
 				this.setFrontierNodes(direction, newNode);
 			}
 			break;
@@ -346,11 +346,12 @@ public class GridMap {
 	
 	/**
 	 * Creates the key for the mapping in the TreeMap.
+	 * 
 	 * @param x The x-coordinate of the node
 	 * @param y The y-coordinate of the node
 	 * @return The key for the mapping
 	 */
-	private int makeKey(int x, int y){
+	private int makeKey(int x, int y) {
 		return (x ^ y << 16) | (x & 0xFFFF);
 	}
 
@@ -365,57 +366,64 @@ public class GridMap {
 	private void setFrontierNodes(int direction, GraphNode newNode) {
 		NodeType type = NodeType.FRONTIERNODE;
 		GraphNode newFrontierNode = null;
-		
+
 		int key;
-		switch (direction){
-		//left neighbour
+		switch (direction) {
+		// left neighbour
 		case 0:
-			//Create new frontierNode
-			newFrontierNode = new GraphNode(newNode.getXValue() - 1, 
-													newNode.getYValue(),type);
-			//Set new neighbourhood
-			newNode.setNeighbours(newNode.LEFTNEIGHBOUR,newFrontierNode);
-			newFrontierNode.setNeighbours(newFrontierNode.RIGHTNEIGHBOUR,newNode);			
-			//insert in mapTree
-			key = this.makeKey(newFrontierNode.getXValue(),newFrontierNode.getYValue());
+			// Create new frontierNode
+			newFrontierNode = new GraphNode(newNode.getXValue() - 1, newNode
+					.getYValue(), type);
+			// Set new neighbourhood
+			newNode.setNeighbours(newNode.LEFTNEIGHBOUR, newFrontierNode);
+			newFrontierNode.setNeighbours(newFrontierNode.RIGHTNEIGHBOUR,
+					newNode);
+			// insert in mapTree
+			key = this.makeKey(newFrontierNode.getXValue(), newFrontierNode
+					.getYValue());
 			this.mapTree.put(key, newFrontierNode);
 			break;
-		//right neighbour
+		// right neighbour
 		case 1:
-			//Create new frontierNode
-			newFrontierNode = new GraphNode(newNode.getXValue() + 1, 
-													newNode.getYValue(),type);
-			//Set new neighbourhood
-			newNode.setNeighbours(newNode.RIGHTNEIGHBOUR,newFrontierNode);
-			newFrontierNode.setNeighbours(newFrontierNode.LEFTNEIGHBOUR,newNode);			
-			//insert in mapTree
-			key = this.makeKey(newFrontierNode.getXValue(),newFrontierNode.getYValue());
+			// Create new frontierNode
+			newFrontierNode = new GraphNode(newNode.getXValue() + 1, newNode
+					.getYValue(), type);
+			// Set new neighbourhood
+			newNode.setNeighbours(newNode.RIGHTNEIGHBOUR, newFrontierNode);
+			newFrontierNode.setNeighbours(newFrontierNode.LEFTNEIGHBOUR,
+					newNode);
+			// insert in mapTree
+			key = this.makeKey(newFrontierNode.getXValue(), newFrontierNode
+					.getYValue());
 			this.mapTree.put(key, newFrontierNode);
 			break;
-		//bottom neighbour
-		case 2: 
-			newFrontierNode = new GraphNode(newNode.getXValue(), 
-												newNode.getYValue()+1,type);
-			//Set new neighbourhood
-			newNode.setNeighbours(newNode.BOTTOMNEIGHBOUR,newFrontierNode);
-			newFrontierNode.setNeighbours(newFrontierNode.TOPNEIGHBOUR,newNode);			
-			//insert in mapTree
-			key = this.makeKey(newFrontierNode.getXValue(),newFrontierNode.getYValue());
+		// bottom neighbour
+		case 2:
+			newFrontierNode = new GraphNode(newNode.getXValue(), newNode
+					.getYValue() + 1, type);
+			// Set new neighbourhood
+			newNode.setNeighbours(newNode.BOTTOMNEIGHBOUR, newFrontierNode);
+			newFrontierNode
+					.setNeighbours(newFrontierNode.TOPNEIGHBOUR, newNode);
+			// insert in mapTree
+			key = this.makeKey(newFrontierNode.getXValue(), newFrontierNode
+					.getYValue());
 			this.mapTree.put(key, newFrontierNode);
 			break;
-		//upper neighbour
+		// upper neighbour
 		case 3:
-			newFrontierNode = new GraphNode(newNode.getXValue(), 
-												newNode.getYValue() - 1,type);
-			//Set new neighbourhood
-			newNode.setNeighbours(newNode.TOPNEIGHBOUR,newFrontierNode);
-			newFrontierNode.setNeighbours(newFrontierNode.BOTTOMNEIGHBOUR,newNode);			
-			//insert in mapTree
-			key = this.makeKey(newFrontierNode.getXValue(),newFrontierNode.getYValue());
+			newFrontierNode = new GraphNode(newNode.getXValue(), newNode
+					.getYValue() - 1, type);
+			// Set new neighbourhood
+			newNode.setNeighbours(newNode.TOPNEIGHBOUR, newFrontierNode);
+			newFrontierNode.setNeighbours(newFrontierNode.BOTTOMNEIGHBOUR,
+					newNode);
+			// insert in mapTree
+			key = this.makeKey(newFrontierNode.getXValue(), newFrontierNode
+					.getYValue());
 			this.mapTree.put(key, newFrontierNode);
 			break;
 		}
-		//add to frontierList //evtl checken ob der doppelt vorkommen tut....
 		this.frontierList.add(newFrontierNode);
 	}
 
@@ -429,43 +437,45 @@ public class GridMap {
 	 * 				
 	 */
 	private void changeState(int x, int y, NodeType newNodeType) {
-		//Iteration trough the frontierList for removing the node if it
-		//exists in the LinkedList
+		// Iteration trough the frontierList for removing the node if it
+		// exists in the LinkedList
 		Iterator<GraphNode> it = frontierList.listIterator();
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			GraphNode itNode = it.next();
-			if(itNode.getXValue() == x && itNode.getYValue() == y){
+			if (itNode.getXValue() == x && itNode.getYValue() == y) {
 				it.remove();
 			}
 		}
-		//Update the borders of the map and the NodeType as well as the 
-		//visitCounter
+		// Update the borders of the map and the NodeType as well as the
+		// visitCounter
 		this.updateMapBorders(x, y);
-		this.getNode(x,y).setNodeType(newNodeType);
-		this.getNode(x,y).increaseVisitCounter();
+		this.getNode(x, y).setNodeType(newNodeType);
+		this.getNode(x, y).increaseVisitCounter();
 	}
 
 	/**
+	 * Saves the coordinates and the status of the non-frontierNodes in a
+	 * string. These information suffice to save and to recreate the GridMap.
 	 * 
-	 * @return
+	 * @return The string with the nodes' information
 	 * @throws IOException
 	 */
 	public String serializeMapInString() throws IOException {
 		StringBuilder builder = new StringBuilder();
-		//iterate trough the maptree and saves all nodes in a string
+		// iterate trough the mapTree and saves all non-frontierNodes in a
+		// string
 		Iterator<Entry<Integer, GraphNode>> it = mapTree.entrySet().iterator();
 		MapNode bufferNode;
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			bufferNode = it.next().getValue();
-			MapNode newNodeInList = new MapNode(bufferNode.getXValue(),bufferNode.getYValue(),bufferNode.getNodeType());
-			if(newNodeInList.getNodeType() != NodeType.FRONTIERNODE){
-				builder.append(newNodeInList.getXValue());
+			if (bufferNode.getNodeType() != NodeType.FRONTIERNODE) {
+				builder.append(bufferNode.getXValue());
 				builder.append(" ");
-				builder.append(newNodeInList.getYValue());
+				builder.append(bufferNode.getYValue());
 				builder.append(" ");
-				builder.append(newNodeInList.getNodeType());
-				builder.append("\n");	
-			}			
+				builder.append(bufferNode.getNodeType());
+				builder.append("\n");
+			}
 		}
 		String returnString = builder.toString();
 		return returnString;
