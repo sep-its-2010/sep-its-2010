@@ -119,8 +119,9 @@ public class GridMap {
 		GraphNode bufferNode;
 		while(it.hasNext()){
 			//makes a copy of the GraphNode and saves it into the LinkedList 
-			bufferNode = it.next().clone();
-			graphNodeList.add(bufferNode);
+			bufferNode = it.next();
+			GraphNode newNodeInList = new GraphNode(bufferNode.getXValue(),bufferNode.getYValue(), bufferNode.getNodeType());
+			graphNodeList.add(newNodeInList);
 		}
 		return graphNodeList;
 	}
@@ -137,11 +138,12 @@ public class GridMap {
 		//Iterator for the TreeMap mapTree
 		Iterator<Entry<Integer, GraphNode>> it = mapTree.entrySet().iterator();
 		LinkedList<MapNode> nodeList = new LinkedList<MapNode>();
-		MapNode newNodeInList;
+		MapNode bufferNode;
 		while(it.hasNext()){
 			//copies the GraphNode as an instance of MapNode and saves it in
 			//the LinkedList if they aren't a frontierNode
-			newNodeInList = it.next().getValue().clone();
+			bufferNode = it.next().getValue();
+			MapNode newNodeInList = new MapNode(bufferNode.getXValue(), bufferNode.getYValue(), bufferNode.getNodeType());
 			if(newNodeInList.getNodeType() != NodeType.FRONTIERNODE){
 				nodeList.add(newNodeInList);
 			}
@@ -443,22 +445,29 @@ public class GridMap {
 		this.getNode(x,y).increaseVisitCounter();
 	}
 
-	
+	/**
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public String serializeMapInString() throws IOException {
 		StringBuilder builder = new StringBuilder();
 		//iterate trough the maptree and saves all nodes in a string
 		Iterator<Entry<Integer, GraphNode>> it = mapTree.entrySet().iterator();
-		MapNode newNodeInList;
+		MapNode bufferNode;
 		while(it.hasNext()){
-			newNodeInList = it.next().getValue().clone();
-			builder.append(newNodeInList.getXValue());
-			builder.append(" ");
-			builder.append(newNodeInList.getYValue());
-			builder.append(" ");
-			builder.append(newNodeInList.getNodeType());
-			builder.append(" ");
-			builder.append(newNodeInList.getVisitCounter());
-			builder.append("\n");
+			bufferNode = it.next().getValue();
+			MapNode newNodeInList = new MapNode(bufferNode.getXValue(),bufferNode.getYValue(),bufferNode.getNodeType());
+			if(newNodeInList.getNodeType() != NodeType.FRONTIERNODE){
+				builder.append(newNodeInList.getXValue());
+				builder.append(" ");
+				builder.append(newNodeInList.getYValue());
+				builder.append(" ");
+				builder.append(newNodeInList.getNodeType());
+				builder.append(" ");
+				builder.append(newNodeInList.getVisitCounter());
+				builder.append("\n");	
+			}			
 		}
 		String returnString = builder.toString();
 		return returnString;
