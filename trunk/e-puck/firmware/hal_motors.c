@@ -375,7 +375,7 @@ void hal_motors_setSpeedRight(
  * Specifies the line speed.
  * 
  * \param _i16AngularStepsPerSecond
- * Specifies the angular speed.
+ * Specifies the angular speed with negative values for turning left and positive values for turning right.
  * 
  * \remarks
  * - This function is interrupt safe concerning timer 4 and 5 interrupts.
@@ -395,7 +395,7 @@ void hal_motors_setSpeed(
 	if( abs( _i16AngularStepsPerSecond) + abs( _i16StepsPerSecond) <= HAL_MOTORS_MAX_ABS_SPEED) {
 		T4CON = 0;
 		T5CON = 0;
-		hal_motors_setSpeedRight( _i16StepsPerSecond + _i16AngularStepsPerSecond);
-		hal_motors_setSpeedLeft( _i16StepsPerSecond - _i16AngularStepsPerSecond);
+		hal_motors_setSpeedRight( _i16StepsPerSecond - _i16AngularStepsPerSecond);
+		hal_motors_setSpeedLeft( _i16StepsPerSecond + _i16AngularStepsPerSecond);
 	}
 }
