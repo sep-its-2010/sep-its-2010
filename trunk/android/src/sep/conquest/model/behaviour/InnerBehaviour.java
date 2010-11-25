@@ -1,15 +1,18 @@
-package sep.conquest.model;
+package sep.conquest.model.behaviour;
 
 import java.util.Map;
 
+import sep.conquest.model.Puck;
+import sep.conquest.model.State;
+
 /**
- * ReturnBehaviour represents a behaviour for robots that have to return to
- * their start-nodes. It extends the Behaviour class for enabling a
- * behaviour-chain.
+ * InnerBehaviour represents a behaviour to identify inner areas of frontier
+ * nodes within a map. It extends the Behaviour class for enabling a behaviour-
+ * chain.
  * 
  * @author Andreas Wilhelm
  */
-public final class ReturnBehaviour extends Behaviour {
+public final class InnerBehaviour extends Behaviour {
 
     /**
      * The constructor enables chain-handling by calling the constructor of
@@ -18,7 +21,7 @@ public final class ReturnBehaviour extends Behaviour {
      * @param stateLevel The level of the state.
      * @param next A reference to the next behaviour.
      */
-    protected ReturnBehaviour(State stateLevel, IBehaviour next) {
+    protected InnerBehaviour(State stateLevel, IBehaviour next) {
         super(stateLevel, next);
     }
 

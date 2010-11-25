@@ -1,6 +1,8 @@
-package sep.conquest.model;
+package sep.conquest.model.behaviour;
 
 import java.util.Map;
+
+import sep.conquest.model.Puck;
 
 /**
  * Every single logic-stage of the navigation has to implement the IBehaviour

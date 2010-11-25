@@ -1,15 +1,18 @@
-package sep.conquest.model;
+package sep.conquest.model.behaviour;
 
 import java.util.Map;
 
+import sep.conquest.model.Puck;
+import sep.conquest.model.State;
+
 /**
- * InnerBehaviour represents a behaviour to identify inner areas of frontier
- * nodes within a map. It extends the Behaviour class for enabling a behaviour-
- * chain.
+ * GlobalLocalizeBehaviour represents a behaviour for localizing robots on
+ * arbitrary map-nodes. It extends the Behaviour class for enabling a
+ * behaviour-chain.
  * 
  * @author Andreas Wilhelm
  */
-public final class InnerBehaviour extends Behaviour {
+public final class GlobalLocalizeBehaviour extends Behaviour {
 
     /**
      * The constructor enables chain-handling by calling the constructor of
@@ -18,7 +21,7 @@ public final class InnerBehaviour extends Behaviour {
      * @param stateLevel The level of the state.
      * @param next A reference to the next behaviour.
      */
-    protected InnerBehaviour(State stateLevel, IBehaviour next) {
+    protected GlobalLocalizeBehaviour(State stateLevel, IBehaviour next) {
         super(stateLevel, next);
     }
 

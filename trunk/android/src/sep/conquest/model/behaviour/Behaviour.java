@@ -1,7 +1,10 @@
-package sep.conquest.model;
+package sep.conquest.model.behaviour;
 
 import java.util.Map;
 import java.util.TreeMap;
+
+import sep.conquest.model.Puck;
+import sep.conquest.model.State;
 
 /**
  * The abstract class Behaviour should be derived by all concrete behaviours
@@ -26,7 +29,8 @@ public abstract class Behaviour implements IBehaviour {
 	/**
 	 * A map for the first behaviours per state-level.
 	 */
-	private static TreeMap <State, IBehaviour> entryBehaviours;    
+	private static TreeMap <State, IBehaviour> entryBehaviours = 
+		new TreeMap<State, IBehaviour>();    
     
     /**
      * The constructor sets the reference to the previous Behaviour in the chain

@@ -38,7 +38,9 @@ public abstract class Request implements IRequest {
      * The constructor expects no receiver. The requests shall be read by
      * all participants of the communication-network.
      */
-    protected Request() { }
+    protected Request(UUID sender) {
+    	this.sender = sender;
+    }
 
     /* (non-Javadoc)
      * @see sep.conquest.model.IRequest#getReceiver()

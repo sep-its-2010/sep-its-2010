@@ -1,15 +1,17 @@
-package sep.conquest.model;
+package sep.conquest.model.behaviour;
 
 import java.util.Map;
 
+import sep.conquest.model.Puck;
+import sep.conquest.model.State;
+
 /**
- * GlobalLocalizeBehaviour represents a behaviour for localizing robots on
- * arbitrary map-nodes. It extends the Behaviour class for enabling a
- * behaviour-chain.
+ * LocalLocalizeBehaviour represents a behaviour for localizing adjacent robots.
+ * It extends the Behaviour class for enabling a behaviour-chain.
  * 
  * @author Andreas Wilhelm
  */
-public final class GlobalLocalizeBehaviour extends Behaviour {
+public final class LocalLocalizeBehaviour extends Behaviour {
 
     /**
      * The constructor enables chain-handling by calling the constructor of
@@ -18,7 +20,7 @@ public final class GlobalLocalizeBehaviour extends Behaviour {
      * @param stateLevel The level of the state.
      * @param next A reference to the next behaviour.
      */
-    protected GlobalLocalizeBehaviour(State stateLevel, IBehaviour next) {
+    protected LocalLocalizeBehaviour(State stateLevel, IBehaviour next) {
         super(stateLevel, next);
     }
 

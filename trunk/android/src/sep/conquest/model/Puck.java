@@ -35,7 +35,7 @@ public abstract class Puck implements IComClient, IRobot {
 	/**
 	 * Executes logic and behaviour.
 	 */
-	private LogicThread logicThread = new LogicThread(this);
+	private LogicThread logicThread;
 
 	/**
 	 * The thread executor for the logic-thread.
@@ -64,6 +64,7 @@ public abstract class Puck implements IComClient, IRobot {
 		states.put(id, new RobotStatus());
 
 		// start the logic thread
+		logicThread = new LogicThread(this);
 		executor.execute(logicThread);
 	}
 
@@ -81,7 +82,7 @@ public abstract class Puck implements IComClient, IRobot {
 	 */
 	public void sendHello() {
 		ComManager comMan = ComManager.getInstance();
-		HelloRequest request = new HelloRequest();
+		HelloRequest request = new HelloRequest(getID());
 		comMan.broadcast(request);
 	}
 	

@@ -1,5 +1,7 @@
 package sep.conquest.model.requests;
 
+import java.util.UUID;
+
 
 /**
  * The HelloRequest represents message objects that are sent by 
@@ -15,8 +17,8 @@ public class HelloRequest extends Request {
     /**
      * The constructor for a introduction-request.
      */
-    public HelloRequest() {
-    	super();    	
+    public HelloRequest(UUID sender) {
+    	super(sender);    	
     }
 
     /* (non-Javadoc)

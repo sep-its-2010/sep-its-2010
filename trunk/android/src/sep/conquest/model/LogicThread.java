@@ -7,6 +7,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import sep.conquest.model.behaviour.Behaviour;
+import sep.conquest.model.behaviour.BehaviourFactory;
+import sep.conquest.model.behaviour.IBehaviour;
 import sep.conquest.model.handler.Handler;
 import sep.conquest.model.handler.HandlerFactory;
 import sep.conquest.model.requests.PuckRequest;
@@ -53,7 +56,8 @@ public class LogicThread implements Runnable {
 	/**
 	 * The queue for broadcast messages.
 	 */
-	private ConcurrentLinkedQueue<IRequest> bcQueue;
+	private ConcurrentLinkedQueue<IRequest> bcQueue = 
+		new ConcurrentLinkedQueue<IRequest>();
 
 	/**
 	 * Indicates whether a bluetooth messages is expected.
@@ -78,6 +82,8 @@ public class LogicThread implements Runnable {
 	 */
 	public LogicThread(Puck robot) {
 		this.robot = robot;
+		State state = robot.getRobotStatus().get(robot.getID()).getState();		
+		BehaviourFactory.createBehaviourChain(state);		
 		stateBehaviour = Behaviour
 				.getFirstBehaviour(getRobotState().getState());
 		bcHandler = HandlerFactory.getPuckBCChain(this);
@@ -284,7 +290,9 @@ public class LogicThread implements Runnable {
 			
 			// handle broadcast messages
 			if (!bcQueue.isEmpty()) {
-				bcHandler.handleRequest(bcQueue.poll());
+				IRequest req = bcQueue.poll();
+				bcHandler.handleRequest(req);
+				ConquestLog.addMessage(this, "Robot: " + robot.getID() + " Sender: " + req.getSender());
 				changed = true;
 			}
 			

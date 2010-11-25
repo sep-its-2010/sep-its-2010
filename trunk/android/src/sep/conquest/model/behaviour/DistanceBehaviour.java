@@ -1,15 +1,18 @@
-package sep.conquest.model;
+package sep.conquest.model.behaviour;
 
 import java.util.Map;
 
+import sep.conquest.model.Puck;
+import sep.conquest.model.State;
+
 /**
- * CooperativeBehaviour represents a behaviour to identify frontier nodes within
- * a map that will be already explored by other robots. It extends the Behaviour
- * class for enabling a behaviour-chain.
+ * DistanceBehaviour represents a behaviour to identify the next frontier-nodes
+ * of a given map. It extends the Behaviour class for enabling a behaviour-
+ * chain.
  * 
  * @author Andreas Wilhelm
  */
-public final class CooperativeBehaviour extends Behaviour {
+public final class DistanceBehaviour extends Behaviour {
 
     /**
      * The constructor enables chain-handling by calling the constructor of
@@ -18,7 +21,7 @@ public final class CooperativeBehaviour extends Behaviour {
      * @param stateLevel The level of the state.
      * @param next A reference to the next behaviour.
      */
-    protected CooperativeBehaviour(State stateLevel, IBehaviour next) {
+    protected DistanceBehaviour(State stateLevel, IBehaviour next) {
         super(stateLevel, next);
     }
 
@@ -28,5 +31,4 @@ public final class CooperativeBehaviour extends Behaviour {
     public Map<int[], Integer> execute(Map<int[], Integer> map, Puck robot) {
         return super.execute(map, robot);
     }
-
 }
