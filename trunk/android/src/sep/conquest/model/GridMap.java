@@ -72,10 +72,10 @@ public class GridMap {
 	 */
 	public GridMap() {
 		//init the borders of the map 
-		mapBorders[this.MAXYVALUEONMAP]=0;
-		mapBorders[this.MAXXVALUEONMAP]=0;
-		mapBorders[this.MINYVALUEONMAP]=0;
-		mapBorders[this.MINXVALUEONMAP]=0;
+		mapBorders[this.MAXYVALUEONMAP]=Integer.MIN_VALUE;
+		mapBorders[this.MAXXVALUEONMAP]=Integer.MIN_VALUE;
+		mapBorders[this.MINYVALUEONMAP]=Integer.MAX_VALUE;
+		mapBorders[this.MINXVALUEONMAP]=Integer.MAX_VALUE;
 	}
 	
 	/**
@@ -464,32 +464,10 @@ public class GridMap {
 				builder.append(newNodeInList.getYValue());
 				builder.append(" ");
 				builder.append(newNodeInList.getNodeType());
-				builder.append(" ");
-				builder.append(newNodeInList.getVisitCounter());
 				builder.append("\n");	
 			}			
 		}
 		String returnString = builder.toString();
 		return returnString;
 	}
-
-	/**
-	 * Makes a deep copy of the frontierList and saves the GraphNodes in a 
-	 * LinkedList
-	 * 
-	 * @return LinkedList which is a copy of frontierList
-	 */
-	/**private LinkedList<GraphNode> cloneFrontierList() {
-		return null;
-	}*/
-
-	/**
-	 * Iterates trough the TreeMap mapTree, creates MapNodes using the 
-	 * GraphNodes and saves them into a LinkedList
-	 * 
-	 * @return LinkedList which contains all nodes saved in the GridMap
-	 */
-	/**private LinkedList<MapNode> cloneMapTreeIntoList() {
-		return null;
-	}*/
 }
