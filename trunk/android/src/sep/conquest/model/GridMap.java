@@ -47,25 +47,25 @@ public class GridMap {
 	 * This constant represents the smallest x-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 0.
 	 */
-	private final int MINXVALUEONMAP = 0;
+	public final int MINXVALUEONMAP = 0;
 	
 	/**
 	 * This constant represents the smallest y-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 1.
 	 */
-	private final int MINYVALUEONMAP = 1;
+	public final int MINYVALUEONMAP = 1;
 
 	/**
 	 * This constant represents the biggest x-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 2.
 	 */
-	private final int MAXXVALUEONMAP = 2;
+	public final int MAXXVALUEONMAP = 2;
 	
 	/**
 	 * This constant represents the biggest y-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 3.
 	 */
-	private final int MAXYVALUEONMAP = 3;
+	public final int MAXYVALUEONMAP = 3;
 
 	/**
 	 * default constructor
