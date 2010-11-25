@@ -5,6 +5,10 @@
 
 #include "subs_abyss.h"
 
+enum {
+	ABYSS_DETECTION_THRESHOLD = 75 ///< Sensor-values below this threshold indicate an abyss.
+};
+
 /*!
  * \brief
  * Decides if there is an abyss in front of the robot.
@@ -21,7 +25,8 @@ bool subs_abyss_run( void) {
 	sen_line_SData_t* _lppodSensorData = &podSensorData;
 	sen_line_read( _lppodSensorData);
 
-	if( podSensorData.aui16Data[1] < 75) {
+	// Check if middle ground-sensor detects an abyss
+	if( podSensorData.aui16Data[1] < ABYSS_DETECTION_THRESHOLD) {
 		hal_motors_setSpeed( 0, 0);
 		hal_motors_setSteps( 0);
 		abyssDetected = true;

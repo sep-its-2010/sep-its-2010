@@ -5,6 +5,17 @@
 
 #include "subs_node.h"
 
+enum {
+	NODE_DETECTION__REQUIRED_MEASUREMENTS = 3, ///< Specifies the number of measurements, which have to provide data above a certain threshold for node-detection.
+	
+	NODE_DETECTION__LEFT_SENSORVALUE_THRESHOLD = 0,//0.7 * "Wert im EEPROM für linken Sensor"
+	NODE_DETECTION__MIDDLE_SENSORVALUE_THRESHOLD = 0, //0.7 * ...
+	NODE_DETECTION__RIGHT_SENSORVALUE_THRESHOLD = 0 // 0.7 * ...
+};
+
+uint8_t ui8NodeDetectionCounter; ///< Number of measurements in a row, which provided data above a certain threshold.
+sen_line_SData_t podSensorData; ///< Holds data of the three ground-sensors.
+
 /*!
  * \brief
  * Analyzes if the robot is above a node.
@@ -20,11 +31,15 @@
 bool subs_node_run( void) {
 	bool nodeHit = false;
 	bool isMoving = (hal_motors_getSpeedLeft() == 0) && (hal_motors_getSpeedRight() == 0);
-	sen_line_SData_t podSensorData;
 	sen_line_SData_t* _lppodSensorData = &podSensorData;
 
-
-	
+	if( isMoving) {
+		if( ui8NodeDetectionCounter < NODE_DETECTION__REQUIRED_MEASUREMENTS) {
+			sen_line_read( _lppodSensorData);
+			// Fallunterscheidung
+		}
+	}
+		
 	return nodeHit;
 }
 
@@ -35,5 +50,9 @@ bool subs_node_run( void) {
  * Write detailed description for subs_node_reset here.
  */
 void subs_node_reset( void) {
-
+	ui8NodeDetectionCounter = 0;
+	
+	for( uint8_t i = 0; sizeof( podSensorData.aui16Data); i++) {
+		podSensorData.aui16Data[i] = 0;
+	}
 }
