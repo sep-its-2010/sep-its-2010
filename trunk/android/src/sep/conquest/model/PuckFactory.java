@@ -46,6 +46,10 @@ public class PuckFactory {
         Puck newPuck = new RealPuck(robot, newUUID);
         man.addClient(newUUID, newPuck);
       }
+      
+      // initiate handshaking of the robots
+      Puck first = (Puck) man.getClients()[0];
+      first.sendHello();
       return true;
     }
   }

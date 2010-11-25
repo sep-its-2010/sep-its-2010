@@ -533,9 +533,9 @@ public final class Connect extends Activity {
 
       // When all sockets are connected properly create RealPuckInstances
       // and send success message
-      // PuckFactory.createRealPucks(sockets);
-      intent.setAction(CONNECTION_SUCCESSFUL);
-      sendBroadcast(intent);
+      PuckFactory.createRealPucks(sockets);
+	  intent.setAction(CONNECTION_SUCCESSFUL);
+      sendBroadcast(intent); 
     }
   }
 }

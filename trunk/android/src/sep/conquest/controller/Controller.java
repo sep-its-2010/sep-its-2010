@@ -2,8 +2,8 @@ package sep.conquest.controller;
 
 import java.util.UUID;
 
-import sep.conquest.model.Drive;
 import sep.conquest.model.Environment;
+import sep.conquest.model.Orientation;
 import sep.conquest.model.SpeedLevel;
 
 /**
@@ -60,7 +60,7 @@ public class Controller {
      * @param ID The ID of the robot.
      */
     public void left(UUID ID) {
-        environment.driveCommand(ID, Drive.LEFT);
+        environment.driveCommand(ID, Orientation.LEFT);
     }
 
     /**
@@ -69,7 +69,7 @@ public class Controller {
      * @param ID The ID of the robot.
      */
     public void right(UUID ID) {
-        environment.driveCommand(ID, Drive.RIGHT);
+        environment.driveCommand(ID, Orientation.RIGHT);
     }
     
     /**
@@ -78,7 +78,7 @@ public class Controller {
      * @param ID the ID of the robot.
      */
     public void forward(UUID ID) {
-        environment.driveCommand(ID, Drive.FORWARD);
+        environment.driveCommand(ID, Orientation.UP);
     }    
     
     /**
@@ -87,7 +87,7 @@ public class Controller {
      * @param ID The ID of the robot.
      */
     public void turn(UUID ID) {
-        environment.driveCommand(ID, Drive.TURN);
+        environment.driveCommand(ID, Orientation.DOWN);
     }    
     
     /**

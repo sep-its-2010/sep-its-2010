@@ -83,7 +83,7 @@ public class Environment extends Observable implements IComClient {
 	 * @param command
 	 *            The drive command to send.
 	 */
-	public void driveCommand(UUID id, Drive command) {
+	public void driveCommand(UUID id, Orientation command) {
 		UUID[] receiver = { id };
 		DriveRequest driveReq = new DriveRequest(this.getID(), receiver,
 				command);

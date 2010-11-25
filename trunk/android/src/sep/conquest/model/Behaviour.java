@@ -81,7 +81,6 @@ public abstract class Behaviour implements IBehaviour {
             return nextBehaviour.execute(map, robot);
         } else {
             return map;
-        }
-            
+        }            
     }
 }

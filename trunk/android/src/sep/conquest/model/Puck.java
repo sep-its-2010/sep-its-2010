@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import sep.conquest.model.requests.HelloRequest;
 import sep.conquest.util.ConquestLog;
 
 /**
@@ -75,6 +76,15 @@ public abstract class Puck implements IComClient, IRobot {
 		return states;
 	}
 
+	/**
+	 * Initiate a hello-message-chain.
+	 */
+	public void sendHello() {
+		ComManager comMan = ComManager.getInstance();
+		HelloRequest request = new HelloRequest();
+		comMan.broadcast(request);
+	}
+	
 	/**
 	 * The method delivers a message from a specific sender and puts it on the
 	 * LogicThread-queue.

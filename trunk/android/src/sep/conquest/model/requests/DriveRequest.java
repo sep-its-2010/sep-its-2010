@@ -2,7 +2,7 @@ package sep.conquest.model.requests;
 
 import java.util.UUID;
 
-import sep.conquest.model.Drive;
+import sep.conquest.model.Orientation;
 
 
 /**
@@ -18,7 +18,7 @@ public class DriveRequest extends Request {
     /**
      * The specific drive command of the request message.
      */
-    private Drive driveCommand;
+    private Orientation driveCommand;
     
     /**
      * The constructor expects a drive-command and a corresponding robot.
@@ -26,7 +26,7 @@ public class DriveRequest extends Request {
      * @param receiver The robot IDs that shall receive the command.
      * @param command The drive-command.
      */
-    public DriveRequest(UUID sender, UUID[] receiver, Drive command) {
+    public DriveRequest(UUID sender, UUID[] receiver, Orientation command) {
         super(sender, receiver);
         driveCommand = command;
     }
@@ -43,7 +43,7 @@ public class DriveRequest extends Request {
      * 
      * @return The drive-command.
      */
-    public Drive getCommand() {
+    public Orientation getCommand() {
         return driveCommand;
     }
 }

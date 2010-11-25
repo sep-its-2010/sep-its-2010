@@ -1,6 +1,7 @@
 package sep.conquest.model;
 
 import java.util.Iterator;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -87,6 +88,22 @@ public class ComManager implements IComMan {
 	 */
 	public void removeClient(UUID id) {
 		clients.remove(id);
+	}
+
+	/* (non-Javadoc)
+	 * @see sep.conquest.model.IComMan#getClients()
+	 */
+	public IComClient[] getClients() {
+		Set<UUID> keys = clients.keySet();
+		IComClient[] clientArray = new IComClient[keys.size()];
+		int i = 0;
+		
+		for (UUID key: keys) {
+			clientArray[i] = clients.get(key);
+			i++;
+		}
+		
+		return clientArray;
 	}
 
 }

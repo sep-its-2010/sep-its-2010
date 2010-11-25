@@ -33,4 +33,11 @@ public interface IComMan {
      * @param id The ID of the client which has to be removed.
      */
     void removeClient(UUID id);
+    
+    /**
+     * Returns the list of registered clients.
+     * 
+     * @return The clients.
+     */
+    IComClient[] getClients();
 }

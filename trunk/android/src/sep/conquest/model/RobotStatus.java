@@ -16,6 +16,11 @@ public class RobotStatus {
 	private int[] position;
 
 	/**
+	 * The type of the current node.
+	 */
+	private NodeType nodeType;
+
+	/**
 	 * The current orientation of the robot within the map.
 	 */
 	private Orientation orientation;
@@ -29,6 +34,11 @@ public class RobotStatus {
 	 * The current state of the robot.
 	 */
 	private State state;
+	
+	/**
+	 * The intended destination.
+	 */
+	private int[] intentPosition;
 
 	/**
 	 * The constructor takes every needed parameter to fill the ModelData
@@ -42,13 +52,19 @@ public class RobotStatus {
 	 *            Indicates if the robot is moving.
 	 * @param state
 	 *            The current state of the robot.
+	 * @param nodeType
+	 *            The type of the node.
+	 * @param intentPosition
+	 *            The intended destination node.
 	 */
 	public RobotStatus(int[] position, Orientation orientation, boolean moving,
-			State state) {
+			State state, NodeType nodeType, int[] intentPosition) {
 		this.position = position;
 		this.orientation = orientation;
 		this.moving = moving;
 		this.state = state;
+		this.nodeType = nodeType;
+		this.intentPosition = intentPosition;
 	}
 
 	/**
@@ -79,6 +95,15 @@ public class RobotStatus {
 	public Orientation getOrientation() {
 		return orientation;
 	}
+	
+	/**
+	 * Returns the type of the current node.
+	 * 
+	 * @return A NodeType.
+	 */
+	public NodeType getNodeType() {
+		return nodeType;
+	}
 
 	/**
 	 * Indicates if the robot is currently moving.
@@ -98,6 +123,15 @@ public class RobotStatus {
 		return state;
 	}
 
+	/**
+	 * Returns the current destination position.
+	 * 
+	 * @return The destination.
+	 */
+	public int[] getIntentPosition() {
+		return intentPosition;
+	}	
+	
 	/**
 	 * Sets the position of the robot.
 	 * 
@@ -137,23 +171,37 @@ public class RobotStatus {
 	public void setMoving(boolean moving) {
 		this.moving = moving;
 	}
+	
+	/**
+	 * Sets the type of the Node.
+	 * 
+	 * @param nodeType The NodeType.
+	 */
+	public void setNodeType(NodeType nodeType) {
+		this.nodeType = nodeType;
+	}
 
+	/**
+	 * Sets the destination node.
+	 * 
+	 * @param intentPosition The intended destination.
+	 */
+	public void setIntentPosition(int[] intentPosition) {
+		this.intentPosition = intentPosition;
+	}	
+	
 	/**
 	 * Sets the complete status of the robot.
 	 * 
-	 * @param pos
-	 *            The position of the robot.
-	 * @param orientation
-	 *            The Orientation of the robot.
-	 * @param moving
-	 *            Indicates if the robot is moving.
-	 * @param state
-	 *            The current state of the robot.
+	 * @param status
+	 *            The RobotStatus.
 	 */
 	public void setRobotStatus(RobotStatus status) {
 		this.position = status.getPosition();
 		this.orientation = status.getOrientation();
 		this.moving = status.isMoving();
 		this.state = status.getState();
+		this.nodeType = status.getNodeType();
+		this.intentPosition = status.getIntentPosition();
 	}
 }
