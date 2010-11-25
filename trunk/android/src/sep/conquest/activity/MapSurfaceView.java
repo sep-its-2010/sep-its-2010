@@ -104,6 +104,8 @@ public class MapSurfaceView extends SurfaceView
     private int scaleValue = STARTVALUE;
     
     private float scaleFactor;
+    
+    private int selectedPuck;
 
     /**
      * This value is initially set to false and is activated when scallValue
@@ -165,6 +167,7 @@ public class MapSurfaceView extends SurfaceView
         positions = new LinkedList<EpuckPosition>();
         positions.add(new EpuckPosition(1, 1, 1224));
         positions.add(new EpuckPosition(2, 2, 1225));
+        positions.add(new EpuckPosition(5, 5, 1229));
         //for testing only
     }
 
@@ -206,27 +209,25 @@ public class MapSurfaceView extends SurfaceView
      * @param event Event to get x and y coordinates.
      */
 	public boolean onTouch(View v, MotionEvent event) {
+		if (positions != null) {
+			Iterator<EpuckPosition> it = positions.iterator();
+			while(it.hasNext()) {
+				EpuckPosition e = (EpuckPosition) it.next();
+				int xCoord = (int) (((e.getX()*scaleValue) + currentOffsetX) * scaleFactor);
+				int yCoord = (int) (((e.getY()*scaleValue) + currentOffsetY) * scaleFactor);
+				int test = (int) event.getX();
+				int test2 = (int) event.getY();
+				if (Math.abs(xCoord-test) < 40 && Math.abs(yCoord-test2) < 40) {
+					selectedPuck = e.getID();
+					
+				}
+			}
+		}
 		if (scrollAble) {
 		if(event.getAction() == MotionEvent.ACTION_DOWN){
 			
 			// Track starting point
 			downTouchPoint = new PointF(event.getX(), event.getY());
-			
-			//check if e-puck should be selected
-			if (positions != null) {
-				Iterator<EpuckPosition> it = positions.iterator();
-				while(it.hasNext()) {
-					EpuckPosition e = (EpuckPosition) it.next();
-					int xCoord = (int) (((e.getX()+1)*scaleValue) + currentOffsetX);
-					int yCoord = (int) (((e.getY()+1)*scaleValue) + currentOffsetY);
-					int test = (int) event.getX();
-					int test2 = (int) event.getY();
-					if (Math.abs(xCoord-test) < 40 && Math.abs(yCoord-test2) < 40) {
-						//mach den epuck zu selected
-						
-					}
-				}
-			}
 			
 		} else if(event.getAction() == MotionEvent.ACTION_UP){
 			// Clear starting point
@@ -281,7 +282,7 @@ public class MapSurfaceView extends SurfaceView
          * to draw the e-pucks and in another color for selected ones.
          */
         private Paint paint = new Paint();
-
+        
         /**
          * This class extends of Thread and this method must be implemented.
          * It runs persistently in the background and executes an infinite loop.
@@ -293,62 +294,22 @@ public class MapSurfaceView extends SurfaceView
         public void run() {
             while(!paused){
             	doTest();
-            	
             }
         } 
         
         public void doTest() {
         	GridMap map = new GridMap();
-	        NodeType type = NodeType.CROSS;
-	        int x = 1;
-	        int y = 0;
-	       
-	        type = NodeType.TOPLEFTEDGE;
-	        x = 0;
-	        y = 0;
-	        map.addNode(x, y, type);
-	       
-	        type = NodeType.CROSS;
-	        x = 2;
-	        y = 1;
-	        map.addNode(x, y, type);
-	       
-	        type = NodeType.TOPT;
-	        x = 0;
-	        y = 2;
-	        map.addNode(x, y, type);
-	       
-	        type = NodeType.CROSS;
-	        x = 1;
-	        y = 1;
-	        map.addNode(x, y, type);
-	       
-	        type = NodeType.LEFTT;
-	        x = 0;
-	        y = 1;
-	        map.addNode(x, y, type);
-	       
-	        type = NodeType.BOTTOMT;
-	        x = 1;
-	        y = 2;
-	        map.addNode(x, y, type);
-	       
-	        type = NodeType.BOTTOMLEFTEDGE;
-	        x = 0;
-	        y = 2;
-	        map.addNode(x, y, type);
-	       
-	        type = NodeType.TOPT;
-	        x = 1;
-	        y = 0;
-	        map.addNode(x, y, type);
-	       
-	        type = NodeType.CROSS;
-	        x = 2;
-	        y = 2;
-	        map.addNode(x, y, type);
-
-	        LinkedList<MapNode> ll = map.getMapAsList();
+        	NodeType type;
+            type = NodeType.CROSS;
+            for(int k = 0; k<2;k++){
+                for(int i = 0;i<20;i++){
+                    for(int j = 0; j < 20;j++){
+                        map.addNode(i+(20*k), j+(20*k), type);
+                    }
+                }   
+            }
+        	
+            LinkedList<MapNode> ll = map.getMapAsList();
 	        int[] borders = new int[4];
 	        borders = map.getMapBorders();
 	        doDraw(ll, borders);
@@ -368,9 +329,10 @@ public class MapSurfaceView extends SurfaceView
          * @param map Complete map explored by robots.
          */
         private void doDraw(LinkedList<MapNode> map, int[] borders){
+        	//neu zeichnen bei update und bei ontouch. 
+        	//also mit thread.doDraw
+        	
             //lock the canvas to do draw operations on it
-        	int testX = 20;
-        	int testY = 30;
         	Canvas c = getHolder().lockCanvas();
             
         	//Set current size of canvas
@@ -396,13 +358,13 @@ public class MapSurfaceView extends SurfaceView
             } else {
             	int boundX = 0;
             	int boundY = 0;
-            	if (displayX < testX*scaleValue) {
-            		boundX = testX*scaleValue;
+            	if (displayX < (maxX-minX)*scaleValue) {
+            		boundX = (maxX-minX)*scaleValue;
             	} else {
             		boundX = displayX;
             	}
-            	if (displayY < testY*scaleValue) {
-            		boundY = testY * scaleValue;
+            	if (displayY < (maxY-minY)*scaleValue) {
+            		boundY = (maxY-minY) * scaleValue;
             	} else {
             		boundY = displayY;
             	}
@@ -412,20 +374,15 @@ public class MapSurfaceView extends SurfaceView
             //Draw background for scrollable view
             paint.setColor(0xff000000);
             c.drawRect(bounds, paint);
-            
-            //Draw the first layer: Visited Rects
-            
-            
-            //Draw the second layer: Nodes
-            
 
+            //Draw first and second layer: Visited Rects and Nodes
             Iterator<MapNode> map_it = map.iterator();
             MapNode mn;
             while(map_it.hasNext()) {
             	mn = map_it.next();
-            	int xValue = mn.getXValue() + offsetX;
-            	int yValue = mn.getYValue() + offsetY;
-            	//hier drawvisited!! und paint wieder setzen!
+            	int xValue = (mn.getXValue() + offsetX) * scaleValue;
+            	int yValue = (mn.getYValue() + offsetY) * scaleValue;
+            	//drawVisited(c, xValue, yValue, mn.getVisitCounter(), paint);
             	paint.setColor(0xff00ff00);
             	switch (mn.getNodeType()) {
             	case BOTTOMLEFTEDGE: drawBottomLeftEdge(c, xValue, yValue); break;
@@ -439,20 +396,20 @@ public class MapSurfaceView extends SurfaceView
             	case CROSS: drawCross(c, xValue, yValue); break;
             	}
             }
-            /**
-            for (int k = 0; k < testY; k++) {
-            	for (int l = 0; l < testX; l++) {
-            		drawCross(c, l*scaleValue, k*scaleValue);
-            	}
-            }
-            */
+
+            
             
             //Draw the third layer: Robots
             Iterator<EpuckPosition> pos_it = positions.iterator();
             EpuckPosition epp;
             while(pos_it.hasNext()) {
             	epp = pos_it.next();
-            	drawEpuck(c, epp.getX(), epp.getY());
+            	if (epp.getID() == selectedPuck) {
+            		selectEpuck(c, epp.getX(), epp.getY());
+            	} else {
+            		drawEpuck(c, epp.getX(), epp.getY());
+            	}
+            	
             }
 
             getHolder().unlockCanvasAndPost(c);
@@ -496,9 +453,7 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-        public void drawCross(Canvas c, int dx, int dy) {
-        	int x = dx * scaleValue;
-        	int y = dy * scaleValue;
+        public void drawCross(Canvas c, int x, int y) {
             c.drawLine(x, y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
             c.drawLine(x + (scaleValue/2), y, x + (scaleValue/2), y + scaleValue, paint);
         }
@@ -515,9 +470,7 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-        public void drawTopLeftEdge(Canvas c, int dx, int dy) {
-        	int x = dx * scaleValue;
-        	int y = dy * scaleValue;
+        public void drawTopLeftEdge(Canvas c, int x, int y) {
             c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
             c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + (scaleValue/2), y + scaleValue, paint);
         }
@@ -534,9 +487,7 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-    	public void drawTopRightEdge(Canvas c, int dx, int dy) {
-    		int x = dx * scaleValue;
-        	int y = dy * scaleValue;
+    	public void drawTopRightEdge(Canvas c, int x, int y) {
     		c.drawLine(x, y + (scaleValue/2), x + (scaleValue/2), y + (scaleValue/2), paint);
     		c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + (scaleValue/2), y + scaleValue, paint);
     	}
@@ -553,9 +504,7 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-    	public void drawBottomRightEdge(Canvas c, int dx, int dy) {
-    		int x = dx * scaleValue;
-        	int y = dy * scaleValue;
+    	public void drawBottomRightEdge(Canvas c, int x, int y) {
     		c.drawLine(x, y + (scaleValue/2), x + (scaleValue/2), y + (scaleValue/2), paint);
     		c.drawLine(x + (scaleValue/2), y, x + (scaleValue/2), y + (scaleValue/2), paint);
     	}
@@ -572,9 +521,7 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-    	public void drawBottomLeftEdge(Canvas c, int dx, int dy) {
-    		int x = dx * scaleValue;
-        	int y = dy * scaleValue;
+    	public void drawBottomLeftEdge(Canvas c, int x, int y) {
     		c.drawLine(x + (scaleValue/2), y, x + (scaleValue/2), y + (scaleValue/2), paint);
     		c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
     	}
@@ -589,9 +536,7 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-        public void drawTopT(Canvas c, int dx, int dy) {
-        	int x = dx * scaleValue;
-        	int y = dy * scaleValue;
+        public void drawTopT(Canvas c, int x, int y) {
             c.drawLine(x, y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
             c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + (scaleValue/2), y + (scaleValue), paint);
         }
@@ -607,9 +552,7 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-    	public void drawRightT(Canvas c, int dx, int dy) {
-    		int x = dx * scaleValue;
-        	int y = dy * scaleValue;
+    	public void drawRightT(Canvas c, int x, int y) {
     		c.drawLine(x + (scaleValue/2), y, x + (scaleValue/2), y + scaleValue, paint);
     		c.drawLine(x, y + (scaleValue/2), x + (scaleValue/2), y + (scaleValue/2), paint);
     	}
@@ -625,9 +568,7 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-        public void drawBottomT(Canvas c, int dx, int dy) {
-        	int x = dx * scaleValue;
-        	int y = dy * scaleValue;
+        public void drawBottomT(Canvas c, int x, int y) {
             c.drawLine(x, y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
             c.drawLine(x + (scaleValue/2), y, x + (scaleValue/2), y + (scaleValue/2), paint);
         }
@@ -643,9 +584,7 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-        public void drawLeftT(Canvas c, int dx, int dy) {
-        	int x = dx * scaleValue;
-        	int y = dy * scaleValue;
+        public void drawLeftT(Canvas c, int x, int y) {
             c.drawLine(x + (scaleValue/2), y, x + (scaleValue/2), y + scaleValue, paint);
             c.drawLine(x + (scaleValue/2), y + (scaleValue/2), x + scaleValue, y + (scaleValue/2), paint);
         }
@@ -659,16 +598,22 @@ public class MapSurfaceView extends SurfaceView
          * @param y Y coordinate of the node.
          * @param visitedCounter Number of crossings over one node.
          */
-        public void drawVisited(Canvas c, int x, int y, int visitedCounter) {
+        public void drawVisited(Canvas c, int x, int y, int visitedCounter, Paint p) {
             //switch color by visited index
             switch(visitedCounter) {
                 case 0: break;
-                case 1: break;
-                case 2: break;
-                case 3: break;
-                default: paint.setColor(0xffff0000);
+                case 1: paint.setColor(0xfff08080);
+                		break;
+                case 2: paint.setColor(0xffff6347);
+                		break;
+                case 3: paint.setColor(0xffff4500);
+                		break;
+                case 4: paint.setColor(0xffff0000);
+                		break;
+                case 5: paint.setColor(0xffb22222);
+        				break;		
             }
-            c.drawRect(new Rect(x, y, x + scaleValue, y + scaleValue), paint);
+            c.drawRect(x, y, x + scaleValue, y + scaleValue, p);
         }
         
         /**
@@ -695,8 +640,13 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-        public void selectEpuck(Canvas c, int x, int y) {
-            
+        public void selectEpuck(Canvas c, int dx, int dy) {
+        	int x = dx * scaleValue;
+        	int y = dy * scaleValue;
+            paint.setColor(0xffcccccc);
+            c.drawCircle((x+(scaleValue/2)), (y+(scaleValue/2)), (scaleValue/2), paint);
+            paint.setColor(0xffff0000);
+            c.drawCircle((x+(scaleValue/2)), (y+(scaleValue/2)), (scaleValue/4), paint);
         }
         
     }
@@ -712,22 +662,27 @@ public class MapSurfaceView extends SurfaceView
      * @param fieldSizeY The maximal expansion in height.
      */
     public void autoScaling(Canvas c, int fieldSizeX, int fieldSizeY) {
+    	float zoom = 0.5f;
 		int xSize = fieldSizeX * scaleValue;
 		int ySize = fieldSizeY * scaleValue;
 		
 		if (xSize > displayX && ySize < displayY) {
 			float newX = (float) displayX/xSize;
-			if (newX < 0.4f) {
+			if (newX < zoom) {
 				scrollAble = true;
-				bounds.set(0, 0, xSize, ySize);
+				bounds.set(0, 0, xSize, displayY);
+				scaleFactor = 1;
 			} else {
 				c.scale(newX, newX);
 				scaleFactor = newX;
 			}
 		} else if (ySize > displayY && xSize < displayX) {
 			float newY = (float) displayY/ySize;
-			if (newY < 0.4f) {
+			if (newY < zoom) {
 				scrollAble = true;
+				bounds.set(0, 0, displayX, ySize);
+				scaleFactor = 1;
+				
 			} else {
 				c.scale(newY, newY);
 				scaleFactor = newY;
@@ -736,8 +691,10 @@ public class MapSurfaceView extends SurfaceView
 			float newX = (float) displayX/xSize;
 			float newY = (float) displayY/ySize;
 			float newSize = Math.min(newX, newY);
-			if (newSize < 0.4f) {
+			if (newSize < zoom) {
 				scrollAble = true;
+				bounds.set(0, 0, xSize, ySize);
+				scaleFactor = 1;
 			} else {
 				c.scale(newSize, newSize);
 				scaleFactor = newSize;
