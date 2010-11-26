@@ -14,8 +14,8 @@
 
 
 #define T 20.0				// Interrupt intervall for pid-controller
-#define KRC 2.0	//2.5		// stability limit
-#define TC 0.2	//0.2		// loop time
+#define KRC 2.5	//2.5		// stability limit
+#define TC 0.4	//0.2		// loop time
 #define IMAX 1500.0			// max integration sum
 #define INITIAL_SPEED 700	// initial speed
 #define SPEED_MAX 1000		// maximum speed
@@ -40,12 +40,15 @@ int main(void)
 	e_set_speed(0, 0);
 	e_start_agendas_processing();
    	initTMR1();
-	
-	BODY_LED = BODY_LED^1;
-	int led_active = 0;
 
+	
+	//BODY_LED = BODY_LED^1;
+	//int led_active = 0;
+	
+	
 	while(1)
 		{
+		/*
 		LED0 = LED1 = LED2 = LED3 = LED4 = LED5 = LED6 = LED7 = 0;
 		switch(led_active){
 			case 0:
@@ -78,8 +81,9 @@ int main(void)
 		led_active = led_active % 8;
 		
 		for(i=0;i<100000;i++)
-			asm("nop");
+			asm("nop");*/
 		}
+		
 }
 
 // timer 1 interrupt
@@ -102,8 +106,9 @@ void __attribute__((interrupt, auto_psv, shadow)) _T1Interrupt(void) {
 	const float yd = (tv / t);
 
 	// local static definitions
-	static int	l_calibrate[3] = {0,0,0};
+	static int	l_calibrate[2][3] = {{0,0,0},{0,0,0}};
 	static int nodelen = 0;
+	static float avg_left = 0.0, avg_right = 0.0;
 	static float y_old = 0,  diff_new = 0, diff_old = 0, diff_sum = 0;
 
 	// local declarations / definitions
@@ -117,30 +122,50 @@ void __attribute__((interrupt, auto_psv, shadow)) _T1Interrupt(void) {
 	// selector else = drive
 	int selector = getSelector();
 
-	if (!(selector == 0 && l_calibrate[0] != 0)) {
-		
-		// read ground-sensor-data
-		e_i2cp_enable();
-        for(j = 0; j < 6; j++) {
-          if (j % 2 == 0) buffer[j] = e_i2cp_read(I2C_address, j + 1);
-          else            buffer[j] = e_i2cp_read(I2C_address, j - 1);
-        }
-        e_i2cp_disable();
-		l_buffer[0] = (unsigned int) (buffer[0] & 0xff) + ((unsigned int) buffer[1] << 8);
-		l_buffer[1] = (unsigned int) (buffer[2] & 0xff) + ((unsigned int) buffer[3] << 8);
-		l_buffer[2] = (unsigned int) (buffer[4] & 0xff) + ((unsigned int) buffer[5] << 8);
 
-		if (selector == 0) {
-			sprintf(buffer, "yp:%g, yi:%g, yd:%g \r \n", yp, yi, yd);
+	enum ECalibrate {
+		CAL_BLACK,
+		CAL_WHITE,
+		CAL_DONE
+	};
+
+    // read ground-sensor-data
+    e_i2cp_enable();
+   	for(j = 0; j < 6; j++) {
+	    if (j % 2 == 0) buffer[j] = e_i2cp_read(I2C_address, j + 1);
+	    else            buffer[j] = e_i2cp_read(I2C_address, j - 1);
+    }
+    e_i2cp_disable();
+
+    l_buffer[0] = (unsigned int) (buffer[0] & 0xff) + ((unsigned int) buffer[1] << 8);
+    l_buffer[1] = (unsigned int) (buffer[2] & 0xff) + ((unsigned int) buffer[3] << 8);
+    l_buffer[2] = (unsigned int) (buffer[4] & 0xff) + ((unsigned int) buffer[5] << 8);
+
+	static enum ECalibrate eCal = CAL_BLACK;
+	if( !selector) {
+		if( eCal == CAL_BLACK) {
+			l_calibrate[0][0] = l_buffer[0];
+			l_calibrate[0][1] = l_buffer[1];
+			l_calibrate[0][2] = l_buffer[2];
+			sprintf(buffer, "c[0]:%d  c[1]:%d  c[2]:%d \r\n", l_buffer[0], l_buffer[1], l_buffer[2]);
 			uart_send_text(buffer);
 
-			l_calibrate[0] = l_buffer[0];
-			l_calibrate[1] = l_buffer[1];
-			l_calibrate[2] = l_buffer[2];
-			sprintf(buffer, "c[0]:%d  c[1]:%d  c[2]:%d \r \n", l_buffer[0], l_buffer[1], l_buffer[2]);
-			uart_send_text(buffer);
-			return;
+			e_set_speed( INITIAL_SPEED, 0);
+			eCal = CAL_WHITE;
+		} else if( eCal == CAL_WHITE) {
+			if( e_get_steps_left() > 250 && e_get_steps_right() > 250) {
+
+				l_calibrate[1][0] = l_buffer[0];
+				l_calibrate[1][1] = l_buffer[1];
+				l_calibrate[1][2] = l_buffer[2];
+				sprintf(buffer, "c[0]:%d  c[1]:%d  c[2]:%d \r\n", l_buffer[0], l_buffer[1], l_buffer[2]);
+				uart_send_text(buffer);
+
+				e_set_speed( 0, 0);
+				eCal = CAL_DONE;
+			}
 		}
+	} else if( eCal == CAL_DONE) {
 
 		// calculate integration-part
 		diff_sum += diff_new;
@@ -148,55 +173,74 @@ void __attribute__((interrupt, auto_psv, shadow)) _T1Interrupt(void) {
 		if (diff_sum < -IMAX) diff_sum = -IMAX;
 
 		// get new difference of sensor[0] to sensor[2]
-		diff_new = l_buffer[2] - l_buffer[0] - (l_calibrate[2] - l_calibrate[0]);
-		diff_new = diff_new + (l_buffer[1] - l_calibrate[1]);
-		
-		// no line on the horizon
-		if (abs(l_buffer[1] - l_calibrate[1]) > 0.6*l_calibrate[1]) {
-			e_set_speed(INITIAL_SPEED, 0);
-			if (nodelen >= 5 && e_get_steps_left() >= 250) {
-				e_set_speed(0, 0);
-			}
-		
-		// attention! a crossover
-		} else if (abs(l_buffer[0] - l_calibrate[0]) > 0.6*l_calibrate[0] ||
-			abs(l_buffer[2] - l_calibrate[2]) > 0.6*l_calibrate[0]) {
+		diff_new = l_buffer[2] - l_buffer[0] - (l_calibrate[0][2] - l_calibrate[0][0]);
 			
-			if (nodelen == 0) {
-				e_set_steps_left(0);
-				e_set_speed(INITIAL_SPEED, 0);
-			}
+		// node detection
+		if ((2 * l_buffer[0] < l_calibrate[1][0]) ||
+			(2 * l_buffer[2] < l_calibrate[1][2])) {
 
-			nodelen += 1;
-			
-			sprintf(buffer, "[0]: %d  [1]: %d  [2]: %d  ges: %d \r \n", l_buffer[0], l_buffer[1], l_buffer[2], (l_buffer[0]+l_buffer[1]+l_buffer[2]));
-			uart_send_text(buffer);
-			
-		// stop! node was passed
-		} else if (nodelen >= 5 && e_get_steps_left() >= 250) {
-				e_set_speed(0, 0);
+				sprintf(buffer, "[0]: %d  [1]: %d  [2]: %d \r\n", l_buffer[0], l_buffer[1], l_buffer[2]);
+				uart_send_text(buffer);
 
-		// pid controller
-		} else {
-			if (nodelen <= 2)	{
-				nodelen = 0;
-			}
-
-			// PID-adjust-algorithm
-			y_new = kr * (yp * diff_new + yi * diff_sum + yd * (diff_new - diff_old));
+				if (nodelen == 0) {
+					e_set_steps_left(0);
+					e_set_steps_right(0);
+				}
 				
-			// set motor speed
-			if (INITIAL_SPEED + (int)(y_new / 2) > SPEED_MAX) {
-				y_new = 2 * (SPEED_MAX - INITIAL_SPEED) - 1;
-			}else if (INITIAL_SPEED - (int)(y_new / 2) < SPEED_MIN) {
-				y_new = 2 * (INITIAL_SPEED - SPEED_MIN) + 1;
-			}
-			e_set_speed(INITIAL_SPEED, (int)(y_new / 2));
-							
-			// store static values
-			diff_old = diff_new;
-			y_old = y_new;
+				avg_left += l_buffer[0];
+				avg_right += l_buffer[2];
+				nodelen += 1;
+				e_set_speed(INITIAL_SPEED, 0);
+
+				return;
 		}
+
+		// roboter ist überm knoten
+		if (nodelen >= 3 && (e_get_steps_right() >= 240 && e_get_steps_left() >= 240)) {
+			avg_left = avg_left / nodelen;
+			avg_right = avg_right / nodelen;
+			
+			if (avg_left > 0 && avg_right > 0) {
+				if (2 * l_buffer[1] < l_calibrate[1][1]) {
+					LED0 = 1; 
+				}
+				if (2 * avg_left < l_calibrate[1][0]) {
+					LED6 = 1; 
+				}
+				if (2 * avg_right < l_calibrate[1][2]) {
+					LED2 = 1; 
+				}
+			}
+			
+			avg_left = 0;
+			avg_right = 0;
+			e_set_speed(0,0);
+			return;
+		}
+
+
+		// calculate integration-part
+		diff_sum += diff_new;
+		if (diff_sum > IMAX) diff_sum = IMAX;
+		if (diff_sum < -IMAX) diff_sum = -IMAX;
+
+		// get new difference of sensor[0] to sensor[2]
+		diff_new = l_buffer[2] - l_buffer[0] - (l_calibrate[0][2] - l_calibrate[0][0]);
+		
+		// PID-adjust-algorithm
+		y_new = kr * (yp * diff_new + yi * diff_sum + yd * (diff_new - diff_old));
+		y_new = kr * yp * diff_new;	
+		// set motor speed
+		if (INITIAL_SPEED + (int)(y_new / 2) > SPEED_MAX) {
+			y_new = 2 * (SPEED_MAX - INITIAL_SPEED) - 1;
+		}else if (INITIAL_SPEED - (int)(y_new / 2) < SPEED_MIN) {
+			y_new = 2 * (INITIAL_SPEED - SPEED_MIN) + 1;
+		}
+		e_set_speed(INITIAL_SPEED, (int)(y_new / 2));
+						
+		// store static values
+		diff_old = diff_new;
+		y_old = y_new;
 	}
 }
 
