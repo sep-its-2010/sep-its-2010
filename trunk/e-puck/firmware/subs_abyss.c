@@ -2,6 +2,7 @@
 #include "hal_motors.h"
 #include "hal_led.h"
 #include "sen_line.h"
+#include "subs_calibration.h"
 
 #include "subs_abyss.h"
 

@@ -8,9 +8,9 @@
 #include "subs_calibration.h"
 
 bool subs_calibration_isNotCalibrated = true;			///< The robot is not calibrated by default.
-uint16_t _EEDATA(2) aui16LineCalibrationValues[3];		///< Stores calibration-values for line-detection
-uint16_t _EEDATA(2) aui16SurfaceCalibrationValues[3];	///< Stores calibration-values for line-detection
-//uint16_t _EEDATA(2) aui16CalibrationData[2][3];
+uint16_t _EEDATA(2) aui16BlackCalibrationValues[3] = {0, 0, 0};		///< Stores calibration-values for line-detection
+uint16_t _EEDATA(2) aui16SurfaceCalibrationValues[3] = {0, 0, 0};	///< Stores calibration-values for line-detection
+//uint16_t _EEDATA(2) aui16CalibrationData[2][3] = {{0,0,0},{0,0,0}};
 
 /*!
  * \brief
