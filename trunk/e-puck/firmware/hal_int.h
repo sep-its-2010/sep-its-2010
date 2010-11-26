@@ -90,11 +90,11 @@ void hal_int_enable(
 			IEC2bits.INT4IE = true;
 			break;
 		}
-		case HAL_INT_SOURCE__I2C_BUS_COLLISION: {
+		case HAL_INT_SOURCE__I2C_MASTER: {
 			IEC0bits.MI2CIE = true;
 			break;
 		}
-		case HAL_INT_SOURCE__I2C_TRANSFER_COMPLETE: {
+		case HAL_INT_SOURCE__I2C_SLAVE: {
 			IEC0bits.SI2CIE = true;
 			break;
 		}
@@ -280,11 +280,11 @@ void hal_int_disable(
 			IEC2bits.INT4IE = false;
 			break;
 		}
-		case HAL_INT_SOURCE__I2C_BUS_COLLISION: {
+		case HAL_INT_SOURCE__I2C_MASTER: {
 			IEC0bits.MI2CIE = false;
 			break;
 		}
-		case HAL_INT_SOURCE__I2C_TRANSFER_COMPLETE: {
+		case HAL_INT_SOURCE__I2C_SLAVE: {
 			IEC0bits.SI2CIE = false;
 			break;
 		}
@@ -475,11 +475,11 @@ void hal_int_setPriority(
 			IPC9bits.INT4IP = _ePriority;
 			break;
 		}
-		case HAL_INT_SOURCE__I2C_BUS_COLLISION: {
+		case HAL_INT_SOURCE__I2C_MASTER: {
 			IPC3bits.MI2CIP = _ePriority;
 			break;
 		}
-		case HAL_INT_SOURCE__I2C_TRANSFER_COMPLETE: {
+		case HAL_INT_SOURCE__I2C_SLAVE: {
 			IPC3bits.SI2CIP = _ePriority;
 			break;
 		}
@@ -675,11 +675,11 @@ bool hal_int_isFlagSet(
 			blReturn = IFS2bits.INT4IF;
 			break;
 		}
-		case HAL_INT_SOURCE__I2C_BUS_COLLISION: {
+		case HAL_INT_SOURCE__I2C_MASTER: {
 			blReturn = IFS0bits.MI2CIF;
 			break;
 		}
-		case HAL_INT_SOURCE__I2C_TRANSFER_COMPLETE: {
+		case HAL_INT_SOURCE__I2C_SLAVE: {
 			blReturn = IFS0bits.SI2CIF;
 			break;
 		}
@@ -869,11 +869,11 @@ void hal_int_clearFlag(
 			IFS2bits.INT4IF = false;
 			break;
 		}
-		case HAL_INT_SOURCE__I2C_BUS_COLLISION: {
+		case HAL_INT_SOURCE__I2C_MASTER: {
 			IFS0bits.MI2CIF = false;
 			break;
 		}
-		case HAL_INT_SOURCE__I2C_TRANSFER_COMPLETE: {
+		case HAL_INT_SOURCE__I2C_SLAVE: {
 			IFS0bits.SI2CIF = false;
 			break;
 		}

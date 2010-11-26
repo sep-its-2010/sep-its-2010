@@ -41,8 +41,8 @@ typedef enum {
 	HAL_INT_SOURCE__EXTERNAL2, ///< External event 2.
 	HAL_INT_SOURCE__EXTERNAL3, ///< External event 3.
 	HAL_INT_SOURCE__EXTERNAL4, ///< External event 4.
-	HAL_INT_SOURCE__I2C_BUS_COLLISION,  ///< I2C bus collision; at least 2 masters active.
-	HAL_INT_SOURCE__I2C_TRANSFER_COMPLETE, ///< I2C transfer complete.
+	HAL_INT_SOURCE__I2C_MASTER,  ///< I2C bus collision; at least 2 masters active.
+	HAL_INT_SOURCE__I2C_SLAVE, ///< I2C transfer complete.
 	HAL_INT_SOURCE__INPUT_CAPTURE_CHAN1, ///< Input capture event on channel 1.
 	HAL_INT_SOURCE__INPUT_CAPTURE_CHAN2, ///< Input capture event on channel 2.
 	HAL_INT_SOURCE__INPUT_CAPTURE_CHAN3, ///< Input capture event on channel 3.
