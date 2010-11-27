@@ -311,7 +311,7 @@ void hal_motors_setStepsRight(
  * \brief
  * Sets the step counters of the left and right motors.
  * 
- * \param _ui16StepsLeft
+ * \param _ui16Steps
  * Specifies the new value of the left and right step counters.
  * 
  * Write detailed description for hal_motors_setSteps here.

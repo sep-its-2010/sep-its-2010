@@ -31,11 +31,14 @@ typedef enum {
  * hal_int_enable | hal_int_disable | hal_int_setPriority | hal_int_clearFlag | hal_int_isFlagSet
  */
 typedef enum {
+	HAL_INT_SOURCE__DUMMY, ///< Dummy placeholder which is required by #HAL_INT_ATOMIC_BLOCK.
+
 	HAL_INT_SOURCE__ADC_COMPLETE, ///< Analog-digital-conversion complete.
 	HAL_INT_SOURCE__BROWNOUT, ///< Under voltage detected.
-	HAL_INT_SOURCE__CAN1, ///< CAN1 bus event.
-	HAL_INT_SOURCE__CAN2, ///< CAN1 bus event.
-	HAL_INT_SOURCE__DATA_CONVERTER, ///< 
+	HAL_INT_SOURCE__CAN1, ///< Primary CAN bus event.
+	HAL_INT_SOURCE__CAN2, ///< Secondary CAN bus event.
+	HAL_INT_SOURCE__CPU, ///< General CPU processing (required only for priority levels).
+	HAL_INT_SOURCE__DATA_CONVERTER, ///< Data converter (sound processing) event.
 	HAL_INT_SOURCE__EXTERNAL0, ///< External event 0.
 	HAL_INT_SOURCE__EXTERNAL1, ///< External event 1.
 	HAL_INT_SOURCE__EXTERNAL2, ///< External event 2.

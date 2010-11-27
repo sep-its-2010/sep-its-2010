@@ -7,6 +7,29 @@
 
 #include "hal_int_types.h"
 
+
+/*!
+ * \brief
+ * Control structure for atomic operations.
+ * 
+ * This control structure allows using \c break , \c continue and \c return to leave the block safely.
+ * All operations within the block are guaranteed to be interrupt safe.
+ * The previous CPU priority is restored when leaving the block.
+ * 
+ * \remarks
+ * Write remarks for HAL_INT_ATOMIC_BLOCK here.
+ */
+#define HAL_INT_ATOMIC_BLOCK() \
+	for( uint8_t __attribute__( ( cleanup( _exitAtomicBlock))) _ui8Atomic = _enterAtomicBlock(), _ui8Break = 1; \
+		_ui8Break; \
+		_ui8Break = 0)
+
+static inline uint8_t _enterAtomicBlock( void);
+
+static inline void _exitAtomicBlock(
+	IN const uint8_t* const _lpui8CPUPriorityBackup
+	);
+
 static inline void hal_int_enable(
 	IN const hal_int_ESource_t _eSource
 	);
@@ -27,6 +50,56 @@ static inline bool hal_int_isFlagSet(
 static inline void hal_int_clearFlag(
 	IN const hal_int_ESource_t _eSource
 	);
+
+
+/*!
+ * \internal
+ * \brief
+ * Leaves an user interrupt safe block.
+ * 
+ * \param _lpui8CPUPriorityBackup
+ * Specifies the CPU priority bits before entering the block.
+ *
+ * The previous CPU priority is recovered.
+ * 
+ * \remarks
+ * Any CPU priority changes within the block are discarded.
+ * 
+ * \see
+ * _enterAtomicBlock | HAL_INT_ATOMIC_BLOCK
+ */
+void _exitAtomicBlock(
+	IN const uint8_t* const _lpui8CPUPriorityBackup
+	) {
+
+	SRbits.IPL = *_lpui8CPUPriorityBackup;
+}
+
+
+/*!
+ * \internal
+ * \brief
+ * Enters an user interrupt safe block.
+ * 
+ * \returns
+ * The previous CPU priority bits.
+ * 
+ * The CPU priority is set to #HAL_INT_PRIORITY__7. Thus, no user interrupt can occur.
+ * 
+ * \remarks
+ * The CPU priority may be changed by the user within the block.
+ * 
+ * \see
+ * _exitAtomicBlock | HAL_INT_ATOMIC_BLOCK
+ */
+uint8_t _enterAtomicBlock( void) {
+
+	const uint8_t ui8CurrentCPUPriority = SRbits.IPL;
+
+	SRbits.IPL = HAL_INT_PRIORITY__7;
+
+	return ui8CurrentCPUPriority;
+}
 
 
 /*!
@@ -449,6 +522,10 @@ void hal_int_setPriority(
 		}
 		case HAL_INT_SOURCE__CAN2: {
 			IPC9bits.C2IP = _ePriority;
+			break;
+		}
+		case HAL_INT_SOURCE__CPU: {
+			SRbits.IPL = _ePriority;
 			break;
 		}
 		case HAL_INT_SOURCE__DATA_CONVERTER: {
