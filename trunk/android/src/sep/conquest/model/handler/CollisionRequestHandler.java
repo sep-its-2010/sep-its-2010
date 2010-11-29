@@ -1,9 +1,9 @@
 package sep.conquest.model.handler;
 
-import java.util.UUID;
-
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.CollisionRequest;
+import sep.conquest.model.requests.MessageType;
 
 /**
  * Handles CollisionRequest messages.
@@ -39,6 +39,15 @@ public class CollisionRequestHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-    return false;
+	  if(!(request.getKind() == MessageType.COLLISION)){
+		  return super.handleRequest(request);
+	  } else {
+		  CollisionRequest colReq = (CollisionRequest) request;
+		  //Gets the RobotStatus of the sender and actualizes the collisionArray
+		  lThread.getRobot().getRobotStatus().get(colReq.getSender())
+					.setSensorCollisionArray(colReq.getSensor());
+		  return true;
+	  }
+    
   }
 }
