@@ -6,17 +6,22 @@
 
 /*!
  * \brief
- * Executes movement-commands sent by the smartphone.
+ * Executes movement-commands sent by the Smartphone.
  * 
  * \returns
  * True if a movement-command is going to be performed, false otherwise.
  *
- * Checks if the bluetooth-message-queue contains a message for moving or turning.
+ * Checks if the BlueTooth-message-queue contains a message for moving or turning.
  * If there is one the robot starts to perform the demanded movement and sends an acknowledgment to the smartphone and deletes this message.
  */
 bool subs_movement_run( void) {
+	bool movementChanged = false;
 
-	return false;
+	// Check if a movement-change message exists
+
+
+
+	return movementChanged;
 }
 
 /*!

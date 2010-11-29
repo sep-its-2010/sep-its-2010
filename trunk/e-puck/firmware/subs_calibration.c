@@ -1,5 +1,4 @@
 #include <p30f6014A.h>
-#include "stdio.h"
 #include "hal_motors.h"
 #include "hal_sel.h"
 #include "hal_led.h"
@@ -8,7 +7,7 @@
 #include "subs_calibration.h"
 
 bool subs_calibration_isNotCalibrated = true;			///< The robot is not calibrated by default.
-uint16_t _EEDATA(2) aui16BlackCalibrationValues[3] = {0, 0, 0};		///< Stores calibration-values for line-detection
+uint16_t _EEDATA(2) aui16LineCalibrationValues[3] = {0, 0, 0};		///< Stores calibration-values for line-detection
 uint16_t _EEDATA(2) aui16SurfaceCalibrationValues[3] = {0, 0, 0};	///< Stores calibration-values for line-detection
 //uint16_t _EEDATA(2) aui16CalibrationData[2][3] = {{0,0,0},{0,0,0}};
 
@@ -34,11 +33,9 @@ bool subs_calibration_run( void) {
 		//perform calibration
 		sen_line_SData_t podLineValueBuffer;
 		sen_line_SData_t podSurfaceValueBuffer;
-		sen_line_SData_t* _lppodLineValues = &podLineValueBuffer;
-		sen_line_SData_t* _lppodSurfaceValues = &podSurfaceValueBuffer;
-		sen_line_read( _lppodLineValues);
-		hal_motors_setSpeed( 800, 800);
-		sen_line_read( _lppodSurfaceValues);
+		sen_line_read( &podLineValueBuffer);
+		hal_motors_setSpeed( 800, 0);
+		sen_line_read( &podSurfaceValueBuffer);
 
 		// copy values from buffer to EEPROM
 		for( uint8_t i = 0; sizeof( podLineValueBuffer.aui16Data); i++) {
@@ -61,6 +58,7 @@ bool subs_calibration_run( void) {
  */
 void subs_calibration_reset( void) {
 		subs_calibration_isNotCalibrated = true;
+		// Daten im EEPROM auf 0 setzen
 }
 
 /*!
