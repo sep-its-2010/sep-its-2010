@@ -1,6 +1,5 @@
 package sep.conquest.model;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeMap;
