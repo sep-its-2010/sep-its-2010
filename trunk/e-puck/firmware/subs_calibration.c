@@ -6,9 +6,9 @@
 
 #include "subs_calibration.h"
 
-bool subs_calibration_isNotCalibrated = true;			///< The robot is not calibrated by default.
-uint16_t _EEDATA(2) aui16LineCalibrationValues[3] = {0, 0, 0};		///< Stores calibration-values for line-detection
-uint16_t _EEDATA(2) aui16SurfaceCalibrationValues[3] = {0, 0, 0};	///< Stores calibration-values for line-detection
+bool subs_calibration_isNotCalibrated = true; ///< The robot is not calibrated by default.
+uint16_t _EEDATA(2) aui16LineCalibrationValues[3] = {0, 0, 0}; ///< Stores calibration-values for line-detection in the EEPROM.
+uint16_t _EEDATA(2) aui16SurfaceCalibrationValues[3] = {0, 0, 0}; ///< Stores calibration-values for line-detection in the EEPROM.
 //uint16_t _EEDATA(2) aui16CalibrationData[2][3] = {{0,0,0},{0,0,0}};
 
 /*!
@@ -29,23 +29,28 @@ bool subs_calibration_run( void) {
 	uint8_t selector = hal_sel_getPosition();
 
 	if( subs_calibration_isNotCalibrated && (selector == 0)) {
+		
+		// If there are no calibration-values for the line: collect and store some.
+		if( aui16LineCalibrationValues[0] == 0){ 
+			sen_line_SData_t podLineValueBuffer;
+			sen_line_read( &podLineValueBuffer);
 
-		//perform calibration
-		sen_line_SData_t podLineValueBuffer;
-		sen_line_SData_t podSurfaceValueBuffer;
-		sen_line_read( &podLineValueBuffer);
-		hal_motors_setSpeed( 800, 0);
-		sen_line_read( &podSurfaceValueBuffer);
+			for( uint8_t i = 0; sizeof( podLineValueBuffer.aui16Data); i++) {
+				aui16LineCalibrationValues[i] = podLineValueBuffer.aui16Data[i];
+			}
+		}		
+		hal_motors_setSpeed( 500, 0);
 
-		// copy values from buffer to EEPROM
-		for( uint8_t i = 0; sizeof( podLineValueBuffer.aui16Data); i++) {
-			aui16LineCalibrationValues[i] = podLineValueBuffer.aui16Data[i];
-		}
-
-		for( uint8_t i = 0; sizeof( podSurfaceValueBuffer.aui16Data); i++) {
-			aui16SurfaceCalibrationValues[i] = podSurfaceValueBuffer.aui16Data[i];
-		}
-		subs_calibration_isNotCalibrated = false;
+		// If there are no calibration-values for the surface: collect and store.
+		if( (aui16SurfaceCalibrationValues[0] == 0) && (hal_motors_getStepsLeft() >= 500)) {
+			sen_line_SData_t podSurfaceValueBuffer;
+			sen_line_read( &podSurfaceValueBuffer);
+			
+			for( uint8_t i = 0; sizeof( podSurfaceValueBuffer.aui16Data); i++) {
+				aui16SurfaceCalibrationValues[i] = podSurfaceValueBuffer.aui16Data[i];
+			}
+			subs_calibration_isNotCalibrated = false;
+		}		
 	}
 	return subs_calibration_isNotCalibrated;
 }

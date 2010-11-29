@@ -35,8 +35,7 @@ bool subs_abyss_run( void) {
 		
 		// inform smartphone about abyss
 		com_SMessage_t podAbyssResponse = {COM_MESSAGE_TYPE__RESPONSE_ABYSS, {0}};
-		com_EMessageType_t* _lppodAbyssResponse = &podAbyssResponse;
-		com_send( _lppodAbyssResponse);
+		com_send( &podAbyssResponse);
 	}
 
 	return abyssDetected;

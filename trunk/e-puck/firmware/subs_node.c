@@ -1,17 +1,13 @@
+#include <string.h>
 #include "hal_led.h"
 #include "hal_motors.h"
 #include "com.h"
 #include "sen_line.h"
-#include "subs_calibration.h"
 
 #include "subs_node.h"
 
 enum {
 	NODE_DETECTION__REQUIRED_MEASUREMENTS = 3, ///< Specifies the number of measurements, which have to provide data above a certain threshold for node-detection.
-	
-	NODE_DETECTION__LEFT_SENSORVALUE_THRESHOLD = 0,//0.6 * "Wert im EEPROM für linken Sensor"
-	NODE_DETECTION__MIDDLE_SENSORVALUE_THRESHOLD = 0, //0.6 * ...
-	NODE_DETECTION__RIGHT_SENSORVALUE_THRESHOLD = 0 // 0.6 * ...
 };
 
 uint8_t ui8NodeDetectionCounter; ///< Number of ground-sensor-measurements in a row, which provided data below a certain threshold.
@@ -37,9 +33,8 @@ bool subs_node_run( void) {
 	sen_line_read( _lppodSensorData);
 
 	// node detection
- 	if ((podSensorData.aui16Data[0] < NODE_DETECTION__LEFT_SENSORVALUE_THRESHOLD) ||
- 		(podSensorData.aui16Data[2] < NODE_DETECTION__RIGHT_SENSORVALUE_THRESHOLD)) {
-		
+ 	if ((2 * (podSensorData.aui16Data[0]) < 0) || // 0 wird ersetzt durch EEPROM-Wert
+ 		(2 * (podSensorData.aui16Data[2]) < 0)) { // 0 wird ersetzt durch EEPROM_Wert		
 		if (ui8NodeDetectionCounter == 0) {
 			hal_motors_setSteps(0);
 		}
