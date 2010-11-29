@@ -87,7 +87,7 @@ public class GraphNode extends MapNode implements Serializable {
 	public GraphNode clone() {
 		GraphNode nodeCopy = new GraphNode(this.getXValue(),this.getYValue(), this.getNodeType());
 		int i = this.getVisitCounter();
-		for(int j = 0; i<j;j++){
+		for(int j = 0; j<i;j++){
 			nodeCopy.increaseVisitCounter();
 		}
 		return nodeCopy;
