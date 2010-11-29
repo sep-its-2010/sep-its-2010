@@ -197,7 +197,7 @@ public class GridMap {
 	 * @return The node if it exists in the TreeMap mapTree, otherwise returns
 	 *         null
 	 */
-	private GraphNode getNode(int x, int y) {
+	public GraphNode getNode(int x, int y) {
 		int key = this.makeKey(x, y);
 		return mapTree.get(key);
 	}
