@@ -13,7 +13,7 @@ public class RobotStatus {
 	 * The current position of the robot within the map.
 	 */
 	private int[] position;
-
+	
 	/**
 	 * The type of the current node.
 	 */

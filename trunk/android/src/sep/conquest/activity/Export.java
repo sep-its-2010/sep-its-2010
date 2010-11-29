@@ -1,6 +1,11 @@
 package sep.conquest.activity;
 
+import java.io.IOException;
+
 import sep.conquest.R;
+import sep.conquest.controller.Controller;
+import sep.conquest.model.Environment;
+import sep.conquest.model.GridMap;
 import sep.conquest.model.MapFileHandler;
 import android.app.Activity;
 import android.os.Bundle;
@@ -17,15 +22,15 @@ import android.widget.Toast;
  * The user can specify the name of the file. The folder is fixed.
  * 
  * @author Andreas Poxrucker
- *
+ * 
  */
 public class Export extends Activity {
-  
+
   /**
    * The EditText element where filename can be entered.
    */
   private EditText etxtFilename;
-  
+
   /**
    * Used to start saving.
    */
@@ -43,20 +48,20 @@ public class Export extends Activity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.export_main);
-    
+
     initializeControlElements();
   }
-  
+
   /**
    * Initializes control elements of the activity and sets EventListeners.
    */
   private void initializeControlElements() {
     btnSave = (Button) findViewById(R.id.btnSave);
     btnSave.setOnClickListener(new ExportOnClickListener());
-    
+
     etxtFilename = (EditText) findViewById(R.id.etxtFilename);
   }
-  
+
   /**
    * Displays a message on top of the Activity.
    * 
@@ -84,13 +89,27 @@ public class Export extends Activity {
      *          View that has been clicked.
      */
     public void onClick(View v) {
-      switch(v.getId()) {
+      switch (v.getId()) {
+
+      // If 'Save' button has been clicked, check
       case R.id.btnSave:
         String filename = etxtFilename.getText().toString();
-        displayMessage(String.valueOf(MapFileHandler.saveMap(null, filename)));
+
+        Environment env = Controller.getInstance().getEnv();
+        GridMap map = env.getMap();
+
+        try {
+          if (MapFileHandler.saveMap(map, filename)) {
+            displayMessage("Map successfully saved");
+            finish();
+          } else {
+            displayMessage("Unable to save map");
+          }
+        } catch (IOException e) {
+          displayMessage("Error");
+        }
         break;
       }
-      
     }
   }
 }

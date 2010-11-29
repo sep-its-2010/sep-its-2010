@@ -1,26 +1,32 @@
 package sep.conquest.activity;
 
-import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import sep.conquest.R;
+import sep.conquest.model.GridMap;
+import sep.conquest.model.MapFileHandler;
+import sep.conquest.model.MapNode;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 /**
- * Allows user to open a previous saved map from the file system.
+ * Allows user to open a previously saved map from the file system.
  * 
  * The application then runs in import mode.
  * 
@@ -28,11 +34,6 @@ import android.widget.AdapterView.OnItemClickListener;
  * 
  */
 public class Import extends Activity {
-
-  /**
-   * Used to display headline and current folder.
-   */
-  private TextView txtHead;
 
   /**
    * Used to list available maps.
@@ -45,11 +46,6 @@ public class Import extends Activity {
   private ArrayAdapter<String> fileList;
 
   /**
-   * Used to temporary save found files.
-   */
-  private Map<String, File> files;
-
-  /**
    * Called when Activity is initially created.
    * 
    * Initializes the layout of the Activity and its control elements.
@@ -59,8 +55,18 @@ public class Import extends Activity {
    *          before.
    */
   public void onCreate(Bundle savedInstanceState) {
+    // Call constructor of super class
     super.onCreate(savedInstanceState);
+
+    // Set layout of Activity
     setContentView(R.layout.import_main);
+
+    // Get reference on ListView to display map files from the file system.
+    lsMaps = (ListView) findViewById(R.id.lsMaps);
+    lsMaps.setOnItemClickListener(new ImportOnItemClickListener());
+
+    // Display the list of found map files from the file system in the ListView.
+    displayMapFiles();
   }
 
   /**
@@ -112,11 +118,16 @@ public class Import extends Activity {
     return true;
   }
 
-  /**
-   * Initializes control elements of the activity and sets EventListeners.
-   */
-  private void initializeControlElements() {
+  private void displayMapFiles() {
+    fileList = new ArrayAdapter<String>(this, R.layout.list_item,
+        MapFileHandler.getFileList());
+    lsMaps.setAdapter(fileList);
+  }
 
+  private void displayMessage(String message) {
+    Toast mtoast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+    mtoast.setGravity(Gravity.CENTER, 0, 0);
+    mtoast.show();
   }
 
   /**
@@ -141,25 +152,25 @@ public class Import extends Activity {
     public void onItemClick(AdapterView<?> parent, View view, int position,
         long id) {
 
-    }
-  }
+      TextView txt = (TextView) view;
+      String filename = txt.getText().toString();
 
-  /**
-   * Handles click events on control elements of the Activity.
-   * 
-   * @author Andreas Poxrucker
-   * 
-   */
-  private class ImportOnClickListener implements OnClickListener {
+      try {
+        GridMap map = MapFileHandler.openMap(filename);
+        List<MapNode> nodes = map.getMapAsList();
+        StringBuilder strb = new StringBuilder();
+        for (MapNode node : nodes) {
+          strb.append(node.toString());
+        }
 
-    /**
-     * Called when registered button receives OnClick-Event.
-     * 
-     * @param view
-     *          View that has been clicked.
-     */
-    public void onClick(View arg0) {
-      // TODO Auto-generated method stub
+        displayMessage(strb.toString());
+      } catch (FileNotFoundException e) {
+        // TODO Auto-generated catch block
+        displayMessage("File not found");
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        displayMessage("IO ex");
+      }
     }
   }
 }

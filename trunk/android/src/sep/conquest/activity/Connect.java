@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 import sep.conquest.R;
@@ -53,13 +55,13 @@ public final class Connect extends Activity {
   /**
    * Identifies messages that indicate, that connecting has been successful.
    */
-  public static final String CONNECTION_SUCCESSFUL = "ConnectionSuccessful";
+  private static final String CONNECTION_SUCCESSFUL = "ConnectionSuccessful";
 
   /**
    * Identifies messages that indicate, that opening a certain connection has
    * failed.
    */
-  public static final String CONNECTION_ERROR = "ConnectionError";
+  private static final String CONNECTION_ERROR = "ConnectionError";
 
   /**
    * Reference on BluetoothAdapter of the device.
@@ -120,7 +122,6 @@ public final class Connect extends Activity {
    *          before.
    */
   public void onCreate(Bundle savedInstanceState) {
-
     // Call constructor of super class
     super.onCreate(savedInstanceState);
 
@@ -176,7 +177,7 @@ public final class Connect extends Activity {
       }
     }
   }
-
+  
   /**
    * Sets the menu of the Activity.
    * 
@@ -214,8 +215,8 @@ public final class Connect extends Activity {
             getString(R.string.MSG_CONNECTING), true);
 
         // Start Thread that opens connections
-        Thread conThread = new ConnectThread(selectedRobots.values());
-        conThread.start();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(new ConnectionThread(selectedRobots.values()));
       } else {
         displayMessage(getString(R.string.MSG_NO_ROBOT));
       }
@@ -365,7 +366,6 @@ public final class Connect extends Activity {
       } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
         lsRobots.setAdapter(robotList);
         pDialog.dismiss();
-
         // If connecting to all devices has been successful start Map Activity.
       } else if (CONNECTION_SUCCESSFUL.equals(action)) {
         pDialog.dismiss();
@@ -375,7 +375,7 @@ public final class Connect extends Activity {
             .getPackageName(), Map.class.getName()));
         startActivity(start);
 
-        // If an error occurs during one of the connect actions, show error
+        // If an error occurs during one of the connect actions, display error
         // message.
       } else if (CONNECTION_ERROR.equals(action)) {
         pDialog.dismiss();
@@ -445,6 +445,7 @@ public final class Connect extends Activity {
         if (!bluetoothAdapter.isEnabled()) {
           enableBluetooth();
         } else {
+          bluetoothAdapter.cancelDiscovery();
           discoveredRobots.clear();
           robotList.clear();
           selectedRobots.clear();
@@ -470,7 +471,7 @@ public final class Connect extends Activity {
    * @author Andreas Poxrucker
    * 
    */
-  private class ConnectThread extends Thread {
+  private class ConnectionThread implements Runnable {
 
     /**
      * Standard UUID used to connect to standard Bluetooth modules.
@@ -489,7 +490,7 @@ public final class Connect extends Activity {
      * @param robots
      *          The BluetoothDevices that should be connected.
      */
-    public ConnectThread(Collection<BluetoothDevice> robots) {
+    public ConnectionThread(Collection<BluetoothDevice> robots) {
       devices = robots;
     }
 
@@ -511,10 +512,10 @@ public final class Connect extends Activity {
           // Open RFCommSocket with standard UUID.
           BluetoothSocket socket = device
               .createRfcommSocketToServiceRecord(STD_UUID);
-
           socket.connect();
           sockets.add(socket);
         } catch (IOException connectException) {
+          
           // If IOException occurs during opening RfCommSocket, cancel all
           // connections that have been opened so far and send error message.
           for (BluetoothSocket socket : sockets) {
@@ -534,7 +535,7 @@ public final class Connect extends Activity {
       // When all sockets are connected properly create RealPuckInstances
       // and send success message
       PuckFactory.createRealPucks(sockets);
-	  intent.setAction(CONNECTION_SUCCESSFUL);
+	    intent.setAction(CONNECTION_SUCCESSFUL);
       sendBroadcast(intent); 
     }
   }
