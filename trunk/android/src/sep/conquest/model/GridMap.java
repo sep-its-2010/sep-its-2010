@@ -47,25 +47,25 @@ public class GridMap {
 	 * This constant represents the smallest x-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 0.
 	 */
-	public final int MINXVALUEONMAP = 0;
+	private final int MINXVALUEONMAP = 0;
 	
 	/**
 	 * This constant represents the smallest y-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 1.
 	 */
-	public final int MINYVALUEONMAP = 1;
+	private final int MINYVALUEONMAP = 1;
 
 	/**
 	 * This constant represents the biggest x-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 2.
 	 */
-	public final int MAXXVALUEONMAP = 2;
+	private final int MAXXVALUEONMAP = 2;
 	
 	/**
 	 * This constant represents the biggest y-coordinate of all MapNodes saved
 	 * in the attribute mapBorder on position 3.
 	 */
-	public final int MAXYVALUEONMAP = 3;
+	private final int MAXYVALUEONMAP = 3;
 
 	/**
 	 * default constructor
@@ -455,29 +455,31 @@ public class GridMap {
 
 	/**
 	 * Saves the coordinates and the status of the non-frontierNodes in a
-	 * string. These information suffice to save and to recreate the GridMap.
+	 * string-array. These information suffice to save and to recreate the 
+	 * GridMap.
 	 * 
 	 * @return The string with the nodes' information
-	 * @throws IOException
 	 */
-	public String serializeMapInString() throws IOException {
-		StringBuilder builder = new StringBuilder();
+	public String[] serializeMapInString() {
+		// Number of nodes which are in the structure and NOT frontiernodes
+		int sizeOfMap = this.mapTree.size();
+		int sizeOfFrontierNodes = this.frontierList.size();
+		int realSizeOfNodes = sizeOfMap-sizeOfFrontierNodes;
+		String[] returnString = new String[realSizeOfNodes] ;
 		// iterate trough the mapTree and saves all non-frontierNodes in a
 		// string
 		Iterator<Entry<Integer, GraphNode>> it = mapTree.entrySet().iterator();
 		MapNode bufferNode;
+		int index = 0;
 		while (it.hasNext()) {
 			bufferNode = it.next().getValue();
 			if (bufferNode.getNodeType() != NodeType.FRONTIERNODE) {
-				builder.append(bufferNode.getXValue());
-				builder.append(" ");
-				builder.append(bufferNode.getYValue());
-				builder.append(" ");
-				builder.append(bufferNode.getNodeType());
-				builder.append("\n");
+				returnString[index] = (String.valueOf(bufferNode.getXValue())
+						+ " " + String.valueOf(bufferNode.getYValue()) + " "
+						+ String.valueOf(bufferNode.getNodeType()) + "\n");
 			}
+			index++;
 		}
-		String returnString = builder.toString();
 		return returnString;
 	}
 }
