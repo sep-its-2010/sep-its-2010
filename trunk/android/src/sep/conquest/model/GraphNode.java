@@ -1,5 +1,6 @@
 package sep.conquest.model;
 
+
 import java.io.Serializable;
 
 /**
@@ -84,8 +85,11 @@ public class GraphNode extends MapNode implements Serializable {
 	 */
 	@Override
 	public GraphNode clone() {
-		GraphNode nodeCopy = new GraphNode(this.getXValue(), this.getYValue(),
-				this.getNodeType());
+		GraphNode nodeCopy = new GraphNode(this.getXValue(),this.getYValue(), this.getNodeType());
+		int i = this.getVisitCounter();
+		for(int j = 0; i<j;j++){
+			nodeCopy.increaseVisitCounter();
+		}
 		return nodeCopy;
 	}
 }
