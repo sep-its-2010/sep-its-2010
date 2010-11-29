@@ -476,8 +476,8 @@ public class GridMap {
 				returnString[index] = (String.valueOf(bufferNode.getXValue())
 						+ " " + String.valueOf(bufferNode.getYValue()) + " "
 						+ String.valueOf(bufferNode.getNodeType()) + "\n");
+				index++;
 			}
-			index++;
 		}
 		return returnString;
 	}
