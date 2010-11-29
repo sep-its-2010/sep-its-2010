@@ -12,12 +12,16 @@
  * \brief
  * Control structure for atomic operations.
  * 
- * This control structure allows using \c break , \c continue and \c return to leave the block safely.
+ * This control structure allows using \c break, \c continue and \c return to leave the block safely.
  * All operations within the block are guaranteed to be interrupt safe.
  * The previous CPU priority is restored when leaving the block.
- * 
- * \remarks
- * Write remarks for HAL_INT_ATOMIC_BLOCK here.
+ *
+ * Usage:
+ * \code
+ * HAL_INT_ATOMIC_BLOCK() {
+ *     [instructions];
+ * }
+ * \endcode
  */
 #define HAL_INT_ATOMIC_BLOCK() \
 	for( uint8_t __attribute__( ( cleanup( _exitAtomicBlock))) _ui8Atomic = _enterAtomicBlock(), _ui8Break = 1; \
@@ -53,7 +57,6 @@ static inline void hal_int_clearFlag(
 
 
 /*!
- * \internal
  * \brief
  * Leaves an user interrupt safe block.
  * 
@@ -77,7 +80,6 @@ void _exitAtomicBlock(
 
 
 /*!
- * \internal
  * \brief
  * Enters an user interrupt safe block.
  * 
@@ -691,8 +693,8 @@ void hal_int_setPriority(
  * Specifies the interrupt source to query.
  * 
  * \returns
- * - true: the associated flag is set.
- * - false: the associated flag is not set.
+ * - \c true: the associated flag is set.
+ * - \c false: the associated flag is not set.
  * 
  * In order for the interrupts to trigger, they need to be enabled and their priorities need to be higher than the CPU priority.
  * 

@@ -175,9 +175,9 @@ bool read(
  * \param _ui16BaudRateDiv
  * Specifies the baud rate divisor. The divisor must be greater than 0 and lower or equal #I2C_MAX_BAUDRATE_DIVISOR.
  *
- * \retunrs
- * - true: Success.
- * - false: Invalid parameter.
+ * \returns
+ * - \c true: Success.
+ * - \c false: Invalid parameter.
  * 
  * The I2C module is initialized as a polling (no interrupts) master.
  * 
@@ -214,9 +214,9 @@ void hal_i2c_init(
  * \param _ui16Length
  * Specifies the length of the date to be written.
  *
- * \retunrs
- * - true: Success.
- * - false: Invalid parameter.
+ * \returns
+ * - \c true: Success.
+ * - \c false: Invalid parameter.
  * 
  * A start-stop frame is used to write the data to the slave.
  * 
@@ -233,6 +233,7 @@ bool hal_i2c_write(
 	) {
 
 	bool blSuccess = true;
+
 	if( !start()) {
 		blSuccess = false;
 		reset();
@@ -243,12 +244,13 @@ bool hal_i2c_write(
 		for( uint16_t ui16 = 0; blSuccess && ui16 < _ui16Length; ui16++)	{
 			blSuccess = write( _lpui8Data[ui16]);
 		}
-		if( blSuccess) {
-			blSuccess = stop();
-		} else {
+		if( !blSuccess || !stop()) {
+			blSuccess = false;
 			reset();
 		}
 	}
+
+	return blSuccess;
 }
 
 
@@ -265,9 +267,9 @@ bool hal_i2c_write(
  * \param _ui8Data
  * Specifies the data byte.
  *
- * \retunrs
- * - true: Success.
- * - false: Invalid parameter.
+ * \returns
+ * - \c true: Success.
+ * - \c false: Invalid parameter.
  * 
  * A start-stop frame is used to write the data to the slave.
  * 
@@ -284,6 +286,7 @@ bool hal_i2c_writeRegister(
 	) {
 
 	bool blSuccess = false;
+
 	if( !start()) {
 		reset();
 	} else if( !write( _ui8SlaveAddress & 0xFE)) {
@@ -292,8 +295,10 @@ bool hal_i2c_writeRegister(
 		reset();
 	} else if( !write( _ui8Data)) {
 		reset();
+	} else if( !stop()) {
+		reset();
 	} else {
-		blSuccess = stop();
+		blSuccess = true;
 	}
 
 	return blSuccess;
@@ -314,8 +319,8 @@ bool hal_i2c_writeRegister(
  * Specifies the length of the date to be read.
  * 
  * \returns
- * - 0x00 to 0xFF on success.
- * - 0xFFFF on timeout.
+ * - \c 0x00 to \c 0xFF on success.
+ * - \c 0xFFFF on timeout.
  * 
  * A start-stop frame is used to read the data from the slave.
  * 
@@ -331,14 +336,35 @@ bool hal_i2c_read(
 	IN const uint16_t _ui16Length
 	) {
 
-	bool blSuccess = false;
+	bool blSuccess = true;
+
 	if( !start()) {
+		blSuccess = false;
 		reset();
 	} else if( !write( _ui8SlaveAddress | 0x01)) {
+		blSuccess = false;
 		reset();
 	} else {
-		
+		for( uint16_t ui16 = 0; blSuccess && ui16 < _ui16Length; ui16++) {
+			if( !read( &_lpui8Data[ui16])) {
+				blSuccess = false;
+				reset();
+			} else if( _ui16Length == ui16 + 1) {
+				if( !nack()) {
+					blSuccess = false;
+					reset();
+				}
+			} else if( !ack()) {
+				blSuccess = false;
+				reset();
+			}
+		}
+		if( blSuccess && !stop()) {
+			blSuccess = false;
+			reset();
+		}
 	}
+
 	return blSuccess;
 }
 
@@ -354,8 +380,8 @@ bool hal_i2c_read(
  * Specifies the register.
  * 
  * \returns
- * - 0x00 to 0xFF on success.
- * - 0xFFFF on timeout.
+ * - \c 0x00 to \c 0xFF on success.
+ * - \c 0xFFFF on timeout.
  * 
  * A start-stop frame is used to read the data from the slave.
  * 
@@ -388,6 +414,8 @@ int16_t hal_i2c_readRegister(
 	} else if( !nack()) {
 		reset();
 	} else if( !stop()) {
+		reset();
+	} else {
 		i16Return = ui8Data;
 	}
 

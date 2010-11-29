@@ -16,6 +16,7 @@
 #include "subs_node.h"
 
 #include "hal_motors.h"
+#include "hal_int.h"
 
 int main( void) {
 
@@ -32,6 +33,11 @@ int main( void) {
 	hal_sel_init();
 	hal_led_init();
 	com_init();
+
+	volatile int i = 20;
+	HAL_INT_ATOMIC_BLOCK() {
+		i = 10;
+	}
 
 	hal_motors_init();
 

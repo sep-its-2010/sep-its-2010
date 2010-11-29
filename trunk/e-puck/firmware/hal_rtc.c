@@ -101,8 +101,8 @@ uint32_t hal_rtc_getSystemUpTime( void) {
  * The handle of the event to be removed.
  * 
  * \returns
- * - true: Success
- * - false: Invalid handle
+ * - \c true: Success
+ * - \c false: Invalid handle
  *
  * A event may always unregister itself. Modifying other events from within an event may cause race conditions.
  * 
@@ -127,8 +127,8 @@ bool hal_rtc_unregister(
  * The handle of the event to be activated.
  * 
  * \returns
- * - true: Success
- * - false: Invalid handle
+ * - \c true: Success
+ * - \c false: Invalid handle
  *
  * Modifying other events from within an event may cause race conditions.
  * 
@@ -153,8 +153,8 @@ bool hal_rtc_activate(
  * The handle of the event to be deactivated.
  * 
  * \returns
- * - true: Success
- * - false: Invalid handle
+ * - \c true: Success
+ * - \c false: Invalid handle
  *
  * An event may always deactivate itself. Modifying other events from within an event may cause race conditions.
  * 
@@ -179,8 +179,8 @@ bool hal_rtc_deactivate(
  * The handle of the event to be reset.
  * 
  * \returns
- * - true: Success
- * - false: Invalid handle
+ * - \c true: Success
+ * - \c false: Invalid handle
  *
  * An event may always reset itself. Modifying other events from within an event may cause race conditions.
  * Resetting an event only resets the associated tick counter.

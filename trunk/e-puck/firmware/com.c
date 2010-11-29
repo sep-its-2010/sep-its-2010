@@ -86,8 +86,8 @@ void com_init( void) {
  * Processes incoming bluetooth messages.
  * 
  * \returns
- * - true: dispatched a message.
- * - false: no message available.
+ * - \c true: dispatched a message.
+ * - \c false: no message available.
  * 
  * Handles incoming messages according to the chain-of-responsibility pattern.
  * The handler call order is not guaranteed to be based on the registration sequence.
@@ -171,8 +171,8 @@ void com_send(
  * Specifies a handler callback.
  * 
  * \returns
- * - true: Success
- * - false: The handler already exists or the callback list is full.
+ * - \c true: Success
+ * - \c false: The handler already exists or the callback list is full.
  * 
  * The callbacks are called by #com_processIncoming().
  * 

@@ -110,8 +110,8 @@ void subs_reset( void) {
  * Specifies the priority of the new behavior.
  * 
  * \returns
- * - true: Insertion was successful.
- * - false: The behavior already exists or there is not enough space to register another behavior.
+ * - \c true: Insertion was successful.
+ * - \c false: The behavior already exists or there is not enough space to register another behavior.
  * 
  * Registers a new behavior which is uniquely identified by its action callback. Optionally, a reset callback can be
  * specified. The behavior is inserted into the list right behind the last entry with a higher or equal priority.

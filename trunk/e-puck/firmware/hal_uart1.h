@@ -165,8 +165,8 @@ void hal_uart1_configure(
  * Checks the hardware buffer and the ring buffer of the primary UART.
  * 
  * \returns
- * - true: There is at least one byte in the buffers.
- * - false: Both buffers are empty.
+ * - \c true: There is at least one byte in the buffers.
+ * - \c false: Both buffers are empty.
  * 
  * This function can be used to build a non-blocking poll & get algorithm.
  * 
@@ -190,8 +190,8 @@ bool hal_uart1_hasRxData( void) {
  * Checks whether there was a hardware buffer overflow in the primary UART receiver.
  * 
  * \returns
- * - true: At least one byte was dropped.
- * - false: No overflow occurred.
+ * - \c true: At least one byte was dropped.
+ * - \c false: No overflow occurred.
  * 
  * A buffer overflow will happen whenever the hardware and ring buffer are full and a byte is moved in by the shift register.
  * The overflow flag remains set until #hal_uart1_clearRxOverflow() is called.
@@ -234,8 +234,8 @@ void hal_uart1_clearRxOverflow( void) {
  * Checks whether the primary UART transmitter is idle.
  * 
  * \returns
- * - true: The transmitter is inactive.
- * - false: There is at least one byte  being shifted or in the hardware buffer.
+ * - \c true: The transmitter is inactive.
+ * - \c false: There is at least one byte  being shifted or in the hardware buffer.
  * 
  * This function is especially useful to allow a clean shutdown of the UART.
  * Shutting down an active transmitter would terminate the operation.
@@ -258,8 +258,8 @@ bool hal_uart1_isTxIdle( void) {
  * Checks whether the primary UART receiver is idle.
  * 
  * \returns
- * - true: The receiver is inactive.
- * - false: The receiver is shifting a byte.
+ * - \c true: The receiver is inactive.
+ * - \c false: The receiver is shifting a byte.
  * 
  * This function is especially useful to allow a clean shutdown of the UART.
  * Shutting down an active receiver would terminate the operation.
