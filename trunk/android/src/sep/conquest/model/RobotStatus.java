@@ -1,5 +1,4 @@
 package sep.conquest.model;
-
 /**
  * The RobotState represents the current status of a specific Puck. It contains
  * the position, the orientation, the indicator whether the robot is moving as
@@ -30,6 +29,11 @@ public class RobotStatus {
 	 */
 	private boolean moving;
 
+	/**
+	 * Saves the sensors which detected a collision
+	 */
+	private boolean[] sensorCollisionArray = new boolean[IRSensor.values().length - 1];
+	
 	/**
 	 * The current state of the robot.
 	 */
@@ -76,6 +80,18 @@ public class RobotStatus {
 		orientation = Orientation.UNKNOWN;
 		moving = false;
 		state = State.IDLE;
+	}
+	
+	/**
+	 * Fills the array sensorCollisionArray with the actual values of the 
+	 * sensors.
+	 * 
+	 * @param bufferSensorEnum An Array with all actual sensor values
+	 */
+	public void setSensorCollisionArray(boolean[] bufferSensorEnum){
+		for(int i = 0; i < IRSensor.values().length-1;i++){
+			this.sensorCollisionArray[i] = bufferSensorEnum[i];
+		}
 	}
 
 	/**
