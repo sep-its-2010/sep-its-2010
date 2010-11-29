@@ -1,14 +1,14 @@
 package sep.conquest.model.handler;
 
-import java.util.UUID;
-
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.DriveRequest;
+import sep.conquest.model.requests.MessageType;
 
 /**
  * Handles DriveRequest messages.
  * 
- * @author Andreas Poxrucker
+ * @author Andreas Poxrucker (Florian Lorenz)
  *
  */
 public class DriveRequestHandler extends Handler {
@@ -38,8 +38,14 @@ public class DriveRequestHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-    // TODO Auto-generated method stub
-    return false;
+	  if(!(request.getKind() == MessageType.CONTROL_DIR)){
+		  return super.handleRequest(request);
+	  } else {
+		  DriveRequest driveReq = (DriveRequest) request;
+		  //calls the method in the Puck class to handle the driveCommand
+		  executor.getRobot().driveCommand(driveReq.getCommand());
+		  return true;
+	  }
   }
 
 }

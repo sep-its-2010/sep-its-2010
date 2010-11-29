@@ -6,7 +6,7 @@ import sep.conquest.model.FailureType;
 
 
 /**
- * The ControlledRequest represents message objects that are sent by 
+ * The FailureRequest represents message objects that are sent by 
  * IComClient clients. It will be sent from a participant if an error is
  * occurred during the runtime.
  * 

@@ -1,9 +1,9 @@
 package sep.conquest.model.handler;
 
-import java.util.UUID;
-
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.MessageType;
+import sep.conquest.model.requests.SpeedRequest;
 
 /**
  * Handles SpeedRequest messages.
@@ -39,7 +39,12 @@ public class SpeedRequestHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-    // TODO Auto-generated method stub
-    return false;
+	  if(!(request.getKind()==MessageType.CONTROL_SPEED)){
+		  return super.handleRequest(request);
+	  } else {
+		  SpeedRequest speedReq = (SpeedRequest) request;
+		  executor.getRobot().setSpeed(speedReq.getSpeed());
+		  return true;
+	  }
   }
 }

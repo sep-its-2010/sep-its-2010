@@ -1,9 +1,11 @@
 package sep.conquest.model.handler;
 
-import java.util.UUID;
-
+import android.graphics.Path.Direction;
+import android.graphics.drawable.GradientDrawable.Orientation;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.MessageType;
+import sep.conquest.model.*;
 
 /**
  * Handles PuckAbyss messages coming from the Bluetooth Adapter.
@@ -38,8 +40,17 @@ public class PuckAbyssHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-    // TODO Auto-generated method stub
-    return false;
+	  if(!(request.getKind() == MessageType.PUCK_ABYSS)){
+		  return super.handleRequest(request);
+	  } else {
+		  //sep.conquest.model.Orientation oldDir = executor.getRobot()
+			//		.getRobotStatus().get(request.getSender()).getOrientation();
+
+		  //The roboter has to turn 180 degrees
+		  executor.getRobot().driveCommand(sep.conquest.model.Orientation.LEFT);
+		  executor.getRobot().driveCommand(sep.conquest.model.Orientation.LEFT);
+		  return true;
+	  }
   }
 
 }

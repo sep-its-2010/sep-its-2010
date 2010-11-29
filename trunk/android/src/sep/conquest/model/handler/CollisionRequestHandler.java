@@ -8,7 +8,7 @@ import sep.conquest.model.requests.MessageType;
 /**
  * Handles CollisionRequest messages.
  * 
- * @author Andreas Poxrucker
+ * @author Andreas Poxrucker (Florian Lorenz)
  *
  */
 public class CollisionRequestHandler extends Handler {

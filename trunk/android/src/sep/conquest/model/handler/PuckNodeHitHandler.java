@@ -2,8 +2,11 @@ package sep.conquest.model.handler;
 
 import java.util.UUID;
 
+import android.webkit.WebView.HitTestResult;
+
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.MessageType;
 
 /**
  * Handles PuckNodeHit messages coming from the Bluetooth Adapter.
@@ -38,8 +41,12 @@ public class PuckNodeHitHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-    // TODO Auto-generated method stub
-    return false;
+	  if(!(request.getKind() == MessageType.PUCK_HITNODE)){
+		  return super.handleRequest(request);
+	  } else {
+		  //What to DO?!
+		  return true;
+	  }
   }
 
 }

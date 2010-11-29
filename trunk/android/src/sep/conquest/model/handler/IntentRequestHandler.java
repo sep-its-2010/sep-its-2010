@@ -1,14 +1,14 @@
 package sep.conquest.model.handler;
 
-import java.util.UUID;
-
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.IntentRequest;
+import sep.conquest.model.requests.MessageType;
 
 /**
  * Handles IntentRequest messages.
  * 
- * @author Andreas Poxrucker
+ * @author Andreas Poxrucker (Florian Lorenz)
  *
  */
 public class IntentRequestHandler extends Handler {
@@ -38,8 +38,15 @@ public class IntentRequestHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-    // TODO Auto-generated method stub
-    return false;
+	  if(!(request.getKind() == MessageType.INTENT)){
+		  return super.handleRequest(request);
+	  } else {
+		  IntentRequest intReq = (IntentRequest) request;
+		  //im Robotstatus macht getIntendedNode keine Kopie sondern nur ne Referenz, is das richtig so?!
+		  executor.getRobot().getRobotStatus().get(intReq.getSender())
+					.setIntentPosition(intReq.getIntendedNode());
+		  return true;
+	  }
   }
 
 }

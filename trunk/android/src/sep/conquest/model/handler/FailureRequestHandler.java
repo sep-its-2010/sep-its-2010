@@ -1,9 +1,9 @@
 package sep.conquest.model.handler;
 
-import java.util.UUID;
-
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.FailureRequest;
+import sep.conquest.model.requests.MessageType;
 
 /**
  * Handles FailureRequest messages.
@@ -38,8 +38,13 @@ public class FailureRequestHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-    // TODO Auto-generated method stub
-    return false;
+	  if(!(request.getKind() == MessageType.FAILURE)){
+		  return super.handleRequest(request);
+	  } else {
+		  FailureRequest failReq = (FailureRequest) request;
+		  
+		  return true;
+	  }
   }
 
 }
