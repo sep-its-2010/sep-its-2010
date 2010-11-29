@@ -25,4 +25,5 @@
 		be enabled to search for robots."</string>
 	<string name="TXT_CONNECTING">Connecting...</string>
 	<string name="MSG_CONNECTING">Connecting to selected e-pucks...</string>
+<string name="EPUCK_SELECT">Select an e-puck</string>
 </resources>
