@@ -1,10 +1,13 @@
 #include "common.h"
 
 #include <libpic30.h>
+#include <stdio.h>
 
 #include "hal_uart1.h"
 #include "hal_led.h"
 #include "hal_sel.h"
+#include "hal_i2c.h"
+#include "sen_line.h"
 #include "com.h"
 
 #include "subs.h"
@@ -34,6 +37,8 @@ int main( void) {
 	hal_led_init();
 	com_init();
 
+	hal_i2c_init( 300);
+
 	volatile int i = 20;
 	HAL_INT_ATOMIC_BLOCK() {
 		i = 10;
@@ -41,9 +46,18 @@ int main( void) {
 
 	hal_motors_init();
 
+	__delay32( FCY / 10);
+
 //	hal_uart1_puts( "SEP 2010 ITS e-puck & Android Project\n\r");
 
 	for( ;;) {
+		sen_line_SData_t podData;
+		sen_line_read( &podData);
+		char buffer[50];
+		sprintf( buffer, "c[0]:%d  c[1]:%d  c[2]:%d\r\n", podData.aui16Data[0], podData.aui16Data[1], podData.aui16Data[2]);
+		hal_uart1_puts( buffer);
+		__delay32( FCY / 10);
+		/*
 		switch( hal_uart1_getch()) {
 			case 'w': {
 				hal_motors_setSpeed( 1000, 0);
@@ -83,6 +97,7 @@ int main( void) {
 
 			}
 		}
+		*/
 //		subs_run();
 	}
 }

@@ -1,5 +1,6 @@
-#include "sen_line.h"
 #include "hal_i2c.h"
+
+#include "sen_line.h"
 
 enum {
 	SENSOR_I2C_ADDRESS = 0xC0		///< adress of ground-sensors on the I2C-BUS
@@ -24,10 +25,14 @@ enum {
 void sen_line_read(
 	OUT sen_line_SData_t* const _lppodData
 	) {
-		
-		// reads 2 Bytes of data from each ground-sensor
-        for( uint8_t i = 0; i < 3; i++) {
-			hal_i2c_read( SENSOR_I2C_ADDRESS, _lppodData->aui16Data[i], 2);
-			// TODO Reihenfolge der Bytes überprüfen
-        }
+
+	uint8_t* lpui8 = (uint8_t*)_lppodData->aui16Data;
+	for( uint16_t ui16 = 0; ui16 < sizeof( _lppodData->aui16Data); ui16++) {
+		int16_t i16Val = hal_i2c_readRegister( SENSOR_I2C_ADDRESS, ui16);
+		if( i16Val < 0) {
+			_lppodData->aui16Data[ui16 / 2] = i16Val;
+			break;
+		}
+		*lpui8++ = i16Val < 0 ? 1 : i16Val & 0xFF;
+	}
 }

@@ -1,7 +1,5 @@
 #include <p30f6014A.h>
 
-#include "hal_int.h"
-
 #include "hal_i2c.h"
 
 enum {
@@ -52,7 +50,7 @@ bool start( void) {
 
 	bool blSuccess = false;
 
-	if( I2CSTATbits.P) {
+//	if( I2CSTATbits.P) {
 		I2CCONbits.SEN = true;
 		uint16_t ui16 = HAL_I2C_TIMEOUT_TICKS;
 		while( ui16 && I2CCONbits.SEN) {
@@ -60,7 +58,7 @@ bool start( void) {
 		}
 
 		blSuccess = ui16 > 0;
-	}
+//	}
 
 	return blSuccess;
 }
@@ -159,7 +157,12 @@ bool read(
 
 	if( waitIdle()) {
 		I2CCONbits.RCEN = true;
-		if( waitIdle()) {
+		uint16_t ui16 = HAL_I2C_TIMEOUT_TICKS;
+		while( ui16 && I2CCONbits.RCEN) {
+			ui16--;
+		}
+
+		if( !I2CCONbits.RCEN) {
 			blSuccess = true;
 			*_lpui8Data = I2CRCV;
 		}
@@ -191,13 +194,11 @@ void hal_i2c_init(
 	IN const uint16_t _ui16BaudRateDiv
 	) {
 
-	if( _ui16BaudRateDiv > 0 && _ui16BaudRateDiv <= I2C_MAX_BAUDRATE_DIVISOR) {
-		I2CCONbits.I2CEN = false;
-		hal_int_disable( HAL_INT_SOURCE__I2C_MASTER);
-		hal_int_disable( HAL_INT_SOURCE__I2C_SLAVE);
+//	if( _ui16BaudRateDiv > 0 && _ui16BaudRateDiv <= I2C_MAX_BAUDRATE_DIVISOR) {
+		I2CCON = 0;
 		I2CBRG = _ui16BaudRateDiv;
 		I2CCONbits.I2CEN = true;
-	}
+//	}
 }
 
 
@@ -396,25 +397,33 @@ int16_t hal_i2c_readRegister(
 	IN const uint8_t _ui8Register
 	) {
 
-	int16_t i16Return = 0xFFFF;
+	int16_t i16Return;
 	uint8_t ui8Data;
 
 	if( !start()) {
 		reset();
+		i16Return = -1;
 	} else if( !write( _ui8SlaveAddress & 0xFE)) {
 		reset();
+		i16Return = -2;
 	} else if( !write( _ui8Register)) {
 		reset();
+		i16Return = -3;
 	} else if( !restart()) {
 		reset();
+		i16Return = -4;
 	} else if( !write(_ui8SlaveAddress | 0x01)) {
 		reset();
+		i16Return = -5;
 	} else if( !read( &ui8Data)) {
 		reset();
+		i16Return = -6;
 	} else if( !nack()) {
 		reset();
+		i16Return = -7;
 	} else if( !stop()) {
 		reset();
+		i16Return = -8;
 	} else {
 		i16Return = ui8Data;
 	}
