@@ -18,7 +18,7 @@ public class CollisionRequest extends Request {
     /**
      * The IR-sensor that has caused the collision.
      */
-    private IRSensor sensor;
+    private boolean[] sensorArray = new boolean[IRSensor.values().length];
     
     /**
      * The constructor expects a sender, a list of receiver as well as the
@@ -27,9 +27,9 @@ public class CollisionRequest extends Request {
      * @param receiver The IDs of the receiver.
      * @param speedLevel The speed-level of the command.
      */
-    public CollisionRequest(UUID sender, UUID[] receiver, IRSensor sensor) {
+    public CollisionRequest(UUID sender, UUID[] receiver, boolean[] sensor) {
     	super(sender, receiver);    	
-        this.sensor = sensor;
+        this.sensorArray = sensor;
     }
 
     /* (non-Javadoc)
@@ -42,9 +42,9 @@ public class CollisionRequest extends Request {
     /**
      * getSensor returns the IR-sensor that caused the collision.
      * 
-     * @return The IR-sensor.
+     * @return The IR-sensorArray.
      */
-    public IRSensor getSensor() {
-        return sensor;
+    public boolean[] getSensor() {
+        return sensorArray;
     }
 }
