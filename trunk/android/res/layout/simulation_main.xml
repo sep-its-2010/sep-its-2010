@@ -6,14 +6,14 @@
 		android:layout_height="wrap_content" android:text="@string/TXT_PREVIEW"
 		android:layout_alignParentTop="true" />
 
-	<ImageView android:id="@+id/imPreview" android:layout_below="@id/txtPreview"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"></ImageView>
+	<sep.conquest.activity.MapSurfaceView android:id="@+id/im_preview"
+	   android:layout_below="@id/txtPreview" android:layout_width="fill_parent" />
 
 	<TextView android:id="@+id/txtNumber" android:text="@+id/TXT_NUMBER"
-		android:layout_below="@id/imPreview" android:layout_width="fill_parent"
-		android:layout_height="wrap_content"></TextView>
+		android:layout_below="@id/im_preview" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
 
 	<Spinner android:id="@+id/spNumber" android:layout_below="@id/txtNumber"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"></Spinner>
+		android:layout_width="wrap_content" android:layout_height="wrap_content" />
 
 </RelativeLayout>

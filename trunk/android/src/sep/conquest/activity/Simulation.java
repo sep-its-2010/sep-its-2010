@@ -53,8 +53,18 @@ public class Simulation extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				//make an intent and go to import dialog.
+				Intent importMap = new Intent();
+				importMap.setComponent(new ComponentName(getApplicationContext().getPackageName(), Import.class.getName()));
+				startActivity(importMap);
 			}
 		});
+		
+		
+		//getIntent().getSerializableExtra(name);
+		
+	}
+	
+	public void onResume() {
 		
 	}
 
