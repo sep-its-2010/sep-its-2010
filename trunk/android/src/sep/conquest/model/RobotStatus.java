@@ -203,7 +203,8 @@ public class RobotStatus {
 	 * @param intentPosition The intended destination.
 	 */
 	public void setIntentPosition(int[] intentPosition) {
-		this.intentPosition = intentPosition;
+		this.intentPosition[0] = intentPosition[0];
+		this.intentPosition[1] = intentPosition[1];
 	}	
 	
 	/**
