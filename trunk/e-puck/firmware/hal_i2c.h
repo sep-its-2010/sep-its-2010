@@ -3,10 +3,6 @@
 
 #include "common.h"
 
-enum {
-	HAL_I2C_TIMEOUT_TICKS = 0xFFFF
-};
-
 void hal_i2c_init(
 	IN const uint16_t _ui16BaudRateDiv
 	);

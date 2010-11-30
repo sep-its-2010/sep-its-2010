@@ -7,37 +7,36 @@ enum {
 	I2C_OPCODE_MASK = ( 1 << 4) | ( 1 << 3) | ( 1 << 2) | ( 1 << 1) | ( 1 << 0) ///< Specifies the operation mode bits within the control register.
 };
 
+static volatile bool s_blBreak = false;
 
-static inline bool waitIdle( void);
+static bool waitIdle( void);
 
-static inline void reset( void);
+static void reset( void);
 
-static inline bool start( void);
+static bool start( void);
 
-static inline bool restart( void);
+static bool restart( void);
 
-static inline bool stop( void);
+static bool stop( void);
 
-static inline bool ack( void);
+static bool ack( void);
 
-static inline bool nack( void);
+static bool nack( void);
 
-static inline bool write(
+static bool write(
 	IN const uint8_t _ui8Data
 	);
 
-static inline bool read(
+static bool read(
 	OUT uint8_t* const _lpui8Data
 	);
 
 bool waitIdle( void) {
 
-	uint16_t ui16 = HAL_I2C_TIMEOUT_TICKS;
-	while( ui16 && ( I2CCON & I2C_OPCODE_MASK)) {
-		ui16--;
-	}
+	while( !s_blBreak && ( I2CCON & I2C_OPCODE_MASK))
+		;
 
-	return ui16 > 0;
+	return !( I2CCON & I2C_OPCODE_MASK);
 }
 
 void reset( void) {
@@ -48,19 +47,11 @@ void reset( void) {
 
 bool start( void) {
 
-	bool blSuccess = false;
+	I2CCONbits.SEN = true;
+	while( !s_blBreak && I2CCONbits.SEN)
+		;
 
-//	if( I2CSTATbits.P) {
-		I2CCONbits.SEN = true;
-		uint16_t ui16 = HAL_I2C_TIMEOUT_TICKS;
-		while( ui16 && I2CCONbits.SEN) {
-			ui16--;
-		}
-
-		blSuccess = ui16 > 0;
-//	}
-
-	return blSuccess;
+	return !I2CCONbits.SEN;
 }
 
 
@@ -70,12 +61,9 @@ bool restart( void) {
 
 	if( waitIdle()) {
 		I2CCONbits.RSEN = true;
-		uint16_t ui16 = HAL_I2C_TIMEOUT_TICKS;
-		while( ui16 && I2CCONbits.RSEN) {
-			ui16--;
-		}
-
-		blSuccess = ui16 > 0;
+		while( !s_blBreak && I2CCONbits.RSEN)
+			;
+		blSuccess = !I2CCONbits.RSEN;
 	}
 
 	return blSuccess;
@@ -87,12 +75,10 @@ bool stop( void) {
 
 	if( waitIdle()) {
 		I2CCONbits.PEN = true;
-		uint16_t ui16 = HAL_I2C_TIMEOUT_TICKS;
-		while( ui16 && I2CCONbits.PEN) {
-			ui16--;
-		}
+		while( !s_blBreak && I2CCONbits.PEN)
+			;
 
-		blSuccess = ui16 > 0;
+		blSuccess = !I2CCONbits.PEN;
 	}
 
 	return blSuccess;
@@ -105,12 +91,10 @@ bool ack( void) {
 	if( waitIdle()) {
 		I2CCONbits.ACKDT = false;
 		I2CCONbits.ACKEN = true;
-		uint16_t ui16 = HAL_I2C_TIMEOUT_TICKS;
-		while( ui16 && I2CCONbits.ACKEN) {
-			ui16--;
-		}
+		while( !s_blBreak && I2CCONbits.ACKEN)
+			;
 
-		blSuccess = ui16 > 0;
+		blSuccess = !I2CCONbits.ACKEN;
 	}
 
 	return blSuccess;
@@ -123,12 +107,12 @@ bool nack( void) {
 	if( waitIdle()) {
 		I2CCONbits.ACKDT = true;
 		I2CCONbits.ACKEN = true;
-		uint16_t ui16 = HAL_I2C_TIMEOUT_TICKS;
-		while( ui16 && I2CCONbits.ACKEN) {
-			ui16--;
-		}
+		while( !s_blBreak && I2CCONbits.ACKEN)
+			;
 
-		blSuccess = ui16 > 0;
+		I2CCONbits.ACKDT = false;
+
+		blSuccess = !I2CCONbits.ACKEN;
 	}
 
 	return blSuccess;
@@ -141,10 +125,17 @@ bool write(
 
 	bool blSuccess = false;
 
-	if( waitIdle()) {
-		blSuccess = true;
+	while( !s_blBreak && I2CSTATbits.TRSTAT)
+		;
+
+	if( !I2CSTATbits.TRSTAT) {
 		I2CTRN = _ui8Data;
+		while( !s_blBreak && I2CSTATbits.TBF)
+			;
+
+		blSuccess = !I2CSTATbits.TBF;
 	}
+
 
 	return blSuccess;
 }
@@ -157,12 +148,10 @@ bool read(
 
 	if( waitIdle()) {
 		I2CCONbits.RCEN = true;
-		uint16_t ui16 = HAL_I2C_TIMEOUT_TICKS;
-		while( ui16 && I2CCONbits.RCEN) {
-			ui16--;
-		}
+		while( !s_blBreak && I2CCONbits.RCEN)
+			;
 
-		if( !I2CCONbits.RCEN) {
+		if( I2CSTATbits.RBF) {
 			blSuccess = true;
 			*_lpui8Data = I2CRCV;
 		}
@@ -194,11 +183,13 @@ void hal_i2c_init(
 	IN const uint16_t _ui16BaudRateDiv
 	) {
 
-//	if( _ui16BaudRateDiv > 0 && _ui16BaudRateDiv <= I2C_MAX_BAUDRATE_DIVISOR) {
+	if( _ui16BaudRateDiv > 0 && _ui16BaudRateDiv <= I2C_MAX_BAUDRATE_DIVISOR) {
+		s_blBreak = false;
 		I2CCON = 0;
 		I2CBRG = _ui16BaudRateDiv;
 		I2CCONbits.I2CEN = true;
-//	}
+		IPC3bits.MI2CIP = 5;
+	}
 }
 
 
@@ -235,6 +226,7 @@ bool hal_i2c_write(
 
 	bool blSuccess = true;
 
+	s_blBreak = false;
 	if( !start()) {
 		blSuccess = false;
 		reset();
@@ -288,6 +280,7 @@ bool hal_i2c_writeRegister(
 
 	bool blSuccess = false;
 
+	s_blBreak = false;
 	if( !start()) {
 		reset();
 	} else if( !write( _ui8SlaveAddress & 0xFE)) {
@@ -339,6 +332,7 @@ bool hal_i2c_read(
 
 	bool blSuccess = true;
 
+	s_blBreak = false;
 	if( !start()) {
 		blSuccess = false;
 		reset();
@@ -400,6 +394,7 @@ int16_t hal_i2c_readRegister(
 	int16_t i16Return;
 	uint8_t ui8Data;
 
+	s_blBreak = false;
 	if( !start()) {
 		reset();
 		i16Return = -1;
@@ -412,7 +407,7 @@ int16_t hal_i2c_readRegister(
 	} else if( !restart()) {
 		reset();
 		i16Return = -4;
-	} else if( !write(_ui8SlaveAddress | 0x01)) {
+	} else if( !write( _ui8SlaveAddress | 0x01)) {
 		reset();
 		i16Return = -5;
 	} else if( !read( &ui8Data)) {
