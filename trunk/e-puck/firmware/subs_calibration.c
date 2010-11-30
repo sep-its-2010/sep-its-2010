@@ -9,12 +9,12 @@
 #include "subs_calibration.h"
 
 bool subs_calibration_isNotCalibrated = true; ///< The robot is not calibrated by default.
-uint16_t _EEDATA(2) subs_calibration_aui16LineCalibrationValues[3] = {0, 0, 0}; ///< Stores calibration-values for line-detection in the EEPROM.
-uint16_t _EEDATA(2) subs_calibration_aui16SurfaceCalibrationValues[3] = {0, 0, 0}; ///< Stores calibration-values for line-detection in the EEPROM.
+uint16_t aui16LineCalibrationValues[3] = {0, 0, 0}; ///< Stores calibration-values for line-detection.
+uint16_t aui16SurfaceCalibrationValues[3] = {0, 0, 0}; ///< Stores calibration-values for line-detection.
 
 /*!
  * \brief
- * Collects calibration values of the ground-sensors.
+ * Collects calibration values of the ground-sensors smartphone.
  *
  * \returns
  * True if the calibration has not been performed yet, false otherwise.
@@ -32,36 +32,27 @@ bool subs_calibration_run( void) {
 	if( subs_calibration_isNotCalibrated && (ui8selector == 0)) {
 		
 		// If there are no calibration-values for the line: collect and store some.
-		if( subs_calibration_aui16LineCalibrationValues[0] == 0){ 
+		if( aui16LineCalibrationValues[0] == 0){ 
 			sen_line_SData_t podLineValueBuffer;
 			sen_line_read( &podLineValueBuffer);
 
 			for( uint8_t i = 0; sizeof( podLineValueBuffer.aui16Data); i++) {
-				subs_calibration_aui16LineCalibrationValues[i] = podLineValueBuffer.aui16Data[i];
+				aui16LineCalibrationValues[i] = podLineValueBuffer.aui16Data[i];
 			}
-
-			// visualize completion of data collection
-			uint32_t ui32SystemUpTime = hal_rtc_getSystemUpTime();
-			uint16_t ui16SetAllLEDs = 0xffff;
-			hal_led_set( ui16SetAllLEDs);
 		}		
 		hal_motors_setSpeed( 500, 0);
 
 		// If there are no calibration-values for the surface: collect and store.
-		if( (subs_calibration_aui16SurfaceCalibrationValues[0] == 0) && (hal_motors_getStepsLeft() >= 500)) {
+		if( (aui16SurfaceCalibrationValues[0] == 0) && (hal_motors_getStepsLeft() >= 500)) {
 			sen_line_SData_t podSurfaceValueBuffer;
 			sen_line_read( &podSurfaceValueBuffer);
 			
 			for( uint8_t i = 0; sizeof( podSurfaceValueBuffer.aui16Data); i++) {
-				subs_calibration_aui16SurfaceCalibrationValues[i] = podSurfaceValueBuffer.aui16Data[i];
+				aui16SurfaceCalibrationValues[i] = podSurfaceValueBuffer.aui16Data[i];
 			}
 			subs_calibration_isNotCalibrated = false;
 			hal_motors_setSpeed( 0, 0);
 			hal_motors_setSteps( 0);
-
-			// visualize completion of data collection
-			uint16_t ui16SetAllLEDs = 0xffff;
-			hal_led_set( ui16SetAllLEDs);
 		}		
 	}
 	return subs_calibration_isNotCalibrated;
@@ -75,26 +66,26 @@ bool subs_calibration_run( void) {
  */
 void subs_calibration_reset( void) {
 		subs_calibration_isNotCalibrated = true;
-		//subs_calibration_aui16LineCalibrationValues = { 0, 0, 0};
-		//subs_calibration_aui16SurfaceCalibrationValues = { 0, 0, 0};
+		memset( aui16LineCalibrationValues, 0, sizeof(aui16LineCalibrationValues));
+		memset( aui16SurfaceCalibrationValues, 0, sizeof(aui16SurfaceCalibrationValues));
 }
 
 /*!
- * \brief
- * Write the given data into the EEPROM.
- * 
- * \param _ui16Value
- * Specifies the data which will be stored in the EEPROM.
- * 
- * \param _aui16EEPROM
- * Specifies the destination buffer.
- * 
- * Saves the given value in the EEPROM permanently. These data will not be lost after resets or power-offs.
- */
-void writeToEEPROM( 
-			IN const uint16_t _ui16Value,
-			OUT uint16_t* const _lpui16EEPROM
-			) {
-	uint16_t* lpui16EEPROMWritePointer;
-	// Sry Moadl i hab keine Ahnung x.x ...
-}
+//  * \brief
+//  * Write the given data into the EEPROM.
+//  * 
+//  * \param _ui16Value
+//  * Specifies the data which will be stored in the EEPROM.
+//  * 
+//  * \param _aui16EEPROM
+//  * Specifies the destination buffer.
+//  * 
+//  * Saves the given value in the EEPROM permanently. These data will not be lost after resets or power-offs.
+//  */
+// void writeToEEPROM( 
+// 			IN const uint16_t _ui16Value,
+// 			OUT uint16_t* const _lpui16EEPROM
+// 			) {
+// 	uint16_t* lpui16EEPROMWritePointer;
+// 	// Sry Moadl i hab keine Ahnung x.x ...
+// }

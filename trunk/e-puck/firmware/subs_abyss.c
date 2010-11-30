@@ -28,7 +28,6 @@ bool subs_abyss_run( void) {
 
 	// Check if middle ground-sensor detects an abyss
 	if( podSensorData.aui16Data[1] < ABYSS_DETECTION_THRESHOLD) {
-
 		hal_motors_setSpeed( 0, 0);
 		hal_motors_setSteps( 0);
 		abyssDetected = true;
@@ -37,6 +36,5 @@ bool subs_abyss_run( void) {
 		com_SMessage_t podAbyssResponse = {COM_MESSAGE_TYPE__RESPONSE_ABYSS, {0}};
 		com_send( &podAbyssResponse);
 	}
-
 	return abyssDetected;
 }
