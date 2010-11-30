@@ -1,4 +1,4 @@
-package sep.conquest.model;
+package sep.conquest.model.requests;
 
 /**
  * The PuckMessageType represents message types which are used by real e-puck
@@ -38,8 +38,33 @@ public enum PuckMessageType {
 	/**
 	 * Set the specified LEDs.
 	 */
-	SET_LED((short)0x06FF);
+	SET_LED((short)0x06FF),
 	
+	/**
+	 * Request acknowledged.
+	 */
+	RESPONSE_OK((short)0x81FF),
+	
+	/**
+	 * Current e-puck status.
+	 */
+	RESPONSE_STATUS((short)0x82FF),
+
+	/**
+	 * e-puck has hit a node.
+	 */
+	RESPONSE_HIT_NODE((short)0x83FF),
+	
+	/**
+	 * e-puck has detected a collision while moving.
+	 */
+	RESPONSE_COLLISION((short)0x84FF),
+	
+	/**
+	 * e-puck has detected an abyss while moving.
+	 */
+	RESPONSE_ABYSS((short)0x85FF);
+
 	/**
 	 * The typecode.
 	 */
