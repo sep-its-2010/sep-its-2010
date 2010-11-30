@@ -1,6 +1,8 @@
 package sep.conquest.model;
 
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -16,12 +18,14 @@ public class ConquestUpdate {
 	/**
 	 * The list of map-nodes of the global map.
 	 */
-	private LinkedList<MapNode> mapList;
+	private List<MapNode> mapList;
 
 	/**
 	 * The status of every robot on the map.
 	 */
-	private TreeMap<UUID, RobotStatus> robots;
+	private Map<UUID, RobotStatus> robots;
+	
+	private int[] borders;
 
 	/**
 	 * The constructor expects a list of map-nodes as well as the status of
@@ -32,10 +36,11 @@ public class ConquestUpdate {
 	 * @param robots
 	 *            The status of the robots, which are distinguished by the id.
 	 */
-	public ConquestUpdate(LinkedList<MapNode> mapList,
-			TreeMap<UUID, RobotStatus> robots) {
+	public ConquestUpdate(List<MapNode> mapList, int[] borders,
+			Map<UUID, RobotStatus> robots) {
 		this.mapList = mapList;
 		this.robots = robots;
+		this.borders = borders;
 	}
 
 	/**
@@ -62,7 +67,7 @@ public class ConquestUpdate {
 	 * 
 	 * @return The map-nodes.
 	 */
-	public LinkedList<MapNode> getMapList() {
+	public List<MapNode> getMapList() {
 		return mapList;
 	}
 
@@ -71,7 +76,7 @@ public class ConquestUpdate {
 	 * 
 	 * @return The map of robot-status.
 	 */
-	public TreeMap<UUID, RobotStatus> getRobotStatus() {
+	public Map<UUID, RobotStatus> getRobotStatus() {
 		return robots;
 	}
 
@@ -83,5 +88,23 @@ public class ConquestUpdate {
 	 */
 	public RobotStatus getRobotStatus(UUID id) {
 		return robots.get(id);
+	}
+	
+	/**
+	 * Sets new borders.
+	 * 
+	 * @param borders The Borders.
+	 */
+	public void setBorders(int[] borders) {
+		this.borders = borders;
+	}
+	
+	/**
+	 * Returns the borders.
+	 * 
+	 * @return The borders.
+	 */
+	public int[] getBorders() {
+		return borders;
 	}
 }

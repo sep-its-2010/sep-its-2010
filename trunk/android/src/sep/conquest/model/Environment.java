@@ -2,6 +2,7 @@ package sep.conquest.model;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import sep.conquest.model.handler.Handler;
@@ -61,6 +62,8 @@ public class Environment extends Observable implements IComClient {
 		comManager = ComManager.getInstance();
 		comManager.addClient(this.id, this);
 		gridMap = new GridMap();
+		update = new ConquestUpdate(gridMap.getMapAsList(), gridMap.getMapBorders(),
+				new TreeMap<UUID, RobotStatus>());
 		handler = HandlerFactory.getEnvironmentBCChain(this);
 	}
 
@@ -156,6 +159,7 @@ public class Environment extends Observable implements IComClient {
 	public void deliver(IRequest request) {
 		handler.handleRequest(request);
 		update.setMapList(gridMap.getMapAsList());
+		update.setBorders(gridMap.getMapBorders());
 		notifyObservers(update);
 	}
 
@@ -168,6 +172,7 @@ public class Environment extends Observable implements IComClient {
 	public void addObserver(Observer observer) {
 		super.addObserver(observer);
 		update.setMapList(gridMap.getMapAsList());
+		update.setBorders(gridMap.getMapBorders());		
 		notifyObservers(update);
 	}
 	
