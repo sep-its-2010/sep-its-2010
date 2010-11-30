@@ -3,6 +3,8 @@ package sep.conquest.model;
 
 import java.util.UUID;
 
+import sep.conquest.model.requests.PuckRequest;
+
 
 /**
  * This class inherits from the class puck and represents an virtual
@@ -16,7 +18,7 @@ public class VirtualPuck extends Puck {
 	/**
 	 * Saves an instance of the class simulator.
 	 */
-	private Simulator mySimulator;
+	private Simulator sim;
 	
 	/**
 	 * Constructor which generates an instance of the class VirtualPuck.
@@ -27,7 +29,7 @@ public class VirtualPuck extends Puck {
 	 */
 	public VirtualPuck(UUID ID){
 		super(ID);
-		mySimulator = Simulator.getInstance();
+		sim = Simulator.getInstance();
 	}
 	
 	/**
@@ -36,7 +38,8 @@ public class VirtualPuck extends Puck {
 	 * @param buffer The Message that will be sent.
 	 */
 	public void writeSocket(byte[] buffer){
-		
+		PuckRequest request = new PuckRequest(buffer);
+
 	}
 	
 	/**
@@ -46,43 +49,5 @@ public class VirtualPuck extends Puck {
 	 */
 	public byte[] readSocket(){
 		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see sep.conquest.model.IComClient#deliver(java.util.UUID, sep.conquest.model.IRequest)
-	 */
-	public void deliver(UUID sender, IRequest request) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void forward() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void left() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void right() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setControlled(boolean enabled) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setSpeed(SpeedLevel level) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void turn() {
-		// TODO Auto-generated method stub
-		
 	}
 }

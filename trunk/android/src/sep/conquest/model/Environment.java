@@ -167,6 +167,16 @@ public class Environment extends Observable implements IComClient {
 	@Override
 	public void addObserver(Observer observer) {
 		super.addObserver(observer);
-		notifyObservers(((IComClient) observer).getID());
+		update.setMapList(gridMap.getMapAsList());
+		notifyObservers(update);
+	}
+	
+	/**
+	 * Loads a given map.
+	 * 
+	 * @param gridMap The map that should been loaded.
+	 */
+	public void loadMap(GridMap gridMap) {
+		this.gridMap = gridMap;
 	}
 }
