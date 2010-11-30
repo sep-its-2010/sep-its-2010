@@ -13,30 +13,22 @@ public interface IPathFinder {
 	 * The find-method searches for the shortest paths from a specific start
 	 * -node to a number of many other nodes.
 	 * 
+	 * @param robot The robot.
 	 * @param start The start-node.
 	 * @param destinations The destination-nodes.
 	 * @return A list of paths to the destination-nodes.
 	 */
-	PathNode[] find(MapNode start, MapNode[] destinations);
-
-	/**
-	 * The find-method searches for the shortest paths from a specific start
-	 * -node to a number of many other nodes.
-	 * 
-	 * @param start The start-node.
-	 * @param destinations The destination-nodes.
-	 * @return A list of paths to the destination-nodes.
-	 */
-	PathNode[] find(int[] start, int[][] destinations);	
+	PathNode[] find(Puck robot, MapNode start, MapNode[] destinations);	
 	
 	/**
 	 * The method calculates the navigation-costs from a specific node to an
 	 * adjacent neighbor.
 	 * 
+	 * @param robot The robot.
 	 * @param from The starting node.
 	 * @param to The destination node.
 	 * @return The navigation-costs.
 	 */
-	int caluclateCosts(MapNode from, MapNode to);
+	int caluclateCosts(Puck robot, MapNode from, MapNode to);
 	
 }

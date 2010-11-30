@@ -179,7 +179,7 @@ public class LogicThread implements Runnable {
 	 */
 	private void driveTo(int[] intentNode) {
 		int[][] dest = { intentNode };
-		PathNode[] path = aStar.find(getRobotState().getPosition(), dest);
+		PathNode[] path = aStar.find(robot, getRobotState().getPosition(), dest);
 
 		// makes driving sense?
 		if (path.length >= 1) {

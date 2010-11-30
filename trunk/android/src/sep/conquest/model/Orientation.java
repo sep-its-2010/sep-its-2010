@@ -7,32 +7,56 @@ package sep.conquest.model;
  * 
  */
 public enum Orientation {
-
+	
 	/**
 	 * Orientation along initial defined 'up' direction.
+	 * @return 
 	 */
-	UP,
+	UP(0),
 
 	/**
 	 * Orientation 180 degree turned.
 	 */
-	DOWN,
+	DOWN(1),
 
 	/**
 	 * Orientation 90 degree left.
 	 */
-	LEFT,
+	LEFT(2),
 
 	/**
 	 * Orientation 90 degree right.
 	 */
-	RIGHT,
+	RIGHT(3),
 
 	/**
 	 * Orientation is unknown.
 	 */
-	UNKNOWN;
+	UNKNOWN(4);
 
+	/**
+	 * The figure for the orientation.
+	 */
+	private int num;
+	
+	/**
+	 * A private constructor to realize figures within Orientation.
+	 * 
+	 * @param num The figure.
+	 */
+	private Orientation(int num) {
+		this.num = num;
+	}
+	
+	/**
+	 * Returns the number for the corresponding enum-object.
+	 * 
+	 * @return The number.
+	 */
+	public int getNum() {
+		return num;
+	}	
+	
 	/**
 	 * The method adds a orientation of the robot and a desired direction to
 	 * get the turning-command.

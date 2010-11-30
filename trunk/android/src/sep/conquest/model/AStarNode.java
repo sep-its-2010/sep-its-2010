@@ -8,7 +8,7 @@ package sep.conquest.model;
  * @author Andreas Wilhelm
  *
  */
-public class AStarNode {
+public class AStarNode implements Comparable<AStarNode>{
 	
 	/**
 	 * The predecessor of the node.
@@ -82,5 +82,22 @@ public class AStarNode {
 	 */
 	public int getCosts() {
 		return costs;
+	}
+
+	@Override public boolean equals(Object o) {
+		return (getNode().hashCode() == o.hashCode());
+	}
+	
+	@Override public int hashCode() {
+		return getNode().hashCode();
+	}
+
+	public int compareTo(AStarNode arg0) {
+		if (this.getCosts() < arg0.getCosts())
+			return -1;
+		else if (this.getCosts() > arg0.getCosts())
+			return 1;
+		else
+			return 0;
 	}
 }
