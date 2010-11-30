@@ -158,9 +158,7 @@ public class Environment extends Observable implements IComClient {
 	 */
 	public void deliver(IRequest request) {
 		handler.handleRequest(request);
-		update.setMapList(gridMap.getMapAsList());
-		update.setBorders(gridMap.getMapBorders());
-		notifyObservers(update);
+		sendUpdate();
 	}
 
 	/*
@@ -171,9 +169,16 @@ public class Environment extends Observable implements IComClient {
 	@Override
 	public void addObserver(Observer observer) {
 		super.addObserver(observer);
+		sendUpdate();
+	}
+	
+	/**
+	 * Sends an update message to the observers.
+	 */
+	private void sendUpdate() {
 		update.setMapList(gridMap.getMapAsList());
 		update.setBorders(gridMap.getMapBorders());		
-		notifyObservers(update);
+		notifyObservers(update.clone());
 	}
 	
 	/**

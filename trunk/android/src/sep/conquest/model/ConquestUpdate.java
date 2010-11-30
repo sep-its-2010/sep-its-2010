@@ -3,6 +3,7 @@ package sep.conquest.model;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -13,7 +14,7 @@ import java.util.UUID;
  * @author Andreas Wilhelm
  * 
  */
-public class ConquestUpdate {
+public class ConquestUpdate implements Cloneable{
 
 	/**
 	 * The list of map-nodes of the global map.
@@ -25,6 +26,9 @@ public class ConquestUpdate {
 	 */
 	private Map<UUID, RobotStatus> robots;
 	
+	/**
+	 * The borders of the map.
+	 */
 	private int[] borders;
 
 	/**
@@ -106,5 +110,19 @@ public class ConquestUpdate {
 	 */
 	public int[] getBorders() {
 		return borders;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+	@Override public ConquestUpdate clone() {
+		Map<UUID, RobotStatus> copyMap = new TreeMap<UUID, RobotStatus>();
+		Set<UUID> keys = robots.keySet();
+		for (UUID key: keys) {
+			copyMap.put(key, robots.get(key).clone());
+		}
+		
+		
+		return new ConquestUpdate(mapList, borders, copyMap);
 	}
 }

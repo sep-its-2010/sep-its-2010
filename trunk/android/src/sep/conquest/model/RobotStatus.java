@@ -1,4 +1,5 @@
 package sep.conquest.model;
+
 /**
  * The RobotState represents the current status of a specific Puck. It contains
  * the position, the orientation, the indicator whether the robot is moving as
@@ -7,13 +8,13 @@ package sep.conquest.model;
  * @author Andreas Wilhelm
  * 
  */
-public class RobotStatus {
+public class RobotStatus implements Cloneable {
 
 	/**
 	 * The current position of the robot within the map.
 	 */
 	private int[] position;
-	
+
 	/**
 	 * The type of the current node.
 	 */
@@ -33,12 +34,12 @@ public class RobotStatus {
 	 * Saves the sensors which detected a collision
 	 */
 	private boolean[] sensorCollisionArray = new boolean[IRSensor.values().length - 1];
-	
+
 	/**
 	 * The current state of the robot.
 	 */
 	private State state;
-	
+
 	/**
 	 * The intended destination.
 	 */
@@ -81,15 +82,16 @@ public class RobotStatus {
 		moving = false;
 		state = State.IDLE;
 	}
-	
+
 	/**
-	 * Fills the array sensorCollisionArray with the actual values of the 
+	 * Fills the array sensorCollisionArray with the actual values of the
 	 * sensors.
 	 * 
-	 * @param bufferSensorEnum An Array with all actual sensor values
+	 * @param bufferSensorEnum
+	 *            An Array with all actual sensor values
 	 */
-	public void setSensorCollisionArray(boolean[] bufferSensorEnum){
-		for(int i = 0; i < IRSensor.values().length-1;i++){
+	public void setSensorCollisionArray(boolean[] bufferSensorEnum) {
+		for (int i = 0; i < IRSensor.values().length - 1; i++) {
 			this.sensorCollisionArray[i] = bufferSensorEnum[i];
 		}
 	}
@@ -111,7 +113,7 @@ public class RobotStatus {
 	public Orientation getOrientation() {
 		return orientation;
 	}
-	
+
 	/**
 	 * Returns the type of the current node.
 	 * 
@@ -146,8 +148,8 @@ public class RobotStatus {
 	 */
 	public int[] getIntentPosition() {
 		return intentPosition;
-	}	
-	
+	}
+
 	/**
 	 * Sets the position of the robot.
 	 * 
@@ -187,11 +189,12 @@ public class RobotStatus {
 	public void setMoving(boolean moving) {
 		this.moving = moving;
 	}
-	
+
 	/**
 	 * Sets the type of the Node.
 	 * 
-	 * @param nodeType The NodeType.
+	 * @param nodeType
+	 *            The NodeType.
 	 */
 	public void setNodeType(NodeType nodeType) {
 		this.nodeType = nodeType;
@@ -200,13 +203,14 @@ public class RobotStatus {
 	/**
 	 * Sets the destination node.
 	 * 
-	 * @param intentPosition The intended destination.
+	 * @param intentPosition
+	 *            The intended destination.
 	 */
 	public void setIntentPosition(int[] intentPosition) {
 		this.intentPosition[0] = intentPosition[0];
 		this.intentPosition[1] = intentPosition[1];
-	}	
-	
+	}
+
 	/**
 	 * Sets the complete status of the robot.
 	 * 
@@ -220,5 +224,17 @@ public class RobotStatus {
 		this.state = status.getState();
 		this.nodeType = status.getNodeType();
 		this.intentPosition = status.getIntentPosition();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
+	@Override
+	public RobotStatus clone() {
+		return new RobotStatus(position.clone(), orientation, moving, state,
+				nodeType, intentPosition.clone());
+
 	}
 }

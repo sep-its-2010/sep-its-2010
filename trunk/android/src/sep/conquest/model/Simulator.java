@@ -17,109 +17,138 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class Simulator {
 
-  /**
-   * The timer period.
-   */
-  private static final long PERIOD = 1000;
+	/**
+	 * The static instance to implement the singleton pattern.
+	 */
+	private static final Simulator INSTANCE = new Simulator();
 
-  /**
-   * The loaded map within the simulator.
-   */
-  private GridMap map;
+	/**
+	 * The timer period.
+	 */
+	private static final long PERIOD = 1000;
 
-  /**
-   * Saves the request messages of the VirtualPucks.
-   */
-  private Queue<IRequest> messageQueue;
+	/**
+	 * The loaded map within the simulator.
+	 */
+	private static GridMap map;
 
-  /**
-   * Executes request handling.
-   */
-  private Timer timer;
+	/**
+	 * Saves the request messages of the VirtualPucks.
+	 */
+	private static Queue<IRequest> messageQueue;
 
-  /**
-   * Indicates whether simulator has been stopped and must be reseted.
-   */
-  private boolean stopped;
+	/**
+	 * Executes request handling.
+	 */
+	private static Timer timer;
 
-  /**
-   * The initial positions of the robots.
-   */
-  private TreeMap<UUID, int[]> initialpositions;
+	/**
+	 * Indicates whether simulator has been stopped and must be reseted.
+	 */
+	private static boolean stopped;
 
-  /**
-   * The output buffer for each VirtualPuck.
-   */
-  private TreeMap<UUID, byte[]> outputBuffer;
+	/**
+	 * The initial positions of the robots.
+	 */
+	private static TreeMap<UUID, int[]> initialPositions;
 
-  /**
-   * The constructor expects the map and all initial positions for the robots.
-   * 
-   * @param map
-   *          The map which should be used.
-   * @param initialPositions
-   *          The initial positions of the robots.
-   */
-  public Simulator(GridMap exMap, TreeMap<UUID, int[]> initialRobotPositions) {
-    map = exMap;
-    initialpositions = initialRobotPositions;
-    messageQueue = new ConcurrentLinkedQueue<IRequest>();
-  }
+	/**
+	 * The output buffer for each VirtualPuck.
+	 */
+	private static TreeMap<UUID, byte[]> outputBuffer;
 
-  /**
-   * Adds a new request message to the simulator message queue.
-   * 
-   * @param request
-   *          The request to add.
-   */
-  public void addRequest(IRequest request) {
-    messageQueue.offer(request);
-  }
+	/**
+	 * The getInstance method returns the singleton object of the Simulator
+	 * class.
+	 * 
+	 * @return The singleton instance of Simulator.
+	 */
+	public static Simulator getInstance() {
+		if (map == null || initialPositions == null)
+			throw new IllegalStateException(
+					"Error! Simulator wasn't initialized!");
+		return INSTANCE;
+	}
 
-  /**
-   * Stops the execution of the simulator.
-   */
-  public void stop() {
-    timer.cancel();
-    stopped = true;
-  }
+	/**
+	 * The private constructor to realize a singleton behavior.
+	 */
+	private Simulator() {
+		messageQueue = new ConcurrentLinkedQueue<IRequest>();
+	}
+	
+	/**
+	 * Sets a global map on which the calculations are executed.
+	 * 
+	 * @param map The new map.
+	 */
+	public void setMap(GridMap map) {
+		Simulator.map = map;
+	}
+	
+	/**
+	 * Sets the initial positions of the robots.
+	 * 
+	 * @param initialPositions The initial positions.
+	 */
+	public void setInitialPositions(TreeMap<UUID, int[]> initialPositions) {
+		Simulator.initialPositions = initialPositions;
+	}
+	
 
-  public void pause() {
-    timer.cancel();
-    stopped = false;
-  }
+	/**
+	 * Adds a new request message to the simulator message queue.
+	 * 
+	 * @param request
+	 *            The request to add.
+	 */
+	public void addRequest(IRequest request) {
+		messageQueue.offer(request);
+	}
 
-  /**
-   * Starts the execution of the simulator.
-   */
-  public void start() {
-    if (!stopped) {
-      timer = new Timer();
-      timer.scheduleAtFixedRate(new SimulatorTask(), 0, PERIOD);
-    } else {
-      
-    }
-  }
+	/**
+	 * Stops the execution of the simulator.
+	 */
+	public void stop() {
+		timer.cancel();
+		stopped = true;
+	}
 
-  /**
-   * Executes
-   */
-  public void step() {
-    handleNextRequest();
-  }
+	public void pause() {
+		timer.cancel();
+		stopped = false;
+	}
 
-  private void handleNextRequest() {
-    if (!messageQueue.isEmpty()) {
-      IRequest request = messageQueue.poll();
-      
+	/**
+	 * Starts the execution of the simulator.
+	 */
+	public void start() {
+		if (!stopped) {
+			timer = new Timer();
+			timer.scheduleAtFixedRate(new SimulatorTask(), 0, PERIOD);
+		} else {
 
-    }
-  }
+		}
+	}
 
-  private class SimulatorTask extends TimerTask {
+	/**
+	 * Executes
+	 */
+	public void step() {
+		handleNextRequest();
+	}
 
-    public void run() {
-      step();
-    }
-  }
+	private void handleNextRequest() {
+		if (!messageQueue.isEmpty()) {
+			IRequest request = messageQueue.poll();
+
+		}
+	}
+
+	private class SimulatorTask extends TimerTask {
+
+		public void run() {
+			step();
+		}
+	}
 }

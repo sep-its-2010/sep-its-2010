@@ -84,14 +84,23 @@ public class AStarNode implements Comparable<AStarNode>{
 		return costs;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override public boolean equals(Object o) {
 		return (getNode().hashCode() == o.hashCode());
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override public int hashCode() {
 		return getNode().hashCode();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	public int compareTo(AStarNode arg0) {
 		if (this.getCosts() < arg0.getCosts())
 			return -1;
