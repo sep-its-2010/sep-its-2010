@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import sep.conquest.model.requests.HelloRequest;
-import sep.conquest.model.requests.PuckMessageType;
+import sep.conquest.model.requests.MessageType;
 import sep.conquest.util.ConquestLog;
 
 /**
@@ -161,16 +161,16 @@ public abstract class Puck implements IComClient, IRobot {
 	// TODO Add reset, status and set_led to irobot interface!
 	public void forward() {
 		byte[] request = new byte[32];
-		request[0] = (byte) (PuckMessageType.MOVE.getTypeCode() & 0xff);
-		request[1] = (byte) ((PuckMessageType.MOVE.getTypeCode() >> 8) & 0xff);
+		request[0] = (byte) (MessageType.REQUEST_MOVE.getTypeCode() & 0xff);
+		request[1] = (byte) ((MessageType.REQUEST_MOVE.getTypeCode() >> 8) & 0xff);
 
 		writeSocket(request);
 	}
 
 	public void left() {
 		byte[] request = new byte[32];
-		request[0] = (byte) (PuckMessageType.TURN.getTypeCode() & 0xff);
-		request[1] = (byte) ((PuckMessageType.TURN.getTypeCode() >> 8) & 0xff);
+		request[0] = (byte) (MessageType.REQUEST_TURN.getTypeCode() & 0xff);
+		request[1] = (byte) ((MessageType.REQUEST_TURN.getTypeCode() >> 8) & 0xff);
 		request[2] = (byte) 1; // turn right
 
 		writeSocket(request);
@@ -178,8 +178,8 @@ public abstract class Puck implements IComClient, IRobot {
 
 	public void right() {
 		byte[] request = new byte[32];
-		request[0] = (byte) (PuckMessageType.TURN.getTypeCode() & 0xff);
-		request[1] = (byte) ((PuckMessageType.TURN.getTypeCode() >> 8) & 0xff);
+		request[0] = (byte) (MessageType.REQUEST_TURN.getTypeCode() & 0xff);
+		request[1] = (byte) ((MessageType.REQUEST_TURN.getTypeCode() >> 8) & 0xff);
 		request[2] = (byte) -1; // turn left
 
 		writeSocket(request);
@@ -187,8 +187,8 @@ public abstract class Puck implements IComClient, IRobot {
 
 	public void setSpeed(SpeedLevel level) {
 		byte[] request = new byte[32];
-		request[0] = (byte) (PuckMessageType.SET_SPEED.getTypeCode() & 0xff);
-		request[1] = (byte) ((PuckMessageType.SET_SPEED.getTypeCode() >> 8) & 0xff);
+		request[0] = (byte) (MessageType.REQUEST_SET_SPEED.getTypeCode() & 0xff);
+		request[1] = (byte) ((MessageType.REQUEST_SET_SPEED.getTypeCode() >> 8) & 0xff);
 		request[2] = (byte) level.getSpeed();
 
 		writeSocket(request);
@@ -196,8 +196,8 @@ public abstract class Puck implements IComClient, IRobot {
 
 	public void turn() {
 		byte[] request = new byte[32];
-		request[0] = (byte) (PuckMessageType.TURN.getTypeCode() & 0xff);
-		request[1] = (byte) ((PuckMessageType.TURN.getTypeCode() >> 8) & 0xff);
+		request[0] = (byte) (MessageType.REQUEST_TURN.getTypeCode() & 0xff);
+		request[1] = (byte) ((MessageType.REQUEST_TURN.getTypeCode() >> 8) & 0xff);
 		request[2] = (byte) 2;
 
 		writeSocket(request);
@@ -206,8 +206,8 @@ public abstract class Puck implements IComClient, IRobot {
 	public void setControlled(boolean enabled) {
 		byte[] request = new byte[32];
 		controlled = enabled;
-		request[0] = (byte) (PuckMessageType.SET_LED.getTypeCode() & 0xff);
-		request[1] = (byte) ((PuckMessageType.SET_LED.getTypeCode() >> 8) & 0xff);
+		request[0] = (byte) (MessageType.REQUEST_SET_LED.getTypeCode() & 0xff);
+		request[1] = (byte) ((MessageType.REQUEST_SET_LED.getTypeCode() >> 8) & 0xff);
 		request[2] = (byte) 10;
 
 		writeSocket(request);
