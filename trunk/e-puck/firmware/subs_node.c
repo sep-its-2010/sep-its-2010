@@ -1,4 +1,6 @@
 #include <string.h>
+#include <p30f6014A.h>
+
 #include "hal_led.h"
 #include "hal_motors.h"
 #include "com.h"
@@ -27,10 +29,9 @@ sen_line_SData_t podSensorData; ///< Holds data of the three ground-sensors.
  */
 bool subs_node_run( void) {
 	bool nodeHit = false;
- 	sen_line_SData_t* _lppodSensorData = &podSensorData;	
 	uint16_t ui16AvgLeft = 0;
 	uint16_t ui16AvgRight = 0;
-	sen_line_read( _lppodSensorData);
+	sen_line_read( &podSensorData);
 
 	// node detection
  	if ((2 * (podSensorData.aui16Data[0]) < 0) || // 0 wird ersetzt durch EEPROM-Wert
@@ -53,13 +54,13 @@ bool subs_node_run( void) {
 
 		// visualizes the shape of the recently detected node
 		if( (ui16AvgLeft > 0) && (ui16AvgRight > 0)) {
-			if (podSensorData.aui16Data[1] < NODE_DETECTION__MIDDLE_SENSORVALUE_THRESHOLD) {
+			if (podSensorData.aui16Data[1] < 0) { // 0 = EEPROMwert
 				hal_led_set(HAL_LED_PIN_BV__0);
 			}
-			if (ui16AvgLeft < NODE_DETECTION__LEFT_SENSORVALUE_THRESHOLD) {
+			if (ui16AvgLeft < 0) { // 0 = EEPROMwert
 				hal_led_set(HAL_LED_PIN_BV__6);
 			}
-			if (ui16AvgRight < NODE_DETECTION__RIGHT_SENSORVALUE_THRESHOLD) {
+			if (ui16AvgRight < 0) { // 0 = EEPROMwert
 				hal_led_set(HAL_LED_PIN_BV__2);
 			}
 		}

@@ -1,4 +1,6 @@
 #include <p30f6014A.h>
+#include <string.h>
+
 #include "hal_motors.h"
 #include "hal_sel.h"
 #include "hal_led.h"
@@ -7,8 +9,8 @@
 #include "subs_calibration.h"
 
 bool subs_calibration_isNotCalibrated = true; ///< The robot is not calibrated by default.
-uint16_t _EEDATA(2) aui16LineCalibrationValues[3] = {0, 0, 0}; ///< Stores calibration-values for line-detection in the EEPROM.
-uint16_t _EEDATA(2) aui16SurfaceCalibrationValues[3] = {0, 0, 0}; ///< Stores calibration-values for line-detection in the EEPROM.
+uint16_t _EEDATA(2) subs_calibration_aui16LineCalibrationValues[3] = {0, 0, 0}; ///< Stores calibration-values for line-detection in the EEPROM.
+uint16_t _EEDATA(2) subs_calibration_aui16SurfaceCalibrationValues[3] = {0, 0, 0}; ///< Stores calibration-values for line-detection in the EEPROM.
 
 /*!
  * \brief
@@ -27,32 +29,39 @@ uint16_t _EEDATA(2) aui16SurfaceCalibrationValues[3] = {0, 0, 0}; ///< Stores ca
 bool subs_calibration_run( void) {
 	uint8_t ui8selector = hal_sel_getPosition();
 
-	if( subs_calibration_isNotCalibrated && ui8selector) {
+	if( subs_calibration_isNotCalibrated && (ui8selector == 0)) {
 		
 		// If there are no calibration-values for the line: collect and store some.
-		if( aui16LineCalibrationValues[0] == 0){ 
+		if( subs_calibration_aui16LineCalibrationValues[0] == 0){ 
 			sen_line_SData_t podLineValueBuffer;
 			sen_line_read( &podLineValueBuffer);
 
 			for( uint8_t i = 0; sizeof( podLineValueBuffer.aui16Data); i++) {
-				aui16LineCalibrationValues[i] = podLineValueBuffer.aui16Data[i];
+				subs_calibration_aui16LineCalibrationValues[i] = podLineValueBuffer.aui16Data[i];
 			}
-			// Alle oberen 8 LEDs leuchten 1 Sekunde
+
+			// visualize completion of data collection
+			uint32_t ui32SystemUpTime = hal_rtc_getSystemUpTime();
+			uint16_t ui16SetAllLEDs = 0xffff;
+			hal_led_set( ui16SetAllLEDs);
 		}		
 		hal_motors_setSpeed( 500, 0);
 
 		// If there are no calibration-values for the surface: collect and store.
-		if( (aui16SurfaceCalibrationValues[0] == 0) && (hal_motors_getStepsLeft() >= 500)) {
+		if( (subs_calibration_aui16SurfaceCalibrationValues[0] == 0) && (hal_motors_getStepsLeft() >= 500)) {
 			sen_line_SData_t podSurfaceValueBuffer;
 			sen_line_read( &podSurfaceValueBuffer);
 			
 			for( uint8_t i = 0; sizeof( podSurfaceValueBuffer.aui16Data); i++) {
-				aui16SurfaceCalibrationValues[i] = podSurfaceValueBuffer.aui16Data[i];
+				subs_calibration_aui16SurfaceCalibrationValues[i] = podSurfaceValueBuffer.aui16Data[i];
 			}
 			subs_calibration_isNotCalibrated = false;
 			hal_motors_setSpeed( 0, 0);
 			hal_motors_setSteps( 0);
-			// Alle oberen 8 LEDs leuchten 1 Sekunde
+
+			// visualize completion of data collection
+			uint16_t ui16SetAllLEDs = 0xffff;
+			hal_led_set( ui16SetAllLEDs);
 		}		
 	}
 	return subs_calibration_isNotCalibrated;
@@ -66,8 +75,8 @@ bool subs_calibration_run( void) {
  */
 void subs_calibration_reset( void) {
 		subs_calibration_isNotCalibrated = true;
-		aui16LineCalibrationValues = {0, 0, 0};
-		aui16SurfaceCalibrationValues = {0, 0, 0};
+		//subs_calibration_aui16LineCalibrationValues = { 0, 0, 0};
+		//subs_calibration_aui16SurfaceCalibrationValues = { 0, 0, 0};
 }
 
 /*!
