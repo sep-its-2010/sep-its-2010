@@ -31,12 +31,13 @@ bool subs_movement_run( void){
  * True, if a message has been handled by this function, false otherwise.
  *
  * Computes the type of the message by analyzing the first and second Byte of the message.
+ * If this handler is responsible the movement is performed.
  * 
  * \remarks
- * This handler-function has to be registered during the reset function.
+ * Handler-functions have to be registered during the reset function.
  *
  * \see
- * cbHandleRequestMove | cbHandleRequestSetSpeed
+ * cbHandleRequestMove | cbHandleRequestSetSpeed | cbHandleRequestSetLED
  */
 bool cbHandleRequestTurn( com_SMessage_t _podMessage) {
 	bool handledMessage = false;
@@ -55,12 +56,13 @@ bool cbHandleRequestTurn( com_SMessage_t _podMessage) {
  * True, if a message has been handled by this function, false otherwise.
  *
  * Computes the type of the message by analyzing the first and second Byte of the message.
+ * If this handler is responsible the movement is performed.
  * 
  * \remarks
- * This handler-function has to be registered during the reset function.
+ * Handler-functions have to be registered during the reset function.
  *
  * \see
- * cbHandleRequestTurn | cbHandleRequestSetSpeed
+ * cbHandleRequestTurn | cbHandleRequestSetSpeed | cbHandleRequestSetLED
  */
 bool cbHandleRequestMove( com_SMessage_t _podMessage) {
 	bool handledMessage = false;
@@ -79,18 +81,45 @@ bool cbHandleRequestMove( com_SMessage_t _podMessage) {
  * True, if a message has been handled by this function, false otherwise.
  *
  * Computes the type of the message by analyzing the first and second Byte of the message.
+ * If this handler is responsible the movement is performed.
  * 
  * \remarks
- * This handler-function has to be registered during the reset function.
+ * Handler-functions have to be registered during the reset function.
  *
  * \see
- * cbHandleRequestMove | cbHandleRequestTurn
+ * cbHandleRequestMove | cbHandleRequestTurn | cbHandleRequestSetLED
  */
 bool cbHandleRequestSetSpeed( com_SMessage_t _podMessage) {
 	bool handledMessage = false;
 
 	return handledMessage;
 }
+
+/*!
+ * \brief
+ * Handles setLED-requests.
+ * 
+ * \param _podMessage
+ * Specifies the message which has to be analyzed.
+ * 
+ * \returns
+ * True, if a message has been handled by this function, false otherwise.
+ *
+ * Computes the type of the message by analyzing the first and second Byte of the message.
+ * If this handler is responsible the movement is performed.
+ * 
+ * \remarks
+ * Handler-functions have to be registered during the reset function.
+ *
+ * \see
+ * cbHandleRequestMove | cbHandleRequestTurn | cbHandleRequestSetSpeed
+ */
+bool cbHandleRequestSetLED( com_SMessage_t _podMessage) {
+	bool handledMessage = false;
+
+	return handledMessage;
+}
+
 
 /*!
  * \brief
@@ -107,4 +136,7 @@ void subs_movement_reset( void) {
 
 	bool (*RequestSetSpeed)( com_SMessage_t) = cbHandleRequestSetSpeed;
 	com_register(RequestSetSpeed);
+
+	bool (*RequestSetLED)( com_SMessage_t) = cbHandleRequestSetLED;
+	com_register(RequestSetLED);
 }
