@@ -12,9 +12,14 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 /**
  * Saves a map to the file system of the smartphone.
@@ -30,11 +35,13 @@ public class Export extends Activity {
    * The EditText element where filename can be entered.
    */
   private EditText etxtFilename;
+  
+  private ListView lsMaps;
 
   /**
-   * Used to start saving.
+   * Used to display names of found map files.
    */
-  private Button btnSave;
+  private ArrayAdapter<String> fileList;
 
   /**
    * Called when Activity is initially created.
@@ -56,10 +63,23 @@ public class Export extends Activity {
    * Initializes control elements of the activity and sets EventListeners.
    */
   private void initializeControlElements() {
-    btnSave = (Button) findViewById(R.id.btnSave);
+    Button btnSave = (Button) findViewById(R.id.btnSave);
     btnSave.setOnClickListener(new ExportOnClickListener());
 
     etxtFilename = (EditText) findViewById(R.id.etxtFilename);
+
+    // Get reference on ListView to display map files from the file system.
+    lsMaps = (ListView) findViewById(R.id.lsMaps);
+    lsMaps.setOnItemClickListener(new ExportOnItemClickListener());
+
+    // Display the list of found map files from the file system in the ListView.
+    displayMapFiles();
+  }
+  
+  private void displayMapFiles() {
+    fileList = new ArrayAdapter<String>(this, R.layout.list_item,
+        MapFileHandler.getFileList());
+    lsMaps.setAdapter(fileList);
   }
 
   /**
@@ -110,6 +130,33 @@ public class Export extends Activity {
         }
         break;
       }
+    }
+  }
+
+  /**
+   * Handles clicks on items of ListView.
+   * 
+   * @author Andreas Poxrucker
+   */
+  private final class ExportOnItemClickListener implements OnItemClickListener {
+
+    /**
+     * Handles clicks on items of ListView containing the available maps.
+     * 
+     * If an item is selected, its text color changes.
+     * 
+     * @param parent
+     *          AdapterView containing the list item.
+     * @param view
+     *          List item that has been clicked.
+     * @param position
+     *          Position of the list item within the AdapterView.
+     */
+    public void onItemClick(AdapterView<?> parent, View view, int position,
+        long id) {
+      TextView txt = (TextView) view;
+      String filename = txt.getText().toString();
+      etxtFilename.setText(filename);
     }
   }
 }

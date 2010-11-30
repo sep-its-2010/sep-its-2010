@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import sep.conquest.R;
+import sep.conquest.controller.Controller;
 import sep.conquest.model.GridMap;
 import sep.conquest.model.MapFileHandler;
 import sep.conquest.model.MapNode;
@@ -44,6 +45,8 @@ public class Import extends Activity {
    * Used to display names of found map files.
    */
   private ArrayAdapter<String> fileList;
+
+  private String selectedMap;
 
   /**
    * Called when Activity is initially created.
@@ -109,10 +112,25 @@ public class Import extends Activity {
 
     // If "Start" has been chosen, start Map-Activity via Intent.
     case R.id.mnuStart:
-      start.setComponent(new ComponentName(getApplicationContext()
-          .getPackageName(), Map.class.getName()));
-      start.putExtra(MapMode.class.toString(), MapMode.IMPORT);
-      startActivity(start);
+
+      if (selectedMap != null) {
+        try {
+          GridMap map = MapFileHandler.openMap(selectedMap);
+        } catch (FileNotFoundException e) {
+          // TODO Auto-generated catch block
+          displayMessage("File not found");
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          displayMessage("IO ex");
+        }
+
+        start.setComponent(new ComponentName(getApplicationContext()
+            .getPackageName(), Map.class.getName()));
+        start.putExtra(MapMode.class.toString(), MapMode.IMPORT);
+        startActivity(start);
+      } else {
+        displayMessage("No map selected");
+      }
       break;
     }
     return true;
@@ -151,26 +169,8 @@ public class Import extends Activity {
      */
     public void onItemClick(AdapterView<?> parent, View view, int position,
         long id) {
-
       TextView txt = (TextView) view;
-      String filename = txt.getText().toString();
-
-      try {
-        GridMap map = MapFileHandler.openMap(filename);
-        List<MapNode> nodes = map.getMapAsList();
-        StringBuilder strb = new StringBuilder();
-        for (MapNode node : nodes) {
-          strb.append(node.toString());
-        }
-
-        displayMessage(strb.toString());
-      } catch (FileNotFoundException e) {
-        // TODO Auto-generated catch block
-        displayMessage("File not found");
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        displayMessage("IO ex");
-      }
+      selectedMap = txt.getText().toString();
     }
   }
 }

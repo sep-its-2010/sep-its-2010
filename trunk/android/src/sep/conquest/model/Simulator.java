@@ -1,7 +1,11 @@
 package sep.conquest.model;
 
+import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * The Simulator class represents a virtual socket for a proxy-robot within the
@@ -9,71 +13,113 @@ import java.util.UUID;
  * navigation-algorithms. Therefore a internal stored map is used.
  * 
  * @author Andreas Wilhelm
- *
+ * 
  */
 public class Simulator {
 
-    /**
-     * The static instance to implement the singleton pattern.
-     */
-    private static final Simulator INSTANCE = new Simulator();
-    
-    /**
-     * The private constructor to realize the singleton pattern.
-     */
-    private Simulator(){ }
-    
-    /**
-     * The getInstance method returns the singleton object of the Simulator
-     * class.
-     * 
-     * @return the singleton instance of Simulator.
-     */
-    public static Simulator getInstance() {
-        return INSTANCE;
-    }	
-	
-	/**
-	 * The loaded map within the simulator.
-	 */
-	private GridMap loadedMap;
-	
-	/**
-	 * The initial positions of the robots.
-	 */
-	private TreeMap<UUID, int[]> initialPositions;
-	
-	/**
-	 * The constructor expects the map and all initial positions for the robots.
-	 * 
-	 * @param map The map which should be used.
-	 * @param initialPositions The initial positions of the robots.
-	 */
-	public Simulator(GridMap map, TreeMap<UUID, int[]> initialPositions) {
-		this.loadedMap = map;
-		// TODO check positions
-		this.initialPositions = initialPositions;
-	}
-	
-	/**
-	 * Returns the node-type for a specified position on the map.
-	 * 
-	 * @param position The position of the node.
-	 * @return The node-type.
-	 */
-	public NodeType getNodeType(int[] position) {
-		// TODO analyse map informations
-		return NodeType.FRONTIERNODE;
-	}
-	
-	/**
-	 * Returns the initial position of a specified robot.
-	 * 
-	 * @param robot The uuid of the robot.
-	 * @return The initial position of the robot.
-	 */
-	public int[] getInitialPosition(UUID robot) {
-		return initialPositions.get(robot);
-	}
-	
+  /**
+   * The timer period.
+   */
+  private static final long PERIOD = 1000;
+
+  /**
+   * The loaded map within the simulator.
+   */
+  private GridMap map;
+
+  /**
+   * Saves the request messages of the VirtualPucks.
+   */
+  private Queue<IRequest> messageQueue;
+
+  /**
+   * Executes request handling.
+   */
+  private Timer timer;
+
+  /**
+   * Indicates whether simulator has been stopped and must be reseted.
+   */
+  private boolean stopped;
+
+  /**
+   * The initial positions of the robots.
+   */
+  private TreeMap<UUID, int[]> initialpositions;
+
+  /**
+   * The output buffer for each VirtualPuck.
+   */
+  private TreeMap<UUID, byte[]> outputBuffer;
+
+  /**
+   * The constructor expects the map and all initial positions for the robots.
+   * 
+   * @param map
+   *          The map which should be used.
+   * @param initialPositions
+   *          The initial positions of the robots.
+   */
+  public Simulator(GridMap exMap, TreeMap<UUID, int[]> initialRobotPositions) {
+    map = exMap;
+    initialpositions = initialRobotPositions;
+    messageQueue = new ConcurrentLinkedQueue<IRequest>();
+  }
+
+  /**
+   * Adds a new request message to the simulator message queue.
+   * 
+   * @param request
+   *          The request to add.
+   */
+  public void addRequest(IRequest request) {
+    messageQueue.offer(request);
+  }
+
+  /**
+   * Stops the execution of the simulator.
+   */
+  public void stop() {
+    timer.cancel();
+    stopped = true;
+  }
+
+  public void pause() {
+    timer.cancel();
+    stopped = false;
+  }
+
+  /**
+   * Starts the execution of the simulator.
+   */
+  public void start() {
+    if (!stopped) {
+      timer = new Timer();
+      timer.scheduleAtFixedRate(new SimulatorTask(), 0, PERIOD);
+    } else {
+      
+    }
+  }
+
+  /**
+   * Executes
+   */
+  public void step() {
+    handleNextRequest();
+  }
+
+  private void handleNextRequest() {
+    if (!messageQueue.isEmpty()) {
+      IRequest request = messageQueue.poll();
+      
+
+    }
+  }
+
+  private class SimulatorTask extends TimerTask {
+
+    public void run() {
+      step();
+    }
+  }
 }
