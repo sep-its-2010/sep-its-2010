@@ -9,7 +9,6 @@
 bool subs_calibration_isNotCalibrated = true; ///< The robot is not calibrated by default.
 uint16_t _EEDATA(2) aui16LineCalibrationValues[3] = {0, 0, 0}; ///< Stores calibration-values for line-detection in the EEPROM.
 uint16_t _EEDATA(2) aui16SurfaceCalibrationValues[3] = {0, 0, 0}; ///< Stores calibration-values for line-detection in the EEPROM.
-//uint16_t _EEDATA(2) aui16CalibrationData[2][3] = {{0,0,0},{0,0,0}};
 
 /*!
  * \brief
@@ -26,9 +25,9 @@ uint16_t _EEDATA(2) aui16SurfaceCalibrationValues[3] = {0, 0, 0}; ///< Stores ca
  * subs_calibrate_reset
  */
 bool subs_calibration_run( void) {
-	uint8_t selector = hal_sel_getPosition();
+	uint8_t ui8selector = hal_sel_getPosition();
 
-	if( subs_calibration_isNotCalibrated && (selector == 0)) {
+	if( subs_calibration_isNotCalibrated && ui8selector) {
 		
 		// If there are no calibration-values for the line: collect and store some.
 		if( aui16LineCalibrationValues[0] == 0){ 
@@ -38,6 +37,7 @@ bool subs_calibration_run( void) {
 			for( uint8_t i = 0; sizeof( podLineValueBuffer.aui16Data); i++) {
 				aui16LineCalibrationValues[i] = podLineValueBuffer.aui16Data[i];
 			}
+			// Alle oberen 8 LEDs leuchten 1 Sekunde
 		}		
 		hal_motors_setSpeed( 500, 0);
 
@@ -50,6 +50,9 @@ bool subs_calibration_run( void) {
 				aui16SurfaceCalibrationValues[i] = podSurfaceValueBuffer.aui16Data[i];
 			}
 			subs_calibration_isNotCalibrated = false;
+			hal_motors_setSpeed( 0, 0);
+			hal_motors_setSteps( 0);
+			// Alle oberen 8 LEDs leuchten 1 Sekunde
 		}		
 	}
 	return subs_calibration_isNotCalibrated;
@@ -63,7 +66,8 @@ bool subs_calibration_run( void) {
  */
 void subs_calibration_reset( void) {
 		subs_calibration_isNotCalibrated = true;
-		// Daten im EEPROM auf 0 setzen
+		aui16LineCalibrationValues = {0, 0, 0};
+		aui16SurfaceCalibrationValues = {0, 0, 0};
 }
 
 /*!
