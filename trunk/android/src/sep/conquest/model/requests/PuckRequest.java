@@ -10,7 +10,7 @@ import sep.conquest.model.IRequest;
  * robots to the android application. It contains some information
  * about the corresponding type.
  * 
- * @author Andreas Wilhelm
+ * @author Andreas Wilhelm (Florian Lorenz)
  *
  */
 public class PuckRequest implements IRequest {
@@ -21,36 +21,6 @@ public class PuckRequest implements IRequest {
     private byte[] message = new byte[32];
     
     private MessageType type;
-    
-    /*
-     * Represents the byte-Code for the messageType Request_Reset
-     */
-    private static final short reqReset = 0x01FF;
-    
-    /*
-     * Represents the byte-Code for the messageType Request_Status
-     */
-    private static final short reqStatus = 0x02FF;
-    
-    /*
-     * Represents the byte-Code for the messageType Request_Turn
-     */
-    private static final short reqTurn = 0x03FF;
-    
-    /*
-     * Represents the byte-Code for the messageType Request_Move
-     */
-    private static final short reqMove = 0x04FF;
-    
-    /*
-     * Represents the byte-Code for the messageType Request_SetSpeed
-     */
-    private static final short reqSetSpeed = 0x05FF;
-    
-    /*
-     * Represents the byte-Code for the messageType Request_SetLed
-     */
-    private static final short reqSetLed = 0x06FF;
     
     /*
      * Represents the byte-Code for the messageType Response_Ok
@@ -101,18 +71,6 @@ public class PuckRequest implements IRequest {
 			type = MessageType.RESPONSE_HIT_NODE;
 		case resStatus:
 			type = MessageType.RESPONSE_STATUS;
-		case reqMove:
-			type = MessageType.REQUEST_MOVE;
-		case reqReset:
-			type = MessageType.REQUEST_RESET;
-		case reqSetLed:
-			type = MessageType.REQUEST_SET_LED;
-		case reqSetSpeed:
-			type = MessageType.REQUEST_SET_SPEED;
-		case reqStatus:
-			type = MessageType.REQUEST_STATUS;
-		case reqTurn:
-			type = MessageType.REQUEST_TURN;
 		}	
     }
 
