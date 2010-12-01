@@ -1,8 +1,17 @@
 #include "hal_motors.h"
 #include "hal_led.h"
 #include "com.h"
+#include "com_types.h"
 
 #include "subs_movement.h"
+
+enum {
+	NINETY_DEGREE_IN_MOTORSTEPS = 250 //TODO diese Zahl muss noch genauer justiert werden
+};
+
+com_EMessageType_t podCurrentMessage; ///< Specifies the last smartphone-message-type.
+int16_t i16CurrentLineSpeed = 600; ///< Stores the current movement-speed of the robot. Default: 600 steps per second.
+int16_t i16CurrentAngularSpeed = 0; ///< Stores angular-speed for turning in left or right direction.
 
 /*!
  * \brief
@@ -17,6 +26,28 @@
 bool subs_movement_run( void){
 	bool movementChanged = false;
 
+	switch( podCurrentMessage) {
+		case COM_MESSAGE_TYPE__REQUEST_TURN: {
+			hal_motors_setSpeed( i16CurrentLineSpeed, i16CurrentAngularSpeed);
+			// bis Liniensensoren ausschlagen!
+			break;
+		}
+		case COM_MESSAGE_TYPE__REQUEST_MOVE: {
+			hal_motors_setSpeed( i16CurrentLineSpeed, i16CurrentAngularSpeed);
+			break;
+		}
+		case COM_MESSAGE_TYPE__REQUEST_SET_SPEED: {
+
+			break;
+		}
+		case COM_MESSAGE_TYPE__REQUEST_SET_LED: {
+
+			break;
+		}
+		default: {
+
+		}
+	}
 	return movementChanged;
 }
 
@@ -31,7 +62,8 @@ bool subs_movement_run( void){
  * True, if a message has been handled by this function, false otherwise.
  *
  * Computes the type of the message by analyzing the first and second Byte of the message.
- * If this handler is responsible the movement is performed.
+ * If this handler is responsible the number of turns is analyzed. Here the first Byte of the transmitted data is a signed Integer.
+ * A positive Integer indicates the number of 90°-turns in clockwise-rotation, negative Integer indicate the number of 90°-turns in counterclockwise-rotation.
  * 
  * \remarks
  * Handler-functions have to be registered during the reset function.
@@ -41,7 +73,14 @@ bool subs_movement_run( void){
  */
 bool cbHandleRequestTurn( com_SMessage_t _podMessage) {
 	bool handledMessage = false;
-
+	
+	if( _podMessage.eType == COM_MESSAGE_TYPE__REQUEST_TURN) {
+		podCurrentMessage = COM_MESSAGE_TYPE__REQUEST_TURN;
+		int8_t i8NumberOfTurns = _podMessage.aui8Data[0];
+		i16CurrentAngularSpeed = i8NumberOfTurns * NINETY_DEGREE_IN_MOTORSTEPS;
+		i16CurrentLineSpeed = 0;
+		handledMessage = true;
+	}
 	return handledMessage;
 }
 
@@ -56,7 +95,7 @@ bool cbHandleRequestTurn( com_SMessage_t _podMessage) {
  * True, if a message has been handled by this function, false otherwise.
  *
  * Computes the type of the message by analyzing the first and second Byte of the message.
- * If this handler is responsible the movement is performed.
+ * If this handler is responsible 
  * 
  * \remarks
  * Handler-functions have to be registered during the reset function.
@@ -67,6 +106,10 @@ bool cbHandleRequestTurn( com_SMessage_t _podMessage) {
 bool cbHandleRequestMove( com_SMessage_t _podMessage) {
 	bool handledMessage = false;
 
+	if( _podMessage.eType == COM_MESSAGE_TYPE__REQUEST_MOVE) {
+		podCurrentMessage = COM_MESSAGE_TYPE__REQUEST_MOVE;		
+		handledMessage = true;
+	}
 	return handledMessage;
 }
 
@@ -81,7 +124,7 @@ bool cbHandleRequestMove( com_SMessage_t _podMessage) {
  * True, if a message has been handled by this function, false otherwise.
  *
  * Computes the type of the message by analyzing the first and second Byte of the message.
- * If this handler is responsible the movement is performed.
+ * If this handler is responsible the first 8 bit of the transmitted data represent an Integer which delivers the new line-speed after it is multiplied with 10.
  * 
  * \remarks
  * Handler-functions have to be registered during the reset function.
@@ -92,6 +135,9 @@ bool cbHandleRequestMove( com_SMessage_t _podMessage) {
 bool cbHandleRequestSetSpeed( com_SMessage_t _podMessage) {
 	bool handledMessage = false;
 
+	if( _podMessage.eType == COM_MESSAGE_TYPE__REQUEST_SET_SPEED) {
+
+	}
 	return handledMessage;
 }
 
@@ -117,6 +163,9 @@ bool cbHandleRequestSetSpeed( com_SMessage_t _podMessage) {
 bool cbHandleRequestSetLED( com_SMessage_t _podMessage) {
 	bool handledMessage = false;
 
+	if( _podMessage.eType == COM_MESSAGE_TYPE__REQUEST_SET_LED) {
+
+	}
 	return handledMessage;
 }
 
