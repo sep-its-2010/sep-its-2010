@@ -1,6 +1,5 @@
 package sep.conquest.model.handler;
 
-import sep.conquest.model.ComManager;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
 import sep.conquest.model.RobotStatus;

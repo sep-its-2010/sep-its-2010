@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.MessageType;
 
 /**
  * Handles request messages from the bluetooth Adapter.
@@ -38,6 +39,7 @@ public class PuckRequestHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
+	  //if(!(request.getKind()==MessageType.))
     // TODO Auto-generated method stub
     return false;
   }

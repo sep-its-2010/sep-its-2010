@@ -11,7 +11,7 @@ import sep.conquest.model.requests.MessageType;
 /**
  * Handles PuckNodeHit messages coming from the Bluetooth Adapter.
  * 
- * @author Andreas Poxrucker
+ * @author Andreas Poxrucker (Florian Lorenz)
  *
  */
 public class PuckNodeHitHandler extends Handler {
@@ -44,9 +44,18 @@ public class PuckNodeHitHandler extends Handler {
 	  if(!(request.getKind() == MessageType.PUCK_HITNODE)){
 		  return super.handleRequest(request);
 	  } else {
-		  //What to DO?!
+		  //What to do:
+		  //RobotStatus position[] sets to old intentPosition[]
+			executor.getRobot().getRobotStatus().get(request.getSender())
+					.setPosition(
+							executor.getRobot().getRobotStatus().get(
+									request.getSender()).getIntentPosition());
+		  //Aus RobotStatus intentposition[] auslesen und in Karte einfuegen
+			int[] bufferPosition = executor.getRobot().getRobotStatus().get(
+					request.getSender()).getIntentPosition();
+			//in map einfuegen?!
+		  //Der Knotentyp steht in der Message!!
 		  return true;
 	  }
   }
-
 }

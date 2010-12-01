@@ -40,15 +40,12 @@ public class PuckAbyssHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-	  if(!(request.getKind() == MessageType.PUCK_ABYSS)){
+	  if(!(request.getKind() == MessageType.RESPONSE_ABYSS)){
 		  return super.handleRequest(request);
 	  } else {
-		  //sep.conquest.model.Orientation oldDir = executor.getRobot()
-			//		.getRobotStatus().get(request.getSender()).getOrientation();
-
-		  //The roboter has to turn 180 degrees
-		  executor.getRobot().driveCommand(sep.conquest.model.Orientation.LEFT);
-		  executor.getRobot().driveCommand(sep.conquest.model.Orientation.LEFT);
+		  //The epuck stops on hardwarebased commands
+		  //The message is to discover a failure state
+		  //Possibly we stop the complete discovery?!
 		  return true;
 	  }
   }

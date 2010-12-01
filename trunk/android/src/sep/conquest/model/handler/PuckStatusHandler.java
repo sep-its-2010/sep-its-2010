@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.MessageType;
 
 /**
  * Handles PuckStatus messages coming from the Bluetooth Adapter.
@@ -38,8 +39,13 @@ public class PuckStatusHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-    // TODO Auto-generated method stub
-    return false;
+	  if(!(request.getKind() == MessageType.RESPONSE_STATUS)){
+		  return super.handleRequest(request);
+	  } else {
+		  //Has to update the status of the robot, hasn't it?
+		  //Is this the RobotState, which means intentPosition, isMoving etc,
+		  //or is this the State which means idle,exploring,etc..
+		  return true;
+	  }
   }
-
 }

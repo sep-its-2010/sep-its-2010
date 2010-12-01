@@ -47,6 +47,7 @@ public class CollisionRequestHandler extends Handler {
 		  lThread.getRobot().getRobotStatus().get(colReq.getSender())
 					.setSensorCollisionArray(colReq.getSensor());
 		  return true;
+		  
 	  }
     
   }
