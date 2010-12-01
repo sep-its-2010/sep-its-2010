@@ -31,7 +31,7 @@ public class LogicThread implements Runnable {
 	/**
 	 * A instance of the AStarPathFinder class for shortest-path-finding.
 	 */
-	private AStarPathFinder aStar = AStarPathFinder.getInstance();
+	private AStarPathFinder aStar = new AStarPathFinder();
 
 	/**
 	 * A reference to the robot.

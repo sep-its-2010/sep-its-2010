@@ -13,13 +13,6 @@ import java.util.UUID;
  */
 public class AStarPathFinder implements IPathFinder {
 
-	// local declarations
-	/**
-	 * The INSTANCE attribute represents the single instance to use the
-	 * singleton pattern.
-	 */
-	private static final AStarPathFinder INSTANCE = new AStarPathFinder();
-
 	/**
 	 * The list of known, but not yet calculated nodes.
 	 */
@@ -31,19 +24,9 @@ public class AStarPathFinder implements IPathFinder {
 	private PriorityQueue<AStarNode> closeList = new PriorityQueue<AStarNode>();
 
 	/**
-	 * The private constructor to realize the singleton pattern.
+	 * The constructor.
 	 */
-	private AStarPathFinder() {
-	}
-
-	/**
-	 * The getInstance method returns the singleton object of the ComManager
-	 * class.
-	 * 
-	 * @return The singleton instance of AStarPathFinder.
-	 */
-	public static AStarPathFinder getInstance() {
-		return INSTANCE;
+	public AStarPathFinder() {
 	}
 
 	/*
