@@ -14,7 +14,7 @@ import java.util.UUID;
  * @author Andreas Wilhelm
  * 
  */
-public class ConquestUpdate implements Cloneable{
+public class ConquestUpdate implements Cloneable {
 
 	/**
 	 * The list of map-nodes of the global map.
@@ -120,9 +120,7 @@ public class ConquestUpdate implements Cloneable{
 		Set<UUID> keys = robots.keySet();
 		for (UUID key: keys) {
 			copyMap.put(key, robots.get(key).clone());
-		}
-		
-		
+		}		
 		return new ConquestUpdate(mapList, borders, copyMap);
 	}
 }

@@ -1,8 +1,13 @@
 package sep.conquest.model.behaviour;
 
+import java.util.LinkedList;
 import java.util.Map;
 
+import sep.conquest.model.AStarPathFinder;
+import sep.conquest.model.GraphNode;
+import sep.conquest.model.PathNode;
 import sep.conquest.model.Puck;
+import sep.conquest.model.RobotStatus;
 import sep.conquest.model.State;
 
 /**
@@ -29,6 +34,22 @@ public final class DistanceBehaviour extends Behaviour {
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
      */
     public Map<int[], Integer> execute(Map<int[], Integer> map, Puck robot) {
+    	
+    	LinkedList<GraphNode> frontiers = robot.getMap().getFrontierList();
+    	AStarPathFinder astar = new AStarPathFinder();
+    	RobotStatus status = robot.getRobotStatus().get(robot.getID());
+    	int[][] destinations = new int[frontiers.size()][2];
+    	int i = 0;
+    	for (GraphNode node: frontiers) {
+    		destinations[i][0] = node.getXValue();
+    		destinations[i][1] = node.getYValue();
+    		i++;
+    	}    	
+    	
+    	PathNode[] path = astar.find(robot, status.getPosition(), destinations);
+    	
+    	
+    	
         return super.execute(map, robot);
     }
 }

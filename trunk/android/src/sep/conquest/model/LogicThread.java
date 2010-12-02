@@ -263,8 +263,8 @@ public class LogicThread implements Runnable {
 	 * 
 	 * @param buffer The message to send via a socket.
 	 */
-	private void writeSocket(byte[] buffer) {
-		btMessage = new byte[32];
+	public void writeSocket(byte[] buffer) {
+		btMessage = new byte[MSGLENGTH];
 		btMessageLen = 0;
 		expectBTMessage = true;
 		

@@ -54,22 +54,44 @@ public class AStarPathFinder implements IPathFinder {
 	 */
 	public PathNode[] find(Puck robot, MapNode start, MapNode[] destinations) {
 
-		// add first node
-		AStarNode first = new AStarNode(null, start, 0);
-		openList.add(first);
-
-		while (!openList.isEmpty()) {
-			AStarNode current = openList.poll();
-			if (current.equals(start)) {
+		PathNode[] paths = new PathNode[destinations.length];
+		
+		// find paths for every destination
+		for (int i = 0; i < destinations.length; i++) {
+			AStarNode first = new AStarNode(null, start, 0);
+			openList.add(first);
+			while (!openList.isEmpty()) {
+				AStarNode current = openList.poll();
+				if (current.equals(destinations[i])) {
+					closeList.add(current);
+					paths[i] = getPath(current);
+				}
+				expandNode(robot, current);
 				closeList.add(current);
-				PathNode[] pathNodes = (PathNode[]) closeList.toArray();
-				return pathNodes;
-			}
-			expandNode(robot, current);
-			closeList.add(current);
+			}			
 		}
+		return paths;
+	}
 
-		return null;
+	/**
+	 * Returns the path to a given destination.
+	 * 
+	 * @param destination The destination.
+	 * @return The path.
+	 */
+	private PathNode getPath(AStarNode destination) {
+		
+		AStarNode current = destination;
+		PathNode path = null;
+		PathNode next = null;
+		
+		while (current != null) {
+			path = new PathNode(current.getNode(), next,
+					destination.getCosts());
+			next = path;
+			current = current.getPredecessor();
+		}		
+		return path;
 	}
 
 	/**
@@ -77,16 +99,19 @@ public class AStarPathFinder implements IPathFinder {
 	 * -node to a number of many other nodes. This version uses x- and y-
 	 * positions for the nodes.
 	 * 
-	 * @param robot The robot.
-	 * @param start The start-node.
-	 * @param destinations The destination-nodes.
+	 * @param robot
+	 *            The robot.
+	 * @param start
+	 *            The start-node.
+	 * @param destinations
+	 *            The destination-nodes.
 	 * @return A list of paths to the destination-nodes.
 	 */
 	public PathNode[] find(Puck robot, int[] start, int[][] destinations) {
 
 		MapNode startNode = robot.getMap().getNode(start[0], start[1]);
 		assert startNode != null;
-		
+
 		MapNode[] destNodes = new MapNode[destinations.length];
 
 		for (int i = 0; i < destinations.length; i++) {
@@ -186,5 +211,21 @@ public class AStarPathFinder implements IPathFinder {
 		}
 
 		return costs;
+	}
+
+	/**
+	 * Estimates the driving costs between to nodes by calculating the step
+	 * distance.
+	 * 
+	 * @param node
+	 *            The start-node.
+	 * @param target
+	 *            The target-node.
+	 * @return The calculated costs.
+	 */
+	private int estimateCosts(MapNode node, MapNode target) {
+		int x = Math.abs(node.getXValue() - target.getXValue());
+		int y = Math.abs(node.getYValue() - target.getYValue());
+		return x + y;
 	}
 }

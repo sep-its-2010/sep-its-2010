@@ -16,9 +16,9 @@ public class PathNode {
 	private MapNode node;
 	
 	/**
-	 * The predecessor of the node.
+	 * The successor of the node.
 	 */
-	private PathNode prev;
+	private PathNode next;
 	
 	/**
 	 * The navigation-costs of the node.
@@ -30,12 +30,12 @@ public class PathNode {
 	 * algorithm and a predecessor node.
 	 * 
 	 * @param node The MapNode.
-	 * @param prev The previous PathNode instance.
+	 * @param next The next PathNode instance.
 	 * @param costs The navigation-costs for this node.
 	 */
-	public PathNode(MapNode node, PathNode prev, int costs) {
+	public PathNode(MapNode node, PathNode next, int costs) {
 		this.node = node;
-		this.prev = prev;
+		this.next = next;
 		this.costs = costs;
 	}
 	
@@ -44,17 +44,17 @@ public class PathNode {
 	 * 
 	 * @return The PathNode.
 	 */
-	public Object getNode() {
+	public MapNode getNode() {
 		return node;
 	}
 	
 	/**
-	 * Returns the previous PathNode.
+	 * Returns the next PathNode.
 	 * 
-	 * @return The previous PathNode.
+	 * @return The next PathNode.
 	 */
-	public PathNode getPrev() {
-		return prev;
+	public PathNode getNext() {
+		return next;
 	}
 	
 	/**
@@ -67,12 +67,12 @@ public class PathNode {
 	}
 	
 	/**
-	 * Sets a new predecessor PathNode.
+	 * Sets a new successor PathNode.
 	 * 
-	 * @param prev The predecessor node.
+	 * @param prev The successor node.
 	 */
-	public void setPrev(PathNode prev) {
-		this.prev = prev;
+	public void setNext(PathNode next) {
+		this.next = next;
 	}
 	
 	/**

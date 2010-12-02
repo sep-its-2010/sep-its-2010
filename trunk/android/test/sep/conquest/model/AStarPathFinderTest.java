@@ -31,7 +31,7 @@ public class AStarPathFinderTest {
 		int[] pos = {0, 0};
 		status.setPosition(pos);
 		status.setOrientation(Orientation.RIGHT);
-		robot = new VirtualPuck(myID);
+		robot = new VirtualPuck(myID, null);
 		robot.getRobotStatus().put(myID, status);
 		RobotStatus status_r2 = new RobotStatus();
 		int[] pos_r2 = {4, -3};
