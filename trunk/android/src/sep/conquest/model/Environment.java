@@ -176,6 +176,7 @@ public class Environment extends Observable implements IComClient {
 	 * Sends an update message to the observers.
 	 */
 	private void sendUpdate() {
+		setChanged();
 		update.setMapList(gridMap.getMapAsList());
 		update.setBorders(gridMap.getMapBorders());		
 		notifyObservers(update.clone());
