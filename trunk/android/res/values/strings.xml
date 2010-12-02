@@ -21,11 +21,11 @@
 	<string name="MSG_NO_ROBOT">No robot selected.</string>
 	<string name="ERR_MSG_BLUETOOTH_NOT_SUPPORTED">Your smartphone does not support Bluetooth.
 		Application can only be run in simulation or import mode.</string>
-	<string name="ERR_MSG_BLUETOOTH_NOT_ENABLED">"Bluetooth has not been turned on. Bluetooth must
-		be enabled to search for robots."</string>
+	<string name="ERR_MSG_BLUETOOTH_NOT_ENABLED">"Bluetooth has not been turned on. Bluetooth must be enabled to search for robots."</string>
 	<string name="TXT_CONNECTING">Connecting...</string>
 	<string name="MSG_CONNECTING">Connecting to selected e-pucks...</string>
 <string name="EPUCK_SELECT">Select an e-puck</string>
 <string name="TXT_NUMBER">Number of Robots</string>
 <string name="BTN_OPEN">Open</string>
+<string name="MNU_OPEN">Open</string>
 </resources>
