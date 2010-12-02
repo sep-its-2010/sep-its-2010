@@ -5,7 +5,7 @@
 	<string name="BTN_SAVE">Save</string>
 	<string name="TXT_DISCOVERED_ROBOTS">Discovered e-pucks:</string>
 	<string name="BTN_SEARCH">Search</string>
-	<string name="TXT_PREVIEW">Map preview:</string>
+	<string name="TXT_PREVIEW">Map preview</string>
 	<string name="MSG_SEARCHING">Searching for e-pucks...</string>
 	<string name="TXT_SEARCHING">Searching...</string>
 	<string name="MNU_MAP">Map</string>
@@ -26,4 +26,6 @@
 	<string name="TXT_CONNECTING">Connecting...</string>
 	<string name="MSG_CONNECTING">Connecting to selected e-pucks...</string>
 <string name="EPUCK_SELECT">Select an e-puck</string>
+<string name="TXT_NUMBER">Number of Robots</string>
+<string name="BTN_OPEN">Open</string>
 </resources>
