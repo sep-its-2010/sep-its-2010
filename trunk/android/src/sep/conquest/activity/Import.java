@@ -92,31 +92,16 @@ public class Import extends Activity {
     Intent start = new Intent();
 
     switch (item.getItemId()) {
-
-    // If "Connect" has been chosen, start Connect-Activity via Intent.
-    case R.id.mnuConnect:
-      start.setComponent(new ComponentName(getApplicationContext()
-          .getPackageName(), Connect.class.getName()));
-      startActivity(start);
-      break;
-
-    // If "Simulation" has been chosen, start Simulation-Activity via Intent.
-    case R.id.mnuSimulation:
-      start.setComponent(new ComponentName(getApplicationContext()
-          .getPackageName(), Simulation.class.getName()));
-      startActivity(start);
-      break;
-
-    // If "Start" has been chosen, start Map-Activity via Intent.
-    case R.id.mnuStart:
+    
+    // If "Open" has been chosen, start Map-Activity via Intent.
+    case R.id.mnuOpen:
 
       if (selectedMap != null) {
         try {
           GridMap map = MapFileHandler.openMap(selectedMap);
           Controller.getInstance().getEnv().loadMap(map);
         } catch (FileNotFoundException e) {
-          // TODO Auto-generated catch block
-          displayMessage("File not found");
+          displayMessage(getString(R.string.ERR_MSG_FILE_NOT_FOUND));
         } catch (IOException e) {
           // TODO Auto-generated catch block
           displayMessage("IO ex");
@@ -126,7 +111,7 @@ public class Import extends Activity {
         start.putExtra(MapMode.class.toString(), MapMode.IMPORT);
         startActivity(start);
       } else {
-        displayMessage("No map selected");
+        displayMessage(getString(R.string.MSG_NO_MAP_SELECTED));
       }
       break;
     }
@@ -134,9 +119,16 @@ public class Import extends Activity {
   }
 
   private void displayMapFiles() {
-    fileList = new ArrayAdapter<String>(this, R.layout.list_item,
-        MapFileHandler.getFileList());
-    lsMaps.setAdapter(fileList);
+    String[] files = MapFileHandler.getFileList();
+
+    // If files equals null then storage is not readable.
+    if (files == null) {
+      displayMessage(getString(R.string.ERR_MSG_STORAGE_NOT_READABLE));
+    } else {
+      fileList = new ArrayAdapter<String>(this, R.layout.list_item,
+          MapFileHandler.getFileList());
+      lsMaps.setAdapter(fileList);
+    }
   }
 
   private void displayMessage(String message) {
