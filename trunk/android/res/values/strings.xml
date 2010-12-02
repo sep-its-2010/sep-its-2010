@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="hello">Hello World!</string>
-	<string name="app_name">epuck_conquest</string>
+	<string name="app_name">e-puck Conquest - Ultimate Exploration Experience</string>
 	<string name="BTN_SAVE">Save</string>
 	<string name="TXT_DISCOVERED_ROBOTS">Discovered e-pucks:</string>
 	<string name="BTN_SEARCH">Search</string>
@@ -27,4 +27,7 @@
 <string name="EPUCK_SELECT">Select an e-puck</string>
 <string name="TXT_NUMBER">Number of Robots</string>
 <string name="MNU_OPEN">Open</string>
+<string name="ERR_MSG_FILE_NOT_FOUND">Error: File not found</string>
+<string name="MSG_NO_MAP_SELECTED">No map file selected.</string>
+<string name="ERR_MSG_STORAGE_NOT_READABLE">Error: The external storage is not readable.</string>
 </resources>
