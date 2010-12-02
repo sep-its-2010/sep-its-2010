@@ -3,7 +3,11 @@
 
 #include "common.h"
 
-void hal_i2c_init(
+enum {
+	HAL_I2C_MAX_BAUDRATE_DIVISOR = ( 1 << 8) - 1 ///< Specifies the maximal i2c baud rate divisor.
+};
+
+bool hal_i2c_init(
 	IN const uint16_t _ui16BaudRateDiv
 	);
 

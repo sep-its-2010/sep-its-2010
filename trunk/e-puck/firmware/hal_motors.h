@@ -37,13 +37,13 @@ enum {
 void hal_motors_init( void);
 
 void hal_motors_setSpeedLeft(
-	IN const int16_t _ui16StepsPerSecond
+	IN const int16_t _i16StepsPerSecond
 	);
 void hal_motors_setSpeedRight(
-	IN const int16_t _ui16StepsPerSecond
+	IN const int16_t _i16StepsPerSecond
 	);
 void hal_motors_setSpeed(
-	IN const int16_t _ui16StepsPerSecond,
+	IN const int16_t _i16StepsPerSecond,
 	IN const int16_t _i16AngularStepsPerSecond
 	);
 
@@ -313,8 +313,6 @@ void hal_motors_setStepsRight(
  * 
  * \param _ui16Steps
  * Specifies the new value of the left and right step counters.
- * 
- * Write detailed description for hal_motors_setSteps here.
  * 
  * \warning
  * This function is not interrupt safe.

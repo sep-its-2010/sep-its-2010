@@ -3,8 +3,7 @@
 #include "sen_line.h"
 
 enum {
-	SENSOR_I2C_ADDRESS = 0xC0		///< adress of ground-sensors on the I2C-BUS
-	// könnte auch 0xD4 sein, muss noch herausgefunden werden
+	SENSOR_I2C_ADDRESS = 0xC0		///< Specifies the I2C address of the line sensor device (padded with R/W bit).
 };
 
 /*!
@@ -26,13 +25,16 @@ void sen_line_read(
 	OUT sen_line_SData_t* const _lppodData
 	) {
 
-	uint8_t* lpui8 = (uint8_t*)_lppodData->aui16Data;
-	for( uint16_t ui16 = 0; ui16 < sizeof( _lppodData->aui16Data); ui16++) {
-		int16_t i16Val = hal_i2c_readRegister( SENSOR_I2C_ADDRESS, ui16);
-		if( i16Val < 0) {
-			_lppodData->aui16Data[ui16 / 2] = i16Val;
-			break;
+	for( uint16_t ui16 = 0; ui16 < SEN_LINE_SENSORS; ui16++) {
+		int16_t i16Val = hal_i2c_readRegister( SENSOR_I2C_ADDRESS, ui16 * 2);
+		if( i16Val >= 0) {
+			_lppodData->aui16Data[ui16] = ( i16Val & 0xFF) << 8;
+			i16Val = hal_i2c_readRegister( SENSOR_I2C_ADDRESS, ui16 * 2 + 1);
 		}
-		*lpui8++ = i16Val < 0 ? 1 : i16Val & 0xFF;
+		if( i16Val >= 0) {
+			_lppodData->aui16Data[ui16] |= i16Val & 0xFF;
+		} else {
+			_lppodData->aui16Data[ui16] = 0;
+		}
 	}
 }

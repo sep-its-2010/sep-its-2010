@@ -1,15 +1,14 @@
 #include <p30f6014A.h>
 
+#include "hal_led.h"
+
 #include "hal_i2c.h"
 
 enum {
-	I2C_MAX_BAUDRATE_DIVISOR = ( 1 << 8) - 1, ///< Specifies the maximal i2c baud rate divisor.
 	I2C_OPCODE_MASK = ( 1 << 4) | ( 1 << 3) | ( 1 << 2) | ( 1 << 1) | ( 1 << 0) ///< Specifies the operation mode bits within the control register.
 };
 
 static volatile bool s_blBreak = false;
-
-static bool waitIdle( void);
 
 static void reset( void);
 
@@ -31,14 +30,6 @@ static bool read(
 	OUT uint8_t* const _lpui8Data
 	);
 
-bool waitIdle( void) {
-
-	while( !s_blBreak && ( I2CCON & I2C_OPCODE_MASK))
-		;
-
-	return !( I2CCON & I2C_OPCODE_MASK);
-}
-
 void reset( void) {
 
 	I2CCONbits.I2CEN = false;
@@ -59,10 +50,14 @@ bool restart( void) {
 
 	bool blSuccess = false;
 
-	if( waitIdle()) {
+	while( !s_blBreak && ( I2CCON & I2C_OPCODE_MASK))
+		;
+
+	if( !( I2CCON & I2C_OPCODE_MASK)) {
 		I2CCONbits.RSEN = true;
 		while( !s_blBreak && I2CCONbits.RSEN)
 			;
+
 		blSuccess = !I2CCONbits.RSEN;
 	}
 
@@ -73,7 +68,10 @@ bool stop( void) {
 
 	bool blSuccess = false;
 
-	if( waitIdle()) {
+	while( !s_blBreak && ( I2CCON & I2C_OPCODE_MASK))
+		;
+
+	if( !( I2CCON & I2C_OPCODE_MASK)) {
 		I2CCONbits.PEN = true;
 		while( !s_blBreak && I2CCONbits.PEN)
 			;
@@ -88,7 +86,10 @@ bool ack( void) {
 
 	bool blSuccess = false;
 
-	if( waitIdle()) {
+	while( !s_blBreak && ( I2CCON & I2C_OPCODE_MASK))
+		;
+
+	if( !( I2CCON & I2C_OPCODE_MASK)) {
 		I2CCONbits.ACKDT = false;
 		I2CCONbits.ACKEN = true;
 		while( !s_blBreak && I2CCONbits.ACKEN)
@@ -104,7 +105,10 @@ bool nack( void) {
 
 	bool blSuccess = false;
 
-	if( waitIdle()) {
+	while( !s_blBreak && ( I2CCON & I2C_OPCODE_MASK))
+		;
+
+	if( !( I2CCON & I2C_OPCODE_MASK)) {
 		I2CCONbits.ACKDT = true;
 		I2CCONbits.ACKEN = true;
 		while( !s_blBreak && I2CCONbits.ACKEN)
@@ -130,10 +134,10 @@ bool write(
 
 	if( !I2CSTATbits.TRSTAT) {
 		I2CTRN = _ui8Data;
-		while( !s_blBreak && I2CSTATbits.TBF)
+		while( !s_blBreak && I2CSTATbits.TRSTAT)
 			;
 
-		blSuccess = !I2CSTATbits.TBF;
+		blSuccess = !I2CSTATbits.TRSTAT;
 	}
 
 
@@ -146,12 +150,15 @@ bool read(
 
 	bool blSuccess = false;
 
-	if( waitIdle()) {
+	while( !s_blBreak && ( I2CCON & I2C_OPCODE_MASK))
+		;
+
+	if( !( I2CCON & I2C_OPCODE_MASK)) {
 		I2CCONbits.RCEN = true;
 		while( !s_blBreak && I2CCONbits.RCEN)
 			;
 
-		if( I2CSTATbits.RBF) {
+		if( !I2CCONbits.RCEN) {
 			blSuccess = true;
 			*_lpui8Data = I2CRCV;
 		}
@@ -179,17 +186,22 @@ bool read(
  * \warning
  * This function is not interrupt safe.
  */
-void hal_i2c_init(
+bool hal_i2c_init(
 	IN const uint16_t _ui16BaudRateDiv
 	) {
 
-	if( _ui16BaudRateDiv > 0 && _ui16BaudRateDiv <= I2C_MAX_BAUDRATE_DIVISOR) {
+	bool blSuccess = false;
+
+	if( _ui16BaudRateDiv > 0 && _ui16BaudRateDiv <= HAL_I2C_MAX_BAUDRATE_DIVISOR) {
 		s_blBreak = false;
 		I2CCON = 0;
 		I2CBRG = _ui16BaudRateDiv;
 		I2CCONbits.I2CEN = true;
-		IPC3bits.MI2CIP = 5;
+
+		blSuccess = true;
 	}
+
+	return blSuccess;
 }
 
 
@@ -392,7 +404,7 @@ int16_t hal_i2c_readRegister(
 	) {
 
 	int16_t i16Return;
-	uint8_t ui8Data;
+	uint8_t ui8Data = 1;
 
 	s_blBreak = false;
 	if( !start()) {
