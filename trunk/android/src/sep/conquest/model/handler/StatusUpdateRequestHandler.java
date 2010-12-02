@@ -1,9 +1,9 @@
 package sep.conquest.model.handler;
 
-import java.util.UUID;
-
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.MessageType;
+import sep.conquest.model.requests.StatusUpdateRequest;
 
 /**
  * Handles StatusUpdateRequest messages.
@@ -38,8 +38,17 @@ public class StatusUpdateRequestHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-    // TODO Auto-generated method stub
-    return false;
+	  if(!(request.getKind() == MessageType.STATUS_UPDATE)){
+		  return super.handleRequest(request);
+	  } else {
+		  StatusUpdateRequest statusReq = (StatusUpdateRequest)request;
+		  //side effect in method RobotStatus.setRobotStatus?! Checken...
+		  //Evtl hier einfach zwischen statusReq und .getStatus noch schnell
+		  //.clone() einfuegen, damit waere kein seiteneffekt da...
+			executor.getRobot().getRobotStatus().get(request.getSender())
+					.setRobotStatus(statusReq.getStatus());
+			return true;
+	  }
   }
 
 }

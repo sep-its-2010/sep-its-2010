@@ -41,16 +41,17 @@ public class PuckCollisionHandler extends Handler {
 	  if(!(request.getKind()==MessageType.RESPONSE_COLLISION)){
 		  return super.handleRequest(request);
 	  } else {
-		  //The epuck stops on hardwarebased commands
-		  //Turn the robot and sends him to his last node
+		  //The epuck stops on hardwarebased command
 		  
 		  	//Sets his new intentPosition to the last node where it came from
 			executor.getRobot().getRobotStatus().get(request.getSender())
 					.setIntentPosition(
 							executor.getRobot().getRobotStatus().get(
 									request.getSender()).getPosition());
+			
 			// Normally there has to send a broadcastMessage to all other
 			// robots, so they know the "new" intentPosition of the epuck
+			
 			
 			//The right command to turn the epuck?!
 			executor.getRobot().turn();

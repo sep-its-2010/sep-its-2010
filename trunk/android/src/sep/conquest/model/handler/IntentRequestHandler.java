@@ -42,7 +42,6 @@ public class IntentRequestHandler extends Handler {
 		  return super.handleRequest(request);
 	  } else {
 		  IntentRequest intReq = (IntentRequest) request;
-		  //im Robotstatus macht getIntendedNode keine Kopie sondern nur ne Referenz, is das richtig so?!
 		  executor.getRobot().getRobotStatus().get(intReq.getSender())
 					.setIntentPosition(intReq.getIntendedNode());
 		  return true;
