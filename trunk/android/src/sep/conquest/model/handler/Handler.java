@@ -1,7 +1,5 @@
 package sep.conquest.model.handler;
 
-import java.util.UUID;
-
 import sep.conquest.model.IRequest;
 
 /**

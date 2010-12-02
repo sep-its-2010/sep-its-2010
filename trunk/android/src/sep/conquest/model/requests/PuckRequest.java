@@ -20,6 +20,9 @@ public class PuckRequest implements IRequest {
      */
     private byte[] message = new byte[32];
     
+    /**
+     * The type of the message.
+     */
     private MessageType type;
     
     /*

@@ -3,6 +3,7 @@ package sep.conquest.model.handler;
 import sep.conquest.model.Environment;
 import sep.conquest.model.LogicThread;
 import sep.conquest.model.PuckOkHandler;
+import sep.conquest.model.Simulator;
 
 /**
  * Factory to create different kinds of Handler chains for Pucks and
@@ -51,7 +52,6 @@ public class HandlerFactory {
    * - PuckOKRequest
    * - PuckRequest
    * 
-   * 
    * @param puck The LogicThread of the Puck that should get the chain.
    * @return Reference on first handler of chain.
    */
@@ -78,5 +78,15 @@ public class HandlerFactory {
     return statHndl;
   }
   
+  /**
+   * Returns chain of Handler objects that handle different kinds of 
+   * Puck messages for the simulator.
+   * 
+   * @param sim The simulator
+   * @return
+   */
+  public static Handler getSimMsgChain(Simulator sim) {
+    return null;
+  }
   
 }

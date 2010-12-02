@@ -28,25 +28,20 @@ public class PuckFactory {
    * @return True, if creation and registration was successful, false otherwise.
    */
   public static boolean createRealPucks(Collection<BluetoothSocket> robots) {
-
     // Get instance of ComManager to add created Pucks.
     ComManager man = ComManager.getInstance();
 
     // In case set is empty or null return false.
     // Otherwise start creating RealPucks.
     if (robots == null || robots.isEmpty()) {
-
-      // Evtl. IllegalArgumentException besser?!
-      return false;
+      throw new IllegalArgumentException("Invalid set of robots passed");
     } else {
-
       // Iterate over set and create RealPuck for each device.
       for (BluetoothSocket robot : robots) {
         UUID newUUID = UUID.randomUUID();
         Puck newPuck = new RealPuck(robot, newUUID);
         man.addClient(newUUID, newPuck);
       }
-      
       // initiate handshaking of the robots
       Puck first = (Puck) man.getClients()[0];
       first.sendHello();
@@ -65,30 +60,27 @@ public class PuckFactory {
    *          The number of VirtualPucks to create.
    * @return True, if creation and registration was successful, false otherwise.
    */
-  public static boolean createVirtualPucks(int number) {
-
-    
+  public static boolean createVirtualPucks(Simulator sim, int number) {
     // Get instance of ComManager to add created Pucks.
     ComManager man = ComManager.getInstance();
 
     // If number is greater than zero start creation.
     // Otherwise return false.
-    if (number > 0) {
+    if (number > 0 && sim != null) {
+      
       for (int i = 0; i < number; i++) {
+        // UUID of new VirtualPuck
         UUID newUUID = UUID.randomUUID();
-        Puck newPuck = new VirtualPuck(UUID.randomUUID());
+        Puck newPuck = new VirtualPuck(newUUID, sim);
         man.addClient(newUUID, newPuck);
       }
-      
       // initiate handshaking of the robots
       Puck first = (Puck) man.getClients()[0];
       first.sendHello();
       return true;
-
     } else {
-
-      // Evtl. IllegalArgumentException besser?!
-      return false;
+      throw new IllegalArgumentException(
+          "Number must be grater than zero and Simulator must not equal null");
     }
   }
 }

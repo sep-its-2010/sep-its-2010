@@ -74,6 +74,6 @@ public class VirtualPuckRequest implements IRequest {
 	 * @see sep.conquest.model.IRequest#getSender()
 	 */
 	public UUID getSender() {
-		return UUID.randomUUID();
+		return sender;
 	}
 }

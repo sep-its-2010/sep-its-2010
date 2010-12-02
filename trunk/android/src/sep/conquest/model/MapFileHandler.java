@@ -148,29 +148,33 @@ public class MapFileHandler {
     // to list, if their ending is .sep.
     // Otherwise return null.
     if (isReadable()) {
+      if (DIR.exists()) {
+        // Saves filenames ending on .sep temporary.
+        List<String> files = new LinkedList<String>();
 
-      // Saves filenames ending on .sep temporary.
-      List<String> files = new LinkedList<String>();
+        // Get list of all files contained in directory.
+        String[] dirFiles = DIR.list();
 
-      // Get list of all files contained in directory.
-      String[] dirFiles = DIR.list();
-
-      // Iterate over contained files and add them to list, if their name ends
-      // on .sep.
-      for (String file : dirFiles) {
-        if (isValidFilename(file)) {
-          files.add(file);
+        // Iterate over contained files and add them to list, if their name ends
+        // on .sep.
+        for (String file : dirFiles) {
+          if (isValidFilename(file)) {
+            files.add(file);
+          }
         }
+
+        String[] arrFiles = new String[files.size()];
+
+        for (int i = 0; i < arrFiles.length; i++) {
+          arrFiles[i] = files.get(i);
+        }
+
+        // Convert List to String array and return it.
+        return arrFiles;
+      } else {
+        DIR.mkdirs();
+        return new String[0];
       }
-
-      String[] arrFiles = new String[files.size()];
-
-      for (int i = 0; i < arrFiles.length; i++) {
-        arrFiles[i] = files.get(i);
-      }
-
-      // Convert List to String array and return it.
-      return arrFiles;
     } else {
       return null;
     }

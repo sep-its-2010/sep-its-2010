@@ -27,9 +27,9 @@ public class VirtualPuck extends Puck {
 	 * @param ID The unique identifying number of an instance of the 
 	 * VirtualPuck. 
 	 */
-	public VirtualPuck(UUID ID){
+	public VirtualPuck(UUID ID, Simulator simulator){
 		super(ID);
-		sim = Simulator.getInstance();
+		sim = simulator;
 	}
 	
 	/**
@@ -39,7 +39,6 @@ public class VirtualPuck extends Puck {
 	 */
 	public void writeSocket(byte[] buffer){
 		PuckRequest request = new PuckRequest(buffer);
-
 	}
 	
 	/**

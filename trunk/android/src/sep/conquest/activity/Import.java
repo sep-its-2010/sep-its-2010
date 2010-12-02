@@ -2,14 +2,11 @@ package sep.conquest.activity;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import sep.conquest.R;
 import sep.conquest.controller.Controller;
 import sep.conquest.model.GridMap;
 import sep.conquest.model.MapFileHandler;
-import sep.conquest.model.MapNode;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -116,6 +113,7 @@ public class Import extends Activity {
       if (selectedMap != null) {
         try {
           GridMap map = MapFileHandler.openMap(selectedMap);
+          Controller.getInstance().getEnv().loadMap(map);
         } catch (FileNotFoundException e) {
           // TODO Auto-generated catch block
           displayMessage("File not found");
@@ -123,7 +121,6 @@ public class Import extends Activity {
           // TODO Auto-generated catch block
           displayMessage("IO ex");
         }
-
         start.setComponent(new ComponentName(getApplicationContext()
             .getPackageName(), Map.class.getName()));
         start.putExtra(MapMode.class.toString(), MapMode.IMPORT);
