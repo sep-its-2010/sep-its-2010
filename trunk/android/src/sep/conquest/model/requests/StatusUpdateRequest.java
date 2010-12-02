@@ -44,7 +44,7 @@ public class StatusUpdateRequest extends Request {
     /**
      * getStatus returns the status of the robot (sender).
      * 
-     * @return The drive-command.
+     * @return The robot status.
      */
     public RobotStatus getStatus() {
         return robotStatus;
