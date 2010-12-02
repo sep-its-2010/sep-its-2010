@@ -34,8 +34,8 @@ bool subs_node_run( void) {
 	sen_line_read( &podSensorData);
 
 	// node detection
- 	if ((2 * (podSensorData.aui16Data[0]) < 0) || // 0 wird ersetzt durch EEPROM-Wert
- 		(2 * (podSensorData.aui16Data[2]) < 0)) { // 0 wird ersetzt durch EEPROM_Wert		
+ 	if ((2 * (podSensorData.aui16Data[0]) < 1) || // 1 wird ersetzt durch EEPROM-Wert
+ 		(2 * (podSensorData.aui16Data[2]) < 1)) { // 1 wird ersetzt durch EEPROM_Wert		
 		if (ui8NodeDetectionCounter == 0) {
 			hal_motors_setSteps(0);
 		}
@@ -54,20 +54,20 @@ bool subs_node_run( void) {
 
 		// visualizes the shape of the recently detected node
 		if( (ui16AvgLeft > 0) && (ui16AvgRight > 0)) {
-			if (podSensorData.aui16Data[1] < 0) { // 0 = EEPROMwert
+			if (podSensorData.aui16Data[1] < 1) { // 1 = EEPROMwert
 				hal_led_set(HAL_LED_PIN_BV__0);
 			}
-			if (ui16AvgLeft < 0) { // 0 = EEPROMwert
+			if (ui16AvgLeft < 1) { // 1 = EEPROMwert
 				hal_led_set(HAL_LED_PIN_BV__6);
 			}
-			if (ui16AvgRight < 0) { // 0 = EEPROMwert
+			if (ui16AvgRight < 1) { // 1 = EEPROMwert
 				hal_led_set(HAL_LED_PIN_BV__2);
 			}
 		}
 
 		ui16AvgLeft = 0;
 		ui16AvgRight = 0;
-		hal_motors_setSpeed(0,0); // hier muss man eventuell noch ein bisschen fahren, so dass der e-puck genau über dem Knoten steht
+		hal_motors_setSpeed(0,0); // @TODO hier muss man eventuell noch ein bisschen fahren, so dass der e-puck genau über dem Knoten steht
 	}
 	return nodeHit;
 }
