@@ -5,10 +5,6 @@
 
 #include "subs_movement.h"
 
-enum {
-	NINETY_DEGREE_IN_MOTORSTEPS = 250 // @TODO diese Zahl muss noch genauer justiert werden
-};
-
 com_EMessageType_t podCurrentMessage; ///< Specifies the last smartphone-message-type.
 int16_t i16CurrentLineSpeed = 600; ///< Stores the current movement-speed of the robot. Default: 600 steps per second.
 int16_t i16CurrentAngularSpeed = 0; ///< Stores angular-speed for turning in left or right direction.
@@ -24,31 +20,35 @@ int16_t i16CurrentAngularSpeed = 0; ///< Stores angular-speed for turning in lef
  * If there is one the robot starts to perform the demanded movement and sends an acknowledgment to the smartphone and deletes this message.
  */
 bool subs_movement_run( void) {
-	bool movementChanged = false;
+	bool blMovementChanged = false;
 
 	switch( podCurrentMessage) {
 		case COM_MESSAGE_TYPE__REQUEST_TURN: {
 			hal_motors_setSpeed( i16CurrentLineSpeed, i16CurrentAngularSpeed);
-			// bis Liniensensoren ausschlagen!
+			// bis Liniensensoren "x-mal" ausgeschlagen haben
+			blMovementChanged = true;
+			com_SMessage_t podOkMessage = { COM_MESSAGE_TYPE__RESPONSE_OK, {0}};
+			com_send(&podOkMessage);
 			break;
 		}
 		case COM_MESSAGE_TYPE__REQUEST_MOVE: {
 			hal_motors_setSpeed( i16CurrentLineSpeed, i16CurrentAngularSpeed);
+			blMovementChanged = true;
+			com_SMessage_t podOkMessage = { COM_MESSAGE_TYPE__RESPONSE_OK, {0}};
+			com_send(&podOkMessage);
 			break;
 		}
 		case COM_MESSAGE_TYPE__REQUEST_SET_SPEED: {
-
-			break;
-		}
-		case COM_MESSAGE_TYPE__REQUEST_SET_LED: {
-
+			blMovementChanged = true;
+			com_SMessage_t podOkMessage = { COM_MESSAGE_TYPE__RESPONSE_OK, {0}};
+			com_send(&podOkMessage);
 			break;
 		}
 		default: {
-
+			
 		}
 	}
-	return movementChanged;
+	return blMovementChanged;
 }
 
 /*!
@@ -75,16 +75,16 @@ bool subs_movement_cbHandleRequestTurn(
 	IN const com_SMessage_t* _lppodMessage
 	) {
 
-	bool handledMessage = false;
+	bool blHandledMessage = false;
 	
 	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_TURN) {
 		podCurrentMessage = COM_MESSAGE_TYPE__REQUEST_TURN;
 		int8_t i8NumberOfTurns = _lppodMessage->aui8Data[0];
-		i16CurrentAngularSpeed = i8NumberOfTurns * NINETY_DEGREE_IN_MOTORSTEPS;
+		//i16CurrentAngularSpeed = ;
 		i16CurrentLineSpeed = 0;
-		handledMessage = true;
+		blHandledMessage = true;
 	}
-	return handledMessage;
+	return blHandledMessage;
 }
 
 /*!
@@ -109,13 +109,13 @@ bool subs_movement_cbHandleRequestTurn(
 bool subs_movement_cbHandleRequestMove(
 	IN const com_SMessage_t* _lppodMessage
 	) {
-	bool handledMessage = false;
+	bool blHandledMessage = false;
 
 	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_MOVE) {
-		podCurrentMessage = COM_MESSAGE_TYPE__REQUEST_MOVE;		
-		handledMessage = true;
+		podCurrentMessage = COM_MESSAGE_TYPE__REQUEST_MOVE;
+		blHandledMessage = true;
 	}
-	return handledMessage;
+	return blHandledMessage;
 }
 
 /*!
@@ -140,12 +140,14 @@ bool subs_movement_cbHandleRequestMove(
 bool subs_movement_cbHandleRequestSetSpeed(
 	IN com_SMessage_t* const _lppodMessage
 	) {
-	bool handledMessage = false;
+	bool blHandledMessage = false;
 
 	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_SET_SPEED) {
-		handledMessage = true;
+		i16CurrentLineSpeed = _lppodMessage->aui8Data[0] * 10;
+		i16CurrentAngularSpeed = 0;
+		blHandledMessage = true;
 	}
-	return handledMessage;
+	return blHandledMessage;
 }
 
 // /*!
@@ -184,8 +186,10 @@ bool subs_movement_cbHandleRequestSetSpeed(
  * Registers all handler of this subsumption-layer for the Chain-of-Responsibility pattern.
  */
 void subs_movement_reset( void) {
+	i16CurrentLineSpeed = 600;
+	i16CurrentAngularSpeed = 0;
+	podCurrentMessage = 0;
 	com_register( subs_movement_cbHandleRequestTurn);
 	com_register( subs_movement_cbHandleRequestMove);
 	com_register( subs_movement_cbHandleRequestSetSpeed);
-	//com_register(cbHandleRequestSetLED);
 }

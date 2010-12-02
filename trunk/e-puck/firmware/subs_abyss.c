@@ -23,17 +23,28 @@ enum {
 bool subs_abyss_run( void) {
 	bool abyssDetected = false;
 	sen_line_SData_t podSensorData;
-	sen_line_SData_t* _lppodSensorData = &podSensorData;
-	sen_line_read( _lppodSensorData);
+	sen_line_read( &podSensorData);
 
-	// Check if middle ground-sensor detects an abyss
-	if( podSensorData.aui16Data[1] < ABYSS_DETECTION_THRESHOLD) {
+	// Check if one of the ground-sensors detects an abyss
+	if( (podSensorData.aui16Data[0] < ABYSS_DETECTION_THRESHOLD) ||
+		(podSensorData.aui16Data[1] < ABYSS_DETECTION_THRESHOLD) ||
+		(podSensorData.aui16Data[2] < ABYSS_DETECTION_THRESHOLD)) {
 		hal_motors_setSpeed( 0, 0);
 		hal_motors_setSteps( 0);
 		abyssDetected = true;
 		
 		// inform smartphone about abyss
 		com_SMessage_t podAbyssResponse = {COM_MESSAGE_TYPE__RESPONSE_ABYSS, {0}};
+		
+		if( podSensorData.aui16Data[0] < ABYSS_DETECTION_THRESHOLD) {
+			podAbyssResponse.aui8Data[0] = true;
+		}
+		if( podSensorData.aui16Data[1] < ABYSS_DETECTION_THRESHOLD) {
+			podAbyssResponse.aui8Data[1] = true;
+		}
+		if( podSensorData.aui16Data[2] < ABYSS_DETECTION_THRESHOLD) {
+			podAbyssResponse.aui8Data[2] = true;
+		}
 		com_send( &podAbyssResponse);
 	}
 	return abyssDetected;

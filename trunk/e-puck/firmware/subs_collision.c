@@ -20,8 +20,12 @@
  * subs_collision_reset
  */
 bool subs_collision_run( void) {
+	bool blCollisionDetected = false;
+	sen_prox_SData_t podSensorData;
+	sen_prox_getCurrent( &podSensorData);
+	
 
-	return false;
+	return blCollisionDetected;
 }
 
 /*!
@@ -31,5 +35,4 @@ bool subs_collision_run( void) {
  * Deletes all values of the IR-sensors concerning the last collision.
  */
 void subs_collision_reset( void) {
-
 }
