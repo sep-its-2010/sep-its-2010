@@ -1,6 +1,16 @@
 package sep.conquest.activity;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+
 import sep.conquest.R;
+import sep.conquest.controller.Controller;
+import sep.conquest.model.ConquestUpdate;
+import sep.conquest.model.GridMap;
+import sep.conquest.model.MapNode;
+import sep.conquest.model.NodeType;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -11,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 
@@ -21,9 +32,15 @@ import android.widget.Spinner;
  * @author Florian Buerchner
  *
  */
-public class Map extends Activity {
+public class Map extends Activity implements Observer {
 	
 	private Spinner ePuckSelect;
+	
+	private ArrayAdapter < String > robotAdapter;
+	
+	private List < MapNode > mmap;
+	
+	private LinkedList < EpuckPosition > positions;
 
     /**
      * Is implemented by Activity and is called when the map class is accessed.
@@ -41,10 +58,18 @@ public class Map extends Activity {
 
         setContentView(R.layout.map_main);
 
+        mmap = new LinkedList < MapNode >();
+        positions = new LinkedList < EpuckPosition >();
+        
         ePuckSelect = (Spinner) findViewById(R.id.epuck_selector);
         final MapSurfaceView map = (MapSurfaceView) findViewById(R.id.map_view);
+        
+        robotAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+        robotAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //initially set
+        robotAdapter.add("none");
 
-        ePuckSelect.setAdapter(map.robotAdapter);
+        ePuckSelect.setAdapter(robotAdapter);
         ePuckSelect.setOnItemSelectedListener(new OnItemSelectedListener() {
 
             public void onItemSelected(final AdapterView < ? > parent,
@@ -62,6 +87,19 @@ public class Map extends Activity {
             public void onNothingSelected(final AdapterView < ? > parent) { }
 
         });
+        
+        setSpinner();
+        //test();
+    }
+    
+    public void onResume() {
+    	super.onResume();
+    	Controller.getInstance().getEnv().addObserver(this);
+    }
+    
+    public void onPause() {
+    	super.onPause();
+    	Controller.getInstance().getEnv().deleteObserver(this);
     }
 
     /**
@@ -122,5 +160,98 @@ public class Map extends Activity {
         }
         return true;
     }
+    
+    public void setSpinner() {
+    	MapSurfaceView map = (MapSurfaceView) findViewById(R.id.map_view);
+    	map.setSpinner(ePuckSelect);
+    }
+
+	public void update(Observable obs, Object data) {
+		// TODO Auto-generated method stub
+		//setMap
+		//setEpuckpositions
+		//check ArrayAdapter
+		ConquestUpdate cu = (ConquestUpdate) data;
+		
+		mmap = cu.getMapList();
+		MapSurfaceView draw = (MapSurfaceView) findViewById(R.id.map_view);
+		int[] borders = cu.getBorders();
+		draw.setMap(mmap, borders);
+		//draw.setMap(list, array);
+		//draw.setRobotPosition(list);
+		
+		//robotAdapter...
+		
+	}
+	
+	public void test() {
+		
+		GridMap map = new GridMap();
+		
+		NodeType type = NodeType.CROSS;
+        int x = 1;
+        int y = 1;
+       
+        type = NodeType.CROSS;
+        x = 0;
+        y = 0;
+        map.addNode(x, y, type);
+        
+        type = NodeType.TOPT;
+        x = 1;
+        y = 0;
+        map.addNode(x, y, type);
+        
+        type = NodeType.TOPT;
+        x = 2;
+        y = 0;
+        map.addNode(x, y, type);
+       
+        type = NodeType.TOPRIGHTEDGE;
+        x = 3;
+        y = 0;
+        map.addNode(x, y, type);
+        
+        type = NodeType.LEFTT;
+        x = 0;
+        y = 1;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = 0;
+        y = 2;
+        map.addNode(x, y, type);
+        
+        type = NodeType.BOTTOMT;
+        x = 1;
+        y = 2;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = -1;
+        y = 2;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = -2;
+        y = 2;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = 0;
+        y = -1;
+        map.addNode(x, y, type);
+        
+        mmap = map.getMapAsList();
+        int[] borders = map.getMapBorders();
+        
+        MapSurfaceView v = (MapSurfaceView) findViewById(R.id.map_view);
+        
+        positions.add(new EpuckPosition(3, 2, 1229));
+        robotAdapter.add("1229");
+        
+        v.setMap(mmap, borders);
+        v.setRobotPosition(positions);
+	}
 
 }
