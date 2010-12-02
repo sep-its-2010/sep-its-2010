@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import sep.conquest.R;
+import sep.conquest.model.GridMap;
+import sep.conquest.model.NodeType;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -12,8 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
@@ -28,11 +29,6 @@ import android.widget.Spinner;
 public class Simulation extends Activity {
 
 	/**
-	 * Used to open a map from the file-system.
-	 */
-	Button btnOpen;
-
-	/**
 	 * Called when the Activity is initially created.
 	 * 
 	 * Initializes layout of Activity and its control elements.
@@ -45,27 +41,19 @@ public class Simulation extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.simulation_main);
 		
-		Spinner numberOfEpucks = new Spinner(this);
-		
-		btnOpen = new Button(this);
-		btnOpen.setOnClickListener(new View.OnClickListener() {
-			
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				//make an intent and go to import dialog.
-				Intent importMap = new Intent();
-				importMap.setComponent(new ComponentName(getApplicationContext().getPackageName(), Import.class.getName()));
-				startActivity(importMap);
-			}
-		});
+		Spinner numberOfRobots = (Spinner) findViewById(R.id.spNumber);
+		ArrayAdapter numberAdapter = ArrayAdapter.createFromResource(this, R.array.numberRobots, android.R.layout.simple_spinner_item);
+		numberAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		numberOfRobots.setAdapter(numberAdapter);
 		
 		
+		test();
 		//getIntent().getSerializableExtra(name);
 		
 	}
 	
 	public void onResume() {
-		
+		super.onResume();
 	}
 
 	/**
@@ -91,17 +79,12 @@ public class Simulation extends Activity {
 		Intent start = new Intent();
 
 		switch (item.getItemId()) {
-		case R.id.mnuConnect:
-			start.setComponent(new ComponentName(getApplicationContext()
-					.getPackageName(), Connect.class.getName()));
-			startActivity(start);
-			break;
 		case R.id.mnuStart:
 			start.setComponent(new ComponentName(getApplicationContext()
 					.getPackageName(), Map.class.getName()));
 			startActivity(start);
 			break;
-		case R.id.mnuImport:
+		case R.id.mnuOpen:
 			start.setComponent(new ComponentName(getApplicationContext()
 					.getPackageName(), Import.class.getName()));
 			startActivity(start);
@@ -118,9 +101,137 @@ public class Simulation extends Activity {
 	 * @param map Contains an imported map.
 	 */
 	public void drawPreview(LinkedList map) {
-		//binde ein neues MapSurfaceView ein um die Preview anzuzeigen
-		//wenn es in der xml datei eine neue id ist wird auch eine neue
-		//Instanz dieser datei erzeugt.
+		MapSurfaceView preview = (MapSurfaceView) findViewById(R.id.im_preview);
+		//preview.setMap(list, array);
+	}
+	
+	public void test() {
+		
+		GridMap map = new GridMap();
+		
+		NodeType type = NodeType.CROSS;
+        int x = 1;
+        int y = 1;
+       
+        type = NodeType.CROSS;
+        x = 0;
+        y = 0;
+        map.addNode(x, y, type);
+        
+        type = NodeType.TOPT;
+        x = 1;
+        y = 0;
+        map.addNode(x, y, type);
+        
+        type = NodeType.TOPT;
+        x = 2;
+        y = 0;
+        map.addNode(x, y, type);
+       
+        type = NodeType.TOPRIGHTEDGE;
+        x = 3;
+        y = 0;
+        map.addNode(x, y, type);
+        
+        type = NodeType.LEFTT;
+        x = 0;
+        y = 1;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = 0;
+        y = 2;
+        map.addNode(x, y, type);
+        
+        type = NodeType.BOTTOMT;
+        x = 1;
+        y = 2;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = -1;
+        y = 2;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = -2;
+        y = 2;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = 0;
+        y = -1;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = 4;
+        y = 0;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = 5;
+        y = 0;
+        map.addNode(x, y, type);
+        
+         type = NodeType.CROSS;
+         x = 1;
+         y = 1;
+       
+        type = NodeType.CROSS;
+        x = 0;
+        y = 0;
+        map.addNode(x, y, type);
+        
+        type = NodeType.TOPT;
+        x = 1;
+        y = 0;
+        map.addNode(x, y, type);
+        
+        type = NodeType.TOPT;
+        x = 2;
+        y = 0;
+        map.addNode(x, y, type);
+       
+        type = NodeType.TOPRIGHTEDGE;
+        x = 3;
+        y = 0;
+        map.addNode(x, y, type);
+        
+        type = NodeType.LEFTT;
+        x = 0;
+        y = 1;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = 0;
+        y = 2;
+        map.addNode(x, y, type);
+        
+        type = NodeType.BOTTOMT;
+        x = 1;
+        y = 2;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = -1;
+        y = 2;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = -2;
+        y = 2;
+        map.addNode(x, y, type);
+        
+        type = NodeType.CROSS;
+        x = 0;
+        y = -1;
+        map.addNode(x, y, type);
+        
+        
+        
+        MapSurfaceView v = (MapSurfaceView) findViewById(R.id.im_preview);
+        
+        v.setMap(map.getMapAsList(), map.getMapBorders());
 	}
 
 }

@@ -18,7 +18,4 @@
 	   android:layout_below="@id/txtPreview" android:layout_width="fill_parent" 
 	   android:layout_height="wrap_content"/>
 	   
-	<Button android:id="@+id/btn_open" android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:text="@string/BTN_OPEN" android:layout_alignParentBottom="true"/>  
 </RelativeLayout>

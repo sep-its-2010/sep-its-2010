@@ -89,7 +89,6 @@ public class Map extends Activity implements Observer {
         });
         
         setSpinner();
-        //test();
     }
     
     public void onResume() {
@@ -182,76 +181,6 @@ public class Map extends Activity implements Observer {
 		
 		//robotAdapter...
 		
-	}
-	
-	public void test() {
-		
-		GridMap map = new GridMap();
-		
-		NodeType type = NodeType.CROSS;
-        int x = 1;
-        int y = 1;
-       
-        type = NodeType.CROSS;
-        x = 0;
-        y = 0;
-        map.addNode(x, y, type);
-        
-        type = NodeType.TOPT;
-        x = 1;
-        y = 0;
-        map.addNode(x, y, type);
-        
-        type = NodeType.TOPT;
-        x = 2;
-        y = 0;
-        map.addNode(x, y, type);
-       
-        type = NodeType.TOPRIGHTEDGE;
-        x = 3;
-        y = 0;
-        map.addNode(x, y, type);
-        
-        type = NodeType.LEFTT;
-        x = 0;
-        y = 1;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = 0;
-        y = 2;
-        map.addNode(x, y, type);
-        
-        type = NodeType.BOTTOMT;
-        x = 1;
-        y = 2;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = -1;
-        y = 2;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = -2;
-        y = 2;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = 0;
-        y = -1;
-        map.addNode(x, y, type);
-        
-        mmap = map.getMapAsList();
-        int[] borders = map.getMapBorders();
-        
-        MapSurfaceView v = (MapSurfaceView) findViewById(R.id.map_view);
-        
-        positions.add(new EpuckPosition(3, 2, 1229));
-        robotAdapter.add("1229");
-        
-        v.setMap(mmap, borders);
-        v.setRobotPosition(positions);
 	}
 
 }

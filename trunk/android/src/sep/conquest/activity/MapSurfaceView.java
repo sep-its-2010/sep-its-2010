@@ -153,6 +153,9 @@ public class MapSurfaceView extends SurfaceView
 
         getHolder().addCallback(this);
         setOnTouchListener(this);
+        map = new LinkedList<MapNode>();
+        positions = new LinkedList<EpuckPosition>();
+        borders = new int[4];
 
         thread = new DrawThread();
     }
@@ -349,7 +352,7 @@ public class MapSurfaceView extends SurfaceView
             
             //check if map is scrollable otherwise scale it
             if (!scrollAble) {
-                autoScaling(c, (maxX-minX), (maxY - minY), displayX, displayY);
+                autoScaling(c, (maxX - minX + 1), (maxY - minY + 1), displayX, displayY);
             } else {
                 int boundX = 0;
                 int boundY = 0;

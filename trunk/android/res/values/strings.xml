@@ -26,6 +26,5 @@
 	<string name="MSG_CONNECTING">Connecting to selected e-pucks...</string>
 <string name="EPUCK_SELECT">Select an e-puck</string>
 <string name="TXT_NUMBER">Number of Robots</string>
-<string name="BTN_OPEN">Open</string>
 <string name="MNU_OPEN">Open</string>
 </resources>
