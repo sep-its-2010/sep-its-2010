@@ -11,10 +11,10 @@
  * The specified LEDs are toggled; the others remain unchanged.
  * 
  * \remarks
- * The LED abstraction layer needs to be initialized before being used.
+ * The LED abstraction layer needs to be initialized.
  *
  * \warning
- * This function is not interrupt safe.
+ * This function may not be preempted by any function which accesses this module.
  * 
  * \see
  * hal_led_init | hal_led_switchOn | hal_led_switchOff | hal_led_set

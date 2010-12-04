@@ -77,12 +77,12 @@ void hal_led_toggle(
  * The required port pins are set as output and the LEDs are initially turned off.
  *
  * \warning
- * This function is not interrupt safe.
+ * This function may not be preempted by any function which accesses this module.
  */
 void hal_led_init( void) {
 
-	LATA &= ~HAL_LED_PIN_MASK__CIRCULAR;
-	LATC &= ~HAL_LED_PIN_MASK__CHASSIS;
+	TRISA &= ~HAL_LED_PIN_MASK__CIRCULAR;
+	TRISC &= ~HAL_LED_PIN_MASK__CHASSIS;
 
 	hal_led_set( 0);
 }
@@ -98,11 +98,9 @@ void hal_led_init( void) {
  * The current state of all LEDs is overridden by the specified bit set.
  * 
  * \remarks
- * - The LED abstraction layer needs to be initialized before being used.
+ * - The LED abstraction layer needs to be initialized.
  * - Using constant values is recommended due to function inlining.
- *
- * \warning
- * This function is not interrupt safe.
+ * - This function should not be preempted by any function which accesses this module.
  * 
  * \see
  * hal_led_init | hal_led_switchOn | hal_led_switchOff | hal_led_toggle
@@ -139,11 +137,9 @@ void hal_led_set(
  * The specified LEDs are enabled; the others remain unchanged.
  * 
  * \remarks
- * - The LED abstraction layer needs to be initialized before being used.
+ * - The LED abstraction layer needs to be initialized.
  * - Using constant values is recommended due to function inlining.
- *
- * \warning
- * This function is not interrupt safe.
+ * - This function should not be preempted by any function which accesses this module.
  * 
  * \see
  * hal_led_init | hal_led_switchOff | hal_led_set | hal_led_toggle
@@ -180,11 +176,9 @@ void hal_led_switchOn(
  * The specified LEDs are disabled; the others remain unchanged.
  * 
  * \remarks
- * - The LED abstraction layer needs to be initialized before being used.
+ * - The LED abstraction layer needs to be initialized.
  * - Using constant values is recommended due to function inlining.
- *
- * \warning
- * This function is not interrupt safe.
+ * - This function should not be preempted by any function which accesses this module.
  * 
  * \see
  * hal_led_init | hal_led_switchOn | hal_led_set | hal_led_toggle

@@ -11,7 +11,7 @@ bool hal_i2c_init(
 	IN const uint16_t _ui16BaudRateDiv
 	);
 
-bool hal_i2c_write(
+uint16_t hal_i2c_write(
 	IN const uint8_t _ui8SlaveAddress,
 	IN const uint8_t* const _lpui8Data,
 	IN const uint16_t _ui16Length

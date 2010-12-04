@@ -39,7 +39,7 @@ void sen_prox_init( void) {
  * 
  * \remarks
  * - This function is interrupt safe concerning interrupts from this module.
- * - The module needs to be initialized before being used.
+ * - The module needs to be initialized.
  * 
  * \see
  * sen_prox_init | sen_prox_disable
@@ -57,7 +57,7 @@ void sen_prox_enable( void) {
  * 
  * \remarks
  * - This function is interrupt safe concerning interrupts from this module.
- * - The module needs to be initialized before being used.
+ * - The module needs to be initialized.
  * 
  * \see
  * sen_prox_init | sen_prox_disable

@@ -29,7 +29,7 @@ static subs_SBehaviorPriorityList_t* s_lppodFirstBehavior = NULL;
  * The priority list of the behaviors gets cleared.
  * 
  * \warning
- * This function is not interrupt safe.
+ * This function may not be preempted by any function which accesses this module.
  * 
  * \see
  * subs_run | subs_reset | subs_register
@@ -48,10 +48,11 @@ void subs_init( void) {
  * The action callbacks are called in decreasing priority until a callback returns true.
  * 
  * \remarks
- * An action callback may call #subs_register() and #subs_unregister().
+ * An action callback may call #subs_register() and #subs_unregister(). Refer to this functions for detailed information and
+ * restrictions.
  *
  * \warning
- * This function is not interrupt safe.
+ * This function may not be preempted by any function which accesses this module.
  * 
  * \see
  * subs_init | subs_reset
@@ -73,15 +74,12 @@ void subs_run( void) {
  * Calls the reset callbacks of all behaviors.
  * 
  * Reset callbacks are called - if they exist - in decreasing priority which will also insure a consistent state.
- * 
- * \remarks
- * A reset callback may call #subs_register() and #subs_unregister().
  *
  * \warning
- * This function is not interrupt safe.
+ * This function may not be preempted by any function which accesses this module.
  * 
  * \see
- * subs_init
+ * subs_init | subs_register
  */
 void subs_reset( void) {
 
@@ -110,17 +108,20 @@ void subs_reset( void) {
  * Specifies the priority of the new behavior.
  * 
  * \returns
- * - \c true: Insertion was successful.
- * - \c false: The behavior already exists or there is not enough space to register another behavior.
+ * - \c true on success.
+ * - \c false on error (invalid action callback or no free slot).
  * 
  * Registers a new behavior which is uniquely identified by its action callback. Optionally, a reset callback can be
  * specified. The behavior is inserted into the list right behind the last entry with a higher or equal priority.
  *
+ * An action callback may register other action callbacks. However, the new action might or might not trigger
+ * in the current run sequence depending on the insertion point and the return value of the current action.
+ *
  * \remarks
- * An action callback must return true if it triggered and false otherwise.
+ * An action callback must return \c true if it triggered and it must return \c false otherwise.
  * 
  * \warning
- * This function is not interrupt safe.
+ * This function may not be preempted by any function which accesses this module.
  * 
  * \see
  * subs_init | subs_unregister | subs_run | subs_reset
@@ -197,10 +198,11 @@ bool subs_register(
  * Specifies the behaviors action callback.
  * 
  * The behavior to be unregistered is found based on its action callback.
- * No action is taken in case the associated behavior does not exist.
+ *
+ * An action may unregister itself or other actions provided that the performing action returns \c true afterwards.
  * 
  * \warning
- * This function is not interrupt safe.
+ * This function may not be preempted by any function which accesses this module.
  * 
  * \see
  * subs_init | subs_register

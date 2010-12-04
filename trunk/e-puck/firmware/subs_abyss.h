@@ -3,6 +3,15 @@
 
 #include "common.h"
 
+
+enum {
+	SUBS_ABYSS_THRESHOLD = 300, ///< Specifies the line sensor threshold below which an abyss is detected.
+	SUBS_ABYSS_REGRESSION = 100 ///< Specifies the amount of steps to drive backwards in case an abyss is detected.
+};
+
+
 bool subs_abyss_run( void);
+
+void subs_abyss_reset( void);
 
 #endif /* subs_abyss_h__ */

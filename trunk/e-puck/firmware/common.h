@@ -52,6 +52,7 @@
 #define AUTO_PSV			__attribute__( ( auto_psv))
 #define NO_AUTO_PSV			__attribute__( ( no_auto_psv))
 #define USE_SHADOWING		__attribute__( ( shadow))
+#define UNUSED				__attribute__( ( unused))
 
 
 #endif /* comdef_h__ */

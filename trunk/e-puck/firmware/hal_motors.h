@@ -30,7 +30,8 @@ enum {
 	HAL_MOTORS_LEFT_DATA_OFFSET = 0, ///< Port data offset of the right motor.
 	HAL_MOTORS_RIGHT_MASK = ( 1 << 4) | ( 1 << 5) | ( 1 << 6) | ( 1 << 7), ///< Right motor port bit mask.
 	HAL_MOTORS_RIGHT_DATA_OFFSET = 4, ///< Port data offset of the right motor.
-	HAL_MOTORS_MAX_ABS_SPEED = 1000 ///< Maximal absolute step motor speed in steps per second.
+	HAL_MOTORS_MAX_ABS_SPEED = 1000, ///< Maximal absolute step motor speed in steps per second.
+	HAL_MOTORS_TIMER_PRESCALER = 3 ///< Specifies a prescaler of /256 for timer 4 and timer 5. 
 };
 
 
@@ -126,10 +127,10 @@ int16_t hal_motors_getSpeedRight( void) {
  * \remarks
  * - Changing the phase takes effect immediately.
  * - The user must assure the correctness of the phase sequences.
- * - The driver needs to be initialized.
+ * - The module needs to be initialized.
  *
  * \warning
- * This function is not interrupt safe.
+ * This function may not be preempted by any function which accesses this module.
  * 
  * \see
  * hal_motors_init | hal_motors_setPhaseRight
@@ -154,10 +155,10 @@ void hal_motors_setPhaseLeft(
  * \remarks
  * - Changing the phase takes effect immediately.
  * - The user must assure the correctness of the phase sequences.
- * - The driver needs to be initialized.
+ * - The module needs to be initialized.
  *
  * \warning
- * This function is not interrupt safe.
+ * This function may not be preempted by any function which accesses this module.
  * 
  * \see
  * hal_motors_init | hal_motors_setPhaseLeft
@@ -315,7 +316,7 @@ void hal_motors_setStepsRight(
  * Specifies the new value of the left and right step counters.
  * 
  * \warning
- * This function is not interrupt safe.
+ * This function may not be preempted by any function which accesses this module.
  * 
  * \see
  * hal_motors_setStepsRight | hal_motors_setStepsLeft | hal_motors_getStepsLeft | hal_motors_getStepsRight

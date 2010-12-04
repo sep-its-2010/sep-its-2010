@@ -31,4 +31,13 @@ void com_unregister(
 	IN const com_fnMessageHandler_t _fnHandler
 	);
 
+static inline bool com_isConnected( void);
+
+bool com_isConnected( void) {
+
+	extern volatile bool com_blConnected;
+
+	return com_blConnected;
+}
+
 #endif /* com_h__ */

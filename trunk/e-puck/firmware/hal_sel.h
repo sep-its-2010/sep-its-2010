@@ -44,7 +44,7 @@ void hal_sel_init( void) {
  * A value between 0x00 and 0x0F which represents the e-puck selector position labeling.
  * 
  * \remarks
- * The selector abstraction layer needs to be initialized before being used.
+ * The selector abstraction layer needs to be initialized.
  * 
  * \see
  * hal_sel_init

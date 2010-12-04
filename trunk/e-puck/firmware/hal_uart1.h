@@ -10,10 +10,12 @@
 #include "hal_uart_types.h"
 
 
-void hal_uart1_open(
+void hal_uart1_enable(
 	IN const bool _blWithTransmitter
 	);
+
 static inline void hal_uart1_close( void);
+
 static inline void hal_uart1_configure(
 	IN const hal_uart_EConfig_t _eConfig,
 	IN const uint16_t _ui16BaudRateDiv
@@ -22,33 +24,41 @@ static inline void hal_uart1_configure(
 void hal_uart1_putch(
 	IN const char _cValue
 	);
+
 void hal_uart1_write(
 	IN const void* const _lpvData,
 	IN const uint16_t _ui16Length
 	);
+
 void hal_uart1_puts(
 	IN const char* const _cstrText
 	);
 
 char hal_uart1_getch( void);
+
 void hal_uart1_read(
 	OUT void* const _lpvData,
 	IN const uint16_t _ui16Length
 	);
 
 static inline bool hal_uart1_hasRxData( void);
+
 static inline bool hal_uart1_hasRxOverflow( void);
+
 static inline void hal_uart1_clearRxOverflow( void);
 
 static inline bool hal_uart1_isTxIdle( void);
+
 static inline bool hal_uart1_isRxIdle( void);
 
 void hal_uart1_generateBreak( void);
 
 static inline ringbuf_SContext_t* hal_uart1_getTxRingBuffer( void);
+
 static inline ringbuf_SContext_t* hal_uart1_getRxRingBuffer( void);
 
 void hal_uart1_forceTxMove( void);
+
 void hal_uart1_forceRxMove( void);
 
 
@@ -77,7 +87,7 @@ void hal_uart1_forceRxMove( void);
  * Disabling the UART during operation will abort all pending transmissions and receptions.
  * 
  * \see
- * hal_uart1_open | hal_uart1_isTxIdle | hal_uart1_isRxIdle
+ * hal_uart1_enable | hal_uart1_isTxIdle | hal_uart1_isRxIdle
  */
 void hal_uart1_close( void) {
 
@@ -107,7 +117,7 @@ void hal_uart1_close( void) {
  * - The 9 bit mode is not supported.
  * 
  * \see
- * hal_uart1_open
+ * hal_uart1_enable
  */
 void hal_uart1_configure(
 	IN const hal_uart_EConfig_t _eConfig,
@@ -175,7 +185,7 @@ void hal_uart1_configure(
  * - The primary UART receiver must be enabled.
  * 
  * \see
- * hal_uart1_open | hal_uart1_hasRxOverflow | hal_uart1_read
+ * hal_uart1_enable | hal_uart1_hasRxOverflow | hal_uart1_read
  */
 bool hal_uart1_hasRxData( void) {
 
@@ -201,7 +211,7 @@ bool hal_uart1_hasRxData( void) {
  * - The primary UART receiver must be enabled.
  * 
  * \see
- * hal_uart1_open | hal_uart1_clearRxOverflow
+ * hal_uart1_enable | hal_uart1_clearRxOverflow
  */
 bool hal_uart1_hasRxOverflow( void) {
 
@@ -221,7 +231,7 @@ bool hal_uart1_hasRxOverflow( void) {
  * - The primary UART receiver must be enabled.
  * 
  * \see
- * hal_uart1_open | hal_uart1_hasRxOverflow
+ * hal_uart1_enable | hal_uart1_hasRxOverflow
  */
 void hal_uart1_clearRxOverflow( void) {
 
@@ -245,7 +255,7 @@ void hal_uart1_clearRxOverflow( void) {
  * - The primary UART transmitter must be enabled.
  * 
  * \see
- * hal_uart1_open | hal_uart1_close
+ * hal_uart1_enable | hal_uart1_close
  */
 bool hal_uart1_isTxIdle( void) {
 
@@ -269,7 +279,7 @@ bool hal_uart1_isTxIdle( void) {
  * - The primary UART receiver must be enabled.
  * 
  * \see
- * hal_uart1_open | hal_uart1_close
+ * hal_uart1_enable | hal_uart1_close
  */
 bool hal_uart1_isRxIdle( void) {
 

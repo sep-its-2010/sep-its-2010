@@ -19,8 +19,9 @@ ringbuf_SContext_t hal_uart1_podTxBuffer = { NULL, 0, 0, 0 };
 ringbuf_SContext_t hal_uart1_podRxBuffer = { NULL, 0, 0, 0 };
 
 
-void ISR NO_AUTO_PSV USE_SHADOWING _U1TXInterrupt( void);
-void ISR NO_AUTO_PSV USE_SHADOWING _U1RXInterrupt( void);
+void ISR NO_AUTO_PSV _U1TXInterrupt( void);
+
+void ISR NO_AUTO_PSV _U1RXInterrupt( void);
 
 
 /*!
@@ -32,7 +33,10 @@ void ISR NO_AUTO_PSV USE_SHADOWING _U1RXInterrupt( void);
  * This interrupt triggers when the hardware buffer of the transmitter is empty due to shifting its last byte.
  * 
  * \remarks
- * The interrupt uses shadow registers because its priority is set to 7.
+ * The interrupt does not use shadow register.
+ *
+ * \warning
+ * This ISR may not be preempted by any function which accesses the transmission part of this module.
  * 
  * \see
  * _U1RXInterrupt | hal_int_setPriority | hal_int_enable | hal_int_disable | hal_uart1_forceTxMove
@@ -58,7 +62,10 @@ void _U1TXInterrupt( void) {
  * This interrupt triggers when the hardware buffer of the receiver is full due to shifting a byte.
  * 
  * \remarks
- * The interrupt uses shadow registers because its priority is set to 7.
+ * The interrupt does not use shadow register.
+ *
+ * \warning
+ * This ISR may not be preempted by any function which accesses the transmission part of this module.
  * 
  * \see
  * _U1TXInterrupt | hal_int_setPriority | hal_int_enable | hal_int_disable | hal_uart1_forceRxMove
@@ -86,40 +93,29 @@ void _U1RXInterrupt( void) {
  * 
  * The transmission interrupt is set to trigger on an empty hardware buffer.
  * The reception interrupt is set to trigger on a full hardware buffer.
- * The associated interrupt sources are enabled but their priorities are set to 0.
+ * The associated interrupt priorities are set to #HAL_INT_PRIORITY__6.
  *
  * The ring buffers must be initialized before with #ringbuf_init().
  * Their context can be retrieved with #hal_uart1_getTxRingBuffer() and #hal_uart1_getRxRingBuffer()
- *
- * Use \code
- * hal_int_setPriority( HAL_INT_SOURCE__UART1_RECEIVER, HAL_INT_PRIORITY__7);
- * \endcode and in case the transmitter module is also required \code
- * hal_int_setPriority( HAL_INT_SOURCE__UART1_TRASMITTER, HAL_INT_PRIORITY__7);
- * \endcode
- * to begin operation.
  * 
  * \remarks
- * - This function is interrupt safe concerning UART1 interrupts.
+ * - This function is interrupt safe concerning interrupts from this module.
  * - The UART should be configured before enabling it.
- * - The Tx and Rx interrupts will not trigger until their priority is set with #hal_int_setPriority().
  *
  * \warning
  * - Using uninitialized ring buffers can cause unpredictable results.
- * - Only use #hal_int_setPriority() with #HAL_INT_PRIORITY__7 because the Tx and Rx interrupts use shadow registers.
  * - Always call #hal_int_enable() after #hal_int_disable() when the UART interrupts need to be disabled temporarily.
  * - Interrupts are crucial for correct transmissions and especially receptions. Do not block them for too long.
+ * - This function may not be preempted by any function which accesses this module.
  * 
  * \see
  * hal_uart1_close | hal_uart1_configure
  */
-void hal_uart1_open(
+void hal_uart1_enable(
 	IN const bool _blWithTransmitter
 	) {
 
 	U1MODEbits.UARTEN = false;
-
-	hal_int_setPriority( HAL_INT_SOURCE__UART1_RECEIVER, HAL_INT_PRIORITY__0);
-	hal_int_setPriority( HAL_INT_SOURCE__UART1_TRANSMITTER, HAL_INT_PRIORITY__0);
 
 	// Trigger INT on empty Tx buffer
 	U1STAbits.UTXISEL = 1;
@@ -127,15 +123,18 @@ void hal_uart1_open(
 	// Trigger INT on full Rx buffer
 	U1STAbits.URXISEL = 3;
 
-	hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
-	if( _blWithTransmitter) {
-		hal_int_enable( HAL_INT_SOURCE__UART1_TRANSMITTER);
-	}
-
 	// Enable UART module before transmitter (see spec.)
 	U1MODEbits.UARTEN = true;
 	if( _blWithTransmitter) {
 		U1STAbits.UTXEN = true;
+	}
+
+	hal_int_setPriority( HAL_INT_SOURCE__UART1_RECEIVER, HAL_INT_PRIORITY__6);
+	hal_int_setPriority( HAL_INT_SOURCE__UART1_TRANSMITTER, HAL_INT_PRIORITY__6);
+
+	hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
+	if( _blWithTransmitter) {
+		hal_int_enable( HAL_INT_SOURCE__UART1_TRANSMITTER);
 	}
 }
 
@@ -151,14 +150,15 @@ void hal_uart1_open(
  * Transmission starts immediately after pushing the byte.
  * 
  * \remarks
- * - This function is interrupt safe concerning UART1 interrupts.
+ * - This function is interrupt safe concerning interrupts from this module.
  * - The primary UART transmitter must be enabled and the priority of its associated interrupt must be above the CPU priority level.
  *
  * \warning
- * If the transmitter interrupt is not enabled then this function might block forever.
+ * - This function might block forever if the transmitter interrupt is not enabled.
+ * - This function may not be preempted by any function which accesses the transmission part of this module.
  * 
  * \see
- * hal_uart1_open | hal_uart1_puts | hal_uart1_write | hal_int_setPriority | hal_uart1_generateBreak | hal_uart1_forceTxMove
+ * hal_uart1_enable | hal_uart1_puts | hal_uart1_write | hal_int_setPriority | hal_uart1_generateBreak | hal_uart1_forceTxMove
  */
 void hal_uart1_putch(
 	IN const char _cValue
@@ -202,14 +202,15 @@ void hal_uart1_putch(
  * Transmission starts immediately after pushing the first byte.
  * 
  * \remarks
- * - This function is interrupt safe concerning UART1 interrupts.
+ * - This function is interrupt safe concerning interrupts from this module.
  * - The primary UART transmitter must be enabled and the priority of its associated interrupt must be above the CPU priority level.
  *
  * \warning
- * If the transmitter interrupt is not enabled then this function might block forever.
+ * - This function might block forever if the transmitter interrupt is not enabled.
+ * - This function may not be preempted by any function which accesses the transmission part of this module.
  * 
  * \see
- * hal_uart1_open | hal_uart1_putch | hal_uart1_puts | hal_int_setPriority | hal_uart1_generateBreak | hal_uart1_forceTxMove
+ * hal_uart1_enable | hal_uart1_putch | hal_uart1_puts | hal_int_setPriority | hal_uart1_generateBreak | hal_uart1_forceTxMove
  */
 void hal_uart1_write(
 	IN const void* const _lpvData,
@@ -256,14 +257,15 @@ void hal_uart1_write(
  * Transmission starts immediately after pushing the first byte.
  * 
  * \remarks
- * - This function is interrupt safe concerning UART1 interrupts.
+ * - This function is interrupt safe concerning interrupts from this module.
  * - The primary UART transmitter must be enabled and the priority of its associated interrupt must be above the CPU priority level.
  *
  * \warning
- * If the transmitter interrupt is not enabled then this function might block forever.
+ * - This function might block forever if the transmitter interrupt is not enabled.
+ * - This function may not be preempted by any function which accesses the transmission part of this module.
  * 
  * \see
- * hal_uart1_open | hal_uart1_putch | hal_uart1_write | hal_int_setPriority | hal_uart1_generateBreak | hal_uart1_forceTxMove
+ * hal_uart1_enable | hal_uart1_putch | hal_uart1_write | hal_int_setPriority | hal_uart1_generateBreak | hal_uart1_forceTxMove
  */
 void hal_uart1_puts(
 	IN const char* const _cstrText
@@ -307,14 +309,15 @@ void hal_uart1_puts(
  * The oldest byte in the buffer.
  * 
  * \remarks
- * - This function is interrupt safe concerning UART1 interrupts.
+ * - This function is interrupt safe concerning interrupts from this module.
  * - The primary UART receiver must be enabled and the priority of its associated interrupt must be above the CPU priority level.
  *
  * \warning
- * If the receiver interrupt is not enabled then this function might block forever.
+ * - This function might block forever if the receiver interrupt is not enabled.
+ * - This function may not be preempted by any function which accesses the reception part of this module.
  * 
  * \see
- * hal_uart1_open | hal_uart1_read | hal_uart1_hasRxData | hal_int_setPriority | hal_uart1_forceRxMove
+ * hal_uart1_enable | hal_uart1_read | hal_uart1_hasRxData | hal_int_setPriority | hal_uart1_forceRxMove
  */
 char hal_uart1_getch( void) {
 
@@ -354,14 +357,15 @@ char hal_uart1_getch( void) {
  * Pops the specified amount of data from the UART Rx buffer as long as it is not empty; blocks otherwise. 
  * 
  * \remarks
- * - This function is interrupt safe concerning UART1 interrupts.
+ * - This function is interrupt safe concerning interrupts from this module.
  * - The primary UART receiver must be enabled and the priority of its associated interrupt must be above the CPU priority level.
  *
  * \warning
- * If the receiver interrupt is not enabled then this function might block forever.
+ * - This function might block forever if the receiver interrupt is not enabled.
+ * - This function may not be preempted by any function which accesses the reception part of this module.
  * 
  * \see
- * hal_uart1_open | hal_uart1_getch | hal_uart1_hasRxData | hal_int_setPriority | hal_uart1_forceRxMove
+ * hal_uart1_enable | hal_uart1_getch | hal_uart1_hasRxData | hal_int_setPriority | hal_uart1_forceRxMove
  */
 void hal_uart1_read(
 	OUT void* const _lpvData,
@@ -402,12 +406,16 @@ void hal_uart1_read(
  * A break is defined as an UART frame with the stop bit being 'low'. This actually generates a frame error.
  * 
  * \remarks
- * - This function is interrupt safe concerning UART1 interrupts.
+ * - This function is interrupt safe concerning interrupts from this module.
  * - The primary UART transmitter must be enabled.
  * - The amount of delay cycles is generated based on the baud rate divisor.
+ *
+ * \warning
+ * - This function might block forever if the transmitter interrupt is not enabled.
+ * - This function may not be preempted by any function which accesses the transmission part of this module.
  * 
  * \see
- * hal_uart1_open
+ * hal_uart1_enable
  */
 void hal_uart1_generateBreak( void) {
 
@@ -442,11 +450,14 @@ void hal_uart1_generateBreak( void) {
  * ring buffer directly without relying on #hal_uart1_putch(), #hal_uart1_puts() or #hal_uart1_write().
  * 
  * \remarks
- * - This function is interrupt safe concerning UART1 interrupts.
+ * - This function is interrupt safe concerning interrupts from this module.
  * - The primary UART transmitter must be enabled.
  * 
+ * \warning
+ * This function may not be preempted by any function which accesses the transmission part of this module.
+ *
  * \see
- * hal_uart1_open | hal_uart1_getTxRingBuffer | hal_uart1_forceRxMove
+ * hal_uart1_enable | hal_uart1_getTxRingBuffer | hal_uart1_forceRxMove
  */
 void hal_uart1_forceTxMove( void) {
 
@@ -469,11 +480,14 @@ void hal_uart1_forceTxMove( void) {
  * ring buffer directly without relying on #hal_uart1_getch() or #hal_uart1_read().
  * 
  * \remarks
- * - This function is interrupt safe concerning UART1 interrupts.
+ * - This function is interrupt safe concerning interrupts from this module.
  * - The primary UART receiver must be enabled.
- * 
+ *
+ * \warning
+ * This function may not be preempted by any function which accesses the reception part of this module.
+ *
  * \see
- * hal_uart1_open | hal_uart1_getRxRingBuffer | hal_uart1_forceTxMove
+ * hal_uart1_enable | hal_uart1_getRxRingBuffer | hal_uart1_forceTxMove
  */
 void hal_uart1_forceRxMove( void) {
 
