@@ -55,42 +55,64 @@ public class AStarPathFinder implements IPathFinder {
 	public PathNode[] find(Puck robot, MapNode start, MapNode[] destinations) {
 
 		PathNode[] paths = new PathNode[destinations.length];
-		
+		boolean pathFound;
+
 		// find paths for every destination
 		for (int i = 0; i < destinations.length; i++) {
-			AStarNode first = new AStarNode(null, start, 0);
-			openList.add(first);
-			while (!openList.isEmpty()) {
+			initialize(robot, start, destinations[i]);
+			pathFound = false;
+			while (!openList.isEmpty() && !pathFound) {
 				AStarNode current = openList.poll();
 				if (current.equals(destinations[i])) {
 					closeList.add(current);
 					paths[i] = getPath(current);
+					pathFound = true;
+				} else {
+					expandNode(robot, current, destinations[i]);
+					closeList.add(current);
 				}
-				expandNode(robot, current);
-				closeList.add(current);
-			}			
+			}
 		}
 		return paths;
+	}
+	
+	/**
+	 * Initializes a new search for a specific start-destination path.
+	 * 
+	 * @param robot The robot.
+	 * @param start The start-node.
+	 * @param destination The destination-node.
+	 */
+	private void initialize(Puck robot, MapNode start, MapNode destination) {
+		if (closeList.isEmpty()) {
+			AStarNode first = new AStarNode(null, start, 0);
+			openList.add(first);
+		} else {
+			for (AStarNode node: closeList)
+				node.setEstimatedCosts(estimateCosts(node.getNode(), destination));
+			for (AStarNode node: openList)
+				node.setEstimatedCosts(estimateCosts(node.getNode(), destination));
+		}
 	}
 
 	/**
 	 * Returns the path to a given destination.
 	 * 
-	 * @param destination The destination.
+	 * @param destination
+	 *            The destination.
 	 * @return The path.
 	 */
 	private PathNode getPath(AStarNode destination) {
-		
+
 		AStarNode current = destination;
 		PathNode path = null;
 		PathNode next = null;
-		
+
 		while (current != null) {
-			path = new PathNode(current.getNode(), next,
-					destination.getCosts());
+			path = new PathNode(current.getNode(), next, current.getCosts());
 			next = path;
 			current = current.getPredecessor();
-		}		
+		}
 		return path;
 	}
 
@@ -157,31 +179,31 @@ public class AStarPathFinder implements IPathFinder {
 	 * @param currentNode
 	 *            The current node.
 	 */
-	private void expandNode(Puck robot, AStarNode currentNode) {
+	private void expandNode(Puck robot, AStarNode currentNode, MapNode dest) {
 
 		GraphNode[] neighbors = getNeighbors(robot.getMap(), currentNode);
 
 		for (GraphNode neighbor : neighbors) {
 			if (neighbor != null) {
-				if (closeList.contains(neighbor))
-					continue;
+				if (!closeList.contains(neighbor)) {
+					int costs = currentNode.getCosts()
+							+ calculateNodeCosts(robot, neighbor);
 
-				int costs = currentNode.getCosts()
-						+ calculateNodeCosts(robot, neighbor);
-
-				// if a better path already exists => continue
-				if (openList.contains(neighbor)) {
-					for (AStarNode openNode : openList) {
-						if (openNode.equals(neighbor)) {
-							if (costs >= openNode.getCosts())
-								continue;
-							else {
-								openNode.setCosts(costs);
-							}
+					// if a better path already exists => continue
+					if (openList.contains(neighbor)) {
+						for (AStarNode openNode : openList) {
+							if (openNode.equals(neighbor))
+								if (costs < openNode.getCosts())
+									openNode.setCosts(costs);
 						}
+					} else {
+						AStarNode tmp = new AStarNode(currentNode, neighbor,
+								costs);
+						tmp.setEstimatedCosts(estimateCosts(tmp.getNode(),
+										dest));
+						openList.add(tmp);
 					}
-				} else
-					openList.add(new AStarNode(currentNode, neighbor, costs));
+				}
 			}
 		}
 	}
@@ -209,7 +231,6 @@ public class AStarPathFinder implements IPathFinder {
 					costs += 50;
 			}
 		}
-
 		return costs;
 	}
 
@@ -226,6 +247,6 @@ public class AStarPathFinder implements IPathFinder {
 	private int estimateCosts(MapNode node, MapNode target) {
 		int x = Math.abs(node.getXValue() - target.getXValue());
 		int y = Math.abs(node.getYValue() - target.getYValue());
-		return x + y;
+		return (x + y) * 10;
 	}
 }

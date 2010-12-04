@@ -139,11 +139,15 @@ public class AStarNode implements Comparable<AStarNode> {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public int compareTo(AStarNode arg0) {
-		if ((this.getCosts() + this.getEstimatedCosts()) < 
-				(arg0.getCosts() + arg0.getEstimatedCosts()))
+		if ((this.getCosts() + this.getEstimatedCosts()) < (arg0.getCosts() +
+				arg0.getEstimatedCosts()))
 			return -1;
-		else if ((this.getCosts() + this.getEstimatedCosts()) > 
-				(arg0.getCosts() + arg0.getEstimatedCosts()))
+		else if ((this.getCosts() + this.getEstimatedCosts()) > (arg0
+				.getCosts() + arg0.getEstimatedCosts()))
+			return 1;
+		else if (this.getEstimatedCosts() < arg0.getEstimatedCosts())
+			return -1;
+		else if (this.getEstimatedCosts() > arg0.getEstimatedCosts())
 			return 1;
 		else
 			return 0;

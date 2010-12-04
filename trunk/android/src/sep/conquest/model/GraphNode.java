@@ -92,4 +92,24 @@ public class GraphNode extends MapNode implements Serializable {
 		}
 		return nodeCopy;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object o) {
+		return (hashCode() == o.hashCode());
+	}	
 }
