@@ -3,12 +3,15 @@
 #include <libpic30.h>
 #include <stdio.h>
 
-#include "hal_uart1.h"
 #include "hal_led.h"
+#include "hal_motors.h"
 #include "hal_sel.h"
 #include "hal_rtc.h"
+
 #include "hal_i2c.h"
 #include "sen_line.h"
+
+#include "hal_uart1.h"
 #include "com.h"
 
 #include "subs.h"
@@ -19,7 +22,58 @@
 #include "subs_movement.h"
 #include "subs_node.h"
 
-#include "hal_motors.h"
+
+/*!
+ * \brief
+ * Specifies the baud rate of the primary UART.
+ * 
+ * The primary UART is used for communicating with the bluetooth module.
+ * Thus, the baud rate needs to match the baud rate of the bluetooth module.
+ * 
+ * \see
+ * UART1_BAUDRATE_DIVISOR
+ */
+#define UART1_BAUDRATE 115200
+
+
+/*!
+ * \brief
+ * Specifies the baud rate divisor of the primary UART.
+ * 
+ * The calculation is based on the formula of the dsPIC30F6014A data sheet.
+ * It requires that \c FCY and \c UART1_BAUDRATE are defined correctly.
+ * 
+ * \see
+ * main | hal_uart1_configure
+ */
+#define UART1_BAUDRATE_DIVISOR (uint16_t)( FCY / ( 16 * UART1_BAUDRATE) - 1)
+
+
+enum {
+	UART1_TX_BUFFER_SIZE = 128, ///< Specifies the amount of transmitter buffer space in bytes.
+	UART1_RX_BUFFER_SIZE = 128 ///< Specifies the amount of receiver buffer space in bytes.
+};
+
+
+/*!
+ * \brief
+ * Holds the receiver ring buffer storage.
+ * 
+ * \see
+ * s_aui8TxBufferSpace
+ */
+static uint8_t s_aui8RxBufferSpace[UART1_RX_BUFFER_SIZE];
+
+
+/*!
+ * \brief
+ * Holds the transmitter ring buffer storage.
+ * 
+ * \see
+ * s_aui8RxBufferSpace
+ */
+static uint8_t s_aui8TxBufferSpace[UART1_TX_BUFFER_SIZE];
+
 
 void cbSubsumptionEvent(
 	IN const hal_rtc_handle_t _hEvent
@@ -57,24 +111,26 @@ int main( void) {
 
 	hal_sel_init();
 	hal_led_init();
-
 	hal_motors_init();
-	hal_i2c_init( HAL_I2C_MAX_BAUDRATE_DIVISOR);
 
-	com_init();
-//	hal_uart1_puts( "SEP 2010 ITS e-puck & Android Project\r\n");
-
+	hal_i2c_init( 100);
 	hal_motors_setSpeed( 800, 0);
 
+	// Configuring the primary UART for the bluetooth module
+	ringbuf_init( hal_uart1_getRxRingBuffer(), s_aui8RxBufferSpace, sizeof( s_aui8RxBufferSpace));
+	ringbuf_init( hal_uart1_getTxRingBuffer(), s_aui8TxBufferSpace, sizeof( s_aui8TxBufferSpace));
+	hal_uart1_configure( HAL_UART_CONFIG__8N1, UART1_BAUDRATE_DIVISOR);
+	hal_uart1_enable( true);
+//	hal_uart1_puts( "SEP 2010 ITS e-puck & Android Project\r\n");
+
+	// Real time clock with 100Hz
 	hal_rtc_init( FCY / 256 / 100);
 	hal_rtc_register( cbSubsumptionEvent, 1, true);
 	hal_rtc_register( cbBlinker, 50, true);
 
+	com_init();
 	for( ;;) {
 		com_processIncoming();
-//		subs_run();
-
-		__delay32( FCY / 100);
 
 		/*
 		switch( hal_uart1_getch()) {

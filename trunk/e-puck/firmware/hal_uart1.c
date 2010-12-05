@@ -132,8 +132,10 @@ void hal_uart1_enable(
 	hal_int_setPriority( HAL_INT_SOURCE__UART1_RECEIVER, HAL_INT_PRIORITY__6);
 	hal_int_setPriority( HAL_INT_SOURCE__UART1_TRANSMITTER, HAL_INT_PRIORITY__6);
 
+	hal_int_clearFlag( HAL_INT_SOURCE__UART1_RECEIVER);
 	hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
 	if( _blWithTransmitter) {
+		hal_int_clearFlag( HAL_INT_SOURCE__UART1_TRANSMITTER);
 		hal_int_enable( HAL_INT_SOURCE__UART1_TRANSMITTER);
 	}
 }

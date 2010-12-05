@@ -15,9 +15,6 @@ enum {
 };
 
 
-volatile bool com_blConnected = false;
-
-
 /*!
  * \brief
  * Holds the message handler slots.
@@ -33,63 +30,22 @@ static com_fnMessageHandler_t s_afnHandlers[COM_MAX_HANDLERS] = { 0 };
 
 /*!
  * \brief
- * Holds the receiver ring buffer space.
- * 
- * \remarks
- * The associated ring buffer is initialized by #com_init().
- * 
- * \see
- * s_aui8TxBufferSpace | com_processIncoming
- */
-static uint8_t s_aui8RxBufferSpace[COM_RX_BUFFER_SIZE];
-
-
-/*!
- * \brief
- * Holds the transmitter ring buffer space.
- * 
- * \remarks
- * The associated ring buffer is initialized by #com_init().
- * 
- * \see
- * s_aui8RxBufferSpace | com_send
- */
-static uint8_t s_aui8TxBufferSpace[COM_TX_BUFFER_SIZE];
-
-
-/*!
- * \brief
  * Initializes the bluetooth communication interface.
  * 
- * The following actions are taken:
- * - Receiver and transmitter ring buffer initialization
- * - UART1 module activation including interrupts (initial interrupt priority is #HAL_INT_PRIORITY__6)
- * - Bluetooth module initialization in transparent mode
- * - Chain-of-responsibility handler slots reset
+ * All message handlers are cleared.
  *
  * \remarks
- * - The initial interrupt priority may be changed by the user.
- * - This function is interrupt safe concerning interrupts from the hal_uart1 module.
+ * The primary UART should be initialized before using this module.
  *
  * \warning
  * This function may not be preempted by any function which accesses this module.
  * 
  * \see
- * com_processIncoming | com_send
+ * com_processIncoming | com_send | hal_uart1_enable | hal_uart1_configure
  */
 void com_init( void) {
 
-	hal_int_disable( HAL_INT_SOURCE__UART1_RECEIVER);
-	hal_int_disable( HAL_INT_SOURCE__UART1_TRANSMITTER);
-
-	ringbuf_init( hal_uart1_getRxRingBuffer(), s_aui8RxBufferSpace, sizeof( s_aui8RxBufferSpace));
-	ringbuf_init( hal_uart1_getTxRingBuffer(), s_aui8TxBufferSpace, sizeof( s_aui8TxBufferSpace));
-
-	com_blConnected = false;
 	memset( s_afnHandlers, 0, sizeof( s_afnHandlers) / sizeof( *s_afnHandlers));
-
-	hal_uart1_configure( HAL_UART_CONFIG__8N1, COM_UART1_BAUDRATE_DIVISOR);
-	hal_uart1_enable( true);
 }
 
 
@@ -212,7 +168,8 @@ void com_send(
  * - \c true on success
  * - \c false on error (handler already exists or callback list is full).
  * 
- * The callbacks are called by #com_processIncoming() when a new message is dispatched.
+ * The callbacks are called by #com_processIncoming() when a new message is dispatched. One can not register more than
+ * #COM_MAX_HANDLERS callbacks.
  * 
  * \remarks
  * - The communication interface needs to be initialized.
