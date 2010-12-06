@@ -21,39 +21,25 @@ public class MapNode implements Serializable {
 	public static final int TOPRIGHTEDGE = 1;
 	
 	/**
-	 * Left bottom corner
-	 */
-	public static final int BOTTOMLEFTEDGE = 2;
-	
-	/**
-	 * Right bottom corner
-	 */
-	public static final int BOTTOMRIGHTEDGE = 3;
-	
-	/**
 	 * T-Cross
 	 */
-	public static final int TOPT = 4;
+	public static final int TOPT = 2;
 	
 	/**
 	 * T-Cross turned 90 degrees
 	 */
-	public static final int RIGHTT = 5;
+	public static final int RIGHTT = 3;
 	
-	/**
-	 * T-Cross turned 180 degrees
-	 */
-	public static final int BOTTOMT = 6;
 	
 	/**
 	 * T-Cross turned 270 degrees
 	 */
-	public static final int LEFTT = 7;
+	public static final int LEFTT = 4;
 	
 	/**
 	 * Cross of two lines
 	 */
-	public static final int CROSS = 8;
+	public static final int CROSS = 5;
 	
 	
 	
