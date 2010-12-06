@@ -3,14 +3,16 @@ package sep.conquest.model.handler;
 import java.util.UUID;
 
 import sep.conquest.model.IRequest;
+import sep.conquest.model.Puck;
 import sep.conquest.model.Simulator;
 import sep.conquest.model.requests.MessageType;
 
 /**
  * Handles speed request messages that are sent to the simulator.
  * 
- * As simulation does not support different speeds for each robot, Handler just
- * writes on ok message to the corresponding output buffer of the simulator.
+ * As simulation does currently not support different speeds for each robot,
+ * Handler just writes on ok message to the corresponding output buffer of 
+ * the simulator.
  * 
  * @author Andreas Poxrucker
  * 
@@ -48,17 +50,18 @@ public class SimSpeedHandler extends Handler {
     // Otherwise call next handler in chain or return false, if there is no next
     // handler.
     if (request.getKind().equals(MessageType.REQUEST_SET_SPEED)) {
+      // The sender of the message
       UUID sender = request.getSender();
+
+      // Write message type "ok" to first two bytes and write whole message 
+      // to the output buffer.
       byte[] response = new byte[32];
-
-      short typeCode;
-
+      response[0] = (byte) (Puck.RES_OK & 0xFF);
+      response[1] = (byte) ((Puck.RES_OK >> 8) & 0xFF);
       sim.writeBuffer(sender, response);
       return true;
-    } else if (hasNext()) {
-      return getNext().handleRequest(request);
     } else {
-      return false;
+      return super.handleRequest(request);
     }
   }
 }

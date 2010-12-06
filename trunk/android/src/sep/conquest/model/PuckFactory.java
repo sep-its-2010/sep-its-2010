@@ -43,7 +43,9 @@ public class PuckFactory {
         man.addClient(newUUID, newPuck);
       }
       // initiate handshaking of the robots
-      Puck first = (Puck) man.getClients()[0];
+      IComClient[] client = man.getClients();
+      
+      Puck first = (Puck) (man.getClients())[0];
       first.sendHello();
       return true;
     }

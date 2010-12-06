@@ -19,6 +19,9 @@ import android.os.Environment;
  * All files are saved to and loaded from external storage, directory
  * "/Android/data/sep.conquest/files" (Android convention).
  * 
+ * To save data on the external storage, permission WRITE_EXTERNAL_STORAGE is
+ * required.
+ * 
  * Maps are saved with ending .sep.
  * 
  * @author Andreas Poxrucker
@@ -106,6 +109,10 @@ public class MapFileHandler {
 
       // Check, if filename is valid and if external media can be written.
       if (isValidFilename(filename) && isWriteable()) {
+        
+        if (!DIR.exists()) {
+          DIR.mkdirs();
+        }
         File mapFile = new File(DIR, filename);
 
         // If map file exists, remove it and create a new one.
@@ -143,10 +150,8 @@ public class MapFileHandler {
    *         readable.
    */
   public static String[] getFileList() {
-
     // If directory is readable, iterate over contained files and add them
-    // to list, if their ending is .sep.
-    // Otherwise return null.
+    // to list, if their ending is .sep. Otherwise return null.
     if (isReadable()) {
       if (DIR.exists()) {
         // Saves filenames ending on .sep temporary.
@@ -162,17 +167,14 @@ public class MapFileHandler {
             files.add(file);
           }
         }
-
         String[] arrFiles = new String[files.size()];
 
         for (int i = 0; i < arrFiles.length; i++) {
           arrFiles[i] = files.get(i);
         }
-
         // Convert List to String array and return it.
         return arrFiles;
       } else {
-        DIR.mkdirs();
         return new String[0];
       }
     } else {

@@ -12,50 +12,36 @@ public enum Orientation {
 	 * Orientation along initial defined 'up' direction.
 	 * @return 
 	 */
-	UP(0),
+	UP,
 
 	/**
 	 * Orientation 180 degree turned.
 	 */
-	DOWN(1),
+	DOWN,
 
 	/**
 	 * Orientation 90 degree left.
 	 */
-	LEFT(2),
+	LEFT,
 
 	/**
 	 * Orientation 90 degree right.
 	 */
-	RIGHT(3),
+	RIGHT,
 
 	/**
 	 * Orientation is unknown.
 	 */
-	UNKNOWN(4);
-
-	/**
-	 * The figure for the orientation.
-	 */
-	private int num;
+	UNKNOWN;
 	
-	/**
-	 * A private constructor to realize figures within Orientation.
-	 * 
-	 * @param num The figure.
-	 */
-	private Orientation(int num) {
-		this.num = num;
+	public static Orientation getTurnedOrientation(int turn, Orientation ori) {
+	  if (ori == UNKNOWN) {
+	    return UNKNOWN;
+	  } else {
+	    int newOriOrdinal = (ori.ordinal() + (turn % 4) + 4) % 4;
+	    return Orientation.values()[newOriOrdinal];
+	  }
 	}
-	
-	/**
-	 * Returns the number for the corresponding enum-object.
-	 * 
-	 * @return The number.
-	 */
-	public int getNum() {
-		return num;
-	}	
 	
 	/**
 	 * The method adds a orientation of the robot and a desired direction to

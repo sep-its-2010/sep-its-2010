@@ -30,12 +30,12 @@ public class Simulator {
   /**
    * The loaded map within the simulator.
    */
-  private GridMap map;
+  private final GridMap map;
 
   /**
    * Saves the request messages of the VirtualPucks.
    */
-  private Queue<IRequest> messageQueue;
+  private final Queue<IRequest> messageQueue;
 
   /**
    * Executes request handling.
@@ -43,14 +43,9 @@ public class Simulator {
   private Timer timer;
 
   /**
-   * The initial positions of the robots.
+   * The status of the robots.
    */
-  private Map<UUID, int[]> initialPositions;
-  
-  /**
-   * The positions of the robots.
-   */
-  private Map<UUID, int[]> positions;
+  private Map<UUID, SimRobotStatus> robotStates;
 
   /**
    * Indicates whether simulator has been stopped and must be reseted.
@@ -71,27 +66,41 @@ public class Simulator {
    * Constructor requiring a map to explore and the initial positions of the
    * robots.
    */
-  public Simulator(GridMap map, Map<UUID, int[]> initialPositions) {
+  public Simulator(GridMap exMap, Map<UUID, int[]> initialPositions,
+      Map<UUID, Orientation> initialOrientations) {
 
     // Check, if map or inital positions equal null.
     // If not, initialize simulator. Otherwise throw exception.
-    if ((map != null) && (initialPositions != null)) {
-      this.map = map;
-      this.initialPositions = initialPositions;
+    if ((exMap != null) && (initialPositions != null)) {
+      map = exMap;
       messageQueue = new ConcurrentLinkedQueue<IRequest>();
       outputBuffer = new TreeMap<UUID, byte[]>();
-      positions = new TreeMap<UUID, int[]>();
+      robotStates = new TreeMap<UUID, SimRobotStatus>();
       firstHandler = HandlerFactory.getSimMsgChain(this);
 
       // Simulator needs as many output buffers as initial positions.
       Set<UUID> ids = initialPositions.keySet();
-      
-      // Add new output buffer for each initial position. If one of the ids
-      // equals null, throw exception.
+
+      // Add new output buffer and robot state for each initial position.
+      // If one of the ids equals null, throw exception.
       for (UUID id : ids) {
         if (id != null) {
           outputBuffer.put(id, new byte[0]);
-          positions.put(id, initialPositions.get(id).clone());
+          int[] pos = initialPositions.get(id);
+
+          // Check, if initial position is invalid.
+          if ((pos.length != 2) || (map.getNode(pos[0], pos[1]) == null)) {
+            throw new IllegalArgumentException(
+                "Illegal initial position passed");
+          }
+          Orientation or = initialOrientations.get(id);
+
+          // Check, if initial orientation is invalid.
+          if (or == null) {
+            throw new IllegalArgumentException(
+                "Illegal initial orientation passed");
+          }
+          robotStates.put(id, new SimRobotStatus(pos, or));
         } else {
           throw new IllegalStateException("UUID equals null");
         }
@@ -110,6 +119,112 @@ public class Simulator {
   public void addRequest(IRequest request) {
     messageQueue.offer(request);
   }
+  
+  /**
+   * Resets a robot to its initial state (position + orientation).
+   * 
+   * @param id The id of the robot to reset.
+   */
+  public void resetRobotState(UUID id) {
+    if (robotStates.containsKey(id)) {
+      robotStates.get(id).reset();
+    } else {
+      throw new IllegalStateException("Asked to reset an unknown id");
+    }
+  }
+
+  /**
+   * Returns the type of node at a certain position
+   * 
+   * @param position
+   *          The position where the type of node is requested.
+   * @return The type of node at position.
+   */
+  public NodeType getNodeType(int[] position) {
+    if (position == null) {
+      throw new IllegalStateException("Invalid position");
+    } else {
+      GraphNode node = map.getNode(position[0], position[1]);
+
+      // If node equals null, then invalid position has been passed.
+      if (node != null) {
+        return node.getNodeType();
+      } else {
+        throw new IllegalStateException(
+            "Asked for type of not at invalid position");
+      }
+    }
+  }
+
+  /**
+   * Returns the current position of a robot.
+   * 
+   * @param id
+   *          The id of the robot whose position is requested.
+   * @return The requested position.
+   */
+  public int[] getPosition(UUID id) {
+    if (robotStates.containsKey(id)) {
+      return robotStates.get(id).getPosition();
+    } else {
+      throw new IllegalStateException("Asked for position of unknown id");
+    }
+  }
+
+  /**
+   * Sets the position of a robot.
+   * 
+   * @param id
+   *          The id of the robot whose position is to set.
+   * @param newPosition
+   *          The new position of the robot.
+   */
+  public void setPosition(UUID id, int[] newPosition) {
+    if (robotStates.containsKey(id)) {
+      robotStates.get(id).setPosition(newPosition);
+    } else {
+      throw new IllegalStateException("Asked to set position of unknown id");
+    }
+  }
+
+  /**
+   * Returns the current orientation of a robot.
+   * 
+   * @param id
+   *          The id of the robot whose orientation is requested.
+   * @return The requested orientation.
+   */
+  public Orientation getOrientation(UUID id) {
+    if (robotStates.containsKey(id)) {
+      return robotStates.get(id).getOrientation();
+    } else {
+      throw new IllegalStateException("Asked for orientation of unknown id");
+    }
+  }
+
+  /**
+   * Sets the orientation of a robot.
+   * 
+   * @param id
+   *          The id of the robot whose orientation is to set.
+   * @param newOrientation
+   *          The new orientation of the robot.
+   */
+  public void setOrientation(UUID id, Orientation newOrientation) {
+    if (robotStates.containsKey(id)) {
+      robotStates.get(id).setOrientation(newOrientation);
+    } else {
+      throw new IllegalStateException("Asked to set orientation of unknown id");
+    }
+  }
+  
+  public int getSystemUpTime(UUID id) {
+    if (robotStates.containsKey(id)) {
+      return robotStates.get(id).getSystemUpTime();
+    } else {
+      throw new IllegalStateException("Asked for system up time of unknown id");
+    }
+  }
 
   /**
    * Returns the output buffer for a certain UUID.
@@ -121,21 +236,33 @@ public class Simulator {
    */
   public byte[] readBuffer(UUID id) {
     if (outputBuffer.containsKey(id)) {
-      return outputBuffer.get(id);
+      byte[] msg = outputBuffer.get(id);
+      outputBuffer.put(id, new byte[0]);
+      return msg;
     } else {
       throw new IllegalStateException("Unknown id asked to read output buffer");
     }
   }
-  
-  public int[] getPosition(UUID id) {
-    return null;
-  }
-  
+
+  /**
+   * Writes a message of 32 bytes on the output buffer associated with the id.
+   * If there is no output buffer for id or message length is not 32 bytes an
+   * exception is thrown.
+   * 
+   * @param id
+   *          The id to whose output buffer the message should be written.
+   * @param msg
+   *          The message to write on the output buffer.
+   */
   public void writeBuffer(UUID id, byte[] msg) {
     // Check, if there is an output buffer for id and if length of message
     // equals 32 byte. It not, throw exception.
-    if (outputBuffer.containsKey(id) && (msg.length == 32)) {
-      outputBuffer.put(id, msg);
+    if (outputBuffer.containsKey(id)) {
+      if (msg.length == 32) {
+        outputBuffer.put(id, msg);
+      } else {
+        throw new IllegalArgumentException("Message length is not equal to 32");
+      }
     } else {
       throw new IllegalStateException("Unknown id asked to write output buffer");
     }
@@ -193,18 +320,18 @@ public class Simulator {
   /**
    * Resets the simulator.
    * 
-   * Resets the request message queue and the output buffer.
+   * Resets the request message queue, the output buffer and the robot states.
    */
   public void reset() {
     // Reset message queue
-    messageQueue = new ConcurrentLinkedQueue<IRequest>();
-
-    // Reset output buffers by setting arrays of length zero.
+    messageQueue.clear();
     Set<UUID> ids = outputBuffer.keySet();
 
+    // Reset output buffers by setting arrays of length zero and reset robot
+    // states.
     for (UUID id : ids) {
       outputBuffer.put(id, new byte[0]);
-      positions.put(id, initialPositions.get(id).clone());
+      robotStates.get(id).reset();
     }
   }
 

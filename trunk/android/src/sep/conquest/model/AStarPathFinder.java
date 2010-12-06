@@ -158,13 +158,13 @@ public class AStarPathFinder implements IPathFinder {
 
 		GraphNode[] neighbours = new GraphNode[4];
 
-		neighbours[Orientation.RIGHT.getNum()] = map.getNode(currentNode
+		neighbours[Orientation.RIGHT.ordinal()] = map.getNode(currentNode
 				.getNode().getXValue() + 1, currentNode.getNode().getYValue());
-		neighbours[Orientation.LEFT.getNum()] = map.getNode(currentNode
+		neighbours[Orientation.LEFT.ordinal()] = map.getNode(currentNode
 				.getNode().getXValue() - 1, currentNode.getNode().getYValue());
-		neighbours[Orientation.UP.getNum()] = map.getNode(currentNode.getNode()
+		neighbours[Orientation.UP.ordinal()] = map.getNode(currentNode.getNode()
 				.getXValue(), currentNode.getNode().getYValue() + 1);
-		neighbours[Orientation.DOWN.getNum()] = map.getNode(currentNode
+		neighbours[Orientation.DOWN.ordinal()] = map.getNode(currentNode
 				.getNode().getXValue(), currentNode.getNode().getYValue() - 1);
 
 		return neighbours;

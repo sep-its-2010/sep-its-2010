@@ -3,17 +3,17 @@ package sep.conquest.model.handler;
 import java.util.UUID;
 
 import sep.conquest.model.IRequest;
+import sep.conquest.model.NodeType;
 import sep.conquest.model.Puck;
 import sep.conquest.model.Simulator;
 import sep.conquest.model.requests.MessageType;
 
 /**
- * Handles speed request messages that are sent to the simulator.
+ * Handles status request messages that are sent to the simulator.
  * 
- * As simulation does not support different speeds for each robot, Handler just
- * writes on ok message to the corresponding output buffer of the simulator.
+ * Returns the complete current state of the robot.
  * 
- * @author Andreas Poxrucker (Florian Lorenz)
+ * @author Andreas Poxrucker
  * 
  */
 public class SimStatusHandler extends Handler {
@@ -24,10 +24,10 @@ public class SimStatusHandler extends Handler {
   /**
    * Constructor.
    * 
-   * Sets reference on previous Handler (if used in a chain) and on simulator.
+   * Sets reference on next Handler (if used in a chain) and on simulator.
    * 
-   * @param prev
-   *          The previous Handler in chain.
+   * @param next
+   *          The next Handler in chain.
    * @param simulator
    *          The simulator that has received the message and has to respond.
    */
@@ -37,31 +37,42 @@ public class SimStatusHandler extends Handler {
   }
 
   /**
-   * Handles speed request messages. As different speed levels are not supported
-   * in the simulator, Handler just writes ok message on the corresponding
-   * output buffer of the simulator.
+   * Handles status request messages.
    */
   @Override
   public boolean handleRequest(IRequest request) {
 
     // Check if Handler is responsible for handling status request messages.
-    // In this case, write ok message to output buffer of simulator.
+    // In this case, write status message to output buffer of simulator.
     // Otherwise call next handler in chain or return false, if there is no next
     // handler.
     if (request.getKind().equals(MessageType.REQUEST_STATUS)) {
+      // The sender of the message.
       UUID sender = request.getSender();
+      
+      // Get current node type.
+      NodeType node = sim.getNodeType(sim.getPosition(sender));
+      
+      // Compute system up time.
+      int time = sim.getSystemUpTime(sender);     
+      
+      // Write message type "status" to first two bytes.
       byte[] response = new byte[32];
-      short typeCode = Puck.REQ_STATUS;
+      response[0] = (byte) (Puck.RES_STATUS & 0xFF);
+      response[1] = (byte) ((Puck.RES_STATUS >> 8) & 0xFF);
       
+      // Write system up time to next four bytes.
+      for (int i = 0; i < 4; i++) {
+        response[2 + i] = (byte) (time & 0xFF);
+        time = time >> 8;
+      }
       
-      
-
+      // Write node type to 17th byte.
+      response[17] = (byte) node.ordinal();
       sim.writeBuffer(sender, response);
       return true;
-    } else if (hasNext()) {
-      return getNext().handleRequest(request);
     } else {
-      return false;
+      return super.handleRequest(request);
     }
   }
 }

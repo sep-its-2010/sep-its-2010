@@ -77,62 +77,62 @@ public enum MessageType {
 	/**
 	 * Reset e-puck logic.
 	 */
-	REQUEST_RESET(0x01FF),
+	REQUEST_RESET((short)0x01FF),
 	
 	/**
 	 * Get e-puck status.
 	 */
-	REQUEST_STATUS(0x02FF),
+	REQUEST_STATUS((short)0x02FF),
 	
 	/**
 	 * Turn e-puck by the specified degrees.
 	 */
-	REQUEST_TURN(0x03FF),
+	REQUEST_TURN((short)0x03FF),
 	
 	/**
 	 * Move e-puck in view direction until a node is found.
 	 */
-	REQUEST_MOVE(0x04FF),
+	REQUEST_MOVE((short)0x04FF),
 	
 	/**
 	 * Change the e-puck speed.
 	 */
-	REQUEST_SET_SPEED(0x05FF),
+	REQUEST_SET_SPEED((short)0x05FF),
 	
 	/**
 	 * Set the specified LEDs.
 	 */
-	REQUEST_SET_LED(0x06FF),
+	REQUEST_SET_LED((short)0x06FF),
 	
 	/**
 	 * Request acknowledged.
 	 */
-	RESPONSE_OK(0x81FF),
+	RESPONSE_OK((short)0x81FF),
 	
 	/**
 	 * Current e-puck status.
 	 */
-	RESPONSE_STATUS(0x82FF),
+	RESPONSE_STATUS((short)0x82FF),
 
 	/**
 	 * e-puck has hit a node.
 	 */
-	RESPONSE_HIT_NODE(0x83FF),
+	RESPONSE_HIT_NODE((short)0x83FF),
 	
 	/**
 	 * e-puck has detected a collision while moving.
 	 */
-	RESPONSE_COLLISION(0x84FF),
+	RESPONSE_COLLISION((short)0x84FF),
 	
 	/**
 	 * e-puck has detected an abyss while moving.
 	 */
-	RESPONSE_ABYSS(0x85FF);
+	RESPONSE_ABYSS((short)0x85FF);
 
 	/**
 	 * The typecode.
 	 */
-	private final int typecode;
+	private final short typecode;
 	
 	/**
 	 * The empty constructor for messages without type-codes.
@@ -146,7 +146,7 @@ public enum MessageType {
 	 * 
 	 * @param typecode The typecode.
 	 */
-	private MessageType(int typecode) {
+	private MessageType(short typecode) {
 		this.typecode = typecode;		
 	}
 	
@@ -155,7 +155,7 @@ public enum MessageType {
 	 * 
 	 * @return The typecode.
 	 */
-	public int getTypeCode() {
+	public short getTypeCode() {
 		return typecode;
 	}    
     

@@ -9,64 +9,63 @@ import sep.conquest.model.IRequest;
  */
 public abstract class Handler {
 
-	/**
-	 * Reference on next Handler in chain.
-	 */
-	private Handler next;
+  /**
+   * Reference on next Handler in chain.
+   */
+  private Handler next;
 
-	/**
-	 * The constructor takes the next handler (if exists) and builds the
-	 * handler-chain.
-	 * 
-	 * @param next
-	 */
-	public Handler(Handler nextHandler) {
-    next = nextHandler;		
-	}
+  /**
+   * The constructor takes the next handler (if exists) and builds the
+   * handler-chain.
+   * 
+   * @param next
+   */
+  public Handler(Handler nextHandler) {
+    next = nextHandler;
+  }
 
-	/**
-	 * Returns reference on next Handler in chain.
-	 * 
-	 * @return Next Handler in chain or null, if Handler has no reference on
-	 *         next Handler.
-	 */
-	public Handler getNext() {
-		return next;
-	}
+  /**
+   * Returns reference on next Handler in chain.
+   * 
+   * @return Next Handler in chain or null, if Handler has no reference on next
+   *         Handler.
+   */
+  public Handler getNext() {
+    return next;
+  }
 
-	/**
-	 * Sets reference of this Handler to nextHandler
-	 * 
-	 * @param nextHandler
-	 *            Reference on next Handler in chain
-	 */
-	public void setNext(Handler nextHandler) {
-		next = nextHandler;
-	}
+  /**
+   * Sets reference of this Handler to nextHandler
+   * 
+   * @param nextHandler
+   *          Reference on next Handler in chain
+   */
+  public void setNext(Handler nextHandler) {
+    next = nextHandler;
+  }
 
-	/**
-	 * Returns whether Handler has successor.
-	 * 
-	 * @return True, if Handler has successor, false otherwise.
-	 */
-	public boolean hasNext() {
-		return next == null;
-	}
+  /**
+   * Returns whether Handler has successor.
+   * 
+   * @return True, if Handler has successor, false otherwise.
+   */
+  public boolean hasNext() {
+    return next == null;
+  }
 
-	/**
-	 * Handles a request message if responsible and returns true. Otherwise
-	 * passes request to next Handler or returns false, if there is no next
-	 * Handler.
-	 * 
-	 * @param request
-	 *            The request that has to be handled.
-	 * 
-	 * @return True, if Handler has handled message, false otherwise.
-	 */
-	public boolean handleRequest(IRequest request) {
-		if (hasNext())
-			return getNext().handleRequest(request);
-		else
-			return false;
-	}
+  /**
+   * Handles a request message if responsible and returns true. Otherwise passes
+   * request to next Handler or returns false, if there is no next Handler.
+   * 
+   * @param request
+   *          The request that has to be handled.
+   * 
+   * @return True, if Handler has handled message, false otherwise.
+   */
+  public boolean handleRequest(IRequest request) {
+    if (hasNext())
+      return getNext().handleRequest(request);
+    else
+      return false;
+  }
 }

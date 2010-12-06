@@ -3,6 +3,7 @@ package sep.conquest.model.handler;
 import java.util.UUID;
 
 import sep.conquest.model.IRequest;
+import sep.conquest.model.Puck;
 import sep.conquest.model.Simulator;
 import sep.conquest.model.requests.MessageType;
 
@@ -19,12 +20,12 @@ import sep.conquest.model.requests.MessageType;
 public class SimLEDHandler extends Handler {
 
   // Reference on simulator that received the message.
-  private Simulator sim;
+  private final Simulator sim;
 
   /**
    * Constructor.
    * 
-   * Sets reference on previous Handler (if used in a chain) and on simulator.
+   * Sets reference on next Handler (if used in a chain) and on simulator.
    * 
    * @param next
    *          The next Handler in chain.
@@ -51,15 +52,15 @@ public class SimLEDHandler extends Handler {
     if (request.getKind().equals(MessageType.REQUEST_SET_LED)) {
       UUID sender = request.getSender();
       byte[] response = new byte[32];
-
-      short typeCode;
-
+      
+      // Write message type "ok" to first two bytes and write whole message 
+      // to the output buffer.
+      response[0] = (byte) (Puck.RES_OK & 0xFF);
+      response[1] = (byte) ((Puck.RES_OK >> 8) & 0xFF);
       sim.writeBuffer(sender, response);
       return true;
-    } else if (hasNext()) {
-      return getNext().handleRequest(request);
     } else {
-      return false;
+      return super.handleRequest(request);
     }
   }
 }
