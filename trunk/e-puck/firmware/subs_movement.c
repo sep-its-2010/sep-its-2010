@@ -5,9 +5,13 @@
 
 #include "subs_movement.h"
 
-com_EMessageType_t podCurrentMessage; ///< Specifies the last smartphone-message-type.
+com_EMessageType_t podCurrentMessageType; ///< Specifies the last smartphone-message-type.
 int16_t i16CurrentLineSpeed = 600; ///< Stores the current movement-speed of the robot. Default: 600 steps per second.
 int16_t i16CurrentAngularSpeed = 0; ///< Stores angular-speed for turning in left or right direction.
+
+static bool cbHandleRequestMove( IN const com_SMessage_t* const _lppodMessage);
+static bool cbHandleRequestTurn( IN const com_SMessage_t* const _lppodMessage);
+static bool cbHandleRequestSetSpeed( IN const com_SMessage_t* const _lppodMessage);
 
 /*!
  * \brief
@@ -21,27 +25,25 @@ int16_t i16CurrentAngularSpeed = 0; ///< Stores angular-speed for turning in lef
  */
 bool subs_movement_run( void) {
 	bool blMovementChanged = false;
+	com_SMessage_t podOkMessage = { COM_MESSAGE_TYPE__RESPONSE_OK, {0}};
 
-	switch( podCurrentMessage) {
+	switch( podCurrentMessageType) {
 		case COM_MESSAGE_TYPE__REQUEST_TURN: {
 			hal_motors_setSpeed( i16CurrentLineSpeed, i16CurrentAngularSpeed);
 			// bis Liniensensoren "x-mal" ausgeschlagen haben
 			blMovementChanged = true;
-			com_SMessage_t podOkMessage = { COM_MESSAGE_TYPE__RESPONSE_OK, {0}};
-			com_send(&podOkMessage);
+			com_send( &podOkMessage);
 			break;
 		}
 		case COM_MESSAGE_TYPE__REQUEST_MOVE: {
 			hal_motors_setSpeed( i16CurrentLineSpeed, i16CurrentAngularSpeed);
 			blMovementChanged = true;
-			com_SMessage_t podOkMessage = { COM_MESSAGE_TYPE__RESPONSE_OK, {0}};
-			com_send(&podOkMessage);
+			com_send( &podOkMessage);
 			break;
 		}
 		case COM_MESSAGE_TYPE__REQUEST_SET_SPEED: {
 			blMovementChanged = true;
-			com_SMessage_t podOkMessage = { COM_MESSAGE_TYPE__RESPONSE_OK, {0}};
-			com_send(&podOkMessage);
+			com_send( &podOkMessage);
 			break;
 		}
 		default: {
@@ -69,17 +71,16 @@ bool subs_movement_run( void) {
  * Handler-functions have to be registered during the reset function.
  *
  * \see
- * cbHandleRequestMove | cbHandleRequestSetSpeed | cbHandleRequestSetLED
+ * cbHandleRequestMove | cbHandleRequestSetSpeed
  */
-bool subs_movement_cbHandleRequestTurn(
-	IN const com_SMessage_t* _lppodMessage
+bool cbHandleRequestTurn(
+	IN const com_SMessage_t* const _lppodMessage
 	) {
-
 	bool blHandledMessage = false;
 	
 	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_TURN) {
-		podCurrentMessage = COM_MESSAGE_TYPE__REQUEST_TURN;
-		int8_t i8NumberOfTurns = _lppodMessage->aui8Data[0];
+		podCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_TURN;
+		//int8_t i8NumberOfTurns = _lppodMessage->aui8Data[0];
 		//i16CurrentAngularSpeed = ;
 		i16CurrentLineSpeed = 0;
 		blHandledMessage = true;
@@ -104,15 +105,15 @@ bool subs_movement_cbHandleRequestTurn(
  * Handler-functions have to be registered during the reset function.
  *
  * \see
- * cbHandleRequestTurn | cbHandleRequestSetSpeed | cbHandleRequestSetLED
+ * cbHandleRequestTurn | cbHandleRequestSetSpeed
  */
-bool subs_movement_cbHandleRequestMove(
-	IN const com_SMessage_t* _lppodMessage
+bool cbHandleRequestMove(
+	IN const com_SMessage_t* const _lppodMessage
 	) {
 	bool blHandledMessage = false;
 
 	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_MOVE) {
-		podCurrentMessage = COM_MESSAGE_TYPE__REQUEST_MOVE;
+		podCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_MOVE;
 		blHandledMessage = true;
 	}
 	return blHandledMessage;
@@ -137,12 +138,13 @@ bool subs_movement_cbHandleRequestMove(
  * \see
  * cbHandleRequestMove | cbHandleRequestTurn | cbHandleRequestSetLED
  */
-bool subs_movement_cbHandleRequestSetSpeed(
-	IN com_SMessage_t* const _lppodMessage
+bool cbHandleRequestSetSpeed(
+	IN const com_SMessage_t* const _lppodMessage
 	) {
 	bool blHandledMessage = false;
 
 	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_SET_SPEED) {
+		podCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_SET_SPEED;
 		i16CurrentLineSpeed = _lppodMessage->aui8Data[0] * 10;
 		i16CurrentAngularSpeed = 0;
 		blHandledMessage = true;
@@ -188,8 +190,8 @@ bool subs_movement_cbHandleRequestSetSpeed(
 void subs_movement_reset( void) {
 	i16CurrentLineSpeed = 600;
 	i16CurrentAngularSpeed = 0;
-	podCurrentMessage = 0;
-	com_register( subs_movement_cbHandleRequestTurn);
-	com_register( subs_movement_cbHandleRequestMove);
-	com_register( subs_movement_cbHandleRequestSetSpeed);
+	podCurrentMessageType = 0;
+	com_register( cbHandleRequestTurn);
+	com_register( cbHandleRequestMove);
+	com_register( cbHandleRequestSetSpeed);
 }
