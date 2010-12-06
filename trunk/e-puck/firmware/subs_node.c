@@ -12,8 +12,19 @@ enum {
 	NODE_DETECTION__REQUIRED_MEASUREMENTS = 3, ///< Specifies the number of measurements, which have to provide data above a certain threshold for node-detection.
 };
 
-uint8_t ui8NodeDetectionCounter; ///< Number of ground-sensor-measurements in a row, which provided data below a certain threshold.
-sen_line_SData_t podSensorData; ///< Holds data of the three ground-sensors.
+enum {
+	NODE_TYPE__TOP_LEFT_EDGE = 0,
+	NODE_TYPE__TOP_RIGHT_EDGE = 1,
+	NODE_TYPE__TOP_T = 2,
+	NODE_TYPE__RIGHT_T = 3,
+	NODE_TYPE__LEFT_T = 4,
+	NODE_TYPE__CROSS = 5
+};
+
+uint8_t ui8NodeDetectionCounter = 0; ///< Number of ground-sensor-measurements in a row, which provided data below a certain threshold.
+sen_line_SData_t podSensorData = {{0}}; ///< Holds data of the three ground-sensors.
+uint16_t ui16AvgLeft = 0; ///< Stores values of the left ground-sensor, which are several times below the threshold for line-detection.
+uint16_t ui16AvgRight = 0; ///< Stores values of the right ground-sensor, which are several times below the threshold for line-detection.
 
 /*!
  * \brief
@@ -29,45 +40,54 @@ sen_line_SData_t podSensorData; ///< Holds data of the three ground-sensors.
  */
 bool subs_node_run( void) {
 	bool nodeHit = false;
-	uint16_t ui16AvgLeft = 0;
-	uint16_t ui16AvgRight = 0;
+	
 	sen_line_read( &podSensorData);
 
-	// node detection
- 	if ((2 * (podSensorData.aui16Data[0]) < 1) || // 1 wird ersetzt durch EEPROM-Wert
- 		(2 * (podSensorData.aui16Data[2]) < 1)) { // 1 wird ersetzt durch EEPROM_Wert		
+	// node detection-measurement
+	// TODO sollte man diese Multiplikation mit 2 in einer Konstante ablegen und besser dokumentieren?
+ 	if ((2 * (podSensorData.aui16Data[0]) < 1) || // 1 wird ersetzt durch EEPROM-Kalibrierwert für linken Sensor über Linie
+ 		(2 * (podSensorData.aui16Data[2]) < 1)) { // 1 wird ersetzt durch EEPROM-Kalibrierwert für rechten Sensor über Linie		
+		
 		if (ui8NodeDetectionCounter == 0) {
 			hal_motors_setSteps(0);
+			ui16AvgLeft = 0;
+			ui16AvgRight = 0;
 		}
 		ui16AvgLeft += podSensorData.aui16Data[0];
 		ui16AvgRight += podSensorData.aui16Data[2];
 		ui8NodeDetectionCounter += 1;
-	}
-
-	// robot is above a node
+	}	
 	bool hasMoved = (hal_motors_getStepsLeft() >= 240) && (hal_motors_getStepsRight() >= 240);
 	
+	// robot is above a node
 	if( (ui8NodeDetectionCounter >= NODE_DETECTION__REQUIRED_MEASUREMENTS) && hasMoved) {
 		ui16AvgLeft = ui16AvgLeft / ui8NodeDetectionCounter;
 		ui16AvgRight = ui16AvgRight / ui8NodeDetectionCounter;
 		nodeHit = true;
 
-		// visualizes the shape of the recently detected node
-		if( (ui16AvgLeft > 0) && (ui16AvgRight > 0)) {
-			if (podSensorData.aui16Data[1] < 1) { // 1 = EEPROMwert
-				hal_led_set(HAL_LED_PIN_BV__0);
-			}
-			if (ui16AvgLeft < 1) { // 1 = EEPROMwert
-				hal_led_set(HAL_LED_PIN_BV__6);
-			}
-			if (ui16AvgRight < 1) { // 1 = EEPROMwert
-				hal_led_set(HAL_LED_PIN_BV__2);
-			}
+		// analyze the shape of the node
+		uint8_t ui8NodeType;
+		
+		if( (ui16AvgLeft < 1) &&( ui16AvgRight < 1) && (2 * podSensorData.aui16Data[1] < 1) ) { // 1 wird ersetzt durch den jeweiligen EEPROM-Kalibrierwert
+			ui8NodeType = NODE_TYPE__CROSS;
+		} else if( (ui16AvgLeft < 1) &&( ui16AvgRight < 1)) {
+			ui8NodeType = NODE_TYPE__TOP_T;
+		} else if( (ui16AvgLeft < 1) && (2 * podSensorData.aui16Data[1] < 1)) {
+			ui8NodeType = NODE_TYPE__RIGHT_T;
+		} else if( (ui16AvgRight < 1) && (2 * podSensorData.aui16Data[1] < 1)) {
+			ui8NodeType = NODE_TYPE__LEFT_T;
+		} else if( ui16AvgLeft < 1) {
+			ui8NodeType = NODE_TYPE__TOP_RIGHT_EDGE;
+		} else if( ui16AvgRight < 1) {
+			ui8NodeType = NODE_TYPE__TOP_LEFT_EDGE;
 		}
-
 		ui16AvgLeft = 0;
 		ui16AvgRight = 0;
-		hal_motors_setSpeed(0,0); // @TODO hier muss man eventuell noch ein bisschen fahren, so dass der e-puck genau über dem Knoten steht
+		hal_motors_setSpeed( 0, 0); // @TODO hier muss man eventuell noch ein bisschen fahren, so dass der e-puck genau über dem Knoten steht
+		hal_motors_setSteps( 0);
+		com_SMessage_t podHitNodeMessage = { COM_MESSAGE_TYPE__RESPONSE_HIT_NODE, {0}};
+		podHitNodeMessage.aui8Data[0] = ui8NodeType;
+		com_send( &podHitNodeMessage);
 	}
 	return nodeHit;
 }
@@ -80,5 +100,7 @@ bool subs_node_run( void) {
  */
 void subs_node_reset( void) {
 	ui8NodeDetectionCounter = 0;
+	ui16AvgLeft = 0;
+	ui16AvgRight = 0;
 	memset( podSensorData.aui16Data, 0, sizeof(podSensorData.aui16Data));
 }
