@@ -46,9 +46,14 @@ public final class DistanceBehaviour extends Behaviour {
     		i++;
     	}    	
     	
-    	PathNode[] path = astar.find(robot, status.getPosition(), destinations);
+    	PathNode[] paths = astar.find(robot, status.getPosition(), destinations);
     	
-    	
+    	for (PathNode path: paths) {
+    		int[] pos = new int[2];
+    		pos[0] = path.getNode().getXValue();
+    		pos[1] = path.getNode().getYValue();
+    		map.put(pos, path.getCosts());
+    	}
     	
         return super.execute(map, robot);
     }

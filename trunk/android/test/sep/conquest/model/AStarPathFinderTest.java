@@ -37,11 +37,15 @@ public class AStarPathFinderTest {
 		TreeMap<UUID, int[]> initPositions = new TreeMap<UUID, int[]>();
 		initPositions.put(id_r1, pos_r1);
 		initPositions.put(id_r2, pos_r2);		
-		initPositions.put(id_r3, pos_r3);		
+		initPositions.put(id_r3, pos_r3);
+		TreeMap<UUID, Orientation> initOrientations = new TreeMap<UUID, Orientation>();
+		initOrientations.put(id_r1, Orientation.UP);
+		initOrientations.put(id_r2, Orientation.UP);
+		initOrientations.put(id_r3, Orientation.UP);
 		RobotStatus status = new RobotStatus();
 		status.setPosition(pos_r1);
 		status.setOrientation(Orientation.RIGHT);
-		robot = new VirtualPuck(id_r1, new Simulator(map, initPositions));
+		robot = new VirtualPuck(id_r1, new Simulator(map, initPositions, initOrientations));
 		robot.getRobotStatus().put(id_r1, status);
 		RobotStatus status_r2 = new RobotStatus();		
 		status_r2.setPosition(pos_r2);
@@ -106,13 +110,13 @@ public class AStarPathFinderTest {
 		MapNode node = robot.getMap().getNode(0, 0);		
 		assertNotNull("Start node wasn't found.", node);
 		
-		MapNode dest1 = robot.getMap().getNode(6, -3);		
+		MapNode dest1 = robot.getMap().getNode(6, 3);		
 		assertNotNull("Destination-1 node wasn't found.", dest1);
 
-		MapNode dest2 = robot.getMap().getNode(5, -5);		
+		MapNode dest2 = robot.getMap().getNode(5, 5);		
 		assertNotNull("Destination-2 node wasn't found.", dest2);
 		
-		MapNode dest3 = robot.getMap().getNode(2, -5);		
+		MapNode dest3 = robot.getMap().getNode(2, 5);		
 		assertNotNull("Destination-3 node wasn't found.", dest3);
 		
 		MapNode[] destinations = {dest1, dest2, dest3};
