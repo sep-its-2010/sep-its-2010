@@ -153,6 +153,10 @@ public class GridMap {
 	 * 
 	 * @return The attribute mapBorders which contains the smallest and biggest
 	 *         coordinates.
+	 *         Position 0: MinXValue
+	 *         Position 1: MinYValue
+	 *         Position 2: MaxXValue
+	 *         Position 3: MaxYValue
 	 */
 	public int[] getMapBorders() {
 		int[] mapBordersToSend = new int[4];
