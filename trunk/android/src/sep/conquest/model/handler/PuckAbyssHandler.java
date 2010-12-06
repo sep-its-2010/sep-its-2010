@@ -23,8 +23,8 @@ public class PuckAbyssHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public PuckAbyssHandler(Handler prev, LogicThread exec) {
-    super(prev);
+  public PuckAbyssHandler(Handler next, LogicThread exec) {
+    super(next);
     executor = exec;
   }
   

@@ -22,8 +22,8 @@ public class HelloRequestHandler extends Handler {
 	/**
 	 * Constructor calling constructor of super class.
 	 */
-	public HelloRequestHandler(Handler prev, LogicThread exec) {
-		super(prev);
+	public HelloRequestHandler(Handler next, LogicThread exec) {
+		super(next);
 		thread = exec;
 	}
 

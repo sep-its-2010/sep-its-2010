@@ -21,8 +21,8 @@ public class DriveRequestHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public DriveRequestHandler(Handler prev, LogicThread exec) {
-    super(prev);
+  public DriveRequestHandler(Handler next, LogicThread exec) {
+    super(next);
     executor = exec;
   }
   

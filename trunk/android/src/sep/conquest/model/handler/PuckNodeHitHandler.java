@@ -24,8 +24,8 @@ public class PuckNodeHitHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public PuckNodeHitHandler(Handler prev, LogicThread exec) {
-    super(prev);
+  public PuckNodeHitHandler(Handler next, LogicThread exec) {
+    super(next);
     executor = exec;
   }
   

@@ -22,8 +22,8 @@ public class PuckStatusHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public PuckStatusHandler(Handler prev, LogicThread exec) {
-    super(prev);
+  public PuckStatusHandler(Handler next, LogicThread exec) {
+    super(next);
     executor = exec;
   }
   

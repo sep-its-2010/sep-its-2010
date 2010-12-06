@@ -41,7 +41,7 @@ public class HandlerFactory {
 	  Handler spdHndl = new SpeedRequestHandler(intHndl, executor);
 	  Handler statHndl = new StatusUpdateRequestHandler(spdHndl, executor);	
 	  
-    return failHndl;
+    return statHndl;
   }
   
   /**
@@ -56,8 +56,10 @@ public class HandlerFactory {
    * @return Reference on first handler of chain.
    */
   public static Handler getPuckBTChain(LogicThread executor) {	  
-	  Handler okHndl = new PuckOkHandler(null, executor);	  
-	  return okHndl;
+	  Handler okHndl = new PuckOkHandler(null, executor);
+	  Handler abyssHndl = new PuckAbyssHandler(okHndl, executor);
+	  
+	  return abyssHndl;
   }
   
   /**
@@ -80,11 +82,25 @@ public class HandlerFactory {
    * Returns chain of Handler objects that handle different kinds of 
    * Puck messages for the simulator.
    * 
-   * @param sim The simulator
-   * @return
+   * Handled types of messages:
+   * - SimResetHandler
+   * - SimLEDHandler
+   * - SimStatusHandler
+   * - SimSpeedHandler
+   * - SimTurnHandler
+   * - SimMoveHandler
+   * 
+   * @param sim The simulator that received the message.
+   * @return Reference on first Handler in chain.
    */
   public static Handler getSimMsgChain(Simulator sim) {
-    return null;
+    Handler resHndl = new SimResetHandler(null, sim);
+    Handler ledHndl = new SimLEDHandler(resHndl, sim);
+    Handler statHndl = new SimStatusHandler(ledHndl, sim);
+    Handler spdHndl = new SimSpeedHandler(statHndl, sim);
+    Handler turnHndl = new SimTurnHandler(spdHndl, sim);
+    Handler moveHndl = new SimMoveHandler(turnHndl, sim);
+    
+    return moveHndl;
   }
-  
 }

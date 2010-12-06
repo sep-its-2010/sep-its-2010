@@ -10,8 +10,8 @@ public class SimResetHandler extends Handler {
 
 private Simulator sim;
   
-  public SimResetHandler(Handler prev, Simulator simulator) {
-    super(prev);
+  public SimResetHandler(Handler next, Simulator simulator) {
+    super(next);
     sim = simulator;
   }
 
@@ -22,6 +22,8 @@ private Simulator sim;
       UUID sender = request.getSender();
       byte[] response = new byte[32];
       
+      
+      sim.writeBuffer(sender, response);
       return true;
     } else if (hasNext()) {
       return getNext().handleRequest(request);

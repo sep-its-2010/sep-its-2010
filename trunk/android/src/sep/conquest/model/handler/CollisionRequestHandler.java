@@ -21,8 +21,8 @@ public class CollisionRequestHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public CollisionRequestHandler(Handler prev, LogicThread exec) {
-    super(prev);
+  public CollisionRequestHandler(Handler next, LogicThread exec) {
+    super(next);
     lThread = exec;
     
   }

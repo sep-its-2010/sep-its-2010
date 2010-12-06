@@ -21,8 +21,8 @@ public class FailureRequestHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public FailureRequestHandler(Handler prev, LogicThread exec) {
-    super(prev);
+  public FailureRequestHandler(Handler next, LogicThread exec) {
+    super(next);
     executor = exec;
   }
   

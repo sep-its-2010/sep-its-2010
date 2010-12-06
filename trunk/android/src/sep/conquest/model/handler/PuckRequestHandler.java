@@ -20,8 +20,8 @@ public class PuckRequestHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public PuckRequestHandler(Handler prev, LogicThread exec) {
-    super(prev);
+  public PuckRequestHandler(Handler next, LogicThread exec) {
+    super(next);
     executor = exec;
   }
   

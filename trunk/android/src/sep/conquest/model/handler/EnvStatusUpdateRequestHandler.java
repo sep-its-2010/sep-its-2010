@@ -17,8 +17,8 @@ public class EnvStatusUpdateRequestHandler extends Handler {
 	/**
 	 * Constructor calling constructor of super class.
 	 */
-	public EnvStatusUpdateRequestHandler(Handler prev) {
-		super(prev);
+	public EnvStatusUpdateRequestHandler(Handler next) {
+		super(next);
 	}
 
 	/**

@@ -21,8 +21,8 @@ public class PuckCollisionHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public PuckCollisionHandler(Handler prev, LogicThread exec) {
-    super(prev);
+  public PuckCollisionHandler(Handler next, LogicThread exec) {
+    super(next);
     executor = exec;
   }
   

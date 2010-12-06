@@ -21,8 +21,8 @@ public class StatusUpdateRequestHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public StatusUpdateRequestHandler(Handler prev, LogicThread exec) {
-    super(prev);
+  public StatusUpdateRequestHandler(Handler next, LogicThread exec) {
+    super(next);
     executor = exec;
   }
   

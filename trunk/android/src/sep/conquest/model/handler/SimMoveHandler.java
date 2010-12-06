@@ -10,8 +10,8 @@ public class SimMoveHandler extends Handler {
 
   private Simulator sim;
   
-  public SimMoveHandler(Handler prev, Simulator simulator) {
-    super(prev);
+  public SimMoveHandler(Handler next, Simulator simulator) {
+    super(next);
     sim = simulator;
   }
 

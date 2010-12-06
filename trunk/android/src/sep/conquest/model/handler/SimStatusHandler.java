@@ -15,7 +15,7 @@ import sep.conquest.model.requests.MessageType;
  * @author Andreas Poxrucker
  * 
  */
-public class SimSpeedHandler extends Handler {
+public class SimStatusHandler extends Handler {
 
   // Reference on simulator that received the message.
   private Simulator sim;
@@ -25,12 +25,12 @@ public class SimSpeedHandler extends Handler {
    * 
    * Sets reference on previous Handler (if used in a chain) and on simulator.
    * 
-   * @param next
+   * @param prev
    *          The previous Handler in chain.
    * @param simulator
    *          The simulator that has received the message and has to respond.
    */
-  public SimSpeedHandler(Handler next, Simulator simulator) {
+  public SimStatusHandler(Handler next, Simulator simulator) {
     super(next);
     sim = simulator;
   }
@@ -47,11 +47,13 @@ public class SimSpeedHandler extends Handler {
     // In this case, write ok message to output buffer of simulator.
     // Otherwise call next handler in chain or return false, if there is no next
     // handler.
-    if (request.getKind().equals(MessageType.REQUEST_SET_SPEED)) {
+    if (request.getKind().equals(MessageType.REQUEST_STATUS)) {
       UUID sender = request.getSender();
       byte[] response = new byte[32];
-
-      short typeCode;
+      short typeCode = MessageType.REQUEST_STATUS.getTypeCode();
+      
+      
+      
 
       sim.writeBuffer(sender, response);
       return true;

@@ -20,8 +20,8 @@ public class ControlledRequestHandler extends Handler {
 	/**
 	 * Constructor calling constructor of super class.
 	 */
-	public ControlledRequestHandler(Handler prev, LogicThread exec) {
-		super(prev);
+	public ControlledRequestHandler(Handler next, LogicThread exec) {
+		super(next);
 		thread = exec;
 	}
 

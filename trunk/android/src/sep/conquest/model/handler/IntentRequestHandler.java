@@ -21,8 +21,8 @@ public class IntentRequestHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public IntentRequestHandler(Handler prev, LogicThread exec) {
-    super(prev);
+  public IntentRequestHandler(Handler next, LogicThread exec) {
+    super(next);
     executor = exec;
   }
   

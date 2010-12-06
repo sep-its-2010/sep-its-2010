@@ -21,8 +21,8 @@ public class SpeedRequestHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public SpeedRequestHandler(Handler prev, LogicThread exec) {
-    super(prev);
+  public SpeedRequestHandler(Handler next, LogicThread exec) {
+    super(next);
     executor = exec;
   }
   

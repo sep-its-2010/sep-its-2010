@@ -15,14 +15,13 @@ public abstract class Handler {
 	private Handler next;
 
 	/**
-	 * The constructor takes the previous handler (if exists) and builds the
+	 * The constructor takes the next handler (if exists) and builds the
 	 * handler-chain.
 	 * 
-	 * @param prev
+	 * @param next
 	 */
-	public Handler(Handler prev) {
-		if (prev != null)
-			prev.setNext(this);			
+	public Handler(Handler nextHandler) {
+    next = nextHandler;		
 	}
 
 	/**
