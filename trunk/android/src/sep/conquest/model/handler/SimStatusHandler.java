@@ -3,6 +3,7 @@ package sep.conquest.model.handler;
 import java.util.UUID;
 
 import sep.conquest.model.IRequest;
+import sep.conquest.model.Puck;
 import sep.conquest.model.Simulator;
 import sep.conquest.model.requests.MessageType;
 
@@ -12,7 +13,7 @@ import sep.conquest.model.requests.MessageType;
  * As simulation does not support different speeds for each robot, Handler just
  * writes on ok message to the corresponding output buffer of the simulator.
  * 
- * @author Andreas Poxrucker
+ * @author Andreas Poxrucker (Florian Lorenz)
  * 
  */
 public class SimStatusHandler extends Handler {
@@ -43,14 +44,14 @@ public class SimStatusHandler extends Handler {
   @Override
   public boolean handleRequest(IRequest request) {
 
-    // Check if Handler is responsible for handling speed request messages.
+    // Check if Handler is responsible for handling status request messages.
     // In this case, write ok message to output buffer of simulator.
     // Otherwise call next handler in chain or return false, if there is no next
     // handler.
     if (request.getKind().equals(MessageType.REQUEST_STATUS)) {
       UUID sender = request.getSender();
       byte[] response = new byte[32];
-      short typeCode = MessageType.REQUEST_STATUS.getTypeCode();
+      short typeCode = Puck.REQ_STATUS;
       
       
       
