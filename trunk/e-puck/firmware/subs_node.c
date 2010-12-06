@@ -21,7 +21,8 @@ enum {
 	NODE_TYPE__RIGHT_T = 5,
 	NODE_TYPE__BOTTOM_T = 6,
 	NODE_TYPE__LEFT_T = 7,
-	NODE_TYPE__CROSS = 8
+	NODE_TYPE__CROSS = 8,
+	NODE_TYPE__UNKNOWN = 9
 };
 
 uint8_t ui8NodeDetectionCounter = 0; ///< Number of ground-sensor-measurements in a row, which provided data below a certain threshold.
