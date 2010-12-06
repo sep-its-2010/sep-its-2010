@@ -30,4 +30,6 @@
 <string name="ERR_MSG_FILE_NOT_FOUND">Error: File not found</string>
 <string name="MSG_NO_MAP_SELECTED">No map file selected.</string>
 <string name="ERR_MSG_STORAGE_NOT_READABLE">Error: The external storage is not readable.</string>
+<string name="BTN_STARTPOSITION">Set Startposition</string>
+<string name="BTN_CLEAR">Clear Positions</string>
 </resources>
