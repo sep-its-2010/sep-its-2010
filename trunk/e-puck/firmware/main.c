@@ -113,7 +113,7 @@ int main( void) {
 	hal_led_init();
 	hal_motors_init();
 
-	hal_i2c_init( 100);
+	hal_i2c_init( 150, false);
 	hal_motors_setSpeed( 800, 0);
 
 	// Configuring the primary UART for the bluetooth module

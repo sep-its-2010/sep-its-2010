@@ -8,7 +8,8 @@ enum {
 };
 
 bool hal_i2c_init(
-	IN const uint16_t _ui16BaudRateDiv
+	IN const uint16_t _ui16BaudRateDiv,
+	IN const bool _blEnableSlewRateControl
 	);
 
 uint16_t hal_i2c_write(

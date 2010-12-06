@@ -195,11 +195,17 @@ void read(
  * \param _ui16BaudRateDiv
  * Specifies the baud rate divisor. The divisor must be greater than 0 and lower or equal #I2C_MAX_BAUDRATE_DIVISOR.
  *
+ * \param _blEnableSlewRateControl
+ * Specifies whether or not to enable the slew rate control.
+ *
  * \returns
  * - \c true: Operation succeeded.
  * - \c false: Invalid baud rate divisor.
  * 
- * The I2C module is initialized as a polling (no interrupts) master in single master mode.
+ * The I2C module is initialized and enabled as a polling (no interrupts) master in single master mode.
+ *
+ * When operating on a 400kHz bus, the I2C specification requires a slew rate control of the device pin output.
+ * This slew rate control is integrated into the device.
  * 
  * \remarks
  * This function may not be preempted by any function which accesses this module.
@@ -208,7 +214,8 @@ void read(
  * This function is not interrupt safe.
  */
 bool hal_i2c_init(
-	IN const uint16_t _ui16BaudRateDiv
+	IN const uint16_t _ui16BaudRateDiv,
+	IN const bool _blEnableSlewRateControl
 	) {
 
 	bool blSuccess = false;
@@ -216,6 +223,7 @@ bool hal_i2c_init(
 	if( _ui16BaudRateDiv > 0 && _ui16BaudRateDiv <= HAL_I2C_MAX_BAUDRATE_DIVISOR) {
 		I2CCON = 0;
 		I2CBRG = _ui16BaudRateDiv;
+		I2CCONbits.DISSLW = !_blEnableSlewRateControl;
 		I2CCONbits.I2CEN = true;
 
 		blSuccess = true;
