@@ -21,5 +21,12 @@ public enum MapMode {
   /**
    * Map is used in import mode.
    */
-  IMPORT
+  IMPORT,
+  
+  /**
+   * Map is used in preview mode.
+   */
+  PREVIEW
+  
+  
 }
