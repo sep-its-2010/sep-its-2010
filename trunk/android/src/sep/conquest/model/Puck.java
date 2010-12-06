@@ -19,6 +19,65 @@ import sep.conquest.util.ConquestLog;
 public abstract class Puck implements IComClient, IRobot {
 
 	/**
+     * Represents the byte-Code for the messageType RESPONSE_OK
+     */
+    public static final short RES_OK = (short) 0x81FF;
+    
+    /**
+     * Represents the byte-Code for the messageType RESPONSE_STATUS
+     */
+    public static final short RES_STATUS = (short) 0x82FF;
+    
+    /**
+     * Represents the byte-Code for the messageType RESPONSE_HITNODE
+     */
+    public static final short RES_HITNODE = (short) 0x83FF;
+    
+    /**
+     * Represents the byte-Code for the messageType RESPONSE_COLLISION
+     */
+    public static final short RES_COLLISION = (short) 0x84FF;
+    
+    /**
+     * Represents the byte-Code for the messageType RESPONSE_ABYSS
+     */
+    public static final short RES_ABYSS = (short) 0x85FF;
+	
+    /**
+     * Represents the byte-Code for the messageType REQUEST_MOVE
+     */
+    public static final short REQ_MOVE = (short) 0x04FF;
+    
+    /**
+     * Represents the byte-Code for the messageType REQUEST_RESET
+     */
+    public static final short REQ_RESET = (short) 0x01FF;
+    
+    /**
+     * Represents the byte-Code for the messageType REQUEST_SET_LED
+     */
+    public static final short REQ_SETLED = (short) 0x06FF;
+    
+    /**
+     * Represents the byte-Code for the messageType REQUEST_SET_SPEED
+     */
+    public static final short REQ_SETSPEED = (short) 0x05FF;
+    
+    /**
+     * Represents the byte-Code for the messageType REQUEST_STATUS
+     */
+    public static final short REQ_STATUS = (short) 0x02FF;
+    
+    /**
+     * Represents the byte-Code for the messageType REQUEST_TURN
+     */
+    public static final short REQ_TURN = (short) 0x03FF;
+    
+    
+    
+    
+	
+	/**
 	 * Global unique id.
 	 */
 	private UUID id;
