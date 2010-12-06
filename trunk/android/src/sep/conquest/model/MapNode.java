@@ -11,6 +11,53 @@ import java.io.Serializable;
 public class MapNode implements Serializable {
 	
 	/**
+	 * Left upper corner
+	 */
+	public static final int TOPLEFTEDGE = 0;
+	  
+	/**
+	 * Right upper corner
+	 */
+	public static final int TOPRIGHTEDGE = 1;
+	
+	/**
+	 * Left bottom corner
+	 */
+	public static final int BOTTOMLEFTEDGE = 2;
+	
+	/**
+	 * Right bottom corner
+	 */
+	public static final int BOTTOMRIGHTEDGE = 3;
+	
+	/**
+	 * T-Cross
+	 */
+	public static final int TOPT = 4;
+	
+	/**
+	 * T-Cross turned 90 degrees
+	 */
+	public static final int RIGHTT = 5;
+	
+	/**
+	 * T-Cross turned 180 degrees
+	 */
+	public static final int BOTTOMT = 6;
+	
+	/**
+	 * T-Cross turned 270 degrees
+	 */
+	public static final int LEFTT = 7;
+	
+	/**
+	 * Cross of two lines
+	 */
+	public static final int CROSS = 8;
+	
+	
+	
+	/**
 	 * An unique serialVersionUID to identify the class.
 	 */
 	private static final long serialVersionUID = 8344046024055788574L;
