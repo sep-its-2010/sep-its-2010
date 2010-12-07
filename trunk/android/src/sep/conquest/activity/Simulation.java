@@ -1,11 +1,14 @@
 package sep.conquest.activity;
 
 import java.util.LinkedList;
-import java.util.Map;
+import java.util.List;
 
 import sep.conquest.R;
 import sep.conquest.model.GridMap;
+import sep.conquest.model.MapNode;
 import sep.conquest.model.NodeType;
+import sep.conquest.model.Orientation;
+import sep.conquest.model.PuckFactory;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -14,8 +17,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
 
 /**
@@ -27,6 +31,18 @@ import android.widget.Spinner;
  * 
  */
 public class Simulation extends Activity {
+	
+	private static final int REQUEST_SIM_CONFIG = 10;
+	
+	GridMap map = new GridMap();
+	
+	int[][] robotPositions;
+	
+	Orientation[] ori;
+	
+	private LinkedList <EpuckPosition> positions;
+	
+	private int mNumber;
 
 	/**
 	 * Called when the Activity is initially created.
@@ -41,19 +57,37 @@ public class Simulation extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.simulation_main);
 		
+		positions = new LinkedList<EpuckPosition>();
+		
 		Spinner numberOfRobots = (Spinner) findViewById(R.id.spNumber);
-		ArrayAdapter numberAdapter = ArrayAdapter.createFromResource(this, R.array.numberRobots, android.R.layout.simple_spinner_item);
+		ArrayAdapter<?> numberAdapter = ArrayAdapter.createFromResource(this, R.array.numberRobots, android.R.layout.simple_spinner_item);
 		numberAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		numberOfRobots.setAdapter(numberAdapter);
+		numberOfRobots.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			public void onItemSelected(AdapterView<?> parent, View v,
+					int position, long id) {
+				
+				mNumber = position;
+			}
+
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		
-		
-		test();
-		//getIntent().getSerializableExtra(name);
+
+		//test();
 		
 	}
 	
 	public void onResume() {
 		super.onResume();
+	}
+	
+	public void onPause() {
+		super.onPause();
 	}
 
 	/**
@@ -81,13 +115,15 @@ public class Simulation extends Activity {
 		switch (item.getItemId()) {
 		case R.id.mnuStart:
 			start.setComponent(new ComponentName(getApplicationContext()
-					.getPackageName(), Map.class.getName()));
+					.getPackageName(), sep.conquest.activity.Map.class.getName()));
+			PuckFactory.createVirtualPucks(map, robotPositions, ori);
 			startActivity(start);
 			break;
 		case R.id.mnuOpen:
 			start.setComponent(new ComponentName(getApplicationContext()
 					.getPackageName(), Import.class.getName()));
-			startActivity(start);
+			start.putExtra(ImportMode.class.toString(), ImportMode.SIMULATION_MAP);
+			startActivityForResult(start, REQUEST_SIM_CONFIG);
 			break;
 		}
 		return true;
@@ -100,9 +136,22 @@ public class Simulation extends Activity {
 	 * 
 	 * @param map Contains an imported map.
 	 */
-	public void drawPreview(LinkedList map) {
+	public void drawPreview(List<MapNode> map, int[] borders) {
 		MapSurfaceView preview = (MapSurfaceView) findViewById(R.id.im_preview);
-		//preview.setMap(list, array);
+		preview.setMap(map, borders);
+		preview.isDrawing(true);
+	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == 0) {
+			if (resultCode == RESULT_OK) {
+				map = (GridMap) data.getSerializableExtra(Import.EXTRA_MAP);
+				robotPositions = (int[][]) data.getSerializableExtra(Import.EXTRA_POSITIONS);
+				ori = (Orientation[]) data.getSerializableExtra(Import.EXTRA_ORIENTATIONS);
+				
+				drawPreview(map.getMapAsList(), map.getMapBorders());
+			}
+		}
 	}
 	
 	public void test() {
@@ -196,16 +245,7 @@ public class Simulation extends Activity {
         x = 3;
         y = 0;
         map.addNode(x, y, type);
-        
-        type = NodeType.LEFTT;
-        x = 0;
-        y = 1;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = 0;
-        y = 2;
-        map.addNode(x, y, type);
+
         
         type = NodeType.BOTTOMT;
         x = 1;

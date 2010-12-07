@@ -1,16 +1,14 @@
 package sep.conquest.activity;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
+import java.util.UUID;
 
 import sep.conquest.R;
 import sep.conquest.controller.Controller;
 import sep.conquest.model.ConquestUpdate;
-import sep.conquest.model.GridMap;
-import sep.conquest.model.MapNode;
-import sep.conquest.model.NodeType;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -34,13 +32,11 @@ import android.widget.Spinner;
  */
 public class Map extends Activity implements Observer {
 	
-	private Spinner ePuckSelect;
+	private Spinner mRobotSelect;
 	
-	private ArrayAdapter < String > robotAdapter;
+	private ArrayAdapter < String > mRobotAdapter;
 	
-	private List < MapNode > mmap;
-	
-	private LinkedList < EpuckPosition > positions;
+	private LinkedList < EpuckPosition > mPositions;
 
     /**
      * Is implemented by Activity and is called when the map class is accessed.
@@ -58,28 +54,27 @@ public class Map extends Activity implements Observer {
 
         setContentView(R.layout.map_main);
 
-        mmap = new LinkedList < MapNode >();
-        positions = new LinkedList < EpuckPosition >();
+        mPositions = new LinkedList < EpuckPosition >();
         
-        ePuckSelect = (Spinner) findViewById(R.id.epuck_selector);
+        mRobotSelect = (Spinner) findViewById(R.id.epuck_selector);
         final MapSurfaceView map = (MapSurfaceView) findViewById(R.id.map_view);
         
-        robotAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-        robotAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mRobotAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+        mRobotAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //initially set
-        robotAdapter.add("none");
+        mRobotAdapter.add("none");
 
-        ePuckSelect.setAdapter(robotAdapter);
-        ePuckSelect.setOnItemSelectedListener(new OnItemSelectedListener() {
+        mRobotSelect.setAdapter(mRobotAdapter);
+        mRobotSelect.setOnItemSelectedListener(new OnItemSelectedListener() {
 
             public void onItemSelected(final AdapterView < ? > parent,
                     final View v, final int position, final long id) {
                 String s = (String) parent.getItemAtPosition(position);
                 if (s.equals("none")) {
-                    map.setSelectedRobot(-1);
+                    map.setSelectedRobot(null);
                 } else {
-                    int i = Integer.parseInt(s);
-                    map.setSelectedRobot(i);
+                    UUID uuid = UUID.fromString(s);
+                    map.setSelectedRobot(uuid);
                 }
 
             }
@@ -162,25 +157,26 @@ public class Map extends Activity implements Observer {
     
     public void setSpinner() {
     	MapSurfaceView map = (MapSurfaceView) findViewById(R.id.map_view);
-    	map.setSpinner(ePuckSelect);
+    	map.setSpinner(mRobotSelect);
     }
 
 	public void update(Observable obs, Object data) {
-		// TODO Auto-generated method stub
-		//setMap
-		//setEpuckpositions
-		//check ArrayAdapter
 		ConquestUpdate cu = (ConquestUpdate) data;
-		
-		mmap = cu.getMapList();
 		MapSurfaceView draw = (MapSurfaceView) findViewById(R.id.map_view);
-		int[] borders = cu.getBorders();
-		draw.setMap(mmap, borders);
-		//draw.setMap(list, array);
-		//draw.setRobotPosition(list);
 		
-		//robotAdapter...
+		Set<UUID> id = cu.getRobotStatus().keySet();
+		mPositions.clear();
+		mRobotAdapter.clear();
+		mRobotAdapter.add("none");
+		for (UUID key : id) {
+			int[] position = cu.getRobotStatus().get(key).getPosition();
+			mPositions.add(new EpuckPosition(position[0], position[1], key));
+			mRobotAdapter.add(key.toString());
+		}
 		
+		draw.setMap(cu.getMapList(), cu.getBorders());
+		draw.setRobotPosition(mPositions);
+
 	}
 
 }
