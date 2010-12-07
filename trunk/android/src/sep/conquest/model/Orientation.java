@@ -1,7 +1,22 @@
 package sep.conquest.model;
 
 /**
- * Represents the directions the pucks can be adjusted.
+ * Represents the directions the pucks can be adjusted. The source of the
+ * coordinate system is in the left upper corner and the x-coordinate grows
+ * downwards. The y-coordinate grows rightwards. The Orientation of the puck is
+ * described in the following: 
+ * 
+ * UP: Means that the puck looks in the
+ * direction of growing y-coordinates 
+ * 
+ * DOWN: Means that the puck looks in the
+ * direction of shrinking y-coordinates 
+ * 
+ * LEFT: Means that the puck looks in
+ * the direction of growing x-coordinates 
+ * 
+ * RIGHT: Means that the puck look
+ * in the direction of shrinking x-coordinates
  * 
  * @author Andreas Poxrucker
  * 
