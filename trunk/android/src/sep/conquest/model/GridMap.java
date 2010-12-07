@@ -6,7 +6,13 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+
 import sep.conquest.util.Utility;
+
 
 /**
  * The class GridMap manages the saving of nodes which have been explored by the
@@ -18,7 +24,7 @@ import sep.conquest.util.Utility;
  * 
  * @author Florian Lorenz
  */
-public class GridMap implements Serializable {
+public class GridMap implements Parcelable {
 	
 	/**
 	 * An unique serialVersionUID to identify the class
@@ -476,5 +482,41 @@ public class GridMap implements Serializable {
 			}
 		}
 		return returnString;
+	}
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	
+	public static final Parcelable.Creator<GridMap> CREATOR = new Parcelable.Creator<GridMap>(){
+
+		@Override
+		public GridMap createFromParcel(Parcel source) {
+			GridMap newMap = new GridMap();
+			String[] newStringArray=new String[0];
+			source.readStringArray(newStringArray);
+			for(String str:newStringArray){
+				String[] irgendwie = str.split(" ");
+				int x = Integer.parseInt(irgendwie[0]);
+				int y = Integer.parseInt(irgendwie[1]);
+				NodeType status = NodeType.valueOf(irgendwie[2]);
+				newMap.addNode(x, y, status);
+			}
+			return newMap;
+		}
+
+		@Override
+		public GridMap[] newArray(int size) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	};
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeStringArray(this.serializeMapInString());
 	}
 }
