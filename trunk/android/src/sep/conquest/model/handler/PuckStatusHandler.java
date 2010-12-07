@@ -50,8 +50,7 @@ public class PuckStatusHandler extends Handler {
 		    /*
 			 * Message looks like: 
 			 * Byte[0-1]: MessageType 
-			 * Byte[2-5]: System Up
-			 * Time (little endian) 
+			 * Byte[2-5]: System Up Time (little endian) 
 			 * Byte[6-8]: Abyss (0 == false, otherwise == true, left middle right) 
 			 * Byte[9-16]: Collision (0 == false, otherwise == true) 
 			 * Byte[17]: NodeType (0-8 NodeType, 9 unknown)
@@ -62,37 +61,48 @@ public class PuckStatusHandler extends Handler {
 		  	byte[] collisionArray = new byte[7];
 		  	byte[] abyssArray = new byte[2];
 		  	boolean isCollision = false;
+		  	boolean[] collisionArrayForPuck = new boolean[8];
+		  	boolean[] abyssArrayForPuck = new boolean[3];
 		  	boolean isAbyss = false;
-		  	//fill the collisionArray with the information of the message
-		  	//and checks whether there is a collision
+		  	
+		  	// For debugging
+		  	// Fill the collisionArray with the information of the message
+		  	// and checks whether there is a collision
 		  	for(int i = 9; i<17;i++){
 		  		collisionArray[i] = bufferMessage[i];
 		  		if (bufferMessage[i] != 0){
 		  			isCollision = true;
+		  			collisionArrayForPuck[i-9] = true;
+		  		} else {
+		  			collisionArrayForPuck[i-9] = false;
 		  		}
 		  	}
 		  	
+		  	// Updates the RobotStatus of the actual robot
+		  	if(isCollision){
+		  		executor.getRobot().getRobotStatus().get(statusReq.getSender())
+				.setSensorCollisionArray(collisionArrayForPuck);
+		  	}
 		  	
-		  	
+		    //For debugging
 		  	//fill the abyssArray with the information of the message and
 		  	//checks whether there is a collision
 		  	for(int j = 6; j<9;j++){
 		  		abyssArray[j] = bufferMessage[j];
 		  		if (bufferMessage[j] != 0){
 		  			isAbyss = true;
+		  			abyssArrayForPuck[j-6] = true;
+		  		} else {
+		  			abyssArrayForPuck[j-6] = false;
 		  		}
 		  	}
 		  	
-		  	//E-puck's near an abyss
+			//E-puck's near an abyss
 		  	if(isAbyss){
 		  		
 		  	}
 		  	
-		  	//E-puck's recognized a collision
-		  	if(isCollision){
-		  		
-		  	}
-		  	
+  	
 		  	// This block seeks out the type of the node sent with the message
 		  	NodeType typeOfLastVisitedNode = null;
 			int typeOfNode = bufferMessage[17];
@@ -127,14 +137,13 @@ public class PuckStatusHandler extends Handler {
 			}
 			
 		  	/*
-		  	 * The NodeType has to be translated within the information of the
-		  	 * PuckStatus. In the beginning perhaps null?!
-		  	 * I assume that the e-pucks are looking in the same direction in
-		  	 * the beginning, so all robots have got the Orientation DOWN
+		  	 * In the PuckFactory the Orientation in the PuckStatus is set to
+		  	 * the default value DOWN.
+		  	 * Don't know the position of the e-pucks 
 		  	 */
+			
 			RobotStatus bufferStatus = executor.getRobot().getRobotStatus().get(statusReq.getSender());
-		  	Orientation ori = Orientation.DOWN;
-			bufferStatus.setOrientation(ori);
+		  	
 		  	
 		  return true;
 	  }

@@ -7,7 +7,7 @@ import sep.conquest.model.requests.MessageType;
 /**
  * Handles ControlledRequest messages.
  * 
- * @author Andreas Poxrucker
+ * @author Andreas Poxrucker (Florian Lorenz)
  * 
  */
 public class ControlledRequestHandler extends Handler {

@@ -1,5 +1,6 @@
 package sep.conquest.model.handler;
 
+import sep.conquest.model.FailureType;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
 import sep.conquest.model.requests.FailureRequest;
@@ -8,7 +9,7 @@ import sep.conquest.model.requests.MessageType;
 /**
  * Handles FailureRequest messages.
  * 
- * @author Andreas Poxrucker
+ * @author Andreas Poxrucker (Florian Lorenz)
  *
  */
 public class FailureRequestHandler extends Handler {
@@ -38,13 +39,27 @@ public class FailureRequestHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-	  if(!(request.getKind() == MessageType.FAILURE)){
-		  return super.handleRequest(request);
-	  } else {
-		  FailureRequest failReq = (FailureRequest) request;
-		  
-		  return true;
-	  }
+		String message;
+		if (!(request.getKind() == MessageType.FAILURE)) {
+			return super.handleRequest(request);
+		} else {
+			FailureRequest failReq = (FailureRequest) request;
+			if (failReq.getFailureType() == FailureType.ABYSS) {
+				message = "An Abyss was discovered..Uahhhh! "
+						+ failReq.getSender();
+				throw new IllegalStateException(message);
+			} else if (failReq.getFailureType() == FailureType.INVALIDPITCH) {
+				message = "The pitch is invalid! " + failReq.getSender();
+				throw new IllegalStateException(message);
+			} else if (failReq.getFailureType() == FailureType.BLUETOOTHFAILURE) {
+				message = "I've lost my Bluetooth-Connection to my little E-Puck! "
+						+ failReq.getSender();
+				throw new IllegalStateException(message);
+			} else if (failReq.getFailureType() == FailureType.NODEOBSTRUCTION) {
+				message = "Cannot reach the node! " + failReq.getSender();
+			}
+			return true;
+		}
   }
 
 }

@@ -13,6 +13,12 @@ public enum FailureType {
 	//Bluetoothausfall
 	//KLeine mögliche Kollisionsverwaltung
 	//Keine Möglichkeit den nächsten Knoten anzufahren
+	
+	/**
+	 * Abyss
+	 */
+	ABYSS,
+	
 	/**
 	 * Invalid playing field
 	 */

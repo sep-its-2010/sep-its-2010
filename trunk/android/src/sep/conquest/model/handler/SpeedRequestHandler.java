@@ -8,7 +8,7 @@ import sep.conquest.model.requests.SpeedRequest;
 /**
  * Handles SpeedRequest messages.
  * 
- * @author Andreas Poxrucker
+ * @author Andreas Poxrucker (Florian Lorenz)
  *
  */
 public class SpeedRequestHandler extends Handler {

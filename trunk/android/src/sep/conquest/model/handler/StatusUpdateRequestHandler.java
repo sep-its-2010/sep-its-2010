@@ -9,7 +9,7 @@ import sep.conquest.model.requests.StatusUpdateRequest;
 /**
  * Handles StatusUpdateRequest messages.
  * 
- * @author Andreas Poxrucker
+ * @author Andreas Poxrucker (Florian Lorenz)
  *
  */
 public class StatusUpdateRequestHandler extends Handler {

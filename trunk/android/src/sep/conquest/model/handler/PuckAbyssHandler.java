@@ -4,6 +4,7 @@ import android.graphics.Path.Direction;
 import android.graphics.drawable.GradientDrawable.Orientation;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.FailureRequest;
 import sep.conquest.model.requests.MessageType;
 import sep.conquest.model.*;
 
@@ -40,14 +41,20 @@ public class PuckAbyssHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-	  if(!(request.getKind() == MessageType.RESPONSE_ABYSS)){
-		  return super.handleRequest(request);
-	  } else {
-		  //The epuck stops on hardwarebased commands
-		  //The message is to discover a failure state
-		  //Possibly we stop the complete discovery?!
-		  return true;
-	  }
-  }
+		if (!(request.getKind() == MessageType.RESPONSE_ABYSS)) {
+			return super.handleRequest(request);
+		} else {
+			/*
+			 * The epuck stops on hardwarebased commands and sends a message
+			 * to its brothers.
+			 */
+			
+			FailureType failType = FailureType.ABYSS;
+			FailureRequest failReq = new FailureRequest(request.getSender(),
+					request.getReceiver(), failType);
+			executor.getRobot().broadcast(failReq);
+			return true;
+		}
+	}
 
 }
