@@ -26,6 +26,8 @@ public class SimRobotStatus {
    * The current orientation if the robot.
    */
   private Orientation orientation;
+  
+  private boolean isMoving;
 
   /**
    * Constructor.
@@ -95,6 +97,24 @@ public class SimRobotStatus {
     } else {
       throw new IllegalArgumentException("New orientation can not be null");
     }
+  }
+  
+  /**
+   * Returns whether robot is currently moving.
+   * 
+   * @return True, if robot is currently moving, false otherwise.
+   */
+  public boolean isMoving() {
+    return isMoving;
+  }
+  
+  /**
+   * Set moving state of robot.
+   * 
+   * @param moving The moving state of the robot.
+   */
+  public void setMoving(boolean moving) {
+    isMoving = moving;
   }
   
   /**

@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import sep.conquest.R;
 import sep.conquest.model.PuckFactory;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -20,10 +21,11 @@ import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,7 +36,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 /**
@@ -173,7 +174,7 @@ public final class Connect extends Activity {
 
     if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
       if (resultCode == RESULT_CANCELED) {
-        displayMessage(getString(R.string.ERR_MSG_BLUETOOTH_NOT_ENABLED));
+        displayMessage(getString(R.string.ERR_MSG_BLUETOOTH_NOT_ENABLED), false);
       }
     }
   }
@@ -210,6 +211,8 @@ public final class Connect extends Activity {
     case R.id.mnuStart:
 
       if (selectedRobots.size() > 0) {
+        
+        if (bluetoothAdapter.isEnabled()) {
         pDialog = ProgressDialog.show(Connect.this,
             getString(R.string.TXT_CONNECTING),
             getString(R.string.MSG_CONNECTING), true);
@@ -217,8 +220,11 @@ public final class Connect extends Activity {
         // Start Thread that opens connections
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(new ConnectionThread(selectedRobots.values()));
+        } else {
+          enableBluetooth();
+        }
       } else {
-        displayMessage(getString(R.string.MSG_NO_ROBOT));
+        displayMessage(getString(R.string.MSG_NO_ROBOT), false);
       }
       break;
 
@@ -234,7 +240,7 @@ public final class Connect extends Activity {
     case R.id.mnuImport:
       start.setComponent(new ComponentName(getApplicationContext()
           .getPackageName(), Import.class.getName()));
-      start.putExtra(ImportMode.class.toString(), ImportMode.DISPLAY_MAP);
+      start.putExtra(ImportMode.class.toString(), ImportMode.IMPORT_MAP);
       startActivity(start);
       break;
     
@@ -295,7 +301,7 @@ public final class Connect extends Activity {
     // In this case, display message and disable "Search"-Button.
     // Otherwise check, if Bluetooth is enabled.
     if (bluetoothAdapter == null) {
-      displayMessage(getString(R.string.ERR_MSG_BLUETOOTH_NOT_SUPPORTED));
+      displayMessage(getString(R.string.ERR_MSG_BLUETOOTH_NOT_SUPPORTED), true);
       btnSearch.setEnabled(false);
     } else if (!bluetoothAdapter.isEnabled()) {
       enableBluetooth();
@@ -306,7 +312,6 @@ public final class Connect extends Activity {
    * Starts an Activity to enable the Bluetooth-Adapter of the device.
    */
   private void enableBluetooth() {
-
     // Set up an Intent message, set it's action to request enable Bluetooth
     Intent intent = new Intent();
     intent.setAction(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -319,10 +324,19 @@ public final class Connect extends Activity {
    * @param message
    *          The message to display.
    */
-  private void displayMessage(String message) {
-    Toast mtoast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-    mtoast.setGravity(Gravity.CENTER, 0, 0);
-    mtoast.show();
+  private void displayMessage(String message, boolean isError) {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setMessage(message);
+    builder.setCancelable(false);
+    builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+      
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+        
+      }
+    });
+    AlertDialog alert = builder.create();
+    alert.show();
   }
 
   /**
@@ -380,8 +394,7 @@ public final class Connect extends Activity {
       } else if (CONNECTION_ERROR.equals(action)) {
         pDialog.dismiss();
         String deviceName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
-        displayMessage("Connection to " + deviceName
-            + " not successful esthablished");
+        displayMessage("Connection to " + deviceName + " not successful esthablished", true);
       }
     }
   }
@@ -410,11 +423,14 @@ public final class Connect extends Activity {
         long id) {
       TextView txtDevice = (TextView) view;
       String deviceName = txtDevice.getText().toString();
+      Resources res = getResources();
 
       if (selectedRobots.containsKey(deviceName)) {
         selectedRobots.remove(deviceName);
+        txtDevice.setTextColor(res.getColor(R.color.list_item_not_selected));
       } else {
         selectedRobots.put(deviceName, discoveredRobots.get(deviceName));
+        txtDevice.setTextColor(res.getColor(R.color.list_item_selected));
       }
     }
   }

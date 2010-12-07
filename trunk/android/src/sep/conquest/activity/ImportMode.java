@@ -16,5 +16,5 @@ public enum ImportMode {
   /**
    * Import is used to open map and display is in Map Activity.
    */
-  DISPLAY_MAP
+  IMPORT_MAP
 }

@@ -1,13 +1,11 @@
 package sep.conquest.model;
 
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import sep.conquest.model.handler.Handler;
 import sep.conquest.model.handler.HandlerFactory;
@@ -33,11 +31,6 @@ public class Simulator {
   private final GridMap map;
 
   /**
-   * Saves the request messages of the VirtualPucks.
-   */
-  private final Queue<IRequest> messageQueue;
-
-  /**
    * Executes request handling.
    */
   private Timer timer;
@@ -58,6 +51,11 @@ public class Simulator {
   private Map<UUID, byte[]> outputBuffer;
 
   /**
+   * The input buffer for each VirtualPuck.
+   */
+  private Map<UUID, IRequest> inputBuffer;
+
+  /**
    * The first Handler to handle requests of VirtualPucks.
    */
   private Handler firstHandler;
@@ -71,9 +69,10 @@ public class Simulator {
 
     // Check, if map or inital positions equal null.
     // If not, initialize simulator. Otherwise throw exception.
-    if ((exMap != null) && (initialPositions != null)) {
+    if ((exMap != null) && (initialPositions != null)
+        && (initialOrientations != null)) {
       map = exMap;
-      messageQueue = new ConcurrentLinkedQueue<IRequest>();
+      inputBuffer = new TreeMap<UUID, IRequest>();
       outputBuffer = new TreeMap<UUID, byte[]>();
       robotStates = new TreeMap<UUID, SimRobotStatus>();
       firstHandler = HandlerFactory.getSimMsgChain(this);
@@ -117,13 +116,21 @@ public class Simulator {
    *          The request to add.
    */
   public void addRequest(IRequest request) {
-    messageQueue.offer(request);
+    UUID sender = request.getSender();
+
+    if (inputBuffer.containsKey(sender) && (inputBuffer.get(sender) == null)) {
+      inputBuffer.put(sender, request);
+    } else {
+      throw new IllegalStateException(
+          "Asked to put message of unknown sender to input buffer");
+    }
   }
-  
+
   /**
    * Resets a robot to its initial state (position + orientation).
    * 
-   * @param id The id of the robot to reset.
+   * @param id
+   *          The id of the robot to reset.
    */
   public void resetRobotState(UUID id) {
     if (robotStates.containsKey(id)) {
@@ -217,7 +224,7 @@ public class Simulator {
       throw new IllegalStateException("Asked to set orientation of unknown id");
     }
   }
-  
+
   public int getSystemUpTime(UUID id) {
     if (robotStates.containsKey(id)) {
       return robotStates.get(id).getSystemUpTime();
@@ -309,11 +316,11 @@ public class Simulator {
    * Executes the next step.
    */
   public void step() {
-    // If request message queue is not empty, poll first message and pass it
-    // to the first Handler.
-    if (!messageQueue.isEmpty()) {
-      IRequest request = messageQueue.poll();
-      firstHandler.handleRequest(request);
+    
+    SimRobotStatus robot = robotStates.get(null);
+    
+    if (robot.isMoving()) {
+
     }
   }
 
@@ -323,13 +330,12 @@ public class Simulator {
    * Resets the request message queue, the output buffer and the robot states.
    */
   public void reset() {
-    // Reset message queue
-    messageQueue.clear();
     Set<UUID> ids = outputBuffer.keySet();
 
     // Reset output buffers by setting arrays of length zero and reset robot
     // states.
     for (UUID id : ids) {
+      inputBuffer.put(id, null);
       outputBuffer.put(id, new byte[0]);
       robotStates.get(id).reset();
     }

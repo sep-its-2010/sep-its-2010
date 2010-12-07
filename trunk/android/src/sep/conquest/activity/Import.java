@@ -6,12 +6,15 @@ import java.io.IOException;
 import sep.conquest.R;
 import sep.conquest.controller.Controller;
 import sep.conquest.model.GridMap;
+import sep.conquest.model.ImportContainer;
 import sep.conquest.model.MapFileHandler;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,7 +23,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 /**
@@ -34,6 +36,21 @@ import android.widget.AdapterView.OnItemClickListener;
 public class Import extends Activity {
 
   /**
+   * Used to send GridMaps in Intent messages.
+   */
+  public static final String EXTRA_MAP = "Map";
+  
+  /**
+   * Used to send positions in Intent messages.
+   */
+  public static final String EXTRA_POSITIONS = "Positions";
+
+  /**
+   * Used to send orientations in Intent messages.
+   */
+  public static final String EXTRA_ORIENTATIONS = "Orientations";
+
+  /**
    * Used to list available maps.
    */
   private ListView lsMaps;
@@ -43,6 +60,9 @@ public class Import extends Activity {
    */
   private ArrayAdapter<String> fileList;
 
+  /**
+   * Used to identify last recently selected map.
+   */
   private String selectedMap;
 
   /**
@@ -88,32 +108,51 @@ public class Import extends Activity {
    *          The MenuItem that has been selected.
    */
   public boolean onOptionsItemSelected(MenuItem item) {
-    // Intent message to start other Activities.
-    Intent start = new Intent();
-
-    switch (item.getItemId()) {
-    
     // If "Open" has been chosen, start Map-Activity via Intent.
-    case R.id.mnuOpen:
-
+    if (item.getItemId() == R.id.mnuOpen) {
       if (selectedMap != null) {
         try {
-          GridMap map = MapFileHandler.openMap(selectedMap);
-          Controller.getInstance().getEnv().loadMap(map);
+          // Open map and get information
+          ImportContainer c = MapFileHandler.openMap(selectedMap);
+          GridMap map = c.getMap();
+          
+          // Determine, whether Activity has been started to display a map or
+          // if it has been started to open a configuration for the simulator.
+          ImportMode mode = (ImportMode) getIntent().getSerializableExtra(
+              ImportMode.class.toString());
+          
+          // Intent message to start other Activities.
+          Intent start = new Intent();
+
+          switch (mode) {
+          case SIMULATION_MAP:
+            // Put the map, the initial positions and the initial orientations
+            // as extras, finish Activity and return to simulation Activity.
+            start.putExtra(EXTRA_MAP, map);
+            start.putExtra(EXTRA_POSITIONS, c.getPositions());
+            start.putExtra(EXTRA_ORIENTATIONS, c.getOrientations());
+            setResult(RESULT_OK, start);
+            finish();
+            break;
+          case IMPORT_MAP:
+            // Load map into Environment and start Map Activity.
+            Controller.getInstance().getEnv().loadMap(map);
+            start.setComponent(new ComponentName(getApplicationContext()
+                .getPackageName(), Map.class.getName()));
+            startActivity(start);
+            break;
+          }
         } catch (FileNotFoundException e) {
-          displayMessage(getString(R.string.ERR_MSG_FILE_NOT_FOUND));
+          // If file was not found, display error message.
+          displayMessage(getString(R.string.ERR_MSG_FILE_NOT_FOUND), true);
         } catch (IOException e) {
-          // TODO Auto-generated catch block
-          displayMessage("IO ex");
+          // If file could not be read (illegal file format) display error message.
+          displayMessage(getString(R.string.ERR_MSG_INVALID_FILE), true);
         }
-        start.setComponent(new ComponentName(getApplicationContext()
-            .getPackageName(), Map.class.getName()));
-        start.putExtra(MapMode.class.toString(), MapMode.IMPORT);
-        startActivity(start);
       } else {
-        displayMessage(getString(R.string.MSG_NO_MAP_SELECTED));
+        // If no map was selected, display note message.
+        displayMessage(getString(R.string.MSG_NO_MAP_SELECTED), false);
       }
-      break;
     }
     return true;
   }
@@ -123,7 +162,7 @@ public class Import extends Activity {
 
     // If files equals null then storage is not readable.
     if (files == null) {
-      displayMessage(getString(R.string.ERR_MSG_STORAGE_NOT_READABLE));
+      displayMessage(getString(R.string.ERR_MSG_STORAGE_NOT_READABLE), true);
     } else {
       fileList = new ArrayAdapter<String>(this, R.layout.list_item,
           MapFileHandler.getFileList());
@@ -131,10 +170,24 @@ public class Import extends Activity {
     }
   }
 
-  private void displayMessage(String message) {
-    Toast mtoast = Toast.makeText(this, message, Toast.LENGTH_LONG);
-    mtoast.setGravity(Gravity.CENTER, 0, 0);
-    mtoast.show();
+  /**
+   * Displays a message in a dialog box.
+   * 
+   * @param message The message to display.
+   * @param isError Indicates, whether message should be displayed as error.
+   */
+  private void displayMessage(String message, boolean isError) {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setMessage(message);
+    builder.setCancelable(false);
+    builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+      }
+    });
+    AlertDialog alert = builder.create();
+    alert.show();
   }
 
   /**
@@ -158,8 +211,10 @@ public class Import extends Activity {
      */
     public void onItemClick(AdapterView<?> parent, View view, int position,
         long id) {
-      TextView txt = (TextView) view;
-      selectedMap = txt.getText().toString();
+      TextView txtMap = (TextView) view;
+      Resources res = getResources();
+      selectedMap = txtMap.getText().toString();
+      txtMap.setTextColor(res.getColor(R.color.list_item_not_selected));
     }
   }
 }

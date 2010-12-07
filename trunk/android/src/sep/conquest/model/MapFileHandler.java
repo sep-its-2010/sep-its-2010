@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -55,7 +56,7 @@ public class MapFileHandler {
    * @throws FileNotFoundException
    *           No file with name filename has been found.
    */
-  public static GridMap openMap(String filename) throws IOException,
+  public static ImportContainer openMap(String filename) throws IOException,
       FileNotFoundException {
 
     if (filename != null) {
@@ -67,25 +68,60 @@ public class MapFileHandler {
 
       // Used read file with readln().
       BufferedReader bReader = new BufferedReader(fReader);
-
+      
+      // The headline contains a single digit (0-6) about how many Pucks
+      // will take part in an exploration.
+      String headline = bReader.readLine();
+      int number = Integer.parseInt(headline);
+      
+      // Number must be between 0 and 6
+      if ((number < 0) || (number > 6)) {
+        throw new IOException("Illegal file format");
+      }
+      
       // The GridMap that will be returned.
       GridMap map = new GridMap();
-
+      
+      // The number of positions/orientations read.
+      int posRead = 0;
+      
+      // Saves positions and orientations.
+      int[][] positions = new int[number][];
+      Orientation[] orientations = new Orientation[number];
+      
       // Iterate over the file and read it line by line.
       // Then split line, parse values and add new Node to map
       for (String line = bReader.readLine(); line != null; line = bReader
           .readLine()) {
-        String[] values = line.split(" ");
-        int xValue = Integer.parseInt(values[0]);
-        int yValue = Integer.parseInt(values[1]);
-        NodeType type = NodeType.valueOf(values[2]);
-        map.addNode(xValue, yValue, type);
-      }
+        String[] tokens = line.split(" ");
 
+        // Line must contain at least three tokens, otherwise the file format
+        // is illegal.
+        if ((tokens.length < 3) || (tokens.length > 4)) {
+          throw new IOException("Illegal file format");
+        } else {
+          int x = Integer.parseInt(tokens[0]);
+          int y = Integer.parseInt(tokens[1]);
+          NodeType type = NodeType.valueOf(tokens[2]);
+          map.addNode(x, y, type);
+          
+          // If line contains four tokens, then the last one indicates that
+          // the position is a start position for a robot.
+          // The value of the fourth token (0-3) indicates the orientation of
+          // robot.
+          if (tokens.length == 4) {
+            int index = Integer.parseInt(tokens[3]);
+            Orientation ori = Orientation.values()[index];
+            int[] pos = {x, y};
+            positions[posRead] = pos;
+            orientations[posRead] = ori;
+          }
+        }
+      }
       // Close readers and return reconstructed map.
       bReader.close();
       fReader.close();
-      return map;
+      return new ImportContainer(map, positions, orientations);
     } else {
       // Thrown, when filename equals null.
       throw new IllegalArgumentException();
@@ -109,7 +145,7 @@ public class MapFileHandler {
 
       // Check, if filename is valid and if external media can be written.
       if (isValidFilename(filename) && isWriteable()) {
-        
+
         if (!DIR.exists()) {
           DIR.mkdirs();
         }
