@@ -6,8 +6,10 @@
 #include "subs_collision.h"
 
 enum {
-	IR_COLLISION_THRESHOLD = 64 ///< Specifies the threshold-value above which a collision will be detected.
+	SUBS_COLLISION_THRESHOLD = 64 ///< Specifies the threshold-value above which a collision will be detected.
 };
+
+static com_SMessage_t s_podCollisionMessage = {COM_MESSAGE_TYPE__RESPONSE_COLLISION, {0}};
 
 /*!
  * \brief
@@ -26,21 +28,20 @@ enum {
 bool subs_collision_run( void) {
 	bool blCollisionDetected = false;
 	sen_prox_SData_t podSensorData;
-	sen_prox_getCurrent( &podSensorData);
-	com_SMessage_t podCollisionMessage = {COM_MESSAGE_TYPE__RESPONSE_COLLISION, {0}};
+	sen_prox_getCurrent( &podSensorData);	
 	
 	// Check all IR-sensors for collision
 	for( uint8_t i = 0; i < sizeof(podSensorData.aui8Data); i++) {
-		if( podSensorData.aui8Data[i] > IR_COLLISION_THRESHOLD) { // TODO reichen 8 bit für die Sensorwerte?
+		if( podSensorData.aui8Data[i] > SUBS_COLLISION_THRESHOLD) { // TODO reichen 8 bit für die Sensorwerte?
 			hal_motors_setSpeed( 0, 0);
 			hal_motors_setSteps( 0);
-			podCollisionMessage.aui8Data[i] = true;
+			s_podCollisionMessage.aui8Data[i] = true;
 			blCollisionDetected = true;
 		}
 	}
 
 	if( blCollisionDetected) {
-		com_send( &podCollisionMessage);
+		com_send( &s_podCollisionMessage);
 	}
 
 	return blCollisionDetected;
@@ -53,4 +54,5 @@ bool subs_collision_run( void) {
  * Deletes all values of the IR-sensors concerning the last collision.
  */
 void subs_collision_reset( void) {
+	memset( s_podCollisionMessage.aui8Data, 0, sizeof(s_podCollisionMessage.aui8Data));
 }
