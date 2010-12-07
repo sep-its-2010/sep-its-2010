@@ -14,6 +14,7 @@ import sep.conquest.model.handler.Handler;
 import sep.conquest.model.handler.HandlerFactory;
 import sep.conquest.model.requests.PuckRequest;
 import sep.conquest.util.ConquestLog;
+import sep.conquest.util.Utility;
 
 /**
  * The LogicThread class will be used by Puck objects for navigation decisions.
@@ -136,14 +137,13 @@ public class LogicThread implements Runnable {
 	 * 
 	 * @return The initialized map.
 	 */
-	private Map<int[], Integer> initMap() {
-		Map<int[], Integer> map = new TreeMap<int[], Integer>();
+	private Map<Integer, Integer> initMap() {
+		Map<Integer, Integer> map = new TreeMap<Integer, Integer>();
 		LinkedList<MapNode> mapList = robot.getMap().getMapAsList();
 		Iterator<MapNode> it = mapList.iterator();
 		while (it.hasNext()) {
 			MapNode node = it.next();
-			int[] pos = { node.getXValue(), node.getYValue() };
-			map.put(pos, 0);
+			map.put(Utility.makeKey(node.getXValue(), node.getYValue()), 0);
 		}
 		return map;
 	}
@@ -155,17 +155,15 @@ public class LogicThread implements Runnable {
 	 *            The map.
 	 * @return The best node.
 	 */
-	private int[] getBestNode(Map<int[], Integer> map) {
+	private int[] getBestNode(Map<Integer, Integer> map) {
 		int bestValue = 0;
 		int[] bestNode = { 0, 0 };
-		Set<int[]> nodes = map.keySet();
-		Iterator<int[]> it = nodes.iterator();
-		while (it.hasNext()) {
-			int[] node = it.next();
+		Set<Integer> nodes = map.keySet();
+		for (Integer node: nodes) {
 			Integer cost = map.get(node);
 			if (bestValue == 0 || cost < bestValue) {
 				bestValue = cost;
-				bestNode = node;
+				bestNode = Utility.extractCoordinates(node);
 			}
 		}
 		return bestNode;
@@ -298,7 +296,7 @@ public class LogicThread implements Runnable {
 			
 			// execute behaviours on changed state
 			if (changed) {
-				Map<int[], Integer> map = initMap();
+				Map<Integer, Integer> map = initMap();
 				map = stateBehaviour.execute(map, robot);
 				driveTo(getBestNode(map));
 			} else

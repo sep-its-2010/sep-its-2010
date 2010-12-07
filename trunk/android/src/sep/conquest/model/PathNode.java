@@ -83,5 +83,18 @@ public class PathNode {
 	public void setCosts(int costs) {
 		this.costs = costs;
 	}
+	
+	/**
+	 * Returns the path costs.
+	 * 
+	 * @return The path costs.
+	 */
+	public int getPathCosts() {
+		PathNode tmp = this;
+		while (tmp.getNext() != null) {
+			tmp = tmp.getNext();
+		}
+		return tmp.getCosts();
+	}
 
 }

@@ -14,6 +14,7 @@ import sep.conquest.model.Orientation;
 import sep.conquest.model.Puck;
 import sep.conquest.model.RobotStatus;
 import sep.conquest.model.State;
+import sep.conquest.util.Utility;
 
 /**
  * InnerBehaviour represents a behaviour to identify inner areas of frontier
@@ -38,51 +39,43 @@ public final class InnerBehaviour extends Behaviour {
     /* (non-Javadoc)
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
      */
-    public Map<int[], Integer> execute(Map<int[], Integer> map, Puck robot) {
+    public Map<Integer, Integer> execute(Map<Integer, Integer> map, Puck robot) {
     	
     	LinkedList<GraphNode> frontiers = robot.getMap().getFrontierList();
-    	Map<int[], Set<Orientation>> innerNodes = new TreeMap<int[], Set<Orientation>>();
+    	Map<Integer, Set<Orientation>> innerNodes = new TreeMap<Integer, Set<Orientation>>();
     	GridMap gridMap = robot.getMap();
     	
     	for (GraphNode frontier: frontiers) {
-    		int[] pos = new int[2];
-    		pos[0] = frontier.getXValue();
-    		pos[1] = frontier.getYValue();
     		Set<Orientation> orientations = new TreeSet<Orientation>();
-    		innerNodes.put(pos, orientations);
+    		innerNodes.put(Utility.makeKey(frontier.getXValue(), frontier.getYValue()), orientations);
     	}
     	
-    	Set<int[]> keys = innerNodes.keySet();    	
-    	for (int[] key: keys) {
+    	Set<Integer> keys = innerNodes.keySet();    	
+    	for (Integer key: keys) {
     		
+    		int[] intKey = Utility.extractCoordinates(key);
     		// expand right neighbour-nodes
-    		if (gridMap.getNode(key[0] - 1, key[1]) != null) {
+    		if (gridMap.getNode(intKey[0] - 1, intKey[1]) != null) {
     			innerNodes.get(key).add(Orientation.LEFT);
-    			for (int i = key[0] + 1; i <= gridMap.getMapBorders()[2]; i++) {
-    				GraphNode current = gridMap.getNode(i, key[1]);
+    			for (int i = intKey[0] + 1; i <= gridMap.getMapBorders()[2]; i++) {
+    				GraphNode current = gridMap.getNode(i, intKey[1]);
     				if (current != null) {
-    					if (current.getNodeType() == NodeType.FRONTIERNODE) {
-    						int[] pos = new int[2];
-    						pos[0] = current.getXValue();
-    						pos[1] = current.getYValue();
-    						innerNodes.get(pos).add(Orientation.LEFT);    						
-    					} else
+    					if (current.getNodeType() == NodeType.FRONTIERNODE)
+    						innerNodes.get(Utility.makeKey(current.getXValue(), current.getYValue())).add(Orientation.LEFT);    						
+    					else
     						break;
     				}
     			}
     		} 
     		
     		// expand left neighbour-nodes
-    		if (gridMap.getNode(key[0] + 1, key[1]) != null) {
+    		if (gridMap.getNode(intKey[0] + 1, intKey[1]) != null) {
     			innerNodes.get(key).add(Orientation.RIGHT);
-    			for (int i = key[0] - 1; i >= gridMap.getMapBorders()[0]; i--) {
-    				GraphNode current = gridMap.getNode(i, key[1]);
+    			for (int i = intKey[0] - 1; i >= gridMap.getMapBorders()[0]; i--) {
+    				GraphNode current = gridMap.getNode(i, intKey[1]);
     				if (current != null) {
     					if (current.getNodeType() == NodeType.FRONTIERNODE) {
-    						int[] pos = new int[2];
-    						pos[0] = current.getXValue();
-    						pos[1] = current.getYValue();
-    						innerNodes.get(pos).add(Orientation.RIGHT);    						
+    						innerNodes.get(Utility.makeKey(current.getXValue(), current.getYValue())).add(Orientation.RIGHT);    		 						
     					} else
     						break;
     				}
@@ -90,16 +83,13 @@ public final class InnerBehaviour extends Behaviour {
     		}     		
 
     		// expand upper neighbour-nodes
-    		if (gridMap.getNode(key[0], key[1] + 1) != null) {
+    		if (gridMap.getNode(intKey[0], intKey[1] + 1) != null) {
     			innerNodes.get(key).add(Orientation.UP);
-    			for (int i = key[1] + 1; i <= gridMap.getMapBorders()[3]; i++) {
-    				GraphNode current = gridMap.getNode(key[0], i);
+    			for (int i = intKey[1] + 1; i <= gridMap.getMapBorders()[3]; i++) {
+    				GraphNode current = gridMap.getNode(intKey[0], i);
     				if (current != null) {
     					if (current.getNodeType() == NodeType.FRONTIERNODE) {
-    						int[] pos = new int[2];
-    						pos[0] = current.getXValue();
-    						pos[1] = current.getYValue();
-    						innerNodes.get(pos).add(Orientation.UP);    						
+    						innerNodes.get(Utility.makeKey(current.getXValue(), current.getYValue())).add(Orientation.UP);    		   						
     					} else
     						break;
     				}
@@ -107,16 +97,13 @@ public final class InnerBehaviour extends Behaviour {
     		}  
     		
     		// expand lower neighbour-nodes
-    		if (gridMap.getNode(key[0], key[1] - 1) != null) {
+    		if (gridMap.getNode(intKey[0], intKey[1] - 1) != null) {
     			innerNodes.get(key).add(Orientation.DOWN);
-    			for (int i = key[1] - 1; i >= gridMap.getMapBorders()[1]; i--) {
-    				GraphNode current = gridMap.getNode(key[0], i);
+    			for (int i = intKey[1] - 1; i >= gridMap.getMapBorders()[1]; i--) {
+    				GraphNode current = gridMap.getNode(intKey[0], i);
     				if (current != null) {
     					if (current.getNodeType() == NodeType.FRONTIERNODE) {
-    						int[] pos = new int[2];
-    						pos[0] = current.getXValue();
-    						pos[1] = current.getYValue();
-    						innerNodes.get(pos).add(Orientation.DOWN);    						
+    						innerNodes.get(Utility.makeKey(current.getXValue(), current.getYValue())).add(Orientation.DOWN);    		   						
     					} else
     						break;
     				}
@@ -127,9 +114,9 @@ public final class InnerBehaviour extends Behaviour {
     	removeRealFrontiers(innerNodes);
     	
     	// add 10 to the navigation cost for inner nodes
-    	for (int[] pos: innerNodes.keySet()) {
-    		Integer node = map.get(pos);
-    		node += 10;
+    	for (Integer pos: innerNodes.keySet()) {
+    		if (map.containsKey(pos))
+    			map.put(pos, map.get(pos) + 10);
     	}
     	
         return super.execute(map, robot);
@@ -141,9 +128,9 @@ public final class InnerBehaviour extends Behaviour {
      * 
      * @param innerNodes A map of inner nodes.
      */
-    private void removeRealFrontiers(Map<int[], Set<Orientation>> innerNodes) {
-    	Set<int[]> keys = innerNodes.keySet();
-    	for (int[] key: keys) {
+    private void removeRealFrontiers(Map<Integer, Set<Orientation>> innerNodes) {
+    	Set<Integer> keys = innerNodes.keySet();
+    	for (Integer key: keys) {
     		if (innerNodes.containsKey(key))
     			removeNode(innerNodes, key);
     	}
@@ -155,21 +142,18 @@ public final class InnerBehaviour extends Behaviour {
      * @param innerNodes A map of inner nodes.
      * @param node The node that shall be removed.
      */
-    private void removeNode(Map<int[], Set<Orientation>> innerNodes, int[] node) {
+    private void removeNode(Map<Integer, Set<Orientation>> innerNodes, Integer node) {
     	if (innerNodes.containsKey(node)) {
 			if (!(	innerNodes.get(node).contains(Orientation.LEFT) &&
 					innerNodes.get(node).contains(Orientation.RIGHT) &&
 					innerNodes.get(node).contains(Orientation.UP) &&
 					innerNodes.get(node).contains(Orientation.DOWN)	)) {
 				innerNodes.remove(node);
-				int left[] = {node[0]-1, node[1]};
-				removeNode(innerNodes, left);
-				int right[] = {node[0]+1, node[1]};
-				removeNode(innerNodes, right);
-				int up[] = {node[0], node[1]+1};
-				removeNode(innerNodes, up);
-				int down[] = {node[0], node[1]-1};
-				removeNode(innerNodes, down);				
+				int intKey[] = Utility.extractCoordinates(node);
+				removeNode(innerNodes, Utility.makeKey(intKey[0]-1, intKey[1]));
+				removeNode(innerNodes, Utility.makeKey(intKey[0]+1, intKey[1]));
+				removeNode(innerNodes, Utility.makeKey(intKey[0], intKey[1]+1));
+				removeNode(innerNodes, Utility.makeKey(intKey[0], intKey[1]-1));								
 			}
 		}
     }

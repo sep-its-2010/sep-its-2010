@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
+import sep.conquest.util.Utility;
+
 /**
  * The class GridMap manages the saving of nodes which have been explored by the
  * e-puck roboter. Nodes of the type GraphNode can be added to the structure and 
@@ -97,7 +99,7 @@ public class GridMap implements Serializable {
 			// creates a new node
 			GraphNode newNode = new GraphNode(x, y, status);
 			// add to tree
-			int key = this.makeKey(x, y);
+			int key = Utility.makeKey(x, y);
 			this.mapTree.put(key, newNode);
 			// update the state to increase the visitCounter
 			this.changeState(x, y, status);
@@ -203,7 +205,7 @@ public class GridMap implements Serializable {
 	 *         null
 	 */
 	public GraphNode getNode(int x, int y) {
-		int key = this.makeKey(x, y);
+		int key = Utility.makeKey(x, y);
 		return mapTree.get(key);
 	}
 
@@ -293,7 +295,7 @@ public class GridMap implements Serializable {
 		switch (direction) {
 		// Search and set the left neighbour
 		case 0:
-			actNeighbour = this.mapTree.get(this.makeKey(
+			actNeighbour = this.mapTree.get(Utility.makeKey(
 					newNode.getXValue() - 1, newNode.getYValue()));
 			// If the neighbour exists set neighbours
 			if (actNeighbour != null) {
@@ -307,7 +309,7 @@ public class GridMap implements Serializable {
 			break;
 		// Search and set the right neighbour
 		case 1:
-			actNeighbour = this.mapTree.get(this.makeKey(
+			actNeighbour = this.mapTree.get(Utility.makeKey(
 					newNode.getXValue() + 1, newNode.getYValue()));
 			// If the neighbour exists set neighbours
 			if (actNeighbour != null) {
@@ -320,7 +322,7 @@ public class GridMap implements Serializable {
 			break;
 		// Search and set the bottom neighbour
 		case 2:
-			actNeighbour = this.mapTree.get(this.makeKey(newNode.getXValue(),
+			actNeighbour = this.mapTree.get(Utility.makeKey(newNode.getXValue(),
 					newNode.getYValue() + 1));
 			// If the neighbour exists set neighbours
 			if (actNeighbour != null) {
@@ -333,7 +335,7 @@ public class GridMap implements Serializable {
 			break;
 		// Search and set the upper neighbour
 		case 3:
-			actNeighbour = this.mapTree.get(this.makeKey(newNode.getXValue(),
+			actNeighbour = this.mapTree.get(Utility.makeKey(newNode.getXValue(),
 					newNode.getYValue() - 1));
 			// If the neighbour exists set neighbours
 			if (actNeighbour != null) {
@@ -348,17 +350,6 @@ public class GridMap implements Serializable {
 		}
 	}
 	
-	/**
-	 * Creates the key for the mapping in the TreeMap.
-	 * 
-	 * @param x The x-coordinate of the node
-	 * @param y The y-coordinate of the node
-	 * @return The key for the mapping
-	 */
-	private int makeKey(int x, int y) {
-		return (x ^ y << 16) | (x & 0xFFFF);
-	}
-
 	/**
 	 * The private method setFrontierNodes checks if new frontierNodes has to be
 	 * created at the node with the coordinates x and y and sets the
@@ -383,7 +374,7 @@ public class GridMap implements Serializable {
 			newFrontierNode.setNeighbours(newFrontierNode.RIGHTNEIGHBOUR,
 					newNode);
 			// insert in mapTree
-			key = this.makeKey(newFrontierNode.getXValue(), newFrontierNode
+			key = Utility.makeKey(newFrontierNode.getXValue(), newFrontierNode
 					.getYValue());
 			this.mapTree.put(key, newFrontierNode);
 			break;
@@ -397,7 +388,7 @@ public class GridMap implements Serializable {
 			newFrontierNode.setNeighbours(newFrontierNode.LEFTNEIGHBOUR,
 					newNode);
 			// insert in mapTree
-			key = this.makeKey(newFrontierNode.getXValue(), newFrontierNode
+			key = Utility.makeKey(newFrontierNode.getXValue(), newFrontierNode
 					.getYValue());
 			this.mapTree.put(key, newFrontierNode);
 			break;
@@ -410,7 +401,7 @@ public class GridMap implements Serializable {
 			newFrontierNode
 					.setNeighbours(newFrontierNode.TOPNEIGHBOUR, newNode);
 			// insert in mapTree
-			key = this.makeKey(newFrontierNode.getXValue(), newFrontierNode
+			key = Utility.makeKey(newFrontierNode.getXValue(), newFrontierNode
 					.getYValue());
 			this.mapTree.put(key, newFrontierNode);
 			break;
@@ -423,7 +414,7 @@ public class GridMap implements Serializable {
 			newFrontierNode.setNeighbours(newFrontierNode.BOTTOMNEIGHBOUR,
 					newNode);
 			// insert in mapTree
-			key = this.makeKey(newFrontierNode.getXValue(), newFrontierNode
+			key = Utility.makeKey(newFrontierNode.getXValue(), newFrontierNode
 					.getYValue());
 			this.mapTree.put(key, newFrontierNode);
 			break;

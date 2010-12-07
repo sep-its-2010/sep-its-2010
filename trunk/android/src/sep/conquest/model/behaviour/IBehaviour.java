@@ -23,7 +23,7 @@ public interface IBehaviour {
      * @param robot The robot.
      * @return The map with new navigation-costs.
      */
-    Map<int[], Integer> execute(Map<int[], Integer> map, Puck robot);    
+    Map<Integer, Integer> execute(Map<Integer, Integer> map, Puck robot);    
     
     /**
      * Sets the following Behaviour.

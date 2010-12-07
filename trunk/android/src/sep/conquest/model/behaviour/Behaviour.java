@@ -80,7 +80,7 @@ public abstract class Behaviour implements IBehaviour {
     /* (non-Javadoc)
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
      */
-    public Map<int[], Integer> execute(Map<int[], Integer> map, Puck robot) {
+    public Map<Integer, Integer> execute(Map<Integer, Integer> map, Puck robot) {
         if (nextBehaviour != null) {
             return nextBehaviour.execute(map, robot);
         } else {

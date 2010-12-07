@@ -9,6 +9,7 @@ import sep.conquest.model.PathNode;
 import sep.conquest.model.Puck;
 import sep.conquest.model.RobotStatus;
 import sep.conquest.model.State;
+import sep.conquest.util.Utility;
 
 /**
  * DistanceBehaviour represents a behaviour to identify the next frontier-nodes
@@ -19,42 +20,44 @@ import sep.conquest.model.State;
  */
 public final class DistanceBehaviour extends Behaviour {
 
-    /**
-     * The constructor enables chain-handling by calling the constructor of
-     * the super-class (Behaviour).
-     * 
-     * @param stateLevel The level of the state.
-     * @param next A reference to the next behaviour.
-     */
-    protected DistanceBehaviour(State stateLevel, IBehaviour next) {
-        super(stateLevel, next);
-    }
+	/**
+	 * The constructor enables chain-handling by calling the constructor of the
+	 * super-class (Behaviour).
+	 * 
+	 * @param stateLevel
+	 *            The level of the state.
+	 * @param next
+	 *            A reference to the next behaviour.
+	 */
+	protected DistanceBehaviour(State stateLevel, IBehaviour next) {
+		super(stateLevel, next);
+	}
 
-    /* (non-Javadoc)
-     * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
-     */
-    public Map<int[], Integer> execute(Map<int[], Integer> map, Puck robot) {
-    	
-    	LinkedList<GraphNode> frontiers = robot.getMap().getFrontierList();
-    	AStarPathFinder astar = new AStarPathFinder();
-    	RobotStatus status = robot.getRobotStatus().get(robot.getID());
-    	int[][] destinations = new int[frontiers.size()][2];
-    	int i = 0;
-    	for (GraphNode node: frontiers) {
-    		destinations[i][0] = node.getXValue();
-    		destinations[i][1] = node.getYValue();
-    		i++;
-    	}    	
-    	
-    	PathNode[] paths = astar.find(robot, status.getPosition(), destinations);
-    	
-    	for (PathNode path: paths) {
-    		int[] pos = new int[2];
-    		pos[0] = path.getNode().getXValue();
-    		pos[1] = path.getNode().getYValue();
-    		map.put(pos, path.getCosts());
-    	}
-    	
-        return super.execute(map, robot);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
+	 */
+	public Map<Integer, Integer> execute(Map<Integer, Integer> map, Puck robot) {
+
+		LinkedList<GraphNode> frontiers = robot.getMap().getFrontierList();
+		AStarPathFinder astar = new AStarPathFinder();
+		RobotStatus status = robot.getRobotStatus().get(robot.getID());
+		int[][] destinations = new int[frontiers.size()][2];
+		int i = 0;
+		for (GraphNode node : frontiers) {
+			destinations[i][0] = node.getXValue();
+			destinations[i][1] = node.getYValue();
+			i++;
+		}
+
+		PathNode[] paths = astar
+				.find(robot, status.getPosition(), destinations);
+
+		for (PathNode path : paths)
+			map.put(Utility.makeKey(path.getNode().getXValue(), path.getNode()
+					.getYValue()), path.getPathCosts());
+
+		return super.execute(map, robot);
+	}
 }
