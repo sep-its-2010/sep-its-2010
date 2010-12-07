@@ -1,5 +1,6 @@
 package sep.conquest.model;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeMap;
@@ -15,7 +16,7 @@ import java.util.Map.Entry;
  * 
  * @author Florian Lorenz
  */
-public class GridMap {
+public class GridMap implements Serializable {
 	
 	/**
 	 * An unique serialVersionUID to identify the class
