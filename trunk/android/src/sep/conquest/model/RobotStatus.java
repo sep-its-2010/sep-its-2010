@@ -11,7 +11,8 @@ package sep.conquest.model;
 public class RobotStatus implements Cloneable {
 
 	/**
-	 * The current position of the robot within the map.
+	 * The current position of the robot within the map. The first position of
+	 * the array is the x-coordinate, the second position is the y-coordinate
 	 */
 	private int[] position;
 
@@ -218,12 +219,14 @@ public class RobotStatus implements Cloneable {
 	 *            The RobotStatus.
 	 */
 	public void setRobotStatus(RobotStatus status) {
-		this.position = status.getPosition();
+		this.position[0] = status.getPosition()[0];
+		this.position[1] = status.getPosition()[1];
 		this.orientation = status.getOrientation();
 		this.moving = status.isMoving();
 		this.state = status.getState();
 		this.nodeType = status.getNodeType();
-		this.intentPosition = status.getIntentPosition();
+		this.intentPosition[0] = status.getIntentPosition()[0];
+		this.intentPosition[1] = status.getIntentPosition()[1];
 	}
 
 	/*

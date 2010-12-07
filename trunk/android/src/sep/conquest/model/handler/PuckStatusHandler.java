@@ -1,15 +1,19 @@
 package sep.conquest.model.handler;
 
-import java.util.UUID;
 
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.MapNode;
+import sep.conquest.model.NodeType;
+import sep.conquest.model.Orientation;
+import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.MessageType;
+import sep.conquest.model.requests.PuckRequest;
 
 /**
  * Handles PuckStatus messages coming from the Bluetooth Adapter.
  * 
- * @author Andreas Poxrucker
+ * @author Andreas Poxrucker (Florian Lorenz)
  *
  */
 public class PuckStatusHandler extends Handler {
@@ -39,12 +43,99 @@ public class PuckStatusHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-	  if(!(request.getKind() == MessageType.RESPONSE_STATUS)){
+	  PuckRequest statusReq = (PuckRequest) request;
+	  if(!(statusReq.getKind() == MessageType.RESPONSE_STATUS)){
 		  return super.handleRequest(request);
 	  } else {
-		  //Has to update the status of the robot, hasn't it?
-		  //Is this the RobotState, which means intentPosition, isMoving etc,
-		  //or is this the State which means idle,exploring,etc..
+		    /*
+			 * Message looks like: 
+			 * Byte[0-1]: MessageType 
+			 * Byte[2-5]: System Up
+			 * Time (little endian) 
+			 * Byte[6-8]: Abyss (0 == false, otherwise == true, left middle right) 
+			 * Byte[9-16]: Collision (0 == false, otherwise == true) 
+			 * Byte[17]: NodeType (0-8 NodeType, 9 unknown)
+			 * What to do: Check which NodeType, then check the priority and how
+			 * many robots are online, then add the node to the structure.
+			 */
+		  	byte[] bufferMessage = statusReq.getMessage();
+		  	byte[] collisionArray = new byte[7];
+		  	byte[] abyssArray = new byte[2];
+		  	boolean isCollision = false;
+		  	boolean isAbyss = false;
+		  	//fill the collisionArray with the information of the message
+		  	//and checks whether there is a collision
+		  	for(int i = 9; i<17;i++){
+		  		collisionArray[i] = bufferMessage[i];
+		  		if (bufferMessage[i] != 0){
+		  			isCollision = true;
+		  		}
+		  	}
+		  	
+		  	
+		  	
+		  	//fill the abyssArray with the information of the message and
+		  	//checks whether there is a collision
+		  	for(int j = 6; j<9;j++){
+		  		abyssArray[j] = bufferMessage[j];
+		  		if (bufferMessage[j] != 0){
+		  			isAbyss = true;
+		  		}
+		  	}
+		  	
+		  	//E-puck's near an abyss
+		  	if(isAbyss){
+		  		
+		  	}
+		  	
+		  	//E-puck's recognized a collision
+		  	if(isCollision){
+		  		
+		  	}
+		  	
+		  	// This block seeks out the type of the node sent with the message
+		  	NodeType typeOfLastVisitedNode = null;
+			int typeOfNode = bufferMessage[17];
+			switch (typeOfNode) {
+			case MapNode.CROSS:
+				typeOfLastVisitedNode = NodeType.CROSS;
+				break;
+			case MapNode.LEFTT:
+				typeOfLastVisitedNode = NodeType.LEFTT;
+				break;
+			case MapNode.RIGHTT:
+				typeOfLastVisitedNode = NodeType.RIGHTT;
+				break;
+			case MapNode.BOTTOMLEFTEDGE:
+				typeOfLastVisitedNode = NodeType.BOTTOMLEFTEDGE;
+				break;
+			case MapNode.BOTTOMRIGHTEDGE:
+				typeOfLastVisitedNode = NodeType.BOTTOMRIGHTEDGE;
+				break;
+			case MapNode.BOTTOMT:
+				typeOfLastVisitedNode = NodeType.BOTTOMT;
+				break;
+			case MapNode.TOPLEFTEDGE:
+				typeOfLastVisitedNode = NodeType.TOPLEFTEDGE;
+				break;
+			case MapNode.TOPRIGHTEDGE:
+				typeOfLastVisitedNode = NodeType.TOPRIGHTEDGE;
+				break;
+			case MapNode.TOPT:
+				typeOfLastVisitedNode = NodeType.TOPT;
+				break;
+			}
+			
+		  	/*
+		  	 * The NodeType has to be translated within the information of the
+		  	 * PuckStatus. In the beginning perhaps null?!
+		  	 * I assume that the e-pucks are looking in the same direction in
+		  	 * the beginning, so all robots have got the Orientation DOWN
+		  	 */
+			RobotStatus bufferStatus = executor.getRobot().getRobotStatus().get(statusReq.getSender());
+		  	Orientation ori = Orientation.DOWN;
+			bufferStatus.setOrientation(ori);
+		  	
 		  return true;
 	  }
   }

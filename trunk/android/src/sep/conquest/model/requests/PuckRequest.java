@@ -3,6 +3,7 @@ package sep.conquest.model.requests;
 import java.util.UUID;
 
 import sep.conquest.model.IRequest;
+import sep.conquest.model.Puck;
 
 
 /**
@@ -25,30 +26,6 @@ public class PuckRequest implements IRequest {
      */
     private MessageType type;
     
-    /*
-     * Represents the byte-Code for the messageType Response_Ok
-     */
-    private static final short resOk = (short) 0x81FF;
-    
-    /*
-     * Represents the byte-Code for the messageType Response_Status
-     */
-    private static final short resStatus = (short) 0x82FF;
-    
-    /*
-     * Represents the byte-Code for the messageType Response_HitNode
-     */
-    private static final short resHitNode = (short) 0x83FF;
-    
-    /*
-     * Represents the byte-Code for the messageType Response_Collision
-     */
-    private static final short resCollision = (short) 0x84FF;
-    
-    /*
-     * Represents the byte-Code for the messageType Response_Abyss
-     */
-    private static final short resAbyss = (short) 0x85FF;
     
     /**
      * The constructor expects an request message to identify the type of the
@@ -64,15 +41,15 @@ public class PuckRequest implements IRequest {
 		short messageType;
 		messageType = (short) (((message[1] & 0xFF) << 8) | message[0] & 0xFF);
 		switch (messageType) {
-		case resOk:
+		case Puck.RES_OK:
 			type = MessageType.RESPONSE_OK;
-		case resAbyss:
+		case Puck.RES_ABYSS:
 			type = MessageType.RESPONSE_ABYSS;
-		case resCollision:
+		case Puck.RES_COLLISION:
 			type = MessageType.RESPONSE_COLLISION;
-		case resHitNode:
+		case Puck.RES_HITNODE:
 			type = MessageType.RESPONSE_HIT_NODE;
-		case resStatus:
+		case Puck.RES_STATUS:
 			type = MessageType.RESPONSE_STATUS;
 		}	
     }

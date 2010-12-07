@@ -2,6 +2,7 @@ package sep.conquest.model.handler;
 
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.MessageType;
 import sep.conquest.model.requests.StatusUpdateRequest;
 
@@ -38,18 +39,19 @@ public class StatusUpdateRequestHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-	  if(!(request.getKind() == MessageType.STATUS_UPDATE)){
-		  return super.handleRequest(request);
-	  } else {
-		  StatusUpdateRequest statusReq = (StatusUpdateRequest)request;
-		  //side effect in method RobotStatus.setRobotStatus?! Checken...
-		  //Evtl hier einfach zwischen statusReq und .getStatus noch schnell
-		  //.clone() einfuegen, damit waere kein seiteneffekt da...
-			executor.getRobot().getRobotStatus().get(request.getSender())
-					.setRobotStatus(statusReq.getStatus());
+		if (!(request.getKind() == MessageType.STATUS_UPDATE)) {
+			return super.handleRequest(request);
+		} else {
+			StatusUpdateRequest statusReq = (StatusUpdateRequest) request;
+			// Side effect in method RobotStatus.setRobotStatus?! Check this!
+			RobotStatus oldStatus = executor.getRobot().getRobotStatus().get(
+					statusReq.getSender());
+			// The status which is sent with the message
+			RobotStatus newBufferRobotStatus = statusReq.getStatus();
+			oldStatus.setRobotStatus(newBufferRobotStatus);
 			return true;
-	  }
-  }
+		}
+	}
 
 }
 

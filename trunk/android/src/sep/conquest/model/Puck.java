@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 
 import sep.conquest.model.requests.HelloRequest;
 import sep.conquest.model.requests.MessageType;
+import sep.conquest.model.requests.Request;
 import sep.conquest.util.ConquestLog;
 
 /**
@@ -122,7 +123,7 @@ public abstract class Puck implements IComClient, IRobot {
 		// initialize state map and add own initial state 'Localizing'.
 		states = new TreeMap<UUID, RobotStatus>();
 		states.put(id, new RobotStatus());
-
+		
 		// start the logic thread
 		logicThread = new LogicThread(this);
 		executor.execute(logicThread);
@@ -159,6 +160,15 @@ public abstract class Puck implements IComClient, IRobot {
 		logicThread.addMessage(request);
 	}
 
+	/**
+	 * The method sends a given request via broadcast to the other members.
+	 * 
+	 * @param request The message to be sent.
+	 */
+	public void broadcast(Request request) {		
+		ComManager.getInstance().broadcast(request);
+	}
+	
 	/**
 	 * Returns the map of the robot.
 	 * 
