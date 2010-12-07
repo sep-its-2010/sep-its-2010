@@ -1,6 +1,10 @@
 package sep.conquest.model;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import android.bluetooth.BluetoothSocket;
@@ -43,8 +47,6 @@ public class PuckFactory {
         man.addClient(newUUID, newPuck);
       }
       // initiate handshaking of the robots
-      IComClient[] client = man.getClients();
-      
       Puck first = (Puck) (man.getClients())[0];
       first.sendHello();
       return true;
@@ -52,29 +54,53 @@ public class PuckFactory {
   }
 
   /**
-   * Creates number times a new VirtualPuck instance and registers it to the
-   * ComManager.
+   * Creates a new simulator instance and new VirtualPuck instances and
+   * registers it to the ComManager.
    * 
    * As soon as all Pucks are created and connected to the ComManager return
    * true.
    * 
-   * @param number
-   *          The number of VirtualPucks to create.
+   * @param map
+   *          The map to explore in the simulator
+   * @param positions
+   *          The initial positions of the robots
+   * @param ori
+   *          The initial orientations of the robots
    * @return True, if creation and registration was successful, false otherwise.
    */
-  public static boolean createVirtualPucks(Simulator sim, int number) {
+  public static boolean createVirtualPucks(GridMap map, int[][] positions,
+      Orientation[] ori) {
     // Get instance of ComManager to add created Pucks.
     ComManager man = ComManager.getInstance();
 
-    // If number is greater than zero start creation.
-    // Otherwise return false.
-    if (number > 0 && sim != null) {
-      
-      for (int i = 0; i < number; i++) {
-        // UUID of new VirtualPuck
-        UUID newUUID = UUID.randomUUID();
-        Puck newPuck = new VirtualPuck(newUUID, sim);
-        man.addClient(newUUID, newPuck);
+    if ((positions != null) && (ori != null) && (map != null)
+        && (positions.length == ori.length)) {
+      // Saves ids of VirtualPucks
+      Set<UUID> ids = new TreeSet<UUID>();
+
+      // Saves mapping of id to positions
+      Map<UUID, int[]> posMap = new TreeMap<UUID, int[]>();
+
+      // Saves mapping of id to orientation
+      Map<UUID, Orientation> oriMap = new TreeMap<UUID, Orientation>();
+
+      // Create new ids and mapping to position and orientation
+      for (int i = 0; i < positions.length; i++) {
+        UUID newId = UUID.randomUUID();
+        ids.add(newId);
+
+        // Check for invalid positions or orientations.
+        if ((positions[i].length != 2) || (ori[i] == null)) {
+          throw new IllegalArgumentException("Invalid position or orientation");
+        }
+        posMap.put(newId, positions[i]);
+        oriMap.put(newId, ori[i]);
+      }
+      Simulator sim = new Simulator(map, posMap, oriMap);
+
+      for (UUID id : ids) {
+        Puck newPuck = new VirtualPuck(id, sim);
+        man.addClient(id, newPuck);
       }
       // initiate handshaking of the robots
       Puck first = (Puck) man.getClients()[0];
@@ -82,7 +108,7 @@ public class PuckFactory {
       return true;
     } else {
       throw new IllegalArgumentException(
-          "Number must be grater than zero and Simulator must not equal null");
+          "Map, position and orientation must not equal null");
     }
   }
 }
