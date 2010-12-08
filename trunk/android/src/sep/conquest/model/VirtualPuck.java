@@ -27,8 +27,8 @@ public class VirtualPuck extends Puck {
 	 * @param ID The unique identifying number of an instance of the 
 	 * VirtualPuck. 
 	 */
-	public VirtualPuck(UUID ID, Simulator simulator){
-		super(ID);
+	public VirtualPuck(UUID ID, Simulator simulator, String name){
+		super(ID, name);
 		sim = simulator;
 	}
 	

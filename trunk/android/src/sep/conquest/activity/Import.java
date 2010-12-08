@@ -129,7 +129,7 @@ public class Import extends Activity {
           case SIMULATION_MAP:
             // Put the map, the initial positions and the initial orientations
             // as extras, finish Activity and return to simulation Activity.
-            start.putExtra(EXTRA_MAP, map);
+            start.putExtra(EXTRA_MAP, map.getMapAsList());
             start.putExtra(EXTRA_POSITIONS, c.getPositions());
             start.putExtra(EXTRA_ORIENTATIONS, c.getOrientations());
             start.setComponent(new ComponentName(getApplicationContext()

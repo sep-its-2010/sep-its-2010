@@ -32,4 +32,8 @@
 <string name="BTN_STARTPOSITION">Set Startposition</string>
 <string name="BTN_CLEAR">Clear Positions</string>
 <string name="ERR_MSG_INVALID_FILE">Error: Could not read file.</string>
+<string name="CONTROL_SELECT">Select control</string>
+<string name="TXT_E_PUCK">Selected e-puck:</string>
+<string name="TXT_CONTROL">Selected control:</string>
+<string name="CHK_ACTIVATE">Activate manual control</string>
 </resources>

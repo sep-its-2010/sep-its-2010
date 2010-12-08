@@ -3,9 +3,14 @@ package sep.conquest.activity;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.UUID;
 
 import sep.conquest.R;
 import sep.conquest.controller.Controller;
+import sep.conquest.model.ConquestUpdate;
+import sep.conquest.model.RobotStatus;
 import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -15,11 +20,15 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 /**
@@ -30,11 +39,6 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
  * 
  */
 public class Steer extends Activity implements Observer {
-
-  /**
-   * Marks whether manual control is activated or not.
-   */
-  private CheckBox chkActivate;
 
   /**
    * Shows selected control method.
@@ -87,6 +91,26 @@ public class Steer extends Activity implements Observer {
   private Controller controller;
 
   /**
+   * The currently selected control.
+   */
+  private Control selectedControl;
+
+  /**
+   * The currently selected Robot.
+   */
+  private UUID selectedRobot;
+
+  /**
+   * Mapping of names from spinner to ids of robots.
+   */
+  private UUID[] robots;
+
+  /**
+   * Indicates that drive command has been send to selected robot.
+   */
+  private boolean moving;
+
+  /**
    * Called when Activity is initially created.
    * 
    * Initializes the layout, the sensor control and the control elements of the
@@ -112,15 +136,30 @@ public class Steer extends Activity implements Observer {
 
     // Get reference on Controller
     controller = Controller.getInstance();
+
+    // Initially selected control is joystick
+    selectedControl = Control.JOYSTICK;
   }
 
   public void onResume() {
     super.onResume();
     controller.getEnv().addObserver(this);
+
+    // If sensor control is selected, register sensor listener.
+    if (selectedControl == Control.ACC_SENSOR) {
+      sensMan.registerListener(accListener, accSensor,
+          SensorManager.SENSOR_DELAY_NORMAL);
+    }
   }
 
   public void onPause() {
     controller.getEnv().deleteObserver(this);
+
+    // If there is an active sensor listener (sensor control is enabled),
+    // unregister it.
+    if (selectedControl == Control.ACC_SENSOR) {
+      sensMan.unregisterListener(accListener);
+    }
     super.onPause();
   }
 
@@ -134,8 +173,29 @@ public class Steer extends Activity implements Observer {
    *          Attached data containing information about changes.
    */
   public void update(Observable observable, Object data) {
-    // TODO Auto-generated method stub
+    // Cast data object.
+    ConquestUpdate update = (ConquestUpdate) data;
 
+    // Get RobotStates and the keyset.
+    java.util.Map<UUID, RobotStatus> states = update.getRobotStatus();
+    Set<UUID> ids = states.keySet();
+
+    robots = new UUID[ids.size()];
+
+    ArrayAdapter<String> adpRobots = new ArrayAdapter<String>(this,
+        android.R.layout.simple_spinner_item);
+    adpRobots
+        .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+    int i = 0;
+    for (UUID id : ids) {
+      String name = states.get(id).getState().toString();
+      adpRobots.add(name);
+      robots[i] = id;
+      i++;
+    }
+    adpRobots.add("none");
+    spRobots.setAdapter(adpRobots);
   }
 
   /**
@@ -151,8 +211,7 @@ public class Steer extends Activity implements Observer {
     List<Sensor> sensList = sensMan.getSensorList(Sensor.TYPE_ACCELEROMETER);
 
     // Check, if device has at least one acc sensor. If not, sensor control
-    // is
-    // not possible.
+    // is not possible.
     if (sensList.size() > 0) {
       accSensor = sensList.get(0);
       accListener = new SteerSensorEventListener();
@@ -166,9 +225,7 @@ public class Steer extends Activity implements Observer {
    * Initializes control elements of the Activity and sets EventListener.
    */
   private void initializeControlElements() {
-
-    // Get reference on CheckBox and set its OnCheckedChangeListener
-    chkActivate = (CheckBox) findViewById(R.id.chk_activate);
+    CheckBox chkActivate = (CheckBox) findViewById(R.id.chkActivate);
     chkActivate.setOnCheckedChangeListener(new SteerOnCheckedChangeListener());
 
     // Get references on Buttons and set their OnClickListener
@@ -183,10 +240,56 @@ public class Steer extends Activity implements Observer {
     btnRight.setOnClickListener(listener);
 
     // Get reference on robot selection Spinner and set its
-    spRobots = (Spinner) findViewById(R.id.sp_robots);
+    spRobots = (Spinner) findViewById(R.id.spRobots);
+    spRobots.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-    // Get reference on control selection Spinner and set its
-    spControl = (Spinner) findViewById(R.id.sp_control);
+      public void onItemSelected(AdapterView<?> parent, View view,
+          int position, long id) {
+        TextView item = (TextView) view;
+
+        if (item.getText().equals("none")) {
+          selectedRobot = null;
+        } else {
+          selectedRobot = robots[position];
+        }
+
+      }
+
+      public void onNothingSelected(AdapterView<?> parent) {
+        // TODO Auto-generated method stub
+
+      }
+
+    });
+
+    // Contains the available controls.
+    String[] controls = { "On-Screen-Joystick", "Acceleration sensor" };
+
+    // Saves the available controls and is used to display them in the control
+    // spinner.
+    ArrayAdapter<String> adpControl = new ArrayAdapter<String>(this,
+        android.R.layout.simple_spinner_item, controls);
+    adpControl
+        .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    spControl = (Spinner) findViewById(R.id.spControl);
+    spControl.setAdapter(adpControl);
+    spControl.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+      public void onItemSelected(AdapterView<?> parent, View view,
+          int position, long id) {
+        // The position of the selected item is the ordinal of the corresponding
+        // Control enum.
+        selectedControl = Control.values()[position];
+      }
+
+      public void onNothingSelected(AdapterView<?> arg0) {
+        // TODO Auto-generated method stub
+
+      }
+    });
+
+    // Disable all steer control elements in the beginning.
+    enableControlElements(false);
   }
 
   /**
@@ -199,6 +302,22 @@ public class Steer extends Activity implements Observer {
     Toast mtoast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
     mtoast.setGravity(Gravity.CENTER, 0, 0);
     mtoast.show();
+  }
+
+  private void enableControlElements(boolean enable) {
+    btnUp.setEnabled(enable);
+    btnDown.setEnabled(enable);
+    btnLeft.setEnabled(enable);
+    btnRight.setEnabled(enable);
+
+    TextView txtControl = (TextView) findViewById(R.id.txtControl);
+    if (sensMan != null) {
+      spControl.setEnabled(enable);
+      txtControl.setEnabled(enable);
+    } else {
+      spControl.setEnabled(false);
+      txtControl.setEnabled(false);
+    }
   }
 
   /**
@@ -270,25 +389,12 @@ public class Steer extends Activity implements Observer {
      *          True, if buttonView is checked, false otherwise.
      */
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-      // If control is activated, set Buttons enabled
-      btnUp.setEnabled(isChecked);
-      btnDown.setEnabled(isChecked);
-      btnLeft.setEnabled(isChecked);
-      btnRight.setEnabled(isChecked);
-
-      // If control is activated and on-screen joystick control is
-      // selected make Buttons clickable.
-      btnUp.setClickable(isChecked);
-      btnDown.setClickable(isChecked);
-      btnLeft.setClickable(isChecked);
-      btnRight.setClickable(isChecked);
+      enableControlElements(isChecked);
 
       if (isChecked) {
-        sensMan.registerListener(accListener, accSensor,
-            SensorManager.SENSOR_DELAY_UI);
+
       } else {
-        sensMan.unregisterListener(accListener);
+
       }
     }
   }
@@ -308,29 +414,32 @@ public class Steer extends Activity implements Observer {
      *          View that has been clicked.
      */
     public void onClick(View v) {
-      int id = v.getId();
+      // If a robot is selected and not moving, pass control command to
+      // Controller.
+      if ((selectedRobot != null) && !moving) {
+        int id = v.getId();
+        switch (id) {
+        // Button 'Up'
+        case R.id.btn_up:
+          controller.forward(selectedRobot);
+          break;
 
-      switch (id) {
+        // Button 'Down'
+        case R.id.btn_down:
+          controller.turn(selectedRobot);
+          break;
 
-      // Button 'Up'
-      case R.id.btn_up:
-        controller.forward(null);
-        break;
+        // Button 'Left'
+        case R.id.btn_left:
+          controller.left(selectedRobot);
+          break;
 
-      // Button 'Down'
-      case R.id.btn_down:
-        controller.turn(null);
-        break;
-      
-      // Button 'Left'
-      case R.id.btn_left:
-        controller.left(null);
-        break;
-      
-      // Button 'Right'
-      case R.id.btn_right:
-        controller.right(null);
-        break;
+        // Button 'Right'
+        case R.id.btn_right:
+          controller.right(selectedRobot);
+          break;
+        }
+        moving = true;
       }
     }
   }

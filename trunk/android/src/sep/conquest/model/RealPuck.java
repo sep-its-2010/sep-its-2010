@@ -34,8 +34,8 @@ public class RealPuck extends Puck {
 	 * @param ID
 	 *            The unique identifying number of an instance of the RealPuck.
 	 */
-	public RealPuck(BluetoothSocket btSocket, UUID ID) {
-		super(ID);
+	public RealPuck(BluetoothSocket btSocket, UUID ID, String name) {
+		super(ID, name);
 		this.mybtSocket = btSocket;
 	}
 

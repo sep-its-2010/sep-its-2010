@@ -17,13 +17,18 @@ import android.bluetooth.BluetoothSocket;
  * 
  */
 public class PuckFactory {
+  
+  /**
+   * The beginning of a robot name used to create names for VirtualPucks.
+   */
+  private static final String ROBOT_NAME = "e-puck_";
 
   /**
    * Creates a new RealPuck instance for each BluetoothDevice of the set and
    * registers it to the ComManager. If creation fails (for example when device
    * is not available) creation is aborted and false is returned.
    * 
-   * As soon as all Pucks are successfully created method return true.
+   * As soon as all Pucks are successfully created, method returns true.
    * 
    * If empty set or null is passed method returns false.
    * 
@@ -43,7 +48,8 @@ public class PuckFactory {
       // Iterate over set and create RealPuck for each device.
       for (BluetoothSocket robot : robots) {
         UUID newUUID = UUID.randomUUID();
-        Puck newPuck = new RealPuck(robot, newUUID);
+        String name = robot.getRemoteDevice().getName();
+        Puck newPuck = new RealPuck(robot, newUUID, name);
         man.addClient(newUUID, newPuck);
       }
       // initiate handshaking of the robots
@@ -98,9 +104,11 @@ public class PuckFactory {
       }
       Simulator sim = new Simulator(map, posMap, oriMap);
 
+      int i = 0;
       for (UUID id : ids) {
-        Puck newPuck = new VirtualPuck(id, sim);
+        Puck newPuck = new VirtualPuck(id, sim, ROBOT_NAME + i);
         man.addClient(id, newPuck);
+        i++;
       }
       // initiate handshaking of the robots
       Puck first = (Puck) man.getClients()[0];

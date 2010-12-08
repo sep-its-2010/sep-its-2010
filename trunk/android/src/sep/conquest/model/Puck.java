@@ -82,7 +82,12 @@ public abstract class Puck implements IComClient, IRobot {
 	 * Global unique id.
 	 */
 	private UUID id;
-
+	
+	/**
+	 * Name to display in Activities.
+	 */
+	private String name;
+	
 	/**
 	 * Local map.
 	 */
@@ -115,10 +120,13 @@ public abstract class Puck implements IComClient, IRobot {
 	 * @param id
 	 *            The unique universally id of the Puck.
 	 */
-	public Puck(UUID id) {
+	public Puck(UUID id, String robotName) {
 
 		// Set ID.
 		this.id = id;
+		
+		// Set name.
+		name = robotName;
 
 		// initialize state map and add own initial state 'Localizing'.
 		states = new TreeMap<UUID, RobotStatus>();
@@ -210,6 +218,10 @@ public abstract class Puck implements IComClient, IRobot {
 	 */
 	public UUID getID() {
 		return this.id;
+	}
+	
+	public String getName() {
+	  return name;
 	}
 
 	/**

@@ -484,7 +484,6 @@ public class GridMap implements Parcelable {
 		return returnString;
 	}
 
-	@Override
 	public int describeContents() {
 		// TODO Auto-generated method stub
 		return 0;
@@ -493,7 +492,6 @@ public class GridMap implements Parcelable {
 	
 	public static final Parcelable.Creator<GridMap> CREATOR = new Parcelable.Creator<GridMap>(){
 
-		@Override
 		public GridMap createFromParcel(Parcel source) {
 			GridMap newMap = new GridMap();
 			String[] newStringArray=new String[0];
@@ -508,14 +506,12 @@ public class GridMap implements Parcelable {
 			return newMap;
 		}
 
-		@Override
 		public GridMap[] newArray(int size) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 		
 	};
-	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeStringArray(this.serializeMapInString());
 	}

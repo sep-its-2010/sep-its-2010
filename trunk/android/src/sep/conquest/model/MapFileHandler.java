@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -162,6 +161,7 @@ public class MapFileHandler {
 
         // Serialize map to string array where each line represents one node.
         String[] serializedMap = map.serializeMapInString();
+        fWriter.write("0\n");
 
         // Iterate over string array and write nodes to file.
         for (String str : serializedMap) {
