@@ -9,7 +9,7 @@
 static bool s_blTurningActive = false; ///< Indicates if the robot is currently performing turnings.
 static uint8_t s_ui8PerformedTurnings = 0; ///< Holds a counter for the already performed 90°-turnings.
 static int8_t s_i8DemandedTurnings = 0; ///< Holds the number of demanded turnings.
-com_EMessageType_t podCurrentMessageType; ///< Specifies the last smartphone-message-type.
+static com_EMessageType_t s_podCurrentMessageType; ///< Specifies the last smartphone-message-type.
 
 static bool cbHandleRequestMove( IN const com_SMessage_t* const _lppodMessage);
 static bool cbHandleRequestTurn( IN const com_SMessage_t* const _lppodMessage);
@@ -29,7 +29,7 @@ bool subs_movement_run( void) {
 	bool blMovementChanged = false;
 	com_SMessage_t podOkMessage = { COM_MESSAGE_TYPE__RESPONSE_OK, {0}};
 
-	switch( podCurrentMessageType) {
+	switch( s_podCurrentMessageType) {
 		case COM_MESSAGE_TYPE__REQUEST_TURN: {
 			
 			// Turning not active? -> Start to perform the demanded turnings.
@@ -106,9 +106,14 @@ bool cbHandleRequestTurn(
 	bool blHandledMessage = false;
 	
 	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_TURN) {
-		podCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_TURN;
+		s_podCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_TURN;
 		s_i8DemandedTurnings = _lppodMessage->aui8Data[0];
-		hal_motors_si16CurrentAngularSpeed = 250;
+
+		if( s_i8DemandedTurnings > 0) {
+			hal_motors_si16CurrentAngularSpeed = 250;
+		} else if( s_i8DemandedTurnings <= 0) {
+			hal_motors_si16CurrentAngularSpeed = -250;
+		}		
 		hal_motors_si16CurrentLineSpeed = 0;
 		blHandledMessage = true;
 	}
