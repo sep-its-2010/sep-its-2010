@@ -21,7 +21,7 @@ import sep.conquest.util.Utility;
  * 
  * @author Florian Lorenz
  */
-public class GridMap implements Parcelable{
+public class GridMap{
 	
 	/**
 	 * An unique serialVersionUID to identify the class
@@ -503,9 +503,9 @@ public class GridMap implements Parcelable{
 	}
 	
 	
-	public static final Parcelable.Creator<GridMap> CREATOR = new Parcelable.Creator<GridMap>(){
+	//public static final Parcelable.Creator<GridMap> CREATOR = new Parcelable.Creator<GridMap>(){
 
-		public GridMap createFromParcel(Parcel source) {
+	/*	public GridMap createFromParcel(Parcel source) {
 			GridMap newMap = new GridMap();
 			LinkedList<MapNode> newList = new LinkedList<MapNode>();
 			source.readList(newList, null);
@@ -520,7 +520,7 @@ public class GridMap implements Parcelable{
 			return null;
 		}
 		
-	};
+	};*/
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeList(this.getMapAsList());
 	}

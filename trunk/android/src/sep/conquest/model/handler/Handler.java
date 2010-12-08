@@ -50,7 +50,7 @@ public abstract class Handler {
    * @return True, if Handler has successor, false otherwise.
    */
   public boolean hasNext() {
-    return next == null;
+    return next != null;
   }
 
   /**

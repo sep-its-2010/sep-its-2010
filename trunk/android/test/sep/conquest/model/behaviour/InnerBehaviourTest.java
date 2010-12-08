@@ -68,7 +68,7 @@ public class InnerBehaviourTest {
 		status.setPosition(pos_r1);
 		status.setOrientation(Orientation.RIGHT);
 		robot = new VirtualPuck(id_r1, new Simulator(map, initPositions,
-				initOrientations));
+				initOrientations), "Robot1");
 		fillMap(robot.getMap());			
 		
 		IBehaviour behaviour = new InnerBehaviour(State.EXPLORE, null);

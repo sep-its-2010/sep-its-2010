@@ -108,6 +108,7 @@ public class LogicThread implements Runnable {
 	 */
 	public void changeBehaviour(State state) {
 		if (state != getRobotState().getState()) {
+			BehaviourFactory.createBehaviourChain(state);
 			stateBehaviour = Behaviour.getFirstBehaviour(state);
 			ConquestLog.addMessage(this, "Behaviour changed to "
 					+ stateBehaviour.getClass().toString());
@@ -175,24 +176,14 @@ public class LogicThread implements Runnable {
 	 * @param intentNode
 	 *            The node.
 	 */
-	private void driveTo(int[] intentNode) {
-		int[][] dest = { intentNode };
+	public void driveTo() {
+		int[][] dest = { getRobotState().getIntentPosition() };
 		PathNode[] path = aStar.find(robot, getRobotState().getPosition(), dest);
 
-		// makes driving sense?
-		if (path.length >= 1) {
-			for (int i = 0; i < path.length; i++) {
-				MapNode mapNode = (MapNode) path[i].getNode();
-				int[] node = { mapNode.getXValue(), mapNode.getYValue() };
-
-				// position on driving-path found => send next command
-				if (node.equals(intentNode)) {
-					MapNode nextMapNode = (MapNode) path[i + 1].getNode();
-					int[] nextNode = { nextMapNode.getXValue(),
-							nextMapNode.getYValue() };
-					sendCommand(node, nextNode);
-				}
-			}
+		if (path != null) {
+			MapNode nextMapNode = (MapNode) path[1].getNode();
+			int[] node = { nextMapNode.getXValue(), nextMapNode.getYValue() };
+			sendCommand(getRobotState().getPosition(), node);
 		}
 	}
 
@@ -277,7 +268,6 @@ public class LogicThread implements Runnable {
 	 */
 	public void run() {
 		while (true) {
-			
 			boolean changed = false;
 			
 			// handle bluetooth messages			
@@ -298,7 +288,8 @@ public class LogicThread implements Runnable {
 			if (changed) {
 				Map<Integer, Integer> map = initMap();
 				map = stateBehaviour.execute(map, robot);
-				driveTo(getBestNode(map));
+				getRobotState().setIntentPosition(getBestNode(map));
+				driveTo();
 			} else
 				Thread.yield();
 		}

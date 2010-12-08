@@ -25,7 +25,7 @@ public interface IComMan {
      * @param id The ID of the client.
      * @param client The client which has to be added.
      */    
-    void addClient(UUID id, IComClient client);
+    void addClient(UUID id, IComClient client); //TODO UUID isn't necessary (client.getID())
 
     /**
      * removeClient removes a participant from the communication-manager.

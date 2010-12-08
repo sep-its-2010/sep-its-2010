@@ -19,6 +19,8 @@ import sep.conquest.util.Utility;
  * @author Andreas Wilhelm
  */
 public final class DistanceBehaviour extends Behaviour {
+	
+	private static boolean visited = false;
 
 	/**
 	 * The constructor enables chain-handling by calling the constructor of the
@@ -39,6 +41,12 @@ public final class DistanceBehaviour extends Behaviour {
 	 * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
 	 */
 	public Map<Integer, Integer> execute(Map<Integer, Integer> map, Puck robot) {
+		
+		if (!visited) {
+			System.out.println("DistanceBehaviour visited");
+			visited = true;
+		}
+		
 
 		LinkedList<GraphNode> frontiers = robot.getMap().getFrontierList();
 		AStarPathFinder astar = new AStarPathFinder();

@@ -3,6 +3,7 @@ package sep.conquest.model.handler;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
 import sep.conquest.model.RobotStatus;
+import sep.conquest.model.State;
 import sep.conquest.model.requests.HelloRequest;
 import sep.conquest.model.requests.MessageType;
 
@@ -54,6 +55,10 @@ public class HelloRequestHandler extends Handler {
 				// send hello request
 				thread.getRobot().sendHello();
 			}
+			
+			//TODO status change after 10 sec or with a given number of robots
+			thread.changeBehaviour(State.EXPLORE);
+			
 			return true;
 		}
 	}
