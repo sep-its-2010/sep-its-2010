@@ -21,7 +21,7 @@ import sep.conquest.util.Utility;
  * 
  * @author Florian Lorenz
  */
-public class GridMap {
+public class GridMap implements Parcelable{
 	
 	/**
 	 * An unique serialVersionUID to identify the class
