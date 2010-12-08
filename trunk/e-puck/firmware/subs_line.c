@@ -24,8 +24,8 @@ const float tv = 0.12 * TC;
 
 // constants for pid-controller (PID-adjust-algorithm)
 const float yp = 1.0;
-const float yi = (t / tn);
-const float yd = (tv / t);
+// const float yi = (t / tn);
+// const float yd = (tv / t);
 
 static float y_old = 0.0;
 static float diff_new = 0.0;
@@ -66,7 +66,7 @@ bool subs_line_run( void) {
 	diff_new = podSensorData.aui16Data[2] - podSensorData.aui16Data[0];// - (l_calibrate[0][2] - l_calibrate[0][0]); // @TODO EEPROM-Kalibrierwerte
 
 	// PID-adjust-algorithm
-	y_new = kr * (yp * diff_new + yi * diff_sum + yd * (diff_new - diff_old));
+//	y_new = kr * (yp * diff_new + yi * diff_sum + yd * (diff_new - diff_old));
 	y_new = kr * yp * diff_new;
 
 	// set motor speed

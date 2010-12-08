@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "com.h"
 #include "hal_motors.h"
 #include "hal_led.h"
