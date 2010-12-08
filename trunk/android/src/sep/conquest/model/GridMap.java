@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import sep.conquest.util.Utility;
 
 
@@ -492,6 +495,34 @@ public class GridMap {
 			}
 		}
 		return returnString;
+	}
+
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	
+	public static final Parcelable.Creator<GridMap> CREATOR = new Parcelable.Creator<GridMap>(){
+
+		public GridMap createFromParcel(Parcel source) {
+			GridMap newMap = new GridMap();
+			LinkedList<MapNode> newList = new LinkedList<MapNode>();
+			source.readList(newList, null);
+			for(MapNode noode : newList){
+				newMap.addNode(noode.getXValue(), noode.getYValue(), noode.getNodeType());
+			}
+			return newMap;
+		}
+
+		public GridMap[] newArray(int size) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	};
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeList(this.getMapAsList());
 	}
 
 }
