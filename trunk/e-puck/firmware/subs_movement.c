@@ -2,12 +2,14 @@
 #include "hal_led.h"
 #include "com.h"
 #include "com_types.h"
+#include "sen_line.h"
 
 #include "subs_movement.h"
 
+static bool s_blTurningActive = false; ///< Indicates if the robot is currently performing turnings.
+static uint8_t s_ui8PerformedTurnings = 0; ///< Holds a counter for the already performed 90°-turnings.
+static int8_t s_i8DemandedTurnings = 0; ///< Holds the number of demanded turnings.
 com_EMessageType_t podCurrentMessageType; ///< Specifies the last smartphone-message-type.
-int16_t i16CurrentLineSpeed = 600; ///< Stores the current movement-speed of the robot. Default: 600 steps per second.
-int16_t i16CurrentAngularSpeed = 0; ///< Stores angular-speed for turning in left or right direction.
 
 static bool cbHandleRequestMove( IN const com_SMessage_t* const _lppodMessage);
 static bool cbHandleRequestTurn( IN const com_SMessage_t* const _lppodMessage);
@@ -29,14 +31,39 @@ bool subs_movement_run( void) {
 
 	switch( podCurrentMessageType) {
 		case COM_MESSAGE_TYPE__REQUEST_TURN: {
-			hal_motors_setSpeed( i16CurrentLineSpeed, i16CurrentAngularSpeed);
-			// bis Liniensensoren "x-mal" ausgeschlagen haben
-			blMovementChanged = true;
-			com_send( &podOkMessage);
+			
+			// Turning not active? -> Start to perform the demanded turnings.
+			if( !s_blTurningActive) {
+				s_blTurningActive = true;
+				hal_motors_setSpeed( hal_motors_si16CurrentLineSpeed, hal_motors_si16CurrentAngularSpeed);
+			
+			// Exit turning-state after all demanded turnings have been performed.
+			} else if( s_blTurningActive) {
+				sen_line_SData_t podSensorData = {{0}};
+				sen_line_read( &podSensorData);
+				
+				// Crossed a line? -> One turning is done.
+				if( (2 * podSensorData.aui16Data[0] < 1) || // @TODO 1 durch EEPROM-Kalibrierwert ersetzen
+					(2 * podSensorData.aui16Data[1] < 1) ||
+					(2 * podSensorData.aui16Data[2] < 1)) {
+					s_ui8PerformedTurnings++;
+				}
+
+				// Performed all demanded turnings? -> Reset state and send message.
+				if( s_ui8PerformedTurnings == s_i8DemandedTurnings) {
+					hal_motors_setSpeed( 0, 0);
+					hal_motors_setSteps( 0);
+					s_blTurningActive = false;
+					s_ui8PerformedTurnings = 0;
+					s_i8DemandedTurnings = 0;
+					com_send( &podOkMessage);
+				}				
+			}			
+			blMovementChanged = true;			
 			break;
 		}
 		case COM_MESSAGE_TYPE__REQUEST_MOVE: {
-			hal_motors_setSpeed( i16CurrentLineSpeed, i16CurrentAngularSpeed);
+			hal_motors_setSpeed( hal_motors_si16CurrentLineSpeed, hal_motors_si16CurrentAngularSpeed);
 			blMovementChanged = true;
 			com_send( &podOkMessage);
 			break;
@@ -80,9 +107,9 @@ bool cbHandleRequestTurn(
 	
 	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_TURN) {
 		podCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_TURN;
-		//int8_t i8NumberOfTurns = _lppodMessage->aui8Data[0];
-		//i16CurrentAngularSpeed = ;
-		i16CurrentLineSpeed = 0;
+		s_i8DemandedTurnings = _lppodMessage->aui8Data[0];
+		hal_motors_si16CurrentAngularSpeed = 250;
+		hal_motors_si16CurrentLineSpeed = 0;
 		blHandledMessage = true;
 	}
 	return blHandledMessage;
@@ -145,8 +172,8 @@ bool cbHandleRequestSetSpeed(
 
 	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_SET_SPEED) {
 		podCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_SET_SPEED;
-		i16CurrentLineSpeed = _lppodMessage->aui8Data[0] * 10;
-		i16CurrentAngularSpeed = 0;
+		hal_motors_si16CurrentLineSpeed = _lppodMessage->aui8Data[0] * 10;
+		hal_motors_si16CurrentAngularSpeed = 0;
 		blHandledMessage = true;
 	}
 	return blHandledMessage;
@@ -180,7 +207,6 @@ bool cbHandleRequestSetSpeed(
 // 	return handledMessage;
 // }
 
-
 /*!
  * \brief
  * Resets all movement data.
@@ -188,8 +214,10 @@ bool cbHandleRequestSetSpeed(
  * Registers all handler of this subsumption-layer for the Chain-of-Responsibility pattern.
  */
 void subs_movement_reset( void) {
-	i16CurrentLineSpeed = 600;
-	i16CurrentAngularSpeed = 0;
+	s_blTurningActive = false;
+	s_ui8PerformedTurnings = 0;
+	hal_motors_si16CurrentLineSpeed = 600;
+	hal_motors_si16CurrentAngularSpeed = 0;
 	podCurrentMessageType = 0;
 	com_register( cbHandleRequestTurn);
 	com_register( cbHandleRequestMove);

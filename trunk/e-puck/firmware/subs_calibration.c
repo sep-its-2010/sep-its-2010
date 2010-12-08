@@ -40,7 +40,7 @@ bool subs_calibration_run( void) {
 				aui16LineCalibrationValues[i] = podLineValueBuffer.aui16Data[i];
 			}
 		}		
-		hal_motors_setSpeed( 500, 0);
+		hal_motors_setSpeed( hal_motors_si16CurrentLineSpeed, hal_motors_si16CurrentAngularSpeed);
 
 		// If there are no calibration-values for the surface: collect and store.
 		if( (aui16SurfaceCalibrationValues[0] == 0) && (hal_motors_getStepsLeft() >= 500)) {
