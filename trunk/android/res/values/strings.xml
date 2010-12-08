@@ -36,4 +36,7 @@
 <string name="TXT_E_PUCK">Selected e-puck:</string>
 <string name="TXT_CONTROL">Selected control:</string>
 <string name="CHK_ACTIVATE">Activate manual control</string>
+<string name="TXT_OK">Ok</string>
+<string name="MSG_SUCCESSFULLY_SAVED">Map successfully saved.</string>
+<string name="ERR_MSG_NOT_SUCCESSFULLY_SAVED">Error: Could not save map to file system.</string>
 </resources>

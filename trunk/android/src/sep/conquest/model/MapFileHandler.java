@@ -114,6 +114,11 @@ public class MapFileHandler {
             int[] pos = {x, y};
             positions[posRead] = pos;
             orientations[posRead] = ori;
+            posRead++;
+            
+            if (posRead > number) {
+              throw new IOException("Illegal file format");
+            }
           }
         }
       }

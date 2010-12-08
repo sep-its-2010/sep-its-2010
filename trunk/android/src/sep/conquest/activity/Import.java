@@ -1,12 +1,6 @@
 package sep.conquest.activity;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import sep.conquest.R;
-import sep.conquest.controller.Controller;
-import sep.conquest.model.GridMap;
-import sep.conquest.model.ImportContainer;
 import sep.conquest.model.MapFileHandler;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,9 +20,8 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 /**
- * Allows user to open a previously saved map from the file system.
- * 
- * The application then runs in import mode.
+ * Allows user to choose a map file form the file system and load it into Map
+ * Activity or Simulation Activity.
  * 
  * @author Andreas Poxrucker
  * 
@@ -39,7 +32,7 @@ public class Import extends Activity {
    * Used to send GridMaps in Intent messages.
    */
   public static final String EXTRA_FILE_PATH = "Path";
-  
+
   /**
    * Used to list available maps.
    */
@@ -73,7 +66,28 @@ public class Import extends Activity {
 
     // Get reference on ListView to display map files from the file system.
     lsMaps = (ListView) findViewById(R.id.lsMaps);
-    lsMaps.setOnItemClickListener(new ImportOnItemClickListener());
+    lsMaps.setOnItemClickListener(new OnItemClickListener() {
+
+      /**
+       * Handles clicks on items of ListView containing the available maps.
+       * 
+       * If an item is selected, its text color changes.
+       * 
+       * @param parent
+       *          AdapterView containing the list item.
+       * @param view
+       *          List item that has been clicked.
+       * @param position
+       *          Position of the list item within the AdapterView.
+       */
+      public void onItemClick(AdapterView<?> parent, View view, int position,
+          long id) {
+        TextView txtMap = (TextView) view;
+        Resources res = getResources();
+        selectedMap = txtMap.getText().toString();
+        txtMap.setTextColor(res.getColor(R.color.list_item_not_selected));
+      }
+    });
 
     // Display the list of found map files from the file system in the ListView.
     displayMapFiles();
@@ -98,41 +112,29 @@ public class Import extends Activity {
    *          The MenuItem that has been selected.
    */
   public boolean onOptionsItemSelected(MenuItem item) {
-    // If "Open" has been chosen, start Map-Activity via Intent.
     if (item.getItemId() == R.id.mnuOpen) {
       if (selectedMap != null) {
-        try {
-          // Open map and get information
-          ImportContainer c = MapFileHandler.openMap(selectedMap);
-          GridMap map = c.getMap();
-          
-          // Determine, whether Activity has been started to display a map or
-          // if it has been started to open a configuration for the simulator.
-          ImportMode mode = (ImportMode) getIntent().getSerializableExtra(
-              ImportMode.class.toString());
-          
-          // Intent message to start other Activities.
-          Intent start = new Intent();
+        // Determine, whether Activity has been started to display a map or
+        // if it has been started to open a configuration for the simulator.
+        ImportMode mode = (ImportMode) getIntent().getSerializableExtra(
+            ImportMode.class.toString());
 
-          switch (mode) {
-          case SIMULATION_MAP:
-            start.putExtra(EXTRA_FILE_PATH, selectedMap);
-            finish();
-            break;
-          case IMPORT_MAP:
-            // Load map into Environment and start Map Activity.
-            Controller.getInstance().getEnv().loadMap(map);
-            start.setComponent(new ComponentName(getApplicationContext()
-                .getPackageName(), Map.class.getName()));
-            startActivity(start);
-            break;
-          }
-        } catch (FileNotFoundException e) {
-          // If file was not found, display error message.
-          displayMessage(getString(R.string.ERR_MSG_FILE_NOT_FOUND), true);
-        } catch (IOException e) {
-          // If file could not be read (illegal file format) display error message.
-          displayMessage(getString(R.string.ERR_MSG_INVALID_FILE), true);
+        // Intent message to start other Activities.
+        Intent start = new Intent();
+
+        switch (mode) {
+        case SIMULATION_MAP:
+          // If Import has been opened by Simulation put file name
+          start.putExtra(EXTRA_FILE_PATH, selectedMap);
+          setResult(RESULT_OK, start);
+          finish();
+          break;
+        case IMPORT_MAP:
+          start.putExtra(EXTRA_FILE_PATH, selectedMap);
+          start.setComponent(new ComponentName(getApplicationContext()
+              .getPackageName(), Map.class.getName()));
+          startActivity(start);
+          break;
         }
       } else {
         // If no map was selected, display note message.
@@ -158,48 +160,27 @@ public class Import extends Activity {
   /**
    * Displays a message in a dialog box.
    * 
-   * @param message The message to display.
-   * @param isError Indicates, whether message should be displayed as error.
+   * @param message
+   *          The message to display.
+   * @param isError
+   *          Indicates, whether message should be displayed as error.
    */
   private void displayMessage(String message, boolean isError) {
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setMessage(message);
     builder.setCancelable(false);
-    builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+    builder.setNeutralButton(getString(R.string.TXT_OK),
+        new DialogInterface.OnClickListener() {
 
-      public void onClick(DialogInterface dialog, int which) {
-        dialog.dismiss();
-      }
-    });
+          /**
+           * Handles click on "ok" button of dialog
+           * Simply closes the dialog.
+           */
+          public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+          }
+        });
     AlertDialog alert = builder.create();
     alert.show();
-  }
-
-  /**
-   * Handles clicks on items of ListView.
-   * 
-   * @author Andreas Poxrucker
-   */
-  private final class ImportOnItemClickListener implements OnItemClickListener {
-
-    /**
-     * Handles clicks on items of ListView containing the available maps.
-     * 
-     * If an item is selected, its text color changes.
-     * 
-     * @param parent
-     *          AdapterView containing the list item.
-     * @param view
-     *          List item that has been clicked.
-     * @param position
-     *          Position of the list item within the AdapterView.
-     */
-    public void onItemClick(AdapterView<?> parent, View view, int position,
-        long id) {
-      TextView txtMap = (TextView) view;
-      Resources res = getResources();
-      selectedMap = txtMap.getText().toString();
-      txtMap.setTextColor(res.getColor(R.color.list_item_not_selected));
-    }
   }
 }
