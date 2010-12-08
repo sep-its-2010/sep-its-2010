@@ -3,9 +3,11 @@
 
 #include "common.h"
 
+
 enum {
 	HAL_I2C_MAX_BAUDRATE_DIVISOR = ( 1 << 8) - 1 ///< Specifies the maximal i2c baud rate divisor.
 };
+
 
 bool hal_i2c_init(
 	IN const uint16_t _ui16BaudRateDiv,
@@ -14,7 +16,7 @@ bool hal_i2c_init(
 
 uint16_t hal_i2c_write(
 	IN const uint8_t _ui8SlaveAddress,
-	IN const uint8_t* const _lpui8Data,
+	IN const void* const _lpvData,
 	IN const uint16_t _ui16Length
 	);
 
@@ -26,7 +28,7 @@ bool hal_i2c_writeRegister(
 
 bool hal_i2c_read(
 	IN const uint8_t _ui8SlaveAddress,
-	OUT uint8_t* const _lpui8Data,
+	OUT void* const _lpvData,
 	IN const uint16_t _ui16Length
 	);
 

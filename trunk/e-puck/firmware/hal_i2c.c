@@ -18,8 +18,7 @@ static bool write(
 	IN const uint8_t _ui8Data
 	);
 
-static void read(
-	OUT uint8_t* const _lpui8Data,
+static uint8_t read(
 	IN const bool _blAcknowledge
 	);
 
@@ -145,13 +144,13 @@ bool write(
 /*!
  * \internal
  * \brief
- * Reads a byte on the I2C bus and writes a subsequent acknowledge bit for the slave device.
- * 
- * \param _lpui8Data
- * Specifies the buffer for the read byte.
+ * Reads one byte on the I2C bus and writes a subsequent acknowledge bit for the slave device.
  * 
  * \param _blAcknowledge
  * Specifies whether or not to acknowledge the byte.
+ *
+ * \returns
+ * The byte which was read from the bus.
  * 
  * The reception starts as soon as the module is idle and finishes when the acknowledge bit is transmitted.
  * 
@@ -164,8 +163,7 @@ bool write(
  * \see
  * write | stop
  */
-void read(
-	OUT uint8_t* const _lpui8Data,
+uint8_t read(
 	IN const bool _blAcknowledge
 	) {
 
@@ -176,7 +174,7 @@ void read(
 	while( I2CCONbits.RCEN)
 		;
 
-	*_lpui8Data = I2CRCV;
+	const uint8_t ui8Byte = I2CRCV;
 
 
 	while( I2CCON & I2C_IDLE_MASK)
@@ -186,7 +184,10 @@ void read(
 	I2CCONbits.ACKEN = true;
 	while( I2CCONbits.ACKEN)
 		;
+
+	return ui8Byte;
 }
+
 
 /*!
  * \brief
@@ -240,8 +241,8 @@ bool hal_i2c_init(
  * \param _ui8SlaveAddress
  * Specifies the slave address. The least significant bit is reserved for the data direction and thus ignored.
  * 
- * \param _lpui8Data
- * Specifies the data to be written.
+ * \param _lpvData
+ * Specifies the source buffer.
  * 
  * \param _ui16Length
  * Specifies the length of the date to be written. The length may not exceed 0xFFFE.
@@ -264,7 +265,7 @@ bool hal_i2c_init(
  */
 uint16_t hal_i2c_write(
 	IN const uint8_t _ui8SlaveAddress,
-	IN const uint8_t* const _lpui8Data,
+	IN const void* const _lpvData,
 	IN const uint16_t _ui16Length
 	) {
 
@@ -274,7 +275,7 @@ uint16_t hal_i2c_write(
 	if( write( _ui8SlaveAddress & 0xFE)) {
 		bool blAck = true;
 		for( ui16Written = 0; blAck && ui16Written < _ui16Length; ui16Written++) {
-			blAck = write( _lpui8Data[ui16Written]);
+			blAck = write( ( (const uint8_t*)_lpvData)[ui16Written]);
 		}
 	}
 	stop();
@@ -339,7 +340,7 @@ bool hal_i2c_writeRegister(
  * \param _ui8SlaveAddress
  * Specifies the slave address. The least significant bit is reserved for the data direction and thus ignored.
  * 
- * \param _lpui8Data
+ * \param _lpvData
  * Specifies the destination buffer.
  * 
  * \param _ui16Length
@@ -361,7 +362,7 @@ bool hal_i2c_writeRegister(
  */
 bool hal_i2c_read(
 	IN const uint8_t _ui8SlaveAddress,
-	OUT uint8_t* const _lpui8Data,
+	OUT void* const _lpvData,
 	IN const uint16_t _ui16Length
 	) {
 
@@ -370,7 +371,7 @@ bool hal_i2c_read(
 	start();
 	if( write( _ui8SlaveAddress | 0x01)) {
 		for( uint16_t ui16 = 0; ui16 < _ui16Length; ui16++) {
-			read( &_lpui8Data[ui16], ui16 + 1 < _ui16Length);
+			*( (uint8_t*) _lpvData) = read( ui16 + 1 < _ui16Length);
 		}
 
 		blSuccess = true;
@@ -419,10 +420,7 @@ int16_t hal_i2c_readRegister(
 		write( _ui8Register);
 		restart();
 		if( write( _ui8SlaveAddress | 0x01)) {
-			uint8_t ui8Data = 1;
-			read( &ui8Data, false);
-
-			i16Return = ui8Data;
+			i16Return = read( false);;
 		}
 	}
 	stop();

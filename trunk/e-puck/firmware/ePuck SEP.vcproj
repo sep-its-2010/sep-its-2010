@@ -160,6 +160,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\hal_nvm.c"
+					>
+				</File>
+				<File
 					RelativePath=".\hal_rtc.c"
 					>
 				</File>
@@ -270,6 +274,14 @@
 				</File>
 				<File
 					RelativePath=".\hal_motors_types.h"
+					>
+				</File>
+				<File
+					RelativePath=".\hal_nvm.h"
+					>
+				</File>
+				<File
+					RelativePath=".\hal_nvm_types.h"
 					>
 				</File>
 				<File

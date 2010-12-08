@@ -75,7 +75,7 @@ void _exitAtomicBlock(
 	IN const uint8_t* const _lpui8CPUPriorityBackup
 	) {
 
-	SRbits.IPL = *_lpui8CPUPriorityBackup;
+	SR = *_lpui8CPUPriorityBackup;
 }
 
 
@@ -96,9 +96,9 @@ void _exitAtomicBlock(
  */
 uint8_t _enterAtomicBlock( void) {
 
-	const uint8_t ui8CurrentCPUPriority = SRbits.IPL;
+	const uint8_t ui8CurrentCPUPriority = SR;
 
-	SRbits.IPL = HAL_INT_PRIORITY__7;
+	hal_int_setPriority( HAL_INT_SOURCE__CPU, HAL_INT_PRIORITY__7);
 
 	return ui8CurrentCPUPriority;
 }

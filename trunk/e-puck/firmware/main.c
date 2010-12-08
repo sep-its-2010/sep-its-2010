@@ -101,7 +101,7 @@ int main( void) {
 
 	subs_init();
 	subs_register( subs_abyss_run, subs_abyss_reset, 0xFF);
-//  subs_register( subs_calibration_run, subs_calibration_reset, 0xEF);
+	subs_register( subs_calibration_run, subs_calibration_reset, 0xEF);
 // 	subs_register( subs_collision_run, subs_collision_reset, 0xDF);
 // 	subs_register( subs_movement_run, subs_movement_reset, 0xCF);
 // 	subs_register( subs_movement_run, subs_movement_reset, 0xBF);
@@ -114,7 +114,6 @@ int main( void) {
 	hal_motors_init();
 
 	hal_i2c_init( 150, false);
-	hal_motors_setSpeed( 800, 0);
 
 	// Configuring the primary UART for the bluetooth module
 	ringbuf_init( hal_uart1_getRxRingBuffer(), s_aui8RxBufferSpace, sizeof( s_aui8RxBufferSpace));
@@ -122,6 +121,9 @@ int main( void) {
 	hal_uart1_configure( HAL_UART_CONFIG__8N1, UART1_BAUDRATE_DIVISOR);
 	hal_uart1_enable( true);
 //	hal_uart1_puts( "SEP 2010 ITS e-puck & Android Project\r\n");
+
+	hal_motors_setSpeed( 800, 0);
+
 
 	// Real time clock with 100Hz
 	hal_rtc_init( FCY / 256 / 100);

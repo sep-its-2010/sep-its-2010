@@ -7,7 +7,7 @@
 
 static inline void ringbuf_init(
 	OUT ringbuf_SContext_t* const _lppodContext,
-	INOUT uint8_t* const _lpui8Storage,
+	INOUT void* const _lpvStorage,
 	IN const uint16_t _ui16Size
 	);
 
@@ -89,7 +89,7 @@ void ringbuf_drop(
  * \param _lppodContext
  * Specifies the ring buffer to operate on.
  * 
- * \param _lpui8Storage
+ * \param _lpvStorage
  * Specifies the storage space to be used by the ring buffer.
  * 
  * \param _ui16Size
@@ -108,11 +108,11 @@ void ringbuf_drop(
  */
 void ringbuf_init(
 	OUT ringbuf_SContext_t* const _lppodContext,
-	INOUT uint8_t* const _lpui8Storage,
+	INOUT void* const _lpvStorage,
 	IN const uint16_t _ui16Size
 	) {
 
-	_lppodContext->lpui8Storage = _lpui8Storage;
+	_lppodContext->lpui8Storage = (uint8_t*)_lpvStorage;
 	_lppodContext->ui16Size = _ui16Size;
 	_lppodContext->ui16ReadIndex = 0;
 	_lppodContext->ui16WriteOffset = 0;
