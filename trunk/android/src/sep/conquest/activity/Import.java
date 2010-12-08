@@ -15,7 +15,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -39,18 +38,8 @@ public class Import extends Activity {
   /**
    * Used to send GridMaps in Intent messages.
    */
-  public static final String EXTRA_MAP = "Map";
+  public static final String EXTRA_FILE_PATH = "Path";
   
-  /**
-   * Used to send positions in Intent messages.
-   */
-  public static final String EXTRA_POSITIONS = "Positions";
-
-  /**
-   * Used to send orientations in Intent messages.
-   */
-  public static final String EXTRA_ORIENTATIONS = "Orientations";
-
   /**
    * Used to list available maps.
    */
@@ -127,14 +116,7 @@ public class Import extends Activity {
 
           switch (mode) {
           case SIMULATION_MAP:
-            // Put the map, the initial positions and the initial orientations
-            // as extras, finish Activity and return to simulation Activity.
-            start.putExtra(EXTRA_MAP, map);
-            start.putExtra(EXTRA_POSITIONS, c.getPositions());
-            start.putExtra(EXTRA_ORIENTATIONS, c.getOrientations());
-            start.setComponent(new ComponentName(getApplicationContext()
-                .getPackageName(), Simulation.class.getName()));
-            setResult(RESULT_OK, start);
+            start.putExtra(EXTRA_FILE_PATH, selectedMap);
             finish();
             break;
           case IMPORT_MAP:
