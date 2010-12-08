@@ -1,15 +1,9 @@
 package sep.conquest.model;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.Map.Entry;
-
-
-import android.os.Parcel;
-import android.os.Parcelable;
-
 
 import sep.conquest.util.Utility;
 
@@ -24,7 +18,7 @@ import sep.conquest.util.Utility;
  * 
  * @author Florian Lorenz
  */
-public class GridMap implements Parcelable {
+public class GridMap {
 	
 	/**
 	 * An unique serialVersionUID to identify the class
@@ -156,6 +150,22 @@ public class GridMap implements Parcelable {
 		return nodeList;
 	}
 
+	/**
+	 * Iterates trough the given list and adds the single nodes into a GridMap
+	 * 
+	 * @param nodeList The list with all Nodes in the Graph
+	 * @return The new GridMap
+	 */
+	public GridMap makeMapWithList(LinkedList<MapNode> nodeList){
+		GridMap newMap = new GridMap();
+		Iterator<MapNode> it = nodeList.iterator();
+		while(it.hasNext()){
+			MapNode newNode = it.next();
+			newMap.addNode(newNode.getXValue(), newNode.getYValue(), newNode.getNodeType());
+		}
+		return newMap;	
+	}
+	
 	/**
 	 * This method returns the smallest and biggest x- and y-coordinates of the
 	 * map saved in an Integer-array of length 4.
@@ -484,35 +494,4 @@ public class GridMap implements Parcelable {
 		return returnString;
 	}
 
-	public int describeContents() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
-	
-	public static final Parcelable.Creator<GridMap> CREATOR = new Parcelable.Creator<GridMap>(){
-
-		public GridMap createFromParcel(Parcel source) {
-			GridMap newMap = new GridMap();
-			String[] newStringArray=new String[0];
-			source.readStringArray(newStringArray);
-			for(String str:newStringArray){
-				String[] irgendwie = str.split(" ");
-				int x = Integer.parseInt(irgendwie[0]);
-				int y = Integer.parseInt(irgendwie[1]);
-				NodeType status = NodeType.valueOf(irgendwie[2]);
-				newMap.addNode(x, y, status);
-			}
-			return newMap;
-		}
-
-		public GridMap[] newArray(int size) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		
-	};
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeStringArray(this.serializeMapInString());
-	}
 }
