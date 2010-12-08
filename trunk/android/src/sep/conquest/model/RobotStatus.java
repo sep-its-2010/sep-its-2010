@@ -82,6 +82,8 @@ public class RobotStatus implements Cloneable {
 		orientation = Orientation.UNKNOWN;
 		moving = false;
 		state = State.IDLE;
+		intentPosition = new int[2];
+		intentPosition[0] = intentPosition[1] = 0;
 	}
 
 	/**
