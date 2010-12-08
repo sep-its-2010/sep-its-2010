@@ -155,6 +155,7 @@ public class MapSurfaceView extends SurfaceView
 
         mMap = new LinkedList < MapNode >();
         mPositions = new LinkedList < EpuckPosition >();
+        mThread = new DrawThread();
     }
 
     /**
@@ -177,7 +178,8 @@ public class MapSurfaceView extends SurfaceView
      * @param holder Holds the display surface and is able to control it.
      */
     public final void surfaceCreated(final SurfaceHolder holder) {
-        mThread = new DrawThread();
+    	mThread = new DrawThread();
+    	
 
     }
 
@@ -421,10 +423,10 @@ public class MapSurfaceView extends SurfaceView
             while (pos_it.hasNext()) {
                 epp = pos_it.next();
                 if (epp.getID() == mSelectedRobot) {
-                    selectEpuck(c, epp.getX(), epp.getY());
+                    selectEpuck(c, (epp.getX()+offsetX)*mScaleValue, (epp.getY()+offsetY)*mScaleValue);
                 } else {
                     //was ist wenn epuck im negativen bereich ist?
-                    drawEpuck(c, epp.getX(), epp.getY());
+                    drawEpuck(c, (epp.getX()+offsetX)*mScaleValue, (epp.getY()+offsetY)*mScaleValue);
                 }
 
             }
@@ -612,9 +614,7 @@ public class MapSurfaceView extends SurfaceView
          * @param x X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-        private void drawEpuck(final Canvas c, final int dx, final int dy) {
-            int x = dx * mScaleValue;
-            int y = dy * mScaleValue;
+        private void drawEpuck(final Canvas c, final int x, final int y) {
             paint.setColor(0xffcccccc);
             c.drawCircle((x+(mScaleValue/2)), (y+(mScaleValue/2)), (mScaleValue/2), paint);
             paint.setColor(0xff0000ff);
@@ -629,9 +629,7 @@ public class MapSurfaceView extends SurfaceView
          * @param x    X coordinate of the node.
          * @param y Y coordinate of the node.
          */
-        private void selectEpuck(final Canvas c, final int dx, final int dy) {
-            int x = dx * mScaleValue;
-            int y = dy * mScaleValue;
+        private void selectEpuck(final Canvas c, final int x, final int y) {
             paint.setColor(0xffcccccc);
             c.drawCircle((x+(mScaleValue/2)), (y+(mScaleValue/2)), (mScaleValue/2), paint);
             paint.setColor(0xffff0000);
@@ -711,9 +709,12 @@ public class MapSurfaceView extends SurfaceView
     
     public final void isDrawing(boolean drawing) {
     	if (drawing) {
+    		mThread.setPaused(false);
     		mThread.start();
+    		
     	} else {
     		mThread.stop();
+    		mThread.setPaused(true);
     	}
     }
     

@@ -1,10 +1,14 @@
 package sep.conquest.activity;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 import sep.conquest.R;
 import sep.conquest.model.GridMap;
+import sep.conquest.model.ImportContainer;
+import sep.conquest.model.MapFileHandler;
 import sep.conquest.model.MapNode;
 import sep.conquest.model.NodeType;
 import sep.conquest.model.Orientation;
@@ -13,6 +17,8 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -139,16 +145,34 @@ public class Simulation extends Activity {
 	public void drawPreview(List<MapNode> map, int[] borders) {
 		MapSurfaceView preview = (MapSurfaceView) findViewById(R.id.im_preview);
 		preview.setMap(map, borders);
+		preview.setRobotPosition(positions);
 		preview.isDrawing(true);
 	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == 0) {
+		if (requestCode == REQUEST_SIM_CONFIG) {
 			if (resultCode == RESULT_OK) {
-				map = (GridMap) data.getSerializableExtra(Import.EXTRA_MAP);
-				robotPositions = (int[][]) data.getSerializableExtra(Import.EXTRA_POSITIONS);
-				ori = (Orientation[]) data.getSerializableExtra(Import.EXTRA_ORIENTATIONS);
 				
+				String mapName = data.getStringExtra(Import.EXTRA_FILE_PATH);
+				int i = 0;
+				try {
+					ImportContainer container = MapFileHandler.openMap(mapName);
+					map = container.getMap();
+					robotPositions = container.getPositions();
+					ori = container.getOrientations();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				for (int j = 0; j < robotPositions.length; j++) {
+					int x = robotPositions[j][0];
+					int y = robotPositions[j][1];
+					positions.add(new EpuckPosition(x, y, null));
+				}
 				drawPreview(map.getMapAsList(), map.getMapBorders());
 			}
 		}
@@ -272,6 +296,7 @@ public class Simulation extends Activity {
         MapSurfaceView v = (MapSurfaceView) findViewById(R.id.im_preview);
         
         v.setMap(map.getMapAsList(), map.getMapBorders());
+        v.isDrawing(true);
 	}
 
 }
