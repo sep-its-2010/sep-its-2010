@@ -34,10 +34,6 @@ enum {
 	HAL_MOTORS_TIMER_PRESCALER = 3 ///< Specifies a prescaler of /256 for timer 4 and timer 5. 
 };
 
-static int16_t hal_motors_si16CurrentLineSpeed = 600; ///< Stores the current movement-speed of the robot. Default: 600 steps per second.
-static int16_t hal_motors_si16CurrentAngularSpeed = 0; ///< Stores angular-speed for turning in left or right direction.
-
-
 void hal_motors_init( void);
 
 void hal_motors_setSpeedLeft(

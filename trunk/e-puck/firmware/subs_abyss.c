@@ -1,6 +1,5 @@
 #include <string.h>
 
-#include "hal_led.h"
 #include "hal_motors.h"
 #include "sen_line.h"
 #include "com.h"
@@ -22,7 +21,7 @@ static com_SMessage_t s_podAbyssResponse;
  * Whether or not an abyss detected or prevention occurred.
  * 
  * Reads the values of the ground-sensors and stops the motors if the data is below a critical value.
- * Afterwards a message is created and sent to the Smartphone via Bluetooth.
+ * Afterwards a message is created and sent to the smart phone via bluetooth.
  */
 bool subs_abyss_run( void) {
 
@@ -30,6 +29,7 @@ bool subs_abyss_run( void) {
 
 	sen_line_SData_t podLineSensors;
 	sen_line_read( &podLineSensors);
+	sen_line_filter( &podLineSensors, &podLineSensors);
 
 	// Abyss detected?
 	if( ( podLineSensors.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD) ||

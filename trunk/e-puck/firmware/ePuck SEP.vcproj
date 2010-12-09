@@ -129,6 +129,10 @@
 			Filter="cpp;c;cc;cxx;asm;s"
 			>
 			<File
+				RelativePath=".\conquest.c"
+				>
+			</File>
+			<File
 				RelativePath=".\main.c"
 				>
 				<FileConfiguration
@@ -235,6 +239,10 @@
 			>
 			<File
 				RelativePath=".\common.h"
+				>
+			</File>
+			<File
+				RelativePath=".\conquest.h"
 				>
 			</File>
 			<Filter

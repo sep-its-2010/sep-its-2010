@@ -28,6 +28,7 @@ typedef enum {
 	COM_MESSAGE_TYPE__RESPONSE_HIT_NODE = 0x83FF, ///< e-puck has hit a node.
 	COM_MESSAGE_TYPE__RESPONSE_COLLISION = 0x84FF, ///< e-puck has detected a collision while moving.
 	COM_MESSAGE_TYPE__RESPONSE_ABYSS = 0x85FF, ///< e-puck has detected an abyss while moving.
+	COM_MESSAGE_TYPE__RESPONSE_REJECTED = 0x86FF, ///< The previously sent request was rejected.
 
 	COM_MESSAGE_TYPE__BTM_REQUEST = 0x5202, ///< Bluetooth module request message.
 	COM_MESSAGE_TYPE__BTM_RESPONSE = 0x4302, ///< Bluetooth module response message.
