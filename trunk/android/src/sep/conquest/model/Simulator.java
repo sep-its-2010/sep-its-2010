@@ -1,11 +1,13 @@
 package sep.conquest.model;
 
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import sep.conquest.model.handler.Handler;
 import sep.conquest.model.handler.HandlerFactory;
@@ -53,7 +55,7 @@ public class Simulator {
   /**
    * The input buffer for each VirtualPuck.
    */
-  private Map<UUID, IRequest> inputBuffer;
+  private Queue<IRequest> inputBuffer;
 
   /**
    * The first Handler to handle requests of VirtualPucks.
@@ -72,7 +74,7 @@ public class Simulator {
     if ((exMap != null) && (initialPositions != null)
         && (initialOrientations != null)) {
       map = exMap;
-      inputBuffer = new TreeMap<UUID, IRequest>();
+      inputBuffer = new ConcurrentLinkedQueue<IRequest>();
       outputBuffer = new TreeMap<UUID, byte[]>();
       robotStates = new TreeMap<UUID, SimRobotStatus>();
       firstHandler = HandlerFactory.getSimMsgChain(this);
@@ -116,14 +118,7 @@ public class Simulator {
    *          The request to add.
    */
   public void addRequest(IRequest request) {
-    UUID sender = request.getSender();
-
-    if (inputBuffer.containsKey(sender) && (inputBuffer.get(sender) == null)) {
-      inputBuffer.put(sender, request);
-    } else {
-      throw new IllegalStateException(
-          "Asked to put message of unknown sender to input buffer");
-    }
+    inputBuffer.add(request);
   }
 
   /**
@@ -316,12 +311,8 @@ public class Simulator {
    * Executes the next step.
    */
   public void step() {
-    
-    SimRobotStatus robot = robotStates.get(null);
-    
-    if (robot.isMoving()) {
-
-    }
+    IRequest request = inputBuffer.poll();
+    firstHandler.handleRequest(request);
   }
 
   /**
@@ -331,11 +322,11 @@ public class Simulator {
    */
   public void reset() {
     Set<UUID> ids = outputBuffer.keySet();
+    inputBuffer.clear();
 
     // Reset output buffers by setting arrays of length zero and reset robot
     // states.
     for (UUID id : ids) {
-      inputBuffer.put(id, null);
       outputBuffer.put(id, new byte[0]);
       robotStates.get(id).reset();
     }
