@@ -55,19 +55,18 @@ public class VirtualPuck extends Puck {
 				throw new IllegalArgumentException("Message from socket is "
 						+ "longer than " + MSGLENGTH + " bytes!");
 
+			// fill up message
 			for (int i = 0; i < message.length; i++) {
 				btMessage[btMessageLen] = message[i];
 				btMessageLen++;
 			}
+			
+			// return message if it's complete
+			if (MSGLENGTH == btMessageLen) {
+				expectNoMessage();
+				return btMessage;
+			}			
 		}
-		
-		if (MSGLENGTH == btMessageLen) {
-			expectNoMessage();
-			return btMessage;
-		} else {
-			return new byte[0];	
-		}		
-		
-		
+		return new byte[0];	
 	}
 }

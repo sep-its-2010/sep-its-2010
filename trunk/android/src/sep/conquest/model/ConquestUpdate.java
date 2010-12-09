@@ -54,7 +54,10 @@ public class ConquestUpdate implements Cloneable {
 	 * @param status The status of the robot.
 	 */
 	public void setRobotStatus(UUID id, RobotStatus status) {
-		robots.get(id).setRobotStatus(status);
+		if (robots.containsKey(id))
+			robots.get(id).setRobotStatus(status);
+		else
+			robots.put(id, status);
 	}
 
 	/**

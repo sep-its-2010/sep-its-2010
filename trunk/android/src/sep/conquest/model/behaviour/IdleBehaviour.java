@@ -1,10 +1,11 @@
 package sep.conquest.model.behaviour;
 
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import sep.conquest.model.Puck;
 import sep.conquest.model.State;
-import sep.conquest.model.requests.MessageType;
 
 /**
  * LocalLocalizeBehaviour represents a behaviour for localizing adjacent robots.
@@ -12,7 +13,9 @@ import sep.conquest.model.requests.MessageType;
  * 
  * @author Andreas Wilhelm
  */
-public final class LocalLocalizeBehaviour extends Behaviour {
+public final class IdleBehaviour extends Behaviour {
+	
+	private boolean timerActive = false;
 
     /**
      * The constructor enables chain-handling by calling the constructor of
@@ -21,7 +24,7 @@ public final class LocalLocalizeBehaviour extends Behaviour {
      * @param stateLevel The level of the state.
      * @param next A reference to the next behaviour.
      */
-    protected LocalLocalizeBehaviour(State stateLevel, IBehaviour next) {
+    protected IdleBehaviour(State stateLevel, IBehaviour next) {
         super(stateLevel, next);
     }
 
@@ -30,16 +33,28 @@ public final class LocalLocalizeBehaviour extends Behaviour {
      */
     public Map<Integer, Integer> execute(Map<Integer, Integer> map, Puck robot) {
     	
+    	if (!timerActive) {
+	    	Timer timer = new Timer();
+	        timer.schedule(new ExecuteTimer(robot), 5000);    		
+    	}
     	
-		byte[] request = new byte[32];
-		request[0] = (byte) (MessageType.REQUEST_STATUS.getTypeCode() & 0xff);
-		request[1] = (byte) ((MessageType.REQUEST_STATUS.getTypeCode() >> 8) & 0xff);
-
-		robot.writeSocket(request);
-    	
-    	robot.changeBehaviour(State.EXPLORE);
-    	 
         return super.execute(map, robot);
+    }
+    
+    private class ExecuteTimer extends TimerTask {
+    	
+    	Puck robot;
+    	
+    	public ExecuteTimer(Puck robot) {
+    		this.robot = robot;
+    	}
+
+    	@Override
+    	public void run() {
+    		if (robot != null)
+    			robot.changeBehaviour(State.LOCALIZE);
+    	}
+    	
     }
     
 }

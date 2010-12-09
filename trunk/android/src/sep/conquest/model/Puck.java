@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import sep.conquest.model.requests.HelloRequest;
 import sep.conquest.model.requests.MessageType;
 import sep.conquest.model.requests.Request;
+import sep.conquest.model.requests.StatusUpdateRequest;
 import sep.conquest.util.ConquestLog;
 
 /**
@@ -208,6 +209,20 @@ public abstract class Puck implements IComClient, IRobot {
 	public void broadcast(Request request) {		
 		ComManager.getInstance().broadcast(request);
 	}
+	
+	/**
+	 * Change the behaviour due to the state change.
+	 * 
+	 * @param state
+	 */
+	public void changeBehaviour(State state) {
+		RobotStatus status = getRobotStatus().get(id);
+		if (state != status.getState()) {
+			logicThread.changeBehaviour(state);
+			StatusUpdateRequest req = new StatusUpdateRequest(id, null, status);
+			broadcast(req);
+		}
+	}	
 	
 	/**
 	 * Returns the map of the robot.

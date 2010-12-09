@@ -197,8 +197,9 @@ public class LogicThread implements Runnable {
 	 *         returned.
 	 */
 	private IRequest getBTMessage() {
-		if (robot.readSocket().length > 0) {
-			return new PuckRequest(robot.readSocket());
+		byte[] message = robot.readSocket();
+		if (message.length > 0) {
+			return new PuckRequest(message);
 		}
 		else
 			return null;
@@ -214,9 +215,10 @@ public class LogicThread implements Runnable {
 			boolean changed = false;
 
 			// handle bluetooth messages
-			if (getBTMessage() != null) {
-				ConquestLog.addMessage(this, "Work on "+getBTMessage().getClass());
-				btHandler.handleRequest(getBTMessage());
+			IRequest request = getBTMessage();
+			if (request != null) {
+				ConquestLog.addMessage(this, "Work on "+request.getClass());
+				btHandler.handleRequest(request);
 				changed = true;
 			}
 
@@ -225,8 +227,6 @@ public class LogicThread implements Runnable {
 				IRequest req = bcQueue.poll();
 				ConquestLog.addMessage(this, "Work on "+req.getClass());
 				bcHandler.handleRequest(req);
-				ConquestLog.addMessage(this, "Robot: " + robot.getID()
-						+ " Sender: " + req.getSender());
 				changed = true;
 			}
 

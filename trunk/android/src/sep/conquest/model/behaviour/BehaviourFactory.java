@@ -20,12 +20,15 @@ public class BehaviourFactory {
 		
 		switch (state) {
 		case IDLE:
-			LocalLocalizeBehaviour loBeh = new LocalLocalizeBehaviour(state,
-					null);
-			return loBeh;
+			IdleBehaviour idleBeh = new IdleBehaviour(state, null);
+			return idleBeh;
+		case LOCALIZE:
+			LocalLocalizeBehaviour locBeh = new LocalLocalizeBehaviour(state, null);
+			return locBeh;
 		case EXPLORE: 
 			DistanceBehaviour distBeh = new DistanceBehaviour(state, null);
 			InnerBehaviour inBeh = new InnerBehaviour(state, distBeh);
+			@SuppressWarnings("unused")
 			CooperativeBehaviour coBeh = new CooperativeBehaviour(state, inBeh);
 			return distBeh;
 		default: 
