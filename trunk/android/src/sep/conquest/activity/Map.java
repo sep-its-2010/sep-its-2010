@@ -73,8 +73,7 @@ public class Map extends Activity implements Observer {
                 if (s.equals("none")) {
                     map.setSelectedRobot(null);
                 } else {
-                    UUID uuid = UUID.fromString(s);
-                    map.setSelectedRobot(uuid);
+                    map.setSelectedRobot(s);
                 }
 
             }
@@ -170,7 +169,7 @@ public class Map extends Activity implements Observer {
 		mRobotAdapter.add("none");
 		for (UUID key : id) {
 			int[] position = cu.getRobotStatus().get(key).getPosition();
-			mPositions.add(new EpuckPosition(position[0], position[1], key));
+			mPositions.add(new EpuckPosition(position[0], position[1], ""));
 			mRobotAdapter.add(key.toString());
 		}
 		

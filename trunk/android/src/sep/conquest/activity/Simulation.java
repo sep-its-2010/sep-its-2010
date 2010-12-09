@@ -10,15 +10,12 @@ import sep.conquest.model.GridMap;
 import sep.conquest.model.ImportContainer;
 import sep.conquest.model.MapFileHandler;
 import sep.conquest.model.MapNode;
-import sep.conquest.model.NodeType;
 import sep.conquest.model.Orientation;
 import sep.conquest.model.PuckFactory;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,16 +35,34 @@ import android.widget.Spinner;
  */
 public class Simulation extends Activity {
 	
+	/**
+	 * Request Code to identify intent data.
+	 */
 	private static final int REQUEST_SIM_CONFIG = 10;
 	
-	GridMap map = new GridMap();
+	/**
+	 * GridMap is created after a file is imported.
+	 */
+	GridMap map;
 	
+	/**
+	 * Saves the robot positions. They are needed for the simulator.
+	 */
 	int[][] robotPositions;
 	
+	/**
+	 * Saves the orientation of the robots. Also needed for simulator.
+	 */
 	Orientation[] ori;
 	
+	/**
+	 * Saves the e-puck positions to draw the preview.
+	 */
 	private LinkedList <EpuckPosition> positions;
 	
+	/**
+	 * Saves the chosen position in the spinner.
+	 */
 	private int mNumber;
 
 	/**
@@ -64,6 +79,7 @@ public class Simulation extends Activity {
 		setContentView(R.layout.simulation_main);
 		
 		positions = new LinkedList<EpuckPosition>();
+		map = new GridMap();
 		
 		Spinner numberOfRobots = (Spinner) findViewById(R.id.spNumber);
 		ArrayAdapter<?> numberAdapter = ArrayAdapter.createFromResource(this, R.array.numberRobots, android.R.layout.simple_spinner_item);
@@ -82,9 +98,6 @@ public class Simulation extends Activity {
 				
 			}
 		});
-		
-
-		//test();
 		
 	}
 	
@@ -146,15 +159,16 @@ public class Simulation extends Activity {
 		MapSurfaceView preview = (MapSurfaceView) findViewById(R.id.im_preview);
 		preview.setMap(map, borders);
 		preview.setRobotPosition(positions);
-		preview.isDrawing(true);
 	}
 	
+	/**
+	 * Gets the file path and file name as result of the import intent.
+	 */
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_SIM_CONFIG) {
 			if (resultCode == RESULT_OK) {
 				
 				String mapName = data.getStringExtra(Import.EXTRA_FILE_PATH);
-				int i = 0;
 				try {
 					ImportContainer container = MapFileHandler.openMap(mapName);
 					map = container.getMap();
@@ -168,6 +182,7 @@ public class Simulation extends Activity {
 					e.printStackTrace();
 				}
 				
+				positions.clear();
 				for (int j = 0; j < robotPositions.length; j++) {
 					int x = robotPositions[j][0];
 					int y = robotPositions[j][1];
@@ -178,125 +193,4 @@ public class Simulation extends Activity {
 		}
 	}
 	
-	public void test() {
-		
-		GridMap map = new GridMap();
-		
-		NodeType type = NodeType.CROSS;
-        int x = 1;
-        int y = 1;
-       
-        type = NodeType.CROSS;
-        x = 0;
-        y = 0;
-        map.addNode(x, y, type);
-        
-        type = NodeType.TOPT;
-        x = 1;
-        y = 0;
-        map.addNode(x, y, type);
-        
-        type = NodeType.TOPT;
-        x = 2;
-        y = 0;
-        map.addNode(x, y, type);
-       
-        type = NodeType.TOPRIGHTEDGE;
-        x = 3;
-        y = 0;
-        map.addNode(x, y, type);
-        
-        type = NodeType.LEFTT;
-        x = 0;
-        y = 1;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = 0;
-        y = 2;
-        map.addNode(x, y, type);
-        
-        type = NodeType.BOTTOMT;
-        x = 1;
-        y = 2;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = -1;
-        y = 2;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = -2;
-        y = 2;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = 0;
-        y = -1;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = 4;
-        y = 0;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = 5;
-        y = 0;
-        map.addNode(x, y, type);
-        
-         type = NodeType.CROSS;
-         x = 1;
-         y = 1;
-       
-        type = NodeType.CROSS;
-        x = 0;
-        y = 0;
-        map.addNode(x, y, type);
-        
-        type = NodeType.TOPT;
-        x = 1;
-        y = 0;
-        map.addNode(x, y, type);
-        
-        type = NodeType.TOPT;
-        x = 2;
-        y = 0;
-        map.addNode(x, y, type);
-       
-        type = NodeType.TOPRIGHTEDGE;
-        x = 3;
-        y = 0;
-        map.addNode(x, y, type);
-
-        
-        type = NodeType.BOTTOMT;
-        x = 1;
-        y = 2;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = -1;
-        y = 2;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = -2;
-        y = 2;
-        map.addNode(x, y, type);
-        
-        type = NodeType.CROSS;
-        x = 0;
-        y = -1;
-        map.addNode(x, y, type);
-        
-        
-        
-        MapSurfaceView v = (MapSurfaceView) findViewById(R.id.im_preview);
-        
-        v.setMap(map.getMapAsList(), map.getMapBorders());
-        v.isDrawing(true);
-	}
-
 }

@@ -24,7 +24,7 @@ public class EpuckPosition {
     /**
      * Saves the id of the roboter to identify it.
      */
-    private UUID id;
+    private String id;
 
     /**
      * If the MapSurfaceView detects a new e-puck on the map, a new
@@ -35,7 +35,7 @@ public class EpuckPosition {
      * @param newY Current y coordinate on the map.
      * @param newID Identifier of the roboter.
      */
-    public EpuckPosition(final int newX, final int newY, final UUID newID) {
+    public EpuckPosition(final int newX, final int newY, final String newID) {
         x = newX;
         y = newY;
         id = newID;
@@ -82,7 +82,7 @@ public class EpuckPosition {
      *
      * @return Identifier of the roboter.
      */
-    public final UUID getID() {
+    public final String getID() {
         return id;
     }
 

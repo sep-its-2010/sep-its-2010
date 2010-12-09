@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import sep.conquest.model.MapNode;
 import android.content.Context;
@@ -81,13 +83,14 @@ public class MapSurfaceView extends SurfaceView
      * different states of the surface view, e.g. when a method sets the thread
      * paused.
      */
-    private DrawThread mThread = null;
+    private DrawThread mThread;
+    
 
     /**
      * Is required to save the coordinates of the touch point adequate
      * for the scroll function.
      */
-    private PointF mDownTouchPoint = null;
+    private PointF mDownTouchPoint;
 
     /**
      * Contains the adjustment value of the surface view relative to the
@@ -129,7 +132,7 @@ public class MapSurfaceView extends SurfaceView
      * This attribute saves the id of the robot which is selected. If no
      * robot is selected it is set to -1.
      */
-    private UUID mSelectedRobot;
+    private String mSelectedRobot;
 
     /**
      * This value is initially set to false and is activated when scallValue
@@ -155,7 +158,6 @@ public class MapSurfaceView extends SurfaceView
 
         mMap = new LinkedList < MapNode >();
         mPositions = new LinkedList < EpuckPosition >();
-        mThread = new DrawThread();
     }
 
     /**
@@ -179,7 +181,7 @@ public class MapSurfaceView extends SurfaceView
      */
     public final void surfaceCreated(final SurfaceHolder holder) {
     	mThread = new DrawThread();
-    	
+    	mThread.start();
 
     }
 
@@ -194,10 +196,10 @@ public class MapSurfaceView extends SurfaceView
     public final void surfaceDestroyed(final SurfaceHolder holder) {
         boolean retry = true;
         mThread.setPaused(true);
-
+        
         while (retry) {
             try {
-                mThread.join();
+                mThread.join(); //wartet auf das Ende des Threads und beendet ihn.
                 retry = false;
             } catch (InterruptedException e) {
                 return;
@@ -233,8 +235,8 @@ public class MapSurfaceView extends SurfaceView
                 int test = (int) event.getX();
                 int test2 = (int) event.getY();
                 if (Math.abs(xCoord-test) < 40 && Math.abs(yCoord-test2) < 40) {
-                    mSelectedRobot = e.getID();
-                    mRobotSelect.setSelection(mPositions.indexOf(e) + 1);
+                    //mSelectedRobot = e.getID();
+                    //mRobotSelect.setSelection(mPositions.indexOf(e) + 1);
                 }
             }
         }
@@ -305,7 +307,6 @@ public class MapSurfaceView extends SurfaceView
          * are provided by the update method. This infinite loop is only be
          * stopped when the thread is paused.
          */
-        @Override
         public void run() {
             while (!paused) {
                 doDraw();
@@ -338,10 +339,16 @@ public class MapSurfaceView extends SurfaceView
             c.setMatrix(m);
 
             //Read attributes of current map - react on negative values
-            int minX = mBorders[0];
-            int minY = mBorders[1];
-            int maxX = mBorders[2];
-            int maxY = mBorders[3];
+            int minX = 0;
+            int minY = 0;
+            int maxX = 0;
+            int maxY = 0;
+            if (mBorders != null) {
+            minX = mBorders[0];
+            minY = mBorders[1];
+            maxX = mBorders[2];
+            maxY = mBorders[3];
+            }
             int offsetY = Math.abs(minY);
             int offsetX = Math.abs(minX);
 
@@ -369,11 +376,15 @@ public class MapSurfaceView extends SurfaceView
             c.drawRect(mBounds, paint);
 
             //Draw First Layer
-            drawFirstLayer(c, offsetX, offsetY);
+			if (mMap != null) {
+				drawFirstLayer(c, offsetX, offsetY);
+			}
 
             //Draw Second Layer
-            drawSecondLayer(c, offsetX, offsetY);
-
+			if (mPositions != null) {
+				drawSecondLayer(c, offsetX, offsetY);
+			}
+			
             //Unlock canvas and draw on display.
             getHolder().unlockCanvasAndPost(c);
         }
@@ -389,43 +400,62 @@ public class MapSurfaceView extends SurfaceView
             paused = pause;
         }
 
-        private void drawFirstLayer(final Canvas c, final int offsetX, final int offsetY) {
-            //Draw first layer: Visited Rects and Nodes
-            Iterator < MapNode > map_it = mMap.iterator();
-            MapNode mn;
-            while(map_it.hasNext()) {
-                mn = map_it.next();
-                int xValue = (mn.getXValue() + offsetX) * mScaleValue;
-                int yValue = (mn.getYValue() + offsetY) * mScaleValue;
+		private void drawFirstLayer(final Canvas c, final int offsetX,
+				final int offsetY) {
+			// Draw first layer: Visited Rects and Nodes
+			Iterator<MapNode> map_it = mMap.iterator();
+			MapNode mn;
+			while (map_it.hasNext()) {
+				mn = map_it.next();
+				int xValue = (mn.getXValue() + offsetX) * mScaleValue;
+				int yValue = (mn.getYValue() + offsetY) * mScaleValue;
 
-                drawVisited(c, xValue, yValue, mn.getVisitCounter(), paint);
+				drawVisited(c, xValue, yValue, mn.getVisitCounter(), paint);
 
-                paint.setColor(0xff000000);
-                switch (mn.getNodeType()) {
-                case BOTTOMLEFTEDGE: drawBottomLeftEdge(c, xValue, yValue); break;
-                case BOTTOMRIGHTEDGE: drawBottomRightEdge(c, xValue, yValue); break;
-                case BOTTOMT: drawBottomT(c, xValue, yValue); break;
-                case TOPLEFTEDGE: drawTopLeftEdge(c, xValue, yValue); break;
-                case TOPRIGHTEDGE: drawTopRightEdge(c, xValue, yValue); break;
-                case TOPT: drawTopT(c, xValue, yValue); break;
-                case LEFTT: drawLeftT(c, xValue, yValue); break;
-                case RIGHTT: drawRightT(c, xValue, yValue); break;
-                case CROSS: drawCross(c, xValue, yValue); break;
-                default: break;
-                }
-            }
-        }
+				paint.setColor(0xff000000);
+				switch (mn.getNodeType()) {
+				case BOTTOMLEFTEDGE:
+					drawBottomLeftEdge(c, xValue, yValue);
+					break;
+				case BOTTOMRIGHTEDGE:
+					drawBottomRightEdge(c, xValue, yValue);
+					break;
+				case BOTTOMT:
+					drawBottomT(c, xValue, yValue);
+					break;
+				case TOPLEFTEDGE:
+					drawTopLeftEdge(c, xValue, yValue);
+					break;
+				case TOPRIGHTEDGE:
+					drawTopRightEdge(c, xValue, yValue);
+					break;
+				case TOPT:
+					drawTopT(c, xValue, yValue);
+					break;
+				case LEFTT:
+					drawLeftT(c, xValue, yValue);
+					break;
+				case RIGHTT:
+					drawRightT(c, xValue, yValue);
+					break;
+				case CROSS:
+					drawCross(c, xValue, yValue);
+					break;
+				default:
+					break;
+				}
+			}
+		}
 
         private void drawSecondLayer(final Canvas c, final int offsetX, final int offsetY) {
-            // Draw the third layer: Robots
+            // Draw the third layer: Robots 
             Iterator < EpuckPosition > pos_it = mPositions.iterator();
             EpuckPosition epp;
             while (pos_it.hasNext()) {
                 epp = pos_it.next();
-                if (epp.getID() == mSelectedRobot) {
+                if (epp.getID().equals(mSelectedRobot)) {
                     selectEpuck(c, (epp.getX()+offsetX)*mScaleValue, (epp.getY()+offsetY)*mScaleValue);
                 } else {
-                    //was ist wenn epuck im negativen bereich ist?
                     drawEpuck(c, (epp.getX()+offsetX)*mScaleValue, (epp.getY()+offsetY)*mScaleValue);
                 }
 
@@ -690,7 +720,7 @@ public class MapSurfaceView extends SurfaceView
 
     }
 
-    public final void setSelectedRobot(final UUID id) {
+    public final void setSelectedRobot(final String id) {
         mSelectedRobot = id;
     }
 
@@ -707,15 +737,15 @@ public class MapSurfaceView extends SurfaceView
         mRobotSelect = selector;
     }
     
-    public final void isDrawing(boolean drawing) {
-    	if (drawing) {
-    		mThread.setPaused(false);
+    public final void setDrawable(boolean isDrawing) {
+    	//ExecutorService service = Executors.newSingleThreadExecutor();
+    	if (isDrawing) {
     		mThread.start();
     		
     	} else {
-    		mThread.stop();
     		mThread.setPaused(true);
     	}
+
     }
     
 
