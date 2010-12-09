@@ -4,6 +4,7 @@ import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
 import sep.conquest.model.requests.DriveRequest;
 import sep.conquest.model.requests.MessageType;
+import sep.conquest.model.requests.StatusUpdateRequest;
 
 /**
  * Handles DriveRequest messages.
@@ -42,10 +43,18 @@ public class DriveRequestHandler extends Handler {
 		  return super.handleRequest(request);
 	  } else {
 		  DriveRequest driveReq = (DriveRequest) request;
-		  //calls the method in the Puck class to handle the driveCommand
-		  executor.getRobot().driveCommand(driveReq.getCommand());
-		  return true;
-	  }
-  }
+		  // calls the method in the Puck class to handle the driveCommand
+			executor.getRobot().driveCommand(driveReq.getCommand());
+
+			// Theoretical:
+			executor.getRobot().getRobotStatus().get(executor.getRobot())
+					.setMoving(true);
+			StatusUpdateRequest statusUpdateReq = new StatusUpdateRequest(
+					executor.getRobot().getID(), null, executor.getRobot()
+							.getRobotStatus().get(executor.getRobot()));
+			executor.getRobot().broadcast(statusUpdateReq);
+			return true;
+		}
+	}
 
 }

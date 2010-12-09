@@ -1,7 +1,5 @@
 package sep.conquest.model.handler;
 
-import java.util.Set;
-import java.util.UUID;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
 import sep.conquest.model.MapNode;
@@ -60,7 +58,9 @@ public class PuckNodeHitHandler extends Handler {
 			/*
 			 * Message looks like:
 			 * 
-			 * Byte[0-1]: MessageType Byte[2]: NodeType
+			 * Byte[0-1]: MessageType 
+			 * Byte[2]: NodeType
+			 * Byte[3]: Previous Node
 			 */
 
 			int newCoordinateX = bufferPosition[0];
@@ -102,10 +102,24 @@ public class PuckNodeHitHandler extends Handler {
 				break;
 			default:
 				/*
+				 * TODO Lokalisierung bei HitNodeHandler
 				 * He don't know where he is.. that's a big problem...
 				 */
 			}
 
+			/*
+			 *  This block seeks out whether the e-puck went to its intentPosition
+			 *  or returned to the node it came from (when an e-puck discovered a
+			 *  collision, it tries to get back to his last consistent node)
+			 */
+			boolean returnedToLastNode = false;;
+			int returned = hitNodeReq.getMessage()[3];
+			if(returned != 0){
+				returnedToLastNode = true;
+			} else {
+				returnedToLastNode = false;
+			}
+			
 			// This block seeks out the type of the node sent with the message
 			int typeOfNode = hitNodeReq.getMessage()[2];
 			switch (typeOfNode) {
@@ -128,24 +142,29 @@ public class PuckNodeHitHandler extends Handler {
 				typeOfNewNode = NodeType.TOPT;
 				break;
 			}
-
-			// Turns the corners and T-Crosses, so they can be added to the map
+			
+			// Turns the corners and T-crosses, so they can be added to the map
 			NodeType finalNodeType = this.turnAround(turnCount, typeOfNewNode);
-
-			// Add the new node to local map of the robot
-			executor.getRobot().getMap().addNode(newCoordinateX,
-					newCoordinateY, finalNodeType);
-
-			// Gets the UUID's of the other robots and saves them into an array
-			UUID[] receivers = new UUID[executor.getRobot().getRobotStatus()
-					.keySet().size()];
-
-			Set<UUID> it = executor.getRobot().getRobotStatus().keySet();
-			int i = 0;
-			for (UUID key : it) {
-				receivers[i] = key;
-				i++;
+						
+			/*
+			 * If !(returnedToLastNode) the information of the new node has to
+			 * be written and added to the map
+			 * If (returnedToLastNode) the puck went to his last position. In
+			 * this case the information of the last node has to be written and
+			 * added to the map.
+			 * The difference is the x and y coordinate.
+			 */			
+			if(!(returnedToLastNode)){
+				// Add the new node to local map of the robot
+				executor.getRobot().getMap().addNode(newCoordinateX,
+						newCoordinateY, finalNodeType);
+			} else {
+				// Add the new node to local map of the robot with its old
+				// coordinates because it returned to the node
+				executor.getRobot().getMap().addNode(bufferPosition[0],
+						bufferPosition[1], finalNodeType);	
 			}
+
 
 			// Sets the new position in the status of the robot and the actual
 			// NodeType
@@ -157,14 +176,15 @@ public class PuckNodeHitHandler extends Handler {
 			// Should I create a new RobotStatus or can I use the Status of the
 			// actual sender?!
 			StatusUpdateRequest statusUpdateReq = new StatusUpdateRequest(
-					executor.getRobot().getID(), receivers, statusOfRobot);
+					executor.getRobot().getID(), null, statusOfRobot);
 			executor.getRobot().broadcast(statusUpdateReq);
 			
 			// drive to next node on path
-			executor.driveTo();
-			
+			executor.driveTo();	
 			return true;
 		}
+			
+		
 	}
 
 	/**
