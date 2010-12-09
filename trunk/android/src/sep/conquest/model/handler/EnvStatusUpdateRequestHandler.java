@@ -41,6 +41,7 @@ public class EnvStatusUpdateRequestHandler extends Handler {
 			env.getStatus().setRobotStatus(request.getSender(), status);
 			env.getMap().addNode(status.getPosition()[0],
 					status.getPosition()[1], status.getNodeType());
+			//TODO Observer informieren
 			return true;
 		}
 	}

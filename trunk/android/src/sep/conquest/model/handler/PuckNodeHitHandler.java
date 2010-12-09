@@ -158,6 +158,9 @@ public class PuckNodeHitHandler extends Handler {
 				// Add the new node to local map of the robot
 				executor.getRobot().getMap().addNode(newCoordinateX,
 						newCoordinateY, finalNodeType);
+				// Sets the new position in the status of the robot
+				bufferPosition[0] = newCoordinateX;
+				bufferPosition[1] = newCoordinateY;
 			} else {
 				// Add the new node to local map of the robot with its old
 				// coordinates because it returned to the node
@@ -166,10 +169,7 @@ public class PuckNodeHitHandler extends Handler {
 			}
 
 
-			// Sets the new position in the status of the robot and the actual
-			// NodeType
-			bufferPosition[0] = newCoordinateX;
-			bufferPosition[1] = newCoordinateY;
+			
 			statusOfRobot.setPosition(bufferPosition);
 			statusOfRobot.setNodeType(finalNodeType);
 			statusOfRobot.setMoving(false);

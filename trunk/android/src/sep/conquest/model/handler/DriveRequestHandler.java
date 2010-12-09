@@ -50,7 +50,7 @@ public class DriveRequestHandler extends Handler {
 			executor.getRobot().getRobotStatus().get(executor.getRobot())
 					.setMoving(true);
 			StatusUpdateRequest statusUpdateReq = new StatusUpdateRequest(
-					executor.getRobot().getID(), null, executor.getRobot()
+					executor.getRobot().getID(),null,executor.getRobot()
 							.getRobotStatus().get(executor.getRobot()));
 			executor.getRobot().broadcast(statusUpdateReq);
 			return true;

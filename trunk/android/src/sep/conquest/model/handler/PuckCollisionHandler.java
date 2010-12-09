@@ -3,7 +3,9 @@ package sep.conquest.model.handler;
 
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.CollisionRequest;
 import sep.conquest.model.requests.MessageType;
+import sep.conquest.model.requests.PuckRequest;
 
 /**
  * Handles PuckCollison messages coming from the Bluetooth Adapter.
@@ -38,28 +40,19 @@ public class PuckCollisionHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-	  if(!(request.getKind()==MessageType.RESPONSE_COLLISION)){
+	  PuckRequest colRes = (PuckRequest) request;
+	  if(!(colRes.getKind()==MessageType.RESPONSE_COLLISION)){
 		  return super.handleRequest(request);
 	  } else {
-		  //The epuck stops on hardwarebased command
 		  
-		  	//Sets his new intentPosition to the last node where it came from
-			executor.getRobot().getRobotStatus().get(request.getSender())
-					.setIntentPosition(
-							executor.getRobot().getRobotStatus().get(
-									request.getSender()).getPosition());
-			
-			// Normally there has to send a broadcastMessage to all other
-			// robots, so they know the "new" intentPosition of the epuck
-			
-			
-			//The right command to turn the epuck?!
-			executor.getRobot().turn();
-			
-			//The right command to make the robot drive?!
-			executor.getRobot().forward();
-			
-			
+		  //The epuck stops on hardwarebased command
+		  byte[] bufferMessage = colRes.getMessage();
+		  boolean[] colArray = new boolean[8];
+		  for(int i = 0 ; i < 8; i++){
+			  //colArray;
+		  }
+		  //CollisionRequest colRes = new CollisionRequest(executor.getRobot(), null, executor.getRobot().getRobotStatus().get(executor.getRobot()));
+		  
 		  return true;
 	  }    
   }

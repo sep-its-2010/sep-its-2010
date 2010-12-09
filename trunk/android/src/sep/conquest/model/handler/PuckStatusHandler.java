@@ -5,7 +5,6 @@ import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
 import sep.conquest.model.MapNode;
 import sep.conquest.model.NodeType;
-import sep.conquest.model.Orientation;
 import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.MessageType;
 import sep.conquest.model.requests.PuckRequest;

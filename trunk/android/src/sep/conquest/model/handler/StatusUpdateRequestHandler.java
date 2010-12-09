@@ -42,14 +42,17 @@ public class StatusUpdateRequestHandler extends Handler {
 		if (!(request.getKind() == MessageType.STATUS_UPDATE)) {
 			return super.handleRequest(request);
 		} else {
-			StatusUpdateRequest statusReq = (StatusUpdateRequest) request;
-			// Side effect in method RobotStatus.setRobotStatus?! Check this!
-			RobotStatus oldStatus = executor.getRobot().getRobotStatus().get(
-					statusReq.getSender());
-			// The status which is sent with the message
-			RobotStatus newBufferRobotStatus = statusReq.getStatus();
-			oldStatus.setRobotStatus(newBufferRobotStatus);
-			return true;
+			//Check if the Thread comes from same robot as the sender
+			if(!(request.getSender() == executor.getRobot().getID())){
+				StatusUpdateRequest statusReq = (StatusUpdateRequest) request;
+				// Side effect in method RobotStatus.setRobotStatus?! Check this!
+				RobotStatus oldStatus = executor.getRobot().getRobotStatus().get(
+						statusReq.getSender());
+				// The status which is sent with the message
+				RobotStatus newBufferRobotStatus = statusReq.getStatus();
+				oldStatus.setRobotStatus(newBufferRobotStatus);
+			}
+			return true;	
 		}
 	}
 
