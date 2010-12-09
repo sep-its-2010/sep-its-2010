@@ -6,6 +6,7 @@ import sep.conquest.model.RobotStatus;
 import sep.conquest.model.State;
 import sep.conquest.model.requests.HelloRequest;
 import sep.conquest.model.requests.MessageType;
+import sep.conquest.model.requests.StatusUpdateRequest;
 
 /**
  * Handles DriveRequest messages.
@@ -58,7 +59,11 @@ public class HelloRequestHandler extends Handler {
 			
 			//TODO status change after 10 sec or with a given number of robots
 			thread.changeBehaviour(State.EXPLORE);
-			
+			thread.getRobot().getRobotStatus().get(thread.getRobot()).setState(State.EXPLORE);
+			StatusUpdateRequest statusUpdateReq = new StatusUpdateRequest(
+					thread.getRobot().getID(),null,thread.getRobot()
+							.getRobotStatus().get(thread.getRobot()));
+			thread.getRobot().broadcast(statusUpdateReq);
 			return true;
 		}
 	}
