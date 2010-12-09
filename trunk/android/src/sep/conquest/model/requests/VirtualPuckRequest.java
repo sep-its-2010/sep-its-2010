@@ -3,6 +3,7 @@ package sep.conquest.model.requests;
 import java.util.UUID;
 
 import sep.conquest.model.IRequest;
+import sep.conquest.model.Puck;
 
 
 /**
@@ -44,7 +45,34 @@ public class VirtualPuckRequest implements IRequest {
     	byte[] code = {message[0], message[1]};
     	
     	
-        type = MessageType.PUCK_OK; // TODO determine correct message-type
+        type = getMessageType(code);
+    }
+    
+    /**
+     * Returns the MessageType of a given byte-code.
+     * 
+     * @param typeCode The byte-code.
+     * @return The MessageType.
+     */
+    private MessageType getMessageType(byte[] typeCode) {
+ 
+    	short type =  (short) (((message[1] & 0xFF) << 8) | message[0] & 0xFF);
+    	
+    	switch (type) {
+    	case Puck.REQ_MOVE:
+			return MessageType.REQUEST_MOVE;
+    	case Puck.REQ_RESET:
+    		return MessageType.REQUEST_RESET;
+    	case Puck.REQ_SETLED:
+    		return MessageType.REQUEST_SET_LED;
+    	case Puck.REQ_SETSPEED:
+    		return MessageType.REQUEST_SET_SPEED;
+    	case Puck.REQ_STATUS:
+    		return MessageType.REQUEST_STATUS;
+    	case Puck.REQ_TURN:
+    		return MessageType.REQUEST_TURN;
+    	}
+		return null;
     }
 
     /* (non-Javadoc)

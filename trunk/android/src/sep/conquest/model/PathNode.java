@@ -97,4 +97,17 @@ public class PathNode {
 		return tmp.getCosts();
 	}
 
+	/**
+	 * Returns the destination node.
+	 * 
+	 * @return The destination node.
+	 */
+	public MapNode getPathNode() {
+		PathNode tmp = this;
+		while (tmp.getNext() != null) {
+			tmp = tmp.getNext();
+		}
+		return tmp.getNode();
+	}	
+	
 }

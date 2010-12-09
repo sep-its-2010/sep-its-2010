@@ -74,7 +74,10 @@ public abstract class Puck implements IComClient, IRobot {
      */
     public static final short REQ_TURN = (short) 0x03FF;
     
-    
+	/**
+	 * The length of a bluetooth message.
+	 */
+	protected static final int MSGLENGTH = 32;    
     
     
 	
@@ -112,6 +115,22 @@ public abstract class Puck implements IComClient, IRobot {
 	 * Indicates whether the robot is controlled by the user.
 	 */
 	private boolean controlled = false;
+	
+	/**
+	 * Indicates whether the robot expects a message from the socket.
+	 */
+	private boolean expectMessage = false;
+	
+	/**
+	 * The bluetooth message.
+	 */
+	protected byte[] btMessage = new byte[MSGLENGTH];
+
+	/**
+	 * The length of the current message in buffer.
+	 */
+	protected int btMessageLen = 0;	
+	
 
 	/**
 	 * Constructor initializing ID, local map, own state, logic thread and
@@ -144,6 +163,19 @@ public abstract class Puck implements IComClient, IRobot {
 	 */
 	public Map<UUID, RobotStatus> getRobotStatus() {
 		return states;
+	}
+	
+	/**
+	 * Indicates whether a socket-message is expected.
+	 * 
+	 * @return True, if a message is expected, otherwise false.
+	 */
+	public boolean isMessageExpected() {
+		return expectMessage;
+	}
+	
+	public void expectNoMessage() {
+		expectMessage = false;
 	}
 
 	/**
@@ -230,7 +262,11 @@ public abstract class Puck implements IComClient, IRobot {
 	 * @param buffer
 	 *            The message that will be sent.
 	 */
-	public abstract void writeSocket(byte[] buffer);
+	public void writeSocket(byte[] buffer) {
+		expectMessage = true;
+		btMessageLen = 0;
+		btMessage = new byte[MSGLENGTH];
+	}
 
 	/**
 	 * This method read if an incoming message has arrived at the socket.

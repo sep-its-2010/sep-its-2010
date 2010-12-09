@@ -46,7 +46,9 @@ public class RealPuck extends Puck {
 	 * @param message
 	 *            The Message that will be sent.
 	 */
+	@Override
 	public void writeSocket(byte[] message) {
+		super.writeSocket(message);
 		OutputStream out;
 
 		try {
@@ -65,16 +67,34 @@ public class RealPuck extends Puck {
 	 * @return Returns the message sent by the e-puck.
 	 */
 	public byte[] readSocket() {
-		InputStream in;
-		byte[] message = new byte[32];
+		// if a message is expected => read socket
+		if (isMessageExpected()) {		
+			InputStream in;
+			byte[] message = new byte[32];
+	
+			try {
+				in = mybtSocket.getInputStream();
+				in.read(message);
+			} catch (IOException e) {
+				ConquestLog.addMessage(this, "Can't read message from socket!");
+			}
 
-		try {
-			in = mybtSocket.getInputStream();
-			in.read(message);
-		} catch (IOException e) {
-			ConquestLog.addMessage(this, "Can't read message from socket!");
+			// check message length
+			if ((btMessageLen + message.length) > MSGLENGTH)
+				throw new IllegalArgumentException("Message from socket is "
+						+ "longer than " + MSGLENGTH + " bytes!");
+
+			for (int i = 0; i < message.length; i++) {
+				btMessage[btMessageLen] = message[i];
+				btMessageLen++;
+			}
 		}
-
-		return message;
+		
+		if (MSGLENGTH == btMessageLen) {
+			expectNoMessage();
+			return btMessage;
+		} else {
+			return new byte[0];	
+		}
 	}
 }

@@ -14,6 +14,9 @@ public final class ConquestLog {
 	public static final boolean ENABLED = false;
 	
 	public static void addMessage(Object obj, String msg) {
-		if (ENABLED) Log.v(TAG, obj.getClass().toString() + ": " + msg);
+		if (ENABLED) 
+			Log.v(TAG, obj.getClass().toString() + ": " + msg);
+		else
+			System.out.println(obj.getClass().toString() + ": " + msg);
 	}
 }

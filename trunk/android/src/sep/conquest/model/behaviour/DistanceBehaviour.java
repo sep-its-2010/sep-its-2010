@@ -19,7 +19,7 @@ import sep.conquest.util.Utility;
  * @author Andreas Wilhelm
  */
 public final class DistanceBehaviour extends Behaviour {
-	
+
 	private static boolean visited = false;
 
 	/**
@@ -41,12 +41,11 @@ public final class DistanceBehaviour extends Behaviour {
 	 * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
 	 */
 	public Map<Integer, Integer> execute(Map<Integer, Integer> map, Puck robot) {
-		
+
 		if (!visited) {
 			System.out.println("DistanceBehaviour visited");
 			visited = true;
 		}
-		
 
 		LinkedList<GraphNode> frontiers = robot.getMap().getFrontierList();
 		AStarPathFinder astar = new AStarPathFinder();
@@ -63,8 +62,8 @@ public final class DistanceBehaviour extends Behaviour {
 				.find(robot, status.getPosition(), destinations);
 
 		for (PathNode path : paths)
-			map.put(Utility.makeKey(path.getNode().getXValue(), path.getNode()
-					.getYValue()), path.getPathCosts());
+			map.put(Utility.makeKey(path.getPathNode().getXValue(), path
+					.getPathNode().getYValue()), path.getPathCosts());
 
 		return super.execute(map, robot);
 	}

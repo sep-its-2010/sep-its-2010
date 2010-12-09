@@ -312,7 +312,8 @@ public class Simulator {
    */
   public void step() {
     IRequest request = inputBuffer.poll();
-    firstHandler.handleRequest(request);
+    if (request != null)
+    	firstHandler.handleRequest(request);
   }
 
   /**

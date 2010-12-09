@@ -1,10 +1,7 @@
 package sep.conquest.model;
 
-
 import java.util.UUID;
-
-import sep.conquest.model.requests.PuckRequest;
-
+import sep.conquest.model.requests.VirtualPuckRequest;
 
 /**
  * This class inherits from the class puck and represents an virtual
@@ -38,7 +35,9 @@ public class VirtualPuck extends Puck {
 	 * @param buffer The Message that will be sent.
 	 */
 	public void writeSocket(byte[] buffer){
-		PuckRequest request = new PuckRequest(buffer);
+		super.writeSocket(buffer);
+		VirtualPuckRequest request = new VirtualPuckRequest(getID(),buffer);
+		sim.addRequest(request);
 	}
 	
 	/**
@@ -47,6 +46,28 @@ public class VirtualPuck extends Puck {
 	 * @return Returns the message sent by the simulator.
 	 */
 	public byte[] readSocket(){
-		return null;
+		// if a message is expected => read socket
+		if (isMessageExpected()) {		
+			byte[] message = sim.readBuffer(getID());
+
+			// check message length
+			if ((btMessageLen + message.length) > MSGLENGTH)
+				throw new IllegalArgumentException("Message from socket is "
+						+ "longer than " + MSGLENGTH + " bytes!");
+
+			for (int i = 0; i < message.length; i++) {
+				btMessage[btMessageLen] = message[i];
+				btMessageLen++;
+			}
+		}
+		
+		if (MSGLENGTH == btMessageLen) {
+			expectNoMessage();
+			return btMessage;
+		} else {
+			return new byte[0];	
+		}		
+		
+		
 	}
 }

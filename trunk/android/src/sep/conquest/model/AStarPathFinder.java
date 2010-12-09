@@ -88,6 +88,11 @@ public class AStarPathFinder implements IPathFinder {
 			AStarNode first = new AStarNode(null, start, 0);
 			openList.add(first);
 		} else {
+			if (closeList.contains(destination))
+				for (AStarNode node: closeList) {
+					if (node.equals(destination))
+						openList.add(node);
+				}		
 			for (AStarNode node: closeList)
 				node.setEstimatedCosts(estimateCosts(node.getNode(), destination));
 			for (AStarNode node: openList)

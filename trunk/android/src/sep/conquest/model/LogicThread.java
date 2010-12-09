@@ -1,7 +1,5 @@
 package sep.conquest.model;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -23,11 +21,6 @@ import sep.conquest.util.Utility;
  * 
  */
 public class LogicThread implements Runnable {
-
-	/**
-	 * The length of a bluetooth message.
-	 */
-	private static final int MSGLENGTH = 32;
 
 	/**
 	 * A instance of the AStarPathFinder class for shortest-path-finding.
@@ -57,23 +50,7 @@ public class LogicThread implements Runnable {
 	/**
 	 * The queue for broadcast messages.
 	 */
-	private ConcurrentLinkedQueue<IRequest> bcQueue = 
-		new ConcurrentLinkedQueue<IRequest>();
-
-	/**
-	 * Indicates whether a bluetooth messages is expected.
-	 */
-	private boolean expectBTMessage = false;
-
-	/**
-	 * The bluetooth message.
-	 */
-	private byte[] btMessage = new byte[MSGLENGTH];
-	
-	/**
-	 * The length of the current message in buffer.
-	 */
-	private int btMessageLen = 0;
+	private ConcurrentLinkedQueue<IRequest> bcQueue = new ConcurrentLinkedQueue<IRequest>();
 
 	/**
 	 * The constructor of LogicThread assigns the robot as well as its status to
@@ -83,8 +60,8 @@ public class LogicThread implements Runnable {
 	 */
 	public LogicThread(Puck robot) {
 		this.robot = robot;
-		State state = robot.getRobotStatus().get(robot.getID()).getState();		
-		BehaviourFactory.createBehaviourChain(state);		
+		State state = robot.getRobotStatus().get(robot.getID()).getState();
+		BehaviourFactory.createBehaviourChain(state);
 		stateBehaviour = Behaviour
 				.getFirstBehaviour(getRobotState().getState());
 		bcHandler = HandlerFactory.getPuckBCChain(this);
@@ -123,7 +100,7 @@ public class LogicThread implements Runnable {
 	private RobotStatus getRobotState() {
 		return robot.getRobotStatus().get(robot.getID());
 	}
-	
+
 	/**
 	 * Returns the robot of the logic thread.
 	 * 
@@ -140,10 +117,7 @@ public class LogicThread implements Runnable {
 	 */
 	private Map<Integer, Integer> initMap() {
 		Map<Integer, Integer> map = new TreeMap<Integer, Integer>();
-		LinkedList<MapNode> mapList = robot.getMap().getMapAsList();
-		Iterator<MapNode> it = mapList.iterator();
-		while (it.hasNext()) {
-			MapNode node = it.next();
+		for (GraphNode node: robot.getMap().getFrontierList()) {
 			map.put(Utility.makeKey(node.getXValue(), node.getYValue()), 0);
 		}
 		return map;
@@ -160,7 +134,7 @@ public class LogicThread implements Runnable {
 		int bestValue = 0;
 		int[] bestNode = { 0, 0 };
 		Set<Integer> nodes = map.keySet();
-		for (Integer node: nodes) {
+		for (Integer node : nodes) {
 			Integer cost = map.get(node);
 			if (bestValue == 0 || cost < bestValue) {
 				bestValue = cost;
@@ -178,10 +152,11 @@ public class LogicThread implements Runnable {
 	 */
 	public void driveTo() {
 		int[][] dest = { getRobotState().getIntentPosition() };
-		PathNode[] path = aStar.find(robot, getRobotState().getPosition(), dest);
+		PathNode[] path = aStar
+				.find(robot, getRobotState().getPosition(), dest);
 
 		if (path != null) {
-			MapNode nextMapNode = (MapNode) path[1].getNode();
+			MapNode nextMapNode = (MapNode) path[0].getNext().getNode();
 			int[] node = { nextMapNode.getXValue(), nextMapNode.getYValue() };
 			sendCommand(getRobotState().getPosition(), node);
 		}
@@ -215,51 +190,19 @@ public class LogicThread implements Runnable {
 	}
 
 	/**
-	 * Returns a bluetooth message if message-receiving is expected and the 
+	 * Returns a bluetooth message if message-receiving is expected and the
 	 * byte-length of the message on the socket has reached the desired length.
 	 * 
 	 * @return The message. If no message exists, an empty byte-array will be
-	 * 	returned.
+	 *         returned.
 	 */
 	private IRequest getBTMessage() {
-		
-		// if a message is expected => read socket
-		if (expectBTMessage) {
-			byte[] msg = robot.readSocket();
-			
-			// check message length
-			if ((btMessageLen + msg.length) > MSGLENGTH)
-				throw new IllegalArgumentException("Message from socket is " +
-						"longer than " + MSGLENGTH + " bytes!");
-			
-
-			for (int i = 0; i < msg.length; i++) {
-				btMessage[btMessageLen] = msg[i];
-				btMessageLen++;
-			}
+		if (robot.readSocket().length > 0) {
+			return new PuckRequest(robot.readSocket());
 		}
-		
-		// 
-		if (MSGLENGTH == btMessageLen) {
-			expectBTMessage = false;
-			return new PuckRequest(btMessage);
-		} else
+		else
 			return null;
 	}
-	
-	/**
-	 * Writes a message to the socket and enables the receiving capability.
-	 * 
-	 * @param buffer The message to send via a socket.
-	 */
-	public void writeSocket(byte[] buffer) {
-		btMessage = new byte[MSGLENGTH];
-		btMessageLen = 0;
-		expectBTMessage = true;
-		
-		robot.writeSocket(buffer);
-	}
-	
 
 	/*
 	 * (non-Javadoc)
@@ -269,21 +212,24 @@ public class LogicThread implements Runnable {
 	public void run() {
 		while (true) {
 			boolean changed = false;
-			
-			// handle bluetooth messages			
+
+			// handle bluetooth messages
 			if (getBTMessage() != null) {
+				ConquestLog.addMessage(this, "Work on "+getBTMessage().getClass());
 				btHandler.handleRequest(getBTMessage());
 				changed = true;
 			}
-			
+
 			// handle broadcast messages
 			if (!bcQueue.isEmpty()) {
 				IRequest req = bcQueue.poll();
+				ConquestLog.addMessage(this, "Work on "+req.getClass());
 				bcHandler.handleRequest(req);
-				ConquestLog.addMessage(this, "Robot: " + robot.getID() + " Sender: " + req.getSender());
+				ConquestLog.addMessage(this, "Robot: " + robot.getID()
+						+ " Sender: " + req.getSender());
 				changed = true;
 			}
-			
+
 			// execute behaviours on changed state
 			if (changed) {
 				Map<Integer, Integer> map = initMap();
