@@ -65,7 +65,7 @@ static inline void hal_led_switchOn(
 static inline void hal_led_switchOff(
 	IN const uint16_t _ui16ClearMask
 	);
-void hal_led_toggle(
+static inline void hal_led_toggle(
 	IN const uint16_t _ui16ToggleMask
 	);
 
@@ -100,7 +100,9 @@ void hal_led_init( void) {
  * \remarks
  * - The LED abstraction layer needs to be initialized.
  * - Using constant values is recommended due to function inlining.
- * - This function should not be preempted by any function which accesses this module.
+ *
+ * \warning
+ * This function may not be preempted by any function which accesses this module.
  * 
  * \see
  * hal_led_init | hal_led_switchOn | hal_led_switchOff | hal_led_toggle
@@ -139,7 +141,9 @@ void hal_led_set(
  * \remarks
  * - The LED abstraction layer needs to be initialized.
  * - Using constant values is recommended due to function inlining.
- * - This function should not be preempted by any function which accesses this module.
+ *
+ * \warning
+ * This function may not be preempted by any function which accesses this module.
  * 
  * \see
  * hal_led_init | hal_led_switchOff | hal_led_set | hal_led_toggle
@@ -178,7 +182,9 @@ void hal_led_switchOn(
  * \remarks
  * - The LED abstraction layer needs to be initialized.
  * - Using constant values is recommended due to function inlining.
- * - This function should not be preempted by any function which accesses this module.
+ *
+ * \warning
+ * This function may not be preempted by any function which accesses this module.
  * 
  * \see
  * hal_led_init | hal_led_switchOn | hal_led_set | hal_led_toggle
@@ -204,5 +210,45 @@ void hal_led_switchOff(
 	LATC &= ~ui16State;
 }
 
+
+/*!
+ * \brief
+ * Toggles the specified LEDs.
+ * 
+ * \param _ui16ToggleMask
+ * Specifies the LED toggle mask based on #HAL_LED_PIN_BV__0 to #HAL_LED_PIN_BV__B.
+ * 
+ * The specified LEDs are toggled; the others remain unchanged.
+ * 
+ * \remarks
+ * - The LED abstraction layer needs to be initialized.
+ * - Using constant values is recommended due to function inlining.
+ *
+ * \warning
+ * This function may not be preempted by any function which accesses this module.
+ * 
+ * \see
+ * hal_led_init | hal_led_switchOn | hal_led_switchOff | hal_led_set
+ */
+void hal_led_toggle(
+	IN const uint16_t _ui16ToggleMask
+	) {
+
+	uint16_t ui16State = LATA;
+	ui16State ^= _ui16ToggleMask & HAL_LED_PIN_BV__0 ? HAL_LED_PIN_MASK__0 : 0;
+	ui16State ^= _ui16ToggleMask & HAL_LED_PIN_BV__1 ? HAL_LED_PIN_MASK__1 : 0;
+	ui16State ^= _ui16ToggleMask & HAL_LED_PIN_BV__2 ? HAL_LED_PIN_MASK__2 : 0;
+	ui16State ^= _ui16ToggleMask & HAL_LED_PIN_BV__3 ? HAL_LED_PIN_MASK__3 : 0;
+	ui16State ^= _ui16ToggleMask & HAL_LED_PIN_BV__4 ? HAL_LED_PIN_MASK__4 : 0;
+	ui16State ^= _ui16ToggleMask & HAL_LED_PIN_BV__5 ? HAL_LED_PIN_MASK__5 : 0;
+	ui16State ^= _ui16ToggleMask & HAL_LED_PIN_BV__6 ? HAL_LED_PIN_MASK__6 : 0;
+	ui16State ^= _ui16ToggleMask & HAL_LED_PIN_BV__7 ? HAL_LED_PIN_MASK__7 : 0;
+	LATA = ui16State;
+
+	ui16State = LATC;
+	ui16State ^= _ui16ToggleMask & HAL_LED_PIN_BV__F ? HAL_LED_PIN_MASK__F : 0;
+	ui16State ^= _ui16ToggleMask & HAL_LED_PIN_BV__B ? HAL_LED_PIN_MASK__B : 0;
+	LATC = ui16State;
+}
 
 #endif /* hal_led_h__ */

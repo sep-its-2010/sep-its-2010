@@ -152,10 +152,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\hal_led.c"
-					>
-				</File>
-				<File
 					RelativePath=".\hal_motors.c"
 					>
 				</File>
