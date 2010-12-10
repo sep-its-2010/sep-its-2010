@@ -12,23 +12,29 @@ enum {
 	NODE_DETECTION__REQUIRED_MEASUREMENTS = 3, ///< Specifies the number of measurements, which have to provide data above a certain threshold for node-detection.
 };
 
-enum {
-	NODE_TYPE__TOP_LEFT_EDGE = 0,
-	NODE_TYPE__TOP_RIGHT_EDGE = 1,
-	NODE_TYPE__BOTTOM_LEFT_EDGE = 2,
-	NODE_TYPE__BOTTOM_RIGHT_EDGE = 3,
-	NODE_TYPE__TOP_T = 4,
-	NODE_TYPE__RIGHT_T = 5,
-	NODE_TYPE__BOTTOM_T = 6,
-	NODE_TYPE__LEFT_T = 7,
-	NODE_TYPE__CROSS = 8,
-	NODE_TYPE__UNKNOWN = 9
-};
+/*!
+ * \brief
+ * Stores the number of ground-sensor-measurements in a row, which provided data below a certain threshold.
+ */
+static uint8_t s_ui8NodeDetectionCounter = 0;
 
-static uint8_t s_ui8NodeDetectionCounter = 0; ///< Number of ground-sensor-measurements in a row, which provided data below a certain threshold.
-sen_line_SData_t podSensorData = {{0}}; ///< Holds data of the three ground-sensors.
-static uint16_t s_ui16AvgLeft = 0; ///< Stores values of the left ground-sensor, which are several times below the threshold for line-detection.
-static uint16_t s_ui16AvgRight = 0; ///< Stores values of the right ground-sensor, which are several times below the threshold for line-detection.
+/*!
+ * \brief
+ * Holds data of the three ground-sensors.
+ */
+static sen_line_SData_t s_podSensorData = {{0}};
+
+/*!
+ * \brief
+ * Stores values of the left ground-sensor, which are several times below the threshold for line-detection.
+ */
+static uint16_t s_ui16AvgLeft = 0;
+
+/*!
+ * \brief
+ * Stores values of the right ground-sensor, which are several times below the threshold for line-detection.
+ */
+static uint16_t s_ui16AvgRight = 0;
 
 /*!
  * \brief
@@ -44,14 +50,14 @@ static uint16_t s_ui16AvgRight = 0; ///< Stores values of the right ground-senso
  */
 bool subs_node_run( void) {
 	bool nodeHit = false;	
-	sen_line_read( &podSensorData);
+	sen_line_read( &s_podSensorData);
 
 	// node detection-measurement
-	// TODO sollte man diese Multiplikation mit 2 in einer Konstante ablegen und besser dokumentieren?
- 	if ((2 * (podSensorData.aui16Data[0]) < 1) || // 1 wird ersetzt durch EEPROM-Kalibrierwert für linken Sensor über Linie
- 		(2 * (podSensorData.aui16Data[2]) < 1)) { // 1 wird ersetzt durch EEPROM-Kalibrierwert für rechten Sensor über Linie
-		s_ui16AvgLeft += podSensorData.aui16Data[0];
-		s_ui16AvgRight += podSensorData.aui16Data[2];
+	// @TODO sollte man diese Multiplikation mit 2 in einer Konstante ablegen und besser dokumentieren?
+ 	if ((2 * (s_podSensorData.aui16Data[0]) < 1) || // 1 wird ersetzt durch EEPROM-Kalibrierwert für linken Sensor über Linie
+ 		(2 * (s_podSensorData.aui16Data[2]) < 1)) { // 1 wird ersetzt durch EEPROM-Kalibrierwert für rechten Sensor über Linie
+		s_ui16AvgLeft += s_podSensorData.aui16Data[0];
+		s_ui16AvgRight += s_podSensorData.aui16Data[2];
 		s_ui8NodeDetectionCounter++;
 	} else {
 		hal_motors_setSteps(0);
@@ -69,28 +75,27 @@ bool subs_node_run( void) {
 		s_ui16AvgLeft = s_ui16AvgLeft / s_ui8NodeDetectionCounter;
 		s_ui16AvgRight = s_ui16AvgRight / s_ui8NodeDetectionCounter;		
 
-		// analyze the shape of the node
-		uint8_t ui8NodeType = NODE_TYPE__UNKNOWN;
-		
-		if( (s_ui16AvgLeft < 1) &&( s_ui16AvgRight < 1) && (2 * podSensorData.aui16Data[1] < 1) ) { // 1 wird ersetzt durch den jeweiligen EEPROM-Kalibrierwert
-			ui8NodeType = NODE_TYPE__CROSS;
+		// analyze the shape of the node		
+		if( (s_ui16AvgLeft < 1) &&( s_ui16AvgRight < 1) && (2 * s_podSensorData.aui16Data[1] < 1) ) { // 1 wird ersetzt durch den jeweiligen EEPROM-Kalibrierwert
+			subs_node_sui8CurrentNodeType = NODE_TYPE__CROSS;
 		} else if( (s_ui16AvgLeft < 1) &&( s_ui16AvgRight < 1)) {
-			ui8NodeType = NODE_TYPE__TOP_T;
-		} else if( (s_ui16AvgLeft < 1) && (2 * podSensorData.aui16Data[1] < 1)) {
-			ui8NodeType = NODE_TYPE__RIGHT_T;
-		} else if( (s_ui16AvgRight < 1) && (2 * podSensorData.aui16Data[1] < 1)) {
-			ui8NodeType = NODE_TYPE__LEFT_T;
+			subs_node_sui8CurrentNodeType = NODE_TYPE__TOP_T;
+		} else if( (s_ui16AvgLeft < 1) && (2 * s_podSensorData.aui16Data[1] < 1)) {
+			subs_node_sui8CurrentNodeType = NODE_TYPE__RIGHT_T;
+		} else if( (s_ui16AvgRight < 1) && (2 * s_podSensorData.aui16Data[1] < 1)) {
+			subs_node_sui8CurrentNodeType = NODE_TYPE__LEFT_T;
 		} else if( s_ui16AvgLeft < 1) {
-			ui8NodeType = NODE_TYPE__TOP_RIGHT_EDGE;
+			subs_node_sui8CurrentNodeType = NODE_TYPE__TOP_RIGHT_EDGE;
 		} else if( s_ui16AvgRight < 1) {
-			ui8NodeType = NODE_TYPE__TOP_LEFT_EDGE;
+			subs_node_sui8CurrentNodeType = NODE_TYPE__TOP_LEFT_EDGE;
 		}
 		s_ui16AvgLeft = 0;
 		s_ui16AvgRight = 0;
 		
 		// inform smartphone about node-detection
+		// @TODO zusätzliches 9. Byte = bool alter Knoten weil nach Kollision?
 		com_SMessage_t podHitNodeMessage = { COM_MESSAGE_TYPE__RESPONSE_HIT_NODE, {0}};
-		podHitNodeMessage.aui8Data[0] = ui8NodeType;
+		podHitNodeMessage.aui8Data[0] = subs_node_sui8CurrentNodeType;
 		com_send( &podHitNodeMessage);
 	}
 	return nodeHit;
@@ -103,8 +108,9 @@ bool subs_node_run( void) {
  * Clears the node-detection-counter and the last ground-sensor-measurement.
  */
 void subs_node_reset( void) {
+	subs_node_sui8CurrentNodeType = NODE_TYPE__UNKNOWN;
 	s_ui8NodeDetectionCounter = 0;
 	s_ui16AvgLeft = 0;
 	s_ui16AvgRight = 0;
-	memset( podSensorData.aui16Data, 0, sizeof(podSensorData.aui16Data));
+	memset( s_podSensorData.aui16Data, 0, sizeof(s_podSensorData.aui16Data));
 }
