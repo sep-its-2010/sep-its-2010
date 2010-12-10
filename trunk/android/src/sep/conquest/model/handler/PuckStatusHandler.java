@@ -57,8 +57,8 @@ public class PuckStatusHandler extends Handler {
 			 * many robots are online, then add the node to the structure.
 			 */
 		  	byte[] bufferMessage = statusReq.getMessage();
-		  	byte[] collisionArray = new byte[7];
-		  	byte[] abyssArray = new byte[2];
+		  	byte[] collisionArray = new byte[8];
+		  	byte[] abyssArray = new byte[3];
 		  	boolean isCollision = false;
 		  	boolean[] collisionArrayForPuck = new boolean[8];
 		  	boolean[] abyssArrayForPuck = new boolean[3];
@@ -68,7 +68,7 @@ public class PuckStatusHandler extends Handler {
 		  	// Fill the collisionArray with the information of the message
 		  	// and checks whether there is a collision
 		  	for(int i = 9; i<17;i++){
-		  		collisionArray[i] = bufferMessage[i];
+		  		collisionArray[i-9] = bufferMessage[i];
 		  		if (bufferMessage[i] != 0){
 		  			isCollision = true;
 		  			collisionArrayForPuck[i-9] = true;
@@ -87,7 +87,7 @@ public class PuckStatusHandler extends Handler {
 		  	//fill the abyssArray with the information of the message and
 		  	//checks whether there is a collision
 		  	for(int j = 6; j<9;j++){
-		  		abyssArray[j] = bufferMessage[j];
+		  		abyssArray[j-6] = bufferMessage[j];
 		  		if (bufferMessage[j] != 0){
 		  			isAbyss = true;
 		  			abyssArrayForPuck[j-6] = true;

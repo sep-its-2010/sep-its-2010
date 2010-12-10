@@ -51,8 +51,9 @@ public class StatusUpdateRequestHandler extends Handler {
 				// The status which is sent with the message
 				RobotStatus newBufferRobotStatus = statusReq.getStatus();
 				oldStatus.setRobotStatus(newBufferRobotStatus);
-			}
-			return true;	
+				return true;
+			} else
+				return false;				
 		}
 	}
 

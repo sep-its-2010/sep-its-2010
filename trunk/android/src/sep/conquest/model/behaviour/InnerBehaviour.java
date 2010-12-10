@@ -6,13 +6,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import sep.conquest.model.AStarPathFinder;
 import sep.conquest.model.GraphNode;
 import sep.conquest.model.GridMap;
 import sep.conquest.model.NodeType;
 import sep.conquest.model.Orientation;
 import sep.conquest.model.Puck;
-import sep.conquest.model.RobotStatus;
 import sep.conquest.model.State;
 import sep.conquest.util.Utility;
 
@@ -39,7 +37,9 @@ public final class InnerBehaviour extends Behaviour {
     /* (non-Javadoc)
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
      */
-    public Map<Integer, Integer> execute(Map<Integer, Integer> map, Puck robot) {
+    public boolean execute(Map<Integer, Integer> map, Puck robot) {
+    	
+    	boolean ret = super.execute(map, robot);
     	
     	LinkedList<GraphNode> frontiers = robot.getMap().getFrontierList();
     	Map<Integer, Set<Orientation>> innerNodes = new TreeMap<Integer, Set<Orientation>>();
@@ -115,11 +115,12 @@ public final class InnerBehaviour extends Behaviour {
     	
     	// add 10 to the navigation cost for inner nodes
     	for (Integer pos: innerNodes.keySet()) {
-    		if (map.containsKey(pos))
+    		if (map.containsKey(pos)) {
     			map.put(pos, map.get(pos) + 10);
+    			ret = true;
+    		}	
     	}
-    	
-        return super.execute(map, robot);
+        return ret;
     }
     
     /**

@@ -120,7 +120,7 @@ public abstract class Puck implements IComClient, IRobot {
 	/**
 	 * Indicates whether the robot expects a message from the socket.
 	 */
-	private boolean expectMessage = false;
+	protected boolean expectMessage = false;
 	
 	/**
 	 * The bluetooth message.
@@ -175,10 +175,6 @@ public abstract class Puck implements IComClient, IRobot {
 		return expectMessage;
 	}
 	
-	public void expectNoMessage() {
-		expectMessage = false;
-	}
-
 	/**
 	 * Initiate a hello-message-chain.
 	 */
@@ -218,6 +214,7 @@ public abstract class Puck implements IComClient, IRobot {
 	public void changeBehaviour(State state) {
 		RobotStatus status = getRobotStatus().get(id);
 		if (state != status.getState()) {
+			status.setState(state);
 			logicThread.changeBehaviour(state);
 			StatusUpdateRequest req = new StatusUpdateRequest(id, null, status);
 			broadcast(req);
@@ -280,8 +277,8 @@ public abstract class Puck implements IComClient, IRobot {
 	public boolean writeSocket(byte[] buffer) {
 		if (!expectMessage) {
 			expectMessage = true;
-		btMessageLen = 0;
-		btMessage = new byte[MSGLENGTH];
+			btMessageLen = 0;
+			btMessage = new byte[MSGLENGTH];
 			return true;
 		} else
 			return false;

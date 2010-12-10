@@ -2,6 +2,7 @@ package sep.conquest.model.behaviour;
 
 import java.util.Map;
 
+import sep.conquest.model.Orientation;
 import sep.conquest.model.Puck;
 import sep.conquest.model.State;
 import sep.conquest.model.requests.MessageType;
@@ -28,15 +29,17 @@ public final class LocalLocalizeBehaviour extends Behaviour {
     /* (non-Javadoc)
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
      */
-    public Map<Integer, Integer> execute(Map<Integer, Integer> map, Puck robot) {
+    public boolean execute(Map<Integer, Integer> map, Puck robot) {
     	
     	if (!awaitResponse) {
     		byte[] request = new byte[32];
 			request[0] = (byte) (MessageType.REQUEST_STATUS.getTypeCode() & 0xff);
 			request[1] = (byte) ((MessageType.REQUEST_STATUS.getTypeCode() >> 8) & 0xff);
 	
-			robot.writeSocket(request);
+			super.writeSocket(robot, request);
     	} else {
+    		awaitResponse = false;
+    		robot.getRobotStatus().get(robot.getID()).setOrientation(Orientation.UP);
     		robot.changeBehaviour(State.EXPLORE);
     	} 
         return super.execute(map, robot);

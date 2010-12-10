@@ -84,12 +84,10 @@ public class LogicThread implements Runnable {
 	 * @param state
 	 */
 	public void changeBehaviour(State state) {
-		if (state != getRobotState().getState()) {
-			BehaviourFactory.createBehaviourChain(state);
-			stateBehaviour = Behaviour.getFirstBehaviour(state);
-			ConquestLog.addMessage(this, "Behaviour changed to "
-					+ stateBehaviour.getClass().toString());
-		}
+		BehaviourFactory.createBehaviourChain(state);
+		stateBehaviour = Behaviour.getFirstBehaviour(state);
+		ConquestLog.addMessage(this, "Behaviour changed to "
+				+ stateBehaviour.getClass().toString());
 	}
 
 	/**
@@ -154,8 +152,12 @@ public class LogicThread implements Runnable {
 		int[][] dest = { getRobotState().getIntentPosition() };
 		PathNode[] path = aStar
 				.find(robot, getRobotState().getPosition(), dest);
+		
+		if (path == null)
+			throw new IllegalStateException("Error! A-Star calculated wrong" +
+					"path from "+getRobotState().getPosition()+" to "+dest);
 
-		if (path != null) {
+		if (path[0].getPathCosts() > 0) {
 			MapNode nextMapNode = (MapNode) path[0].getNext().getNode();
 			int[] node = { nextMapNode.getXValue(), nextMapNode.getYValue() };
 			sendCommand(getRobotState().getPosition(), node);
@@ -199,7 +201,7 @@ public class LogicThread implements Runnable {
 	private IRequest getBTMessage() {
 		byte[] message = robot.readSocket();
 		if (message.length > 0) {
-			return new PuckRequest(message);
+			return new PuckRequest(message, robot);
 		}
 		else
 			return null;
@@ -233,9 +235,10 @@ public class LogicThread implements Runnable {
 			// execute behaviours on changed state
 			if (changed) {
 				Map<Integer, Integer> map = initMap();
-				map = stateBehaviour.execute(map, robot);
-				getRobotState().setIntentPosition(getBestNode(map));
-				driveTo();
+				if (stateBehaviour.execute(map, robot)) {
+					getRobotState().setIntentPosition(getBestNode(map));
+					driveTo();
+				}
 			} else
 				Thread.yield();
 		}

@@ -32,7 +32,9 @@ public final class CooperativeBehaviour extends Behaviour {
     /* (non-Javadoc)
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
      */
-    public Map<Integer, Integer> execute(Map<Integer, Integer> map, Puck robot) {
+    public boolean execute(Map<Integer, Integer> map, Puck robot) {
+    	
+    	boolean ret = super.execute(map, robot);
     	
     	Set<UUID> keys = robot.getRobotStatus().keySet();
     	
@@ -40,11 +42,14 @@ public final class CooperativeBehaviour extends Behaviour {
     		if (robot.getID() != key) {
     			RobotStatus status = robot.getRobotStatus().get(key);
     			int[] intent = status.getIntentPosition();
-    			if (intent != null)
-    				expandIntentNode(intent, map);
+    			if (intent != null) {
+    				if (expandIntentNode(intent, map))
+    					ret = true;
+    			}
+    				
     		}
     	}    	
-        return super.execute(map, robot);
+        return ret;
     }
     
     /**
@@ -55,17 +60,23 @@ public final class CooperativeBehaviour extends Behaviour {
      * @param node The node.
      * @param map The navigation-cost-map.
      */
-    private void expandIntentNode(int[] node, Map<Integer, Integer> map) {
+    private boolean expandIntentNode(int[] node, Map<Integer, Integer> map) {
+    	boolean ret = false;
+    	
     	for (int i = -5; i <= 5; i++) {
     		for (int j = -5; j <= 5; j++) {
     			int costs = Math.abs(i)+Math.abs(j);
     			if (costs < 5) {
     				int key = Utility.makeKey(i+node[0], j+node[1]);
-    				if (map.containsKey(key)) 
-    					map.put(key, map.get(key) + (50-costs*10));    				
+    				if (map.containsKey(key)) {
+    					map.put(key, map.get(key) + (50-costs*10)); 
+    					ret = true;
+    				}
+    					   				
     			}
     		}
     	}
+    	return ret;
     }
 
 }

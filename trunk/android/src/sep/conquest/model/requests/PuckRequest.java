@@ -2,6 +2,7 @@ package sep.conquest.model.requests;
 
 import java.util.UUID;
 
+import sep.conquest.model.IComClient;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.Puck;
 
@@ -28,13 +29,19 @@ public class PuckRequest implements IRequest {
     
     
     /**
+     * The sender id of the request.
+     */
+    UUID sender;
+    
+    
+    /**
      * The constructor expects an request message to identify the type of the
      * message as well as its corresponding data. It stores the specific
      * message-type.
      * 
      * @param message The input-message to determine the type and data.
      */
-    public PuckRequest(byte[] message) {
+    public PuckRequest(byte[] message, IComClient sender) {
     	for (int i = 0; i < 32; i++) {
 			this.message[i] = message[i];
 		}
@@ -43,15 +50,21 @@ public class PuckRequest implements IRequest {
 		switch (messageType) {
 		case Puck.RES_OK:
 			type = MessageType.RESPONSE_OK;
+			break;
 		case Puck.RES_ABYSS:
 			type = MessageType.RESPONSE_ABYSS;
+			break;
 		case Puck.RES_COLLISION:
 			type = MessageType.RESPONSE_COLLISION;
+			break;
 		case Puck.RES_HITNODE:
 			type = MessageType.RESPONSE_HIT_NODE;
+			break;
 		case Puck.RES_STATUS:
 			type = MessageType.RESPONSE_STATUS;
+			break;
 		}	
+		this.sender = sender.getID();
     }
 
     /* (non-Javadoc)
@@ -81,6 +94,6 @@ public class PuckRequest implements IRequest {
 	 * @see sep.conquest.model.IRequest#getSender()
 	 */
 	public UUID getSender() {
-		return UUID.randomUUID();
+		return sender;
 	}
 }

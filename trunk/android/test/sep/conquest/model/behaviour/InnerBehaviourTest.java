@@ -73,7 +73,7 @@ public class InnerBehaviourTest {
 		
 		IBehaviour behaviour = new InnerBehaviour(State.EXPLORE, null);
 
-		mapCosts = behaviour.execute(mapCosts, robot);
+		behaviour.execute(mapCosts, robot);
 
 		for (int i = map.getMapBorders()[0]; i < map.getMapBorders()[2]; i++) {
 			for (int j = map.getMapBorders()[1]; j < map.getMapBorders()[3]; j++)

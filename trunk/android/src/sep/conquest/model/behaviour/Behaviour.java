@@ -82,8 +82,8 @@ public abstract class Behaviour implements IBehaviour {
      * @param buffer The robot socket.
      */
     protected void writeSocket(Puck robot, byte[] buffer) { 
-    	awaitResponse = true;
-    	robot.writeSocket(buffer);
+    	if (robot.writeSocket(buffer))
+			awaitResponse = true;
     }
 
     /* (non-Javadoc)
@@ -96,11 +96,11 @@ public abstract class Behaviour implements IBehaviour {
     /* (non-Javadoc)
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
      */
-    public Map<Integer, Integer> execute(Map<Integer, Integer> map, Puck robot) {
+    public boolean execute(Map<Integer, Integer> map, Puck robot) {
         if (nextBehaviour != null) {
             return nextBehaviour.execute(map, robot);
         } else {
-            return map;
+            return false;
         }            
     }
 }

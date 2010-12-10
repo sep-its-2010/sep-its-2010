@@ -20,8 +20,6 @@ import sep.conquest.util.Utility;
  */
 public final class DistanceBehaviour extends Behaviour {
 
-	private static boolean visited = false;
-
 	/**
 	 * The constructor enables chain-handling by calling the constructor of the
 	 * super-class (Behaviour).
@@ -40,12 +38,9 @@ public final class DistanceBehaviour extends Behaviour {
 	 * 
 	 * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
 	 */
-	public Map<Integer, Integer> execute(Map<Integer, Integer> map, Puck robot) {
-
-		if (!visited) {
-			System.out.println("DistanceBehaviour visited");
-			visited = true;
-		}
+	public boolean execute(Map<Integer, Integer> map, Puck robot) {
+		
+		boolean ret = super.execute(map, robot);
 
 		LinkedList<GraphNode> frontiers = robot.getMap().getFrontierList();
 		AStarPathFinder astar = new AStarPathFinder();
@@ -60,11 +55,13 @@ public final class DistanceBehaviour extends Behaviour {
 
 		PathNode[] paths = astar
 				.find(robot, status.getPosition(), destinations);
-
-		for (PathNode path : paths)
+		
+		if (paths.length > 0) {
+			for (PathNode path : paths)
 			map.put(Utility.makeKey(path.getPathNode().getXValue(), path
-					.getPathNode().getYValue()), path.getPathCosts());
-
-		return super.execute(map, robot);
+					.getPathNode().getYValue()), path.getPathCosts());		
+			ret = true;
+		}
+		return ret;		
 	}
 }

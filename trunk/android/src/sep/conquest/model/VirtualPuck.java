@@ -66,7 +66,7 @@ public class VirtualPuck extends Puck {
 			
 			// return message if it's complete
 			if (MSGLENGTH == btMessageLen) {
-				expectNoMessage();
+				super.expectMessage = false;
 				return btMessage;
 			}			
 		}

@@ -44,7 +44,7 @@ public class PuckNodeHitHandler extends Handler {
   @Override
   public boolean handleRequest(IRequest request) {
 	  	PuckRequest hitNodeReq = (PuckRequest) request;
-		if (!(hitNodeReq.getKind() == MessageType.PUCK_HITNODE)) {
+		if (!(hitNodeReq.getKind() == MessageType.RESPONSE_HIT_NODE)) {
 			return super.handleRequest(request);
 		} else {
 			RobotStatus statusOfRobot = executor.getRobot().getRobotStatus()
