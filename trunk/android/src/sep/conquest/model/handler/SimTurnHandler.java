@@ -75,6 +75,7 @@ public class SimTurnHandler extends Handler {
       response[0] = (byte) (Puck.RES_OK & 0xFF);
       response[1] = (byte) ((Puck.RES_OK >> 8) & 0xFF);
       sim.writeBuffer(sender, response);
+      sim.clearRequest(sender);
       return true;
     } else {
       return super.handleRequest(request);

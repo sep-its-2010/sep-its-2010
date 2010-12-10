@@ -50,26 +50,24 @@ public class SimStatusHandler extends Handler {
       // The sender of the message.
       UUID sender = request.getSender();
       
-      // Get current node type.
-      NodeType node = sim.getNodeType(sim.getPosition(sender));
-      
-      // Compute system up time.
-      int time = sim.getSystemUpTime(sender);     
-      
       // Write message type "status" to first two bytes.
       byte[] response = new byte[32];
       response[0] = (byte) (Puck.RES_STATUS & 0xFF);
       response[1] = (byte) ((Puck.RES_STATUS >> 8) & 0xFF);
       
       // Write system up time to next four bytes.
+      int time = sim.getSystemUpTime(sender);     
       for (int i = 0; i < 4; i++) {
         response[2 + i] = (byte) (time & 0xFF);
         time = time >> 8;
       }
       
       // Write node type to 17th byte.
+      int[] pos = sim.getPosition(sender);
+      NodeType node = sim.getNodeType(pos[0], pos[1]);
       response[17] = (byte) node.ordinal();
       sim.writeBuffer(sender, response);
+      sim.clearRequest(sender);
       return true;
     } else {
       return super.handleRequest(request);
