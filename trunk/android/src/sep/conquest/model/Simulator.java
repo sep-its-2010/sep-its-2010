@@ -40,8 +40,14 @@ public class Simulator {
    */
   private Map<UUID, SimRobot> robots;
 
+  /**
+   * Contains the ids of all robots and is used to iterate over them.
+   */
   private UUID[] robotIds;
 
+  /**
+   * The iteration index.
+   */
   private int index;
 
   /**
@@ -164,7 +170,7 @@ public class Simulator {
    * Returns the current position of a robot.
    * 
    * @param id
-   *          The id of the robot whose position is requested.
+   *          The robot whose position is requested.
    * @return The requested position.
    */
   public int[] getPosition(UUID id) {
@@ -179,7 +185,7 @@ public class Simulator {
    * Sets the position of a robot.
    * 
    * @param id
-   *          The id of the robot whose position is to set.
+   *          The robot whose position is to set.
    * @param newPosition
    *          The new position of the robot.
    */
@@ -262,6 +268,7 @@ public class Simulator {
 
     // If new position can not be attended because of a collision,
     if (collision(newX, newY)) {
+      collide(id);
       setOrientation(id, Orientation
           .getTurnedOrientation(2, getOrientation(id)));
     } else {
@@ -272,16 +279,27 @@ public class Simulator {
       // If new position is on a node (i.e. coordinates are divisible by three)
       // write HitNode message and set moving state false.
       if ((newX % 3 == 0) && (newY % 3 == 0)) {
-        // Get NodeType of new position.
-        NodeType node = getNodeType(pos[0] / 3, pos[1] / 3);
-
-        // Write message type "node hit" to first two bytes.
+        // Message that is written on the output buffer
         byte[] response = new byte[32];
-        response[0] = (byte) (Puck.RES_HITNODE & 0xFF);
-        response[1] = (byte) ((Puck.RES_HITNODE >> 8) & 0xFF);
 
-        // Write node type to third byte.
-        response[2] = (byte) node.ordinal();
+        // If number of collisions during one move is divisible by two
+        // robot has attended its intended node.
+        // Otherwise robot has returned to its initial position.
+        if (getNumberOfCollisions(id) % 2 == 0) {
+          // Get NodeType of new position.
+          NodeType node = getNodeType(pos[0] / 3, pos[1] / 3);
+
+          // Write message type "node hit" to first two bytes.
+          response[0] = (byte) (Puck.RES_HITNODE & 0xFF);
+          response[1] = (byte) ((Puck.RES_HITNODE >> 8) & 0xFF);
+
+          // Write node type to third byte.
+          response[2] = (byte) node.ordinal();
+        } else {
+          // Write message type "collision" to first two bytes.
+          response[0] = (byte) (Puck.RES_COLLISION & 0xFF);
+          response[1] = (byte) ((Puck.RES_COLLISION >> 8) & 0xFF);
+        }
         writeBuffer(id, response);
 
         // Set moving state false.
@@ -309,6 +327,36 @@ public class Simulator {
       }
     }
     return false;
+  }
+
+  /**
+   * Increases the number of collisions that a certain robot suffers while
+   * moving from one node to the next.
+   * 
+   * @param id The robot that collided. 
+   */
+  public void collide(UUID id) {
+    if ((id != null) && robots.containsKey(id)) {
+      robots.get(id).collide();
+    } else {
+      throw new IllegalArgumentException("Asked to set collsions of illegal id");
+    }
+  }
+
+  /**
+   * Returns the number of collision a robot has suffered while moving 
+   * from a node to the next.
+   * 
+   * @param id The robot of interest.
+   * 
+   * @return The number of collisions.
+   */
+  public int getNumberOfCollisions(UUID id) {
+    if ((id != null) && robots.containsKey(id)) {
+      return robots.get(id).getNumberOfCollisions();
+    } else {
+      throw new IllegalArgumentException("Asked to get collsions of illegal id");
+    }
   }
 
   /**
@@ -347,8 +395,7 @@ public class Simulator {
   /**
    * Returns the output buffer for a certain UUID.
    * 
-   * @param The
-   *          id of the registered robot.
+   * @param id The registered robot.
    * @return The output buffer byte array of length zero, if there is no
    *         message, or of length 32 if there is a message.
    */

@@ -30,7 +30,13 @@ public class SimRobot {
   /**
    * Indicates whether robot is moving.
    */
-  private boolean isMoving;
+  private boolean isMoving = false;
+  
+  /**
+   * Indicates, how many collisions have happened until robot
+   * reaches the next node.
+   */
+  private int collisionCounter = 0;
 
   /**
    * Used to write messages back to the corresponding VirtualPuck.
@@ -199,6 +205,30 @@ public class SimRobot {
    */
   public void setMoving(boolean moving) {
     isMoving = moving;
+    
+    // If robot is not moving because it has reached a node
+    // reset collision counter.
+    if (!moving) {
+      collisionCounter = 0;
+    }
+  }
+  
+  /**
+   * Increases the number of collisions that have occurred while
+   * not standing on a node.
+   */
+  public void collide() {
+    collisionCounter++;
+  }
+  
+  /**
+   * Returns the number of collisions that have occurred while
+   * not standing on a node.
+   * 
+   * @return The number of collisions.
+   */
+  public int getNumberOfCollisions() {
+    return collisionCounter;
   }
 
   /**
@@ -221,5 +251,6 @@ public class SimRobot {
     outputBuffer = new byte[0];
     inputBuffer = null;
     isMoving = false;
+    collisionCounter++;
   }
 }
