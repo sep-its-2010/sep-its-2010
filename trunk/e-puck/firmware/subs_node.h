@@ -4,13 +4,11 @@
 #include "common.h"
 #include "subs_types.h"
 
-/*!
- * Stores the type of the last visited node.
- * 
- * \remarks
- * The node-type is NODE_TYPE__UNKNOWN by default and will be set after a node has been detected.
- */
-static uint8_t subs_node_sui8CurrentNodeType = NODE_TYPE__UNKNOWN;
+enum {
+	SUBS_NODE__DETECTION_THRESHOLD = 270, ///< Specifies the threshold for line-detection.
+	SUBS_NODE__REQUIRED_MEASUREMENTS = 3, ///< Specifies the number of measurements, which have to provide data above a certain threshold for node-detection.
+	SUBS_NODE__MOVE_ABOVE_CENTER = 250 ///< Specifies the number of steps which have to be performed by both motors to move the robot above the center of the node.
+};
 
 bool subs_node_run( void);
 

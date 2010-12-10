@@ -1,16 +1,17 @@
-#include <string.h>
-#include <p30f6014A.h>
-
-#include "hal_led.h"
 #include "hal_motors.h"
 #include "com.h"
 #include "sen_line.h"
+#include "conquest_types.h"
 
 #include "subs_node.h"
 
-enum {
-	NODE_DETECTION__REQUIRED_MEASUREMENTS = 3, ///< Specifies the number of measurements, which have to provide data above a certain threshold for node-detection.
-};
+/*!
+ * Stores the type of the last visited node.
+ * 
+ * \remarks
+ * The node-type is UNKNOWN by default and will be set after a node has been detected.
+ */
+uint8_t subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__UNKNOWN;
 
 /*!
  * \brief
@@ -20,9 +21,9 @@ static uint8_t s_ui8NodeDetectionCounter = 0;
 
 /*!
  * \brief
- * Holds data of the three ground-sensors.
+ * Indicates if a node has been detected and therefor the robot has to drive some steps to be with its center above the node.
  */
-static sen_line_SData_t s_podSensorData = {{0}};
+static bool s_blDetectionActive = false;
 
 /*!
  * \brief
@@ -46,18 +47,21 @@ static uint16_t s_ui16AvgRight = 0;
  * Checks the ground-sensors for data. If the robot is currently moving and more than one sensor delivers several times
  * critical values the robot is supposed to be above a node and computes the nodes shape.
  * After that a message with the shape of the node is created and sent to the Smartphone via BlueTooth.
- * The robot will stop with its center above the node and visualize its state.
+ * The robot will stop with its center above the node.
  */
 bool subs_node_run( void) {
-	bool nodeHit = false;	
+
+	bool blActed = false;
+	sen_line_SData_t s_podSensorData = {{0}};
 	sen_line_read( &s_podSensorData);
+	sen_line_filter( &s_podSensorData, &s_podSensorData);
 
 	// node detection-measurement
-	// @TODO sollte man diese Multiplikation mit 2 in einer Konstante ablegen und besser dokumentieren?
- 	if ((2 * (s_podSensorData.aui16Data[0]) < 1) || // 1 wird ersetzt durch EEPROM-Kalibrierwert für linken Sensor über Linie
- 		(2 * (s_podSensorData.aui16Data[2]) < 1)) { // 1 wird ersetzt durch EEPROM-Kalibrierwert für rechten Sensor über Linie
-		s_ui16AvgLeft += s_podSensorData.aui16Data[0];
-		s_ui16AvgRight += s_podSensorData.aui16Data[2];
+	// @TODO Werte ersetzen
+ 	if (((s_podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT]) < SUBS_NODE__DETECTION_THRESHOLD) ||
+ 		((s_podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT]) < SUBS_NODE__DETECTION_THRESHOLD)) {
+		s_ui16AvgLeft += s_podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT];
+		s_ui16AvgRight += s_podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT];
 		s_ui8NodeDetectionCounter++;
 	} else {
 		hal_motors_setSteps(0);
@@ -65,40 +69,49 @@ bool subs_node_run( void) {
 		s_ui16AvgRight = 0;
 		s_ui8NodeDetectionCounter = 0;
 	}
-	bool hasMoved = (hal_motors_getStepsLeft() > 0) && (hal_motors_getStepsRight() > 0);
+	bool hasMoved = ((hal_motors_getStepsLeft() > 0) && (hal_motors_getStepsRight() > 0));
 	
-	// robot is above a node
-	if( (s_ui8NodeDetectionCounter >= NODE_DETECTION__REQUIRED_MEASUREMENTS) && hasMoved) {
-		hal_motors_setSpeed( 0, 0); // @TODO hier muss man eventuell noch ein bisschen fahren, so dass der e-puck genau über dem Knoten steht
-		hal_motors_setSteps( 0);
-		nodeHit = true;		
+	// robot is above a node -> enable node-detection-state
+	if( (s_ui8NodeDetectionCounter >= SUBS_NODE__REQUIRED_MEASUREMENTS) &&
+		hasMoved &&
+		!s_blDetectionActive) {		
+		
 		s_ui16AvgLeft = s_ui16AvgLeft / s_ui8NodeDetectionCounter;
 		s_ui16AvgRight = s_ui16AvgRight / s_ui8NodeDetectionCounter;		
 
 		// analyze the shape of the node		
-		if( (s_ui16AvgLeft < 1) &&( s_ui16AvgRight < 1) && (2 * s_podSensorData.aui16Data[1] < 1) ) { // 1 wird ersetzt durch den jeweiligen EEPROM-Kalibrierwert
-			subs_node_sui8CurrentNodeType = NODE_TYPE__CROSS;
+		if( (s_ui16AvgLeft < 1) &&( s_ui16AvgRight < 1) && (2 * s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < 1) ) { // 1 wird ersetzt durch den jeweiligen EEPROM-Kalibrierwert
+			subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__CROSS;
 		} else if( (s_ui16AvgLeft < 1) &&( s_ui16AvgRight < 1)) {
-			subs_node_sui8CurrentNodeType = NODE_TYPE__TOP_T;
-		} else if( (s_ui16AvgLeft < 1) && (2 * s_podSensorData.aui16Data[1] < 1)) {
-			subs_node_sui8CurrentNodeType = NODE_TYPE__RIGHT_T;
-		} else if( (s_ui16AvgRight < 1) && (2 * s_podSensorData.aui16Data[1] < 1)) {
-			subs_node_sui8CurrentNodeType = NODE_TYPE__LEFT_T;
+			subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_T;
+		} else if( (s_ui16AvgLeft < 1) && (2 * s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < 1)) {
+			subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__RIGHT_T;
+		} else if( (s_ui16AvgRight < 1) && (2 * s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < 1)) {
+			subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__LEFT_T;
 		} else if( s_ui16AvgLeft < 1) {
-			subs_node_sui8CurrentNodeType = NODE_TYPE__TOP_RIGHT_EDGE;
+			subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_RIGHT_EDGE;
 		} else if( s_ui16AvgRight < 1) {
-			subs_node_sui8CurrentNodeType = NODE_TYPE__TOP_LEFT_EDGE;
+			subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_LEFT_EDGE;
 		}
 		s_ui16AvgLeft = 0;
 		s_ui16AvgRight = 0;
-		
-		// inform smartphone about node-detection
-		// @TODO zusätzliches 9. Byte = bool alter Knoten weil nach Kollision?
+		s_blDetectionActive = true;
+		blActed = true;		
+
+	// Exit detection-state when still active & driven far enough; send previously analyzed node-type.
+	} else if( s_blDetectionActive &&
+		hal_motors_getStepsLeft() >= SUBS_NODE__MOVE_ABOVE_CENTER && 
+		hal_motors_getStepsRight() >= SUBS_NODE__MOVE_ABOVE_CENTER) {
+
+		hal_motors_setSteps( 0);
+		hal_motors_setSpeed( 0, 0);
 		com_SMessage_t podHitNodeMessage = { COM_MESSAGE_TYPE__RESPONSE_HIT_NODE, {0}};
 		podHitNodeMessage.aui8Data[0] = subs_node_sui8CurrentNodeType;
 		com_send( &podHitNodeMessage);
+		s_blDetectionActive = false;
+		blActed = true;
 	}
-	return nodeHit;
+	return blActed;
 }
 
 /*!
@@ -108,9 +121,10 @@ bool subs_node_run( void) {
  * Clears the node-detection-counter and the last ground-sensor-measurement.
  */
 void subs_node_reset( void) {
-	subs_node_sui8CurrentNodeType = NODE_TYPE__UNKNOWN;
+
+	subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__UNKNOWN;
+	s_blDetectionActive = false;
 	s_ui8NodeDetectionCounter = 0;
 	s_ui16AvgLeft = 0;
 	s_ui16AvgRight = 0;
-	memset( s_podSensorData.aui16Data, 0, sizeof(s_podSensorData.aui16Data));
 }
