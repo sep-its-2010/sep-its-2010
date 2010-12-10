@@ -6,8 +6,10 @@
 
 enum {
 	PSV_ADDRESS_ENABLE = 0x8000,
-	EEPROM_PSV_PAGE = 0xFF,
-	EEPROM_PSV_PAGE_OFFSET = 0x7000
+	EEPROM_PSV_ADDR_UPPER = 0xFF,
+	EEPROM_PSV_ADDR_LOWER_OFFSET = 0x7000,
+	EEPROM_NVM_ADDR_UPPER = 0x7F,
+	EEPROM_NVM_ADDR_LOWER_OFFSET = 0xF000
 };
 
 
@@ -23,6 +25,7 @@ typedef enum {
 } EOperation_t;
 
 
+
 void hal_nvm_writeEEPROM(
 	IN const uintptr_t _uipDestination,
 	IN const void* const _lpvSource,
@@ -35,7 +38,7 @@ void hal_nvm_writeEEPROM(
 		// Backup current PSV & configure for EEPROM access
 		const uint8_t ui8BackupPSVPAG = PSVPAG;
 		const bool blBackupPSVEnable = CORCONbits.PSV;
-		PSVPAG = 0xFF;
+		PSVPAG = EEPROM_PSV_ADDR_UPPER;
 		CORCONbits.PSV = true;
 
 		// Holds the offset of the EEPROM row boundary
@@ -48,27 +51,28 @@ void hal_nvm_writeEEPROM(
 		while( ui16Written < _ui16Length) {
 
 			// Backup current row
-			uint8_t ui8Image[HAL_NVM_EEPROM_WORDS_PER_ROW * HAL_NVM_EEPROM_BYTES_PER_WORD];
-			memcpy( ui8Image, (void*)uipCurRowAddr, sizeof( ui8Image));
+			uint16_t aui16Image[HAL_NVM_EEPROM_WORDS_PER_ROW];
+			const uintptr_t uipEffectiveReadAddress = ( uipCurRowAddr + EEPROM_PSV_ADDR_LOWER_OFFSET) | PSV_ADDRESS_ENABLE;
+			memcpy( aui16Image, (void*)uipEffectiveReadAddress, sizeof( aui16Image));
 
 			// Update row; need to consider boundary alignment on first write
 			uint16_t ui16ToBeWritten = _ui16Length - ui16Written;
 			if( !ui16Written) {
-				if( ui16ToBeWritten > sizeof( ui8Image) - uipBaseOffset) {
-					ui16ToBeWritten = sizeof( ui8Image) - uipBaseOffset;
+				if( ui16ToBeWritten > sizeof( aui16Image) - uipBaseOffset) {
+					ui16ToBeWritten = sizeof( aui16Image) - uipBaseOffset;
 				}
-				memcpy( ui8Image, (const uint8_t*)_lpvSource + ui16Written + uipBaseOffset, sizeof( ui8Image) - uipBaseOffset);
+				memcpy( (uint8_t*)aui16Image + uipBaseOffset, (const uint8_t*)_lpvSource, ui16ToBeWritten);
 			} else {
-				if( ui16ToBeWritten > sizeof( ui8Image)) {
-					ui16ToBeWritten = sizeof( ui8Image);
+				if( ui16ToBeWritten > sizeof( aui16Image)) {
+					ui16ToBeWritten = sizeof( aui16Image);
 				}
-				memcpy( ui8Image, (const uint8_t*)_lpvSource + ui16Written, ui16ToBeWritten);
+				memcpy( aui16Image, (const uint8_t*)_lpvSource + ui16Written, ui16ToBeWritten);
 			}
 
 			// Prepare erase
-			NVMADRU = 0x7F;
-			NVMADR = _uipDestination;
 			NVMCON = OPERATION__EEPROM_ERASE_ROW;
+			NVMADRU = EEPROM_NVM_ADDR_UPPER;
+			NVMADR = EEPROM_NVM_ADDR_LOWER_OFFSET + _uipDestination;
 
 			// Load key sequence
 			__asm volatile( "mov	#0x55,	w0");
@@ -80,14 +84,15 @@ void hal_nvm_writeEEPROM(
 			NVMCONbits.WR = true;
 			while( NVMCONbits.WR)
 				;
-
-			TBLPAG = 0x7F;
-			NVMCON = OPERATION__EEPROM_WRITE_ROW;
-
+/*
 			// Fill table latch
-			for( uint16_t ui16 = 0; ui16 < sizeof( ui8Image); ui16++) {
-				__asm volatile( "tblwtl %0, [%1]" :  :  "r"( ui8Image[ui16]), "r"( uipCurRowAddr + ui16));
+			TBLPAG = EEPROM_NVM_ADDR_UPPER;
+			for( uintptr_t uip = 0; uip < HAL_NVM_EEPROM_WORDS_PER_ROW; uip++) {
+				const uintptr_t uipWordAddress = uipCurRowAddr + uip * 2 + EEPROM_PSV_ADDR_LOWER_OFFSET;
+				__asm volatile( "tblwtl %0, [%1]" :  :  "r"( aui16Image[uip]), "r"( uipWordAddress));
 			}
+
+			NVMCON = OPERATION__EEPROM_WRITE_ROW;
 
 			// Load key sequence
 			__asm volatile( "mov	#0x55,	w0");
@@ -99,10 +104,10 @@ void hal_nvm_writeEEPROM(
 			NVMCONbits.WR = true;
 			while( NVMCONbits.WR)
 				;
-
+*/
 			// Advance to next row
 			ui16Written += ui16ToBeWritten;
-			uipCurRowAddr += sizeof( ui8Image);
+			uipCurRowAddr += sizeof( aui16Image);
 		}
 
 		NVMCONbits.WREN = blBackupNVMWriteEnable;
@@ -110,6 +115,7 @@ void hal_nvm_writeEEPROM(
 		CORCONbits.PSV = blBackupPSVEnable;
 	}
 }
+
 
 void hal_nvm_readEEPROM(
 	IN const uintptr_t _uipSource,
@@ -120,10 +126,10 @@ void hal_nvm_readEEPROM(
 	HAL_INT_ATOMIC_BLOCK() {
 		const uint8_t ui8BackupPSVPAG = PSVPAG;
 		const bool blBackupPSVEnable = CORCONbits.PSV;
-		PSVPAG = EEPROM_PSV_PAGE;
+		PSVPAG = EEPROM_PSV_ADDR_UPPER;
 		CORCONbits.PSV = true;
 
-		const uintptr_t uipEffectiveAddress = ( _uipSource + EEPROM_PSV_PAGE_OFFSET) | PSV_ADDRESS_ENABLE;
+		const uintptr_t uipEffectiveAddress = ( _uipSource + EEPROM_PSV_ADDR_LOWER_OFFSET) | PSV_ADDRESS_ENABLE;
 		memcpy( _lpvDestination, (const void*)uipEffectiveAddress, _ui16Length);
 
 		PSVPAG = ui8BackupPSVPAG;
