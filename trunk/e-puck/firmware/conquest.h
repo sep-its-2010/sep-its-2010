@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#include "conquest_types.h"
+
 
 /*!
  * \brief

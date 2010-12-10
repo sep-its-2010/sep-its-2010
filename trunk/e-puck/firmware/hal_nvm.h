@@ -3,7 +3,6 @@
 
 #include "common.h"
 
-#include "hal_nvm_types.h"
 
 enum {
 	HAL_NVM_FLASH_WORDS_PER_ROW = 32,
@@ -14,14 +13,14 @@ enum {
 
 
 void hal_nvm_writeEEPROM(
-	IN const hal_nvm_lpeep_t _lpeepDestination,
+	IN const uintptr_t _uipDestination,
 	IN const void* const _lpvSource,
 	IN const uint16_t _ui16Length
 	);
 
 
 void hal_nvm_readEEPROM(
-	IN const hal_nvm_lpeep_t _addrSource,
+	IN const uintptr_t _uipSource,
 	OUT void* const _lpvDestination,
 	IN const uint16_t _ui16Length
 	);

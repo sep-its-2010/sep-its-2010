@@ -245,6 +245,10 @@
 				RelativePath=".\conquest.h"
 				>
 			</File>
+			<File
+				RelativePath=".\conquest_types.h"
+				>
+			</File>
 			<Filter
 				Name="Hardware Abstraction Layer"
 				>
@@ -282,10 +286,6 @@
 				</File>
 				<File
 					RelativePath=".\hal_nvm.h"
-					>
-				</File>
-				<File
-					RelativePath=".\hal_nvm_types.h"
 					>
 				</File>
 				<File

@@ -52,8 +52,8 @@ __extension__ typedef uint64_t uint_fast64_t;
 #endif
 
 // Signed and unsigned types capable of holding an object pointer
-typedef signed long int intptr_t;
-typedef unsigned long int uintptr_t;
+typedef signed int intptr_t;
+typedef unsigned int uintptr_t;
 
 // Signed and unsigned maximal width types
 #ifndef __STRICT_ANSI__

@@ -8,6 +8,8 @@
 #include "hal_uart1.h"
 #include "com.h"
 
+#include "hal_nvm.h"
+
 #include "subs.h"
 #include "subs_abyss.h"
 #include "subs_calibration.h"
@@ -89,6 +91,18 @@ int main( void) {
 
 //	hal_motors_setSpeed( 800, 0);
 
+	uintptr_t uipTest = 0;
+	uint16_t ui16Test = 3000;
+	hal_nvm_writeEEPROM( uipTest, &ui16Test, sizeof( ui16Test));
+	hal_nvm_readEEPROM( uipTest, &ui16Test, sizeof( ui16Test));
+
+	char cstrBuffer[50];
+	sprintf( cstrBuffer, "%d\r\n", ui16Test);
+	hal_uart1_puts( cstrBuffer);
+
+	for( ;;)
+		;
+
 
 	// Real time clock with 100Hz
 	hal_rtc_init( FCY / 256 / 100);
@@ -96,7 +110,7 @@ int main( void) {
 	hal_rtc_register( cbBlinker, 50, true);
 
 	com_init();
-	com_register( cbDemoMessageHandler);
+//	com_register( cbDemoMessageHandler);
 	for( ;;) {
 		com_processIncoming();
 	}
