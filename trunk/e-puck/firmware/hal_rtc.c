@@ -44,6 +44,8 @@ static hal_rtc_SEvent_t s_apodEvents[HAL_RTC_MAX_EVENTS];
  */
 void _T1Interrupt( void) {
 
+	hal_int_clearFlag( HAL_INT_SOURCE__TIMER1);
+
 	for( uint16_t ui16 = 0; ui16 < HAL_RTC_MAX_EVENTS; ui16++) {
 		if( s_apodEvents[ui16].ui16Period && ++s_apodEvents[ui16].ui16CurrentTicks >= s_apodEvents[ui16].ui16Period) {
 			s_apodEvents[ui16].ui16CurrentTicks = 0;
@@ -52,8 +54,6 @@ void _T1Interrupt( void) {
 	}
 
 	s_ui32SystemUpTime++;
-
-	hal_int_clearFlag( HAL_INT_SOURCE__TIMER1);
 }
 
 

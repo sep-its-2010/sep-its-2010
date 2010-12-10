@@ -91,14 +91,11 @@ int main( void) {
 
 //	hal_motors_setSpeed( 800, 0);
 
-	uintptr_t uipTest = 0;
-	uint16_t ui16Test = 3000;
-	hal_nvm_writeEEPROM( uipTest, &ui16Test, sizeof( ui16Test));
-	hal_nvm_readEEPROM( uipTest, &ui16Test, sizeof( ui16Test));
-
-	char cstrBuffer[50];
-	sprintf( cstrBuffer, "%d\r\n", ui16Test);
-	hal_uart1_puts( cstrBuffer);
+	uint16_t ui16Test = 9;
+	char cstrTest[] = "This is an EEPROM test string.";
+	hal_nvm_writeEEPROM( ui16Test, cstrTest, sizeof( cstrTest));
+	hal_nvm_readEEPROM( ui16Test, cstrTest, sizeof( cstrTest));
+	hal_uart1_puts( cstrTest);
 
 	for( ;;)
 		;
