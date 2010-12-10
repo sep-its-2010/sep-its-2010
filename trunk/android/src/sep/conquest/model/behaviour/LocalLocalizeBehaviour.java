@@ -30,15 +30,15 @@ public final class LocalLocalizeBehaviour extends Behaviour {
      */
     public Map<Integer, Integer> execute(Map<Integer, Integer> map, Puck robot) {
     	
-    	
-		byte[] request = new byte[32];
-		request[0] = (byte) (MessageType.REQUEST_STATUS.getTypeCode() & 0xff);
-		request[1] = (byte) ((MessageType.REQUEST_STATUS.getTypeCode() >> 8) & 0xff);
-
-		robot.writeSocket(request);
-    	
-    	robot.changeBehaviour(State.EXPLORE);
-    	 
+    	if (!awaitResponse) {
+    		byte[] request = new byte[32];
+			request[0] = (byte) (MessageType.REQUEST_STATUS.getTypeCode() & 0xff);
+			request[1] = (byte) ((MessageType.REQUEST_STATUS.getTypeCode() >> 8) & 0xff);
+	
+			robot.writeSocket(request);
+    	} else {
+    		robot.changeBehaviour(State.EXPLORE);
+    	} 
         return super.execute(map, robot);
     }
     

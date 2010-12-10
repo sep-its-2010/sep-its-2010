@@ -26,6 +26,11 @@ public abstract class Behaviour implements IBehaviour {
      */
     private State stateLevel;
 
+    /**
+     * Indicates whether the behaviour waits for a response from the robot.
+     */
+    protected boolean awaitResponse = false;    
+    
 	/**
 	 * A map for the first behaviours per state-level.
 	 */
@@ -68,6 +73,17 @@ public abstract class Behaviour implements IBehaviour {
      */
     public static IBehaviour getFirstBehaviour(State stateLevel) {
     	return entryBehaviours.get(stateLevel);
+    }
+    
+    /**
+     * Writes a byte array to the robot-socket.
+     * 
+     * @param robot The robot.
+     * @param buffer The robot socket.
+     */
+    protected void writeSocket(Puck robot, byte[] buffer) { 
+    	awaitResponse = true;
+    	robot.writeSocket(buffer);
     }
 
     /* (non-Javadoc)

@@ -34,10 +34,13 @@ public class VirtualPuck extends Puck {
 	 * 
 	 * @param buffer The Message that will be sent.
 	 */
-	public void writeSocket(byte[] buffer){
-		super.writeSocket(buffer);
-		VirtualPuckRequest request = new VirtualPuckRequest(getID(),buffer);
-		sim.addRequest(request);
+	public boolean writeSocket(byte[] buffer){
+		if (super.writeSocket(buffer)) {
+			VirtualPuckRequest request = new VirtualPuckRequest(getID(),buffer);
+			sim.addRequest(request);
+			return true;
+		} else
+			return false;		
 	}
 	
 	/**

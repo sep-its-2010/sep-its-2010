@@ -277,10 +277,14 @@ public abstract class Puck implements IComClient, IRobot {
 	 * @param buffer
 	 *            The message that will be sent.
 	 */
-	public void writeSocket(byte[] buffer) {
-		expectMessage = true;
+	public boolean writeSocket(byte[] buffer) {
+		if (!expectMessage) {
+			expectMessage = true;
 		btMessageLen = 0;
 		btMessage = new byte[MSGLENGTH];
+			return true;
+		} else
+			return false;
 	}
 
 	/**

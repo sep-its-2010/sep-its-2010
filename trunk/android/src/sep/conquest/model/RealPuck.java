@@ -47,17 +47,21 @@ public class RealPuck extends Puck {
 	 *            The Message that will be sent.
 	 */
 	@Override
-	public void writeSocket(byte[] message) {
-		super.writeSocket(message);
-		OutputStream out;
+	public boolean writeSocket(byte[] message) {
+		if (super.writeSocket(message)) {
+			OutputStream out;
 
-		try {
-			out = mybtSocket.getOutputStream();
-			out.write(message);
-			out.flush();
-		} catch (IOException e) {
-			ConquestLog.addMessage(this, "Can't write message to socket!");
-		}
+			try {
+				out = mybtSocket.getOutputStream();
+				out.write(message);
+				out.flush();
+			} catch (IOException e) {
+				ConquestLog.addMessage(this, "Can't write message to socket!");
+			}
+			return true;
+		} else
+			return false;
+
 	}
 
 	/**

@@ -1,8 +1,9 @@
-package sep.conquest.model;
+package sep.conquest.model.handler;
 
 import java.util.UUID;
 
-import sep.conquest.model.handler.Handler;
+import sep.conquest.model.IRequest;
+import sep.conquest.model.LogicThread;
 
 /**
  * Handles PuckOK messages coming from the Bluetooth Adapter.
@@ -20,8 +21,8 @@ public class PuckOkHandler extends Handler {
   /**
    * Constructor calling constructor of super class.
    */
-  public PuckOkHandler(Handler prev, LogicThread exec) {
-    super(prev);
+  public PuckOkHandler(Handler next, LogicThread exec) {
+    super(next);
     executor = exec;
   }
   

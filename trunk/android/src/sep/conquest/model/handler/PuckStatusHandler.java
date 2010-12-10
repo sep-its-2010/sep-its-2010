@@ -142,7 +142,7 @@ public class PuckStatusHandler extends Handler {
 		  	 */
 			
 			RobotStatus bufferStatus = executor.getRobot().getRobotStatus().get(statusReq.getSender());
-		  	
+		  	bufferStatus.setNodeType(typeOfLastVisitedNode);
 		  	
 		  return true;
 	  }

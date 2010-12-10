@@ -2,7 +2,6 @@ package sep.conquest.model.handler;
 
 import sep.conquest.model.Environment;
 import sep.conquest.model.LogicThread;
-import sep.conquest.model.PuckOkHandler;
 import sep.conquest.model.Simulator;
 
 /**
@@ -58,8 +57,11 @@ public class HandlerFactory {
   public static Handler getPuckBTChain(LogicThread executor) {	  
 	  Handler okHndl = new PuckOkHandler(null, executor);
 	  Handler abyssHndl = new PuckAbyssHandler(okHndl, executor);
+	  Handler hitHndl = new PuckNodeHitHandler(abyssHndl, executor);
+	  Handler statHndl = new PuckStatusHandler(hitHndl, executor);
+	  Handler colHndl = new PuckCollisionHandler(statHndl, executor);
 	  
-	  return abyssHndl;
+	  return colHndl;
   }
   
   /**
