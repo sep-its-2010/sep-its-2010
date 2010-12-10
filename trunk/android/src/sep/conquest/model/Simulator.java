@@ -155,8 +155,8 @@ public class Simulator {
     if (node != null) {
       return node.getNodeType();
     } else {
-      throw new IllegalStateException(
-          "Asked for type of not at invalid position");
+      throw new IllegalArgumentException(
+          "Asked for type of node at invalid position");
     }
   }
 

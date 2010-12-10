@@ -129,7 +129,7 @@ public class SimRobot {
    * @return True, if there is a new message, false otherwise.
    */
   public boolean hasRequest() {
-    return inputBuffer == null;
+    return inputBuffer != null;
   }
 
   /**

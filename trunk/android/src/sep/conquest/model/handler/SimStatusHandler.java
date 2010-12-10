@@ -64,7 +64,7 @@ public class SimStatusHandler extends Handler {
       
       // Write node type to 17th byte.
       int[] pos = sim.getPosition(sender);
-      NodeType node = sim.getNodeType(pos[0], pos[1]);
+      NodeType node = sim.getNodeType(pos[0] / 3, pos[1] / 3);
       response[17] = (byte) node.ordinal();
       sim.writeBuffer(sender, response);
       sim.clearRequest(sender);
