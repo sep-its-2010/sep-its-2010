@@ -19,7 +19,7 @@
 	/>
 	<UserMacro
 		Name="OMF"
-		Value="coff"
+		Value="elf"
 		PerformEnvironmentSet="true"
 	/>
 </VisualStudioPropertySheet>
