@@ -29,12 +29,12 @@ bool subs_abyss_run( void) {
 
 	sen_line_SData_t podLineSensors;
 	sen_line_read( &podLineSensors);
-	sen_line_filter( &podLineSensors, &podLineSensors);
+	sen_line_rescale( &podLineSensors, &podLineSensors);
 
 	// Abyss detected?
-	if( ( podLineSensors.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD) ||
-		( podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD) ||
-		( podLineSensors.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD)) {
+	if( podLineSensors.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD ||
+		podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD ||
+		podLineSensors.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD) {
 
 		// Prevention not active? -> enable it and record line sensor data
 		if( !s_blPreventionActive) {

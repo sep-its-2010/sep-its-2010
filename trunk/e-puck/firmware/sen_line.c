@@ -1,23 +1,29 @@
+#include <string.h>
+
 #include "hal_i2c.h"
 
 #include "sen_line.h"
 
 enum {
-	SENSOR_I2C_ADDRESS = 0xC0 ///< Specifies the I2C address of the line sensor device (padded with R/W bit).
+	SENSOR_I2C_ADDRESS = 0xC0, ///< Specifies the I2C address of the line sensor device (padded with R/W bit).
+	DELTA_WHITE_TO_BLACK = SEN_LINE_NOMINAL_WHITE_LEVEL - SEN_LINE_NOMINAL_BLACK_LEVEL, ///< Specifies the delta between white and black.
+	NUM_COEFFICIENTS = 2, ///< Specifies the degree of the rescaling polynomial.
+	COEFFICIENT_SCALAR = 64 ///< Specifies the scalar for coefficients above the 0. degree.
 };
 
 
 /*!
  * \brief
- * Holds the offset values for each sensor.
+ * Holds the rescaling coefficients for each sensor.
  * 
  * \remarks
- * The offsets are initialized to zero. Thus, filtering without previous calibration has no effect.
+ * - The coefficients above the 0. degree are scaled by #COEFFICIENT_SCALAR to maintain precision.
+ * - The offsets are initialized to zero. Thus, filtering without previous calibration maps any sensor values to zero.
  * 
  * \see
- * sen_line_calibrate | sen_line_filter
+ * sen_line_calibrate | sen_line_rescale
  */
-static int16_t s_ai16Offset[SEN_LINE_NUM_SENSORS] = { 0 };
+static int16_t s_aai16Coefficients[SEN_LINE_NUM_SENSORS][NUM_COEFFICIENTS] = { { 0 } };
 
 
 /*!
@@ -27,7 +33,8 @@ static int16_t s_ai16Offset[SEN_LINE_NUM_SENSORS] = { 0 };
  * \param _lppodData
  * Specifies the output buffer for the sensor data.
  * 
- * The sensors are queried via the I2C bus through the hal_i2c layer.
+ * The sensors are queried via the I2C bus through the hal_i2c layer. Their address is specified b< #SENSOR_I2C_ADDRESS.
+ *
  * The raw value of each sensor is between #SEN_LINE_LOWER_BOUND and #SEN_LINE_UPPER_BOUND.
  * 
  * \remarks
@@ -35,10 +42,10 @@ static int16_t s_ai16Offset[SEN_LINE_NUM_SENSORS] = { 0 };
  * - The sensors should be calibrated based on a black underground.
  *
  * \warning
- * This function may not be preempted by itself.
+ * This function may not be preempted by itself or any module which accesses the I2C bus.
  *
  * \see
- * hal_i2c_init | sen_line_filter
+ * hal_i2c_init | sen_line_rescale
  */
 void sen_line_read(
 	OUT sen_line_SData_t* const _lppodData
@@ -61,13 +68,21 @@ void sen_line_read(
 
 /*!
  * \brief
- * Performs a black level calibration.
+ * Performs a black and white calibration.
  * 
- * \param _lppodBlackLevel
- * Specifies the sensor values on a black underground.
+ * \param _lppodRawBlackLevel
+ * Specifies the raw sensor values on a black underground.
+ * 
+ * \param _lppodRawWhiteLevel
+ * Specifies the raw sensor values on a white underground.
+ *
+ * \returns
+ * - \c true: the calibration succeeded.
+ * - \c false: the calibration failed due to invalid raw data. The current calibration remains unchanged.
  * 
  * Due to different ambient light conditions for each sensor, the raw sensor values may vary.
- * The calibration adjusts the offset of the nominal black level to #SEN_LINE_NUM_SENSORS.
+ * The calibration calculates the rescaling coefficients of a first order polynomial in a way that the raw black level will map to
+ * #SEN_LINE_NOMINAL_BLACK_LEVEL and the raw white level will map to #SEN_LINE_NOMINAL_WHITE_LEVEL.
  * 
  * \remarks
  * The raw values which are read with #sen_line_read() remain unchanged.
@@ -76,30 +91,66 @@ void sen_line_read(
  * This function may not be preempted by any function from this module.
  * 
  * \see
- * sen_line_filter
+ * sen_line_rescale
  */
-void sen_line_calibrate(
-	IN const sen_line_SData_t* const _lppodBlackLevel
+bool sen_line_calibrate(
+	IN const sen_line_SData_t* const _lppodRawBlackLevel,
+	IN const sen_line_SData_t* const _lppodRawWhiteLevel
 	) {
 
-	for( uint16_t ui16 = 0; ui16 < SEN_LINE_NUM_SENSORS; ui16++) {
-		s_ai16Offset[ui16] = (int16_t)SEN_LINE_NOMINAL_BACK_LEVEL - (int16_t)_lppodBlackLevel->aui16Data[ui16];
+	bool blSuccess = true;
+
+	/*
+	// / 1  x_black \   / a_0 \   / y_black \
+	// |            | * |     | = |         | 
+	// \ 1  x_white /   \ a_1 /   \ y_white / 
+	//
+	// => a_0 + a_1 * x_black = y_black
+	//    a_0 + a_1 * x_white = y_white
+	//
+	// => a_1 = (y_white - y_black) / (x_white - x_black)
+	//
+	// => a_0 = y_black - a_1 * x_black
+	*/
+
+	int16_t aai16[SEN_LINE_NUM_SENSORS][2];
+	const uint16_t ui16DeltaNominal = SEN_LINE_NOMINAL_WHITE_LEVEL - SEN_LINE_NOMINAL_BLACK_LEVEL;
+	for( uint16_t ui16 = 0; blSuccess && ui16 < SEN_LINE_NUM_SENSORS; ui16++) {
+		if( _lppodRawBlackLevel->aui16Data[ui16] > SEN_LINE_UPPER_BOUND ||
+			_lppodRawWhiteLevel->aui16Data[ui16] > SEN_LINE_UPPER_BOUND ||
+			_lppodRawBlackLevel->aui16Data[ui16] >= _lppodRawWhiteLevel->aui16Data[ui16]) {
+
+			blSuccess = false;
+		} else {
+			const uint16_t ui16DeltaRaw = _lppodRawWhiteLevel->aui16Data[ui16] - _lppodRawBlackLevel->aui16Data[ui16];
+			aai16[ui16][1] = ui16DeltaNominal * COEFFICIENT_SCALAR / ui16DeltaRaw;
+			const uint32_t ui32 = aai16[ui16][1] * _lppodRawBlackLevel->aui16Data[ui16];
+			aai16[ui16][0] = (int16_t)SEN_LINE_NOMINAL_BLACK_LEVEL - (int16_t)( ui32 / COEFFICIENT_SCALAR);
+		}
 	}
+
+	if( blSuccess) {
+		memcpy( s_aai16Coefficients, aai16, sizeof( aai16));
+	}
+
+	return blSuccess;
 }
 
 
 /*!
  * \brief
- * Write brief comment for sen_line_filter here.
+ * Rescales the specified sensor values based on the calibration values. 
  * 
  * \param _lppodRawData
  * Specifies the raw sensor values.
  * 
- * \param _lppodFilteredData
- * Specifies the output sensor values after filtering.
+ * \param _lppodRescaledData
+ * Specifies the output buffer.
+ *
+ * The rescaled values will not exceed the range from #SEN_LINE_LOWER_BOUND to #SEN_LINE_UPPER_BOUND.
  * 
- * An offset for each sensor is added based on the calibration values.
- * The new values may range from #SEN_LINE_LOWER_BOUND to #SEN_LINE_UPPER_BOUND.
+ * \remarks
+ * The sensor must be calibrated before rescaling or the returned values are all zero.
  * 
  * \warning
  * This function may not be preempted by itself or #sen_line_calibrate().
@@ -107,19 +158,21 @@ void sen_line_calibrate(
  * \see
  * sen_line_read
  */
-void sen_line_filter(
+void sen_line_rescale(
 	IN const sen_line_SData_t* const _lppodRawData,
-	OUT sen_line_SData_t* const _lppodFilteredData
+	OUT sen_line_SData_t* const _lppodRescaledData
 	) {
 
 	for( uint16_t ui16 = 0; ui16 < SEN_LINE_NUM_SENSORS; ui16++) {
-		const int16_t i16Filtered = (int16_t)_lppodRawData->aui16Data[ui16] + s_ai16Offset[ui16];
-		if( i16Filtered < SEN_LINE_LOWER_BOUND) {
-			_lppodFilteredData->aui16Data[ui16] = SEN_LINE_LOWER_BOUND;
-		} else if( i16Filtered > SEN_LINE_UPPER_BOUND) {
-			_lppodFilteredData->aui16Data[ui16] = SEN_LINE_UPPER_BOUND;
+		const int32_t i32ScalarRescale = s_aai16Coefficients[ui16][0] * COEFFICIENT_SCALAR + 
+			s_aai16Coefficients[ui16][1] * _lppodRawData->aui16Data[ui16];
+		const int16_t i16Rescale = i32ScalarRescale / COEFFICIENT_SCALAR;
+		if( i16Rescale < SEN_LINE_LOWER_BOUND) {
+			_lppodRescaledData->aui16Data[ui16] = SEN_LINE_LOWER_BOUND;
+		} else if( i16Rescale > SEN_LINE_UPPER_BOUND) {
+			_lppodRescaledData->aui16Data[ui16] = SEN_LINE_UPPER_BOUND;
 		} else {
-			_lppodFilteredData->aui16Data[ui16] = i16Filtered;
+			_lppodRescaledData->aui16Data[ui16] = i16Rescale;
 		}
 	}
 }

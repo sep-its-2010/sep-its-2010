@@ -5,20 +5,22 @@
 #include "sen_line_types.h"
 
 enum {
-	SEN_LINE_NOMINAL_BACK_LEVEL = 250 ///< Specifies the black level used for calibrating the sensors.
+	SEN_LINE_NOMINAL_BLACK_LEVEL = 250, ///< Specifies the black level used for calibrating the sensors.
+	SEN_LINE_NOMINAL_WHITE_LEVEL = 750 ///< Specifies the white level used for calibrating the sensors.
 };
 
 void sen_line_read(
 	OUT sen_line_SData_t* const _lppodData
 	);
 
-void sen_line_calibrate(
-	IN const sen_line_SData_t* const _lppodBlackLevel
+bool sen_line_calibrate(
+	IN const sen_line_SData_t* const _lppodRawBlackLevel,
+	IN const sen_line_SData_t* const _lppodRawWhiteLevel
 	);
 
-void sen_line_filter(
+void sen_line_rescale(
 	IN const sen_line_SData_t* const _lppodRawData,
-	OUT sen_line_SData_t* const _lppodFilteredData
+	OUT sen_line_SData_t* const _lppodRescaledData
 	);
 
 #endif // sen_line_h__

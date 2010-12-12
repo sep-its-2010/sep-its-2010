@@ -63,7 +63,7 @@ bool subs_collision_run( void) {
 		if( (hal_motors_getStepsLeft() >= SUBS_COLLISION__TURN_AROUND) &&
 			(hal_motors_getStepsRight() >= SUBS_COLLISION__TURN_AROUND)) {
 			sen_line_read( &podLineSensorData);
-			sen_line_filter( &podLineSensorData, &podLineSensorData);
+			sen_line_rescale( &podLineSensorData, &podLineSensorData);
 			
 			if( (podLineSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_COLLISION__LINE_THRESHOLD) || // @TODO Kalibrierwerte einsetzen
 				(podLineSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_COLLISION__LINE_THRESHOLD) ||

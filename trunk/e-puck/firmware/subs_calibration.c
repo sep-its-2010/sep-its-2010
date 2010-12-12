@@ -1,14 +1,41 @@
-// #include <p30f6014A.h>
-// 
-// #include "hal_led.h"
-// #include "hal_uart1.h"
+#include <libpic30.h>
+
 #include "hal_sel.h"
+#include "hal_motors.h"
+#include "hal_nvm.h"
 #include "sen_line.h"
 
 #include "subs_calibration.h"
 
-static bool s_blCalibrationActive = false;
-static bool s_blCalibrationRead = false;
+
+enum {
+	LEFT_MOTOR = 0, ///< Specifies the local index for data concerning the left motor.
+	RIGHT_MOTOR = 1, ///< Specifies the local index for data concerning the right motor.
+	BLACK_LEVEL = 0, ///< Specifies the local index for the black level calibration values.
+	WHITE_LEVEL = 1 ///< Specifies the local index for the white level calibration values.
+};
+
+
+/*!
+ * \brief
+ * Specifies the states of the calibration FSM.
+ * 
+ * \see
+ * subs_calibration_run | s_eStatus
+ */
+typedef enum {
+	STATE__NOT_CALIBRATED = 0, ///< Entry state of the FSM. The calibration values are read from the EEPROM.
+	STATE__WHITE_LEVEL, ///< The e-puck drives a specified amount of steps and measures the ground which is the new white level.
+	STATE__RETURN, ///< The e-puck returns to the start position and performs the calibration with the black and white levels.
+	STATE__CALIBRATED, ///< The selector needs to be switched before a new calibration can be started.
+	STATE__WAIT ///< The e-puck checks the selector and measures the ground (which is the new black level) if calibration is selected.
+} EState_t;
+
+
+static EState_t s_eStatus = STATE__NOT_CALIBRATED;
+static sen_line_SData_t s_podLevels[2];
+static int16_t s_ai16SpeedBackup[2];
+static uint16_t s_aui16StepCounterBackup[2];
 
 
 /*!
@@ -29,29 +56,63 @@ bool subs_calibration_run( void) {
 
 	bool blActed = false;
 
-	if( !s_blCalibrationRead) {
-		s_blCalibrationRead = true;
-//		hal_led_set( 2);
-	} else if( s_blCalibrationActive && hal_sel_getPosition()) {
-		s_blCalibrationActive = false;
-//		hal_led_set( 4);
-	} else if( !s_blCalibrationActive && !hal_sel_getPosition()) {
+	switch( s_eStatus) {
+		case STATE__NOT_CALIBRATED: {
+			hal_nvm_readEEPROM( 0, s_podLevels, sizeof( s_podLevels));
+			(void)sen_line_calibrate( &s_podLevels[BLACK_LEVEL], &s_podLevels[WHITE_LEVEL]);
+			s_eStatus = STATE__WAIT;
+			break;
+		}
+		case STATE__WHITE_LEVEL: {
+			if( hal_motors_getStepsLeft() >= SUBS_CALIBRATION_DISTANCE &&
+				hal_motors_getStepsRight() >= SUBS_CALIBRATION_DISTANCE) {
 
-		sen_line_SData_t podLineSensors;
-		sen_line_read( &podLineSensors);
-// 
-// 		char buffer[50];
-// 		sprintf( buffer, "raw left: %d, mid: %d, right: %d\r\n", podLineSensors.aui16Data[0], podLineSensors.aui16Data[1], podLineSensors.aui16Data[2]);
-// 		hal_uart1_puts( buffer);
-// 
-		sen_line_calibrate( &podLineSensors);
-//		sen_line_filter( &podLineSensors, &podLineSensors);
-// 		sprintf( buffer, "cal left: %d, mid: %d, right: %d\r\n", podLineSensors.aui16Data[0], podLineSensors.aui16Data[1], podLineSensors.aui16Data[2]);
-// 		hal_uart1_puts( buffer);
+				sen_line_read( &s_podLevels[WHITE_LEVEL]);
+				hal_motors_setSpeed( -SUBS_CALIBRATION_SPEED, 0);
+				hal_motors_setSteps( 0);
+				s_eStatus = STATE__RETURN;
+			}
+			blActed = true;
+			break;
+		}
+		case STATE__RETURN: {
+			if( hal_motors_getStepsLeft() >= SUBS_CALIBRATION_DISTANCE &&
+				hal_motors_getStepsRight() >= SUBS_CALIBRATION_DISTANCE) {
 
-		s_blCalibrationActive = true;
-		blActed = true;
-//		hal_led_set( 1);
+				hal_nvm_writeEEPROM( 0, s_podLevels, sizeof( s_podLevels));
+				(void)sen_line_calibrate( &s_podLevels[BLACK_LEVEL], &s_podLevels[WHITE_LEVEL]);
+				hal_motors_setSpeedLeft( s_ai16SpeedBackup[LEFT_MOTOR]);
+				hal_motors_setSpeedRight( s_ai16SpeedBackup[RIGHT_MOTOR]);
+				hal_motors_setStepsLeft( s_aui16StepCounterBackup[LEFT_MOTOR]);
+				hal_motors_setStepsRight( s_aui16StepCounterBackup[RIGHT_MOTOR]);
+				s_eStatus = STATE__CALIBRATED;
+			}
+			blActed = true;
+			break;
+		}
+		case STATE__CALIBRATED: {
+			if( hal_sel_getPosition() != SUBS_CALIBRATION_SELECTOR) {
+				s_eStatus = STATE__WAIT;
+			}
+			break;
+		}
+		case STATE__WAIT: {
+			if( hal_sel_getPosition() == SUBS_CALIBRATION_SELECTOR) {
+				sen_line_read( &s_podLevels[BLACK_LEVEL]);
+				s_ai16SpeedBackup[LEFT_MOTOR] = hal_motors_getSpeedLeft();
+				s_ai16SpeedBackup[RIGHT_MOTOR] = hal_motors_getSpeedRight();
+				hal_motors_setSpeed( SUBS_CALIBRATION_SPEED, 0);
+				s_aui16StepCounterBackup[LEFT_MOTOR] = hal_motors_getStepsLeft();
+				s_aui16StepCounterBackup[RIGHT_MOTOR] = hal_motors_getStepsRight();
+				hal_motors_setSteps( 0);
+				s_eStatus = STATE__WHITE_LEVEL;
+				blActed = true;
+			}
+			break;
+		}
+		default: {
+	
+		}
 	}
 
 	return blActed;
@@ -65,6 +126,5 @@ bool subs_calibration_run( void) {
  */
 void subs_calibration_reset( void) {
 
-	s_blCalibrationActive = false;
-	s_blCalibrationRead = false;
+	s_eStatus = STATE__NOT_CALIBRATED;
 }

@@ -54,7 +54,7 @@ bool subs_node_run( void) {
 	bool blActed = false;
 	sen_line_SData_t s_podSensorData = {{0}};
 	sen_line_read( &s_podSensorData);
-	sen_line_filter( &s_podSensorData, &s_podSensorData);
+	sen_line_rescale( &s_podSensorData, &s_podSensorData);
 
 	// node detection-measurement
 	// @TODO Werte ersetzen
