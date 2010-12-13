@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import sep.conquest.model.handler.Handler;
 import sep.conquest.model.handler.HandlerFactory;
+import sep.conquest.util.Utility;
 
 /**
  * The Simulator class represents a virtual socket for a proxy-robot within the
@@ -249,20 +250,25 @@ public class Simulator {
     int newX = pos[0];
     int newY = pos[1];
     Orientation ori = getOrientation(id);
-
+    int turnCount = 0;
+    
     // Update current position of the robot.
     switch (ori) {
     case UP:
       newY++;
+      turnCount = 2;
       break;
     case DOWN:
       newY--;
+      turnCount = 0;
       break;
     case LEFT:
       newX++;
+      turnCount = 3;
       break;
     case RIGHT:
       newX++;
+      turnCount = 1;
       break;
     }
 
@@ -288,13 +294,18 @@ public class Simulator {
         if (getNumberOfCollisions(id) % 2 == 0) {
           // Get NodeType of new position.
           NodeType node = getNodeType(pos[0] / 3, pos[1] / 3);
-
+          
+          
+        // Turns the corners and T-crosses, so they can be added to the map
+		  NodeType finalNodeType = Utility.turnAround(turnCount, node);
+          
           // Write message type "node hit" to first two bytes.
           response[0] = (byte) (Puck.RES_HITNODE & 0xFF);
           response[1] = (byte) ((Puck.RES_HITNODE >> 8) & 0xFF);
-
+          
+          
           // Write node type to third byte.
-          response[2] = (byte) node.ordinal();
+          response[2] = (byte) finalNodeType.ordinal();
         } else {
           // Write message type "collision" to first two bytes.
           response[0] = (byte) (Puck.RES_COLLISION & 0xFF);

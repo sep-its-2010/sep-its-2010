@@ -9,6 +9,7 @@ import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.MessageType;
 import sep.conquest.model.requests.PuckRequest;
 import sep.conquest.model.requests.StatusUpdateRequest;
+import sep.conquest.util.Utility;
 
 /**
  * Handles PuckNodeHit messages coming from the Bluetooth Adapter.
@@ -144,7 +145,7 @@ public class PuckNodeHitHandler extends Handler {
 			}
 			
 			// Turns the corners and T-crosses, so they can be added to the map
-			NodeType finalNodeType = this.turnAround(turnCount, typeOfNewNode);
+			NodeType finalNodeType = Utility.turnAround(turnCount, typeOfNewNode);
 						
 			/*
 			 * If !(returnedToLastNode) the information of the new node has to
@@ -187,49 +188,5 @@ public class PuckNodeHitHandler extends Handler {
 		
 	}
 
-	/**
-	 * Turns the corners and T-Crosses to the global direction of the map (so
-	 * the NodeType is translated to the view of the puck if its direction is
-	 * DOWN)
-	 * 
-	 * @param turnCount
-	 *            The number of needed turns
-	 * @param typeOfNode
-	 *            The actual NodeType of the Orientation of the puck
-	 * @return The turned NodeType
-	 */
-	private NodeType turnAround(int turnCount, NodeType typeOfNode) {
-		NodeType bufferNodeType = typeOfNode;
-		for (int i = 0; i < turnCount; i++) {
-			switch (bufferNodeType) {
-			case CROSS:
-				return bufferNodeType;
-			case LEFTT:
-				bufferNodeType = NodeType.BOTTOMT;
-				break;
-			case RIGHTT:
-				bufferNodeType = NodeType.TOPT;
-				break;
-			case TOPT:
-				bufferNodeType = NodeType.LEFTT;
-				break;
-			case BOTTOMT:
-				bufferNodeType = NodeType.RIGHTT;
-				break;
-			case TOPLEFTEDGE:
-				bufferNodeType = NodeType.BOTTOMLEFTEDGE;
-				break;
-			case TOPRIGHTEDGE:
-				bufferNodeType = NodeType.TOPLEFTEDGE;
-				break;
-			case BOTTOMLEFTEDGE:
-				bufferNodeType = NodeType.BOTTOMRIGHTEDGE;
-				break;
-			case BOTTOMRIGHTEDGE:
-				bufferNodeType = NodeType.TOPRIGHTEDGE;
-				break;
-			}
-		}
-		return bufferNodeType;
-	}
+	
 }
