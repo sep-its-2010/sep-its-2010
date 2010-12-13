@@ -26,7 +26,10 @@ public class ConquestUpdate implements Cloneable {
 	 */
 	private Map<UUID, RobotStatus> robots;
 	
-	private Map<UUID, String> robotDesc;
+	/**
+	 * The names of the robots.
+	 */
+	private Map<UUID, String> robotNames = new TreeMap<UUID, String>();
 	
 	/**
 	 * The borders of the map.
@@ -50,7 +53,7 @@ public class ConquestUpdate implements Cloneable {
 		ComManager comMan = ComManager.getInstance();
 		for (UUID key: robots.keySet()) {
 			Puck robot = (Puck) comMan.getClient(key);
-			robotDesc.put(key, robot.getName());
+			robotNames.put(key, robot.getName());
 		}
 	}
 
@@ -121,7 +124,7 @@ public class ConquestUpdate implements Cloneable {
 	 * @return The name of the robot.
 	 */
 	public String getRobotName(UUID id) {
-		return robotDesc.get(id);
+		return robotNames.get(id);
 	}
 	
 	/**
