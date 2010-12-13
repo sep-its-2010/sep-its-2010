@@ -172,6 +172,8 @@ public class Simulation extends Activity {
 	 */
 	public void drawPreview(List<MapNode> map, int[] borders) {
 		MapSurfaceView preview = (MapSurfaceView) findViewById(R.id.im_preview);
+		
+		preview.setMode(MapMode.PREVIEW);
 		preview.setMap(map, borders);
 		preview.setRobotPosition(positions);
 	}
@@ -203,6 +205,7 @@ public class Simulation extends Activity {
 					numberAdapter.add("" + (i+1));
 				}
 				setRobotPositions();
+				numberOfRobots.setSelection(0);
 				drawPreview(map.getMapAsList(), map.getMapBorders());
 				mFirstRun = true;
 			}

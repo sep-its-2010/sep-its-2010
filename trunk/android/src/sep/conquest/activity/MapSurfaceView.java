@@ -122,24 +122,12 @@ public class MapSurfaceView extends SurfaceView
     private int mScaleValue = DRAW_SIZE;
 
     /**
-     * This is the scale factor produced by the autoscaling method. It is
-     * needed to translate a on touch event to the right coordinates when
-     * a robot is selected out of the map.
-     */
-    private float mScaleFactor = 1;
-
-    /**
      * This attribute saves the id of the robot which is selected. If no
      * robot is selected it is set to -1.
      */
     private String mSelectedRobot;
-
-    /**
-     * This value is initially set to false and is activated when scallValue
-     * under-runs a threshold and the autoscaling method is replaced by the
-     * scroll function.
-     */
-    private boolean mScrollAble = false;
+    
+    private MapMode mMode;
 
     /**
      * The constructor resgisters the interface SurfaceHolder.Callback on the
@@ -226,21 +214,25 @@ public class MapSurfaceView extends SurfaceView
      * @return Returns true when a robot was selected or the map was scrolled.
      */
     public final boolean onTouch(final View v, final MotionEvent event) {
-        if (mPositions != null) {
+    	
+        if ((mPositions != null) && (mMode == MapMode.EXPLORATION)) {
+        	int threshold = 40;
             Iterator < EpuckPosition > it = mPositions.iterator();
+            int x = (int) event.getX();
+            int y = (int) event.getY();
+            
             while (it.hasNext()) { //variablen raus aus der schleife!
                 EpuckPosition e = (EpuckPosition) it.next();
-                int xCoord = (int) (((e.getX() * mScaleValue) + mCurrentOffsetX) * mScaleFactor);
-                int yCoord = (int) (((e.getY() * mScaleValue) + mCurrentOffsetY) * mScaleFactor);
-                int test = (int) event.getX();
-                int test2 = (int) event.getY();
-                if (Math.abs(xCoord-test) < 40 && Math.abs(yCoord-test2) < 40) {
-                    //mSelectedRobot = e.getID();
-                    //mRobotSelect.setSelection(mPositions.indexOf(e) + 1);
+                int xCoord = (int) (((e.getX() * mScaleValue) + mCurrentOffsetX));
+                int yCoord = (int) (((e.getY() * mScaleValue) + mCurrentOffsetY));
+                if (Math.abs(xCoord-x) < threshold && Math.abs(yCoord-y) < threshold) {
+                    mSelectedRobot = e.getID();
+                    mRobotSelect.setSelection(mPositions.indexOf(e) + 1);
                 }
             }
         }
-        if (mScrollAble) {
+        
+        if (mMode != MapMode.PREVIEW) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
             // Track starting point
@@ -353,18 +345,18 @@ public class MapSurfaceView extends SurfaceView
             int offsetX = Math.abs(minX);
 
             //check if map is scrollable otherwise scale it
-            if (!mScrollAble) {
+            if (mMode == MapMode.PREVIEW) {
                 autoScaling(c, (maxX - minX + 1), (maxY - minY + 1), displayX, displayY);
             } else {
                 int boundX = 0;
                 int boundY = 0;
-                if (displayX < (maxX - minX) * mScaleValue) {
-                    boundX = (maxX - minX) * mScaleValue;
+                if (displayX < (maxX - minX + 1) * mScaleValue) {
+                    boundX = (maxX - minX + 1) * mScaleValue;
                 } else {
                     boundX = displayX;
                 }
-                if (displayY < (maxY - minY) * mScaleValue) {
-                    boundY = (maxY - minY) * mScaleValue;
+                if (displayY < (maxY - minY + 1) * mScaleValue) {
+                    boundY = (maxY - minY + 1) * mScaleValue;
                 } else {
                     boundY = displayY;
                 }
@@ -448,7 +440,7 @@ public class MapSurfaceView extends SurfaceView
 		}
 
         private void drawSecondLayer(final Canvas c, final int offsetX, final int offsetY) {
-            // Draw the third layer: Robots 
+            // Draw the second layer: Robots 
             Iterator < EpuckPosition > pos_it = mPositions.iterator();
             EpuckPosition epp;
             while (pos_it.hasNext()) {
@@ -679,43 +671,20 @@ public class MapSurfaceView extends SurfaceView
      * @param fieldSizeY The maximal expansion in height.
      */
     public final void autoScaling(final Canvas c, final int fieldSizeX, final int fieldSizeY, final int displayX, final int displayY) {
-        float zoom = 0.5f;
         int xSize = fieldSizeX * mScaleValue;
         int ySize = fieldSizeY * mScaleValue;
 
         if (xSize > displayX && ySize < displayY) {
             float newX = (float) displayX/xSize;
-            if (newX < zoom) {
-                mScrollAble = true;
-                mBounds.set(0, 0, xSize, displayY);
-                mScaleFactor = 1;
-            } else {
                 c.scale(newX, newX);
-                mScaleFactor = newX;
-            }
         } else if (ySize > displayY && xSize < displayX) {
             float newY = (float) displayY/ySize;
-            if (newY < zoom) {
-                mScrollAble = true;
-                mBounds.set(0, 0, displayX, ySize);
-                mScaleFactor = 1;
-
-            } else {
                 c.scale(newY, newY);
-                mScaleFactor = newY;
-            }
         } else if (ySize > displayY && xSize > displayX) {
             float newX = (float) displayX/xSize;
             float newY = (float) displayY/ySize;
             float newSize = Math.min(newX, newY);
-            if (newSize < zoom) {
-                mScrollAble = true;
-                mBounds.set(0, 0, xSize, ySize);
-                mScaleFactor = 1;
-            } else {
                 c.scale(newSize, newSize);
-                mScaleFactor = newSize;
-            }
         }
 
     }
@@ -737,7 +706,9 @@ public class MapSurfaceView extends SurfaceView
         mRobotSelect = selector;
     }
     
-
+    public final void setMode(final MapMode mode) {
+    	mMode = mode;
+    }
     
 
 

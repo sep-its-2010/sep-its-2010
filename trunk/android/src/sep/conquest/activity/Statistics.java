@@ -43,6 +43,7 @@ public class Statistics extends Activity implements Observer{
 		
 		Set<UUID> id = cu.getRobotStatus().keySet();
 		for (UUID key : id) {
+			
 		}		
 	}
 	
