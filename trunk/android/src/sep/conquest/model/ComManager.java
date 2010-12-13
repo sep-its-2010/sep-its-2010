@@ -106,4 +106,11 @@ public class ComManager implements IComMan {
 		return clientArray;
 	}
 
+	/* (non-Javadoc)
+	 * @see sep.conquest.model.IComMan#getClient(java.util.UUID)
+	 */
+	public IComClient getClient(UUID id) {
+		return clients.get(id);
+	}
+
 }

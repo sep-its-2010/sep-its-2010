@@ -57,6 +57,21 @@ public enum Orientation {
 	  }
 	}
 	
+	public static Orientation getTurnedOrientation(int[] startNode, int[] endNode) {
+		Orientation direction = Orientation.UNKNOWN;
+
+		if (startNode[0] < endNode[0])
+			direction = Orientation.LEFT;
+		else if (startNode[0] > endNode[0])
+			direction = Orientation.RIGHT;
+		else if (startNode[1] < endNode[1])
+			direction = Orientation.UP;
+		else if (startNode[1] > endNode[1])
+			direction = Orientation.DOWN;
+		
+		return direction;
+	}
+	
 	/**
 	 * The method adds a orientation of the robot and a desired direction to
 	 * get the turning-command.

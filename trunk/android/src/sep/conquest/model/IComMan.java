@@ -40,4 +40,12 @@ public interface IComMan {
      * @return The clients.
      */
     IComClient[] getClients();
+    
+    /**
+     * Get a specific client, if available. Otherwise it returns null.
+     * 
+     * @param id The id of the client.
+     * @return The client.
+     */
+    IComClient getClient(UUID id);
 }

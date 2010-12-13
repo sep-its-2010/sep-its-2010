@@ -26,6 +26,8 @@ public class ConquestUpdate implements Cloneable {
 	 */
 	private Map<UUID, RobotStatus> robots;
 	
+	private Map<UUID, String> robotDesc;
+	
 	/**
 	 * The borders of the map.
 	 */
@@ -45,6 +47,11 @@ public class ConquestUpdate implements Cloneable {
 		this.mapList = mapList;
 		this.robots = robots;
 		this.borders = borders;
+		ComManager comMan = ComManager.getInstance();
+		for (UUID key: robots.keySet()) {
+			Puck robot = (Puck) comMan.getClient(key);
+			robotDesc.put(key, robot.getName());
+		}
 	}
 
 	/**
@@ -104,6 +111,17 @@ public class ConquestUpdate implements Cloneable {
 	 */
 	public void setBorders(int[] borders) {
 		this.borders = borders;
+	}
+	
+	/**
+	 * Returns the name of a specific robot if available. Otherwise it returns
+	 * null. 
+	 * 
+	 * @param id The id of the robot.
+	 * @return The name of the robot.
+	 */
+	public String getRobotName(UUID id) {
+		return robotDesc.get(id);
 	}
 	
 	/**

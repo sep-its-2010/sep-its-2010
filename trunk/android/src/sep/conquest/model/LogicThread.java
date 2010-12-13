@@ -150,46 +150,32 @@ public class LogicThread implements Runnable {
 	 */
 	public void driveTo() {
 		int[][] dest = { getRobotState().getIntentPosition() };
+		
+		// calculate best path to destination
 		aStar = new AStarPathFinder();
 		PathNode[] path = aStar
-				.find(robot, getRobotState().getPosition(), dest);
-		
+				.find(robot, getRobotState().getPosition(), dest);		
 		if (path == null)
 			throw new IllegalStateException("Error! A-Star calculated wrong" +
 					"path from "+getRobotState().getPosition()+" to "+dest);
 
+		// If a path to an intended destination exists, send an appropriate
+		// drive command. In case of turn-commands in order to drive to the
+		// destination, ok-messages are handled to set the new orientation.
 		if (path[0].getPathCosts() > 0) {
 			MapNode nextMapNode = (MapNode) path[0].getNext().getNode();
 			int[] node = { nextMapNode.getXValue(), nextMapNode.getYValue() };
-			sendCommand(getRobotState().getPosition(), node);
+			Orientation newDir = Orientation.getTurnedOrientation(getRobotState().getPosition(), node);
+			
+			if (robot.isOkRcvd()) {
+				RobotStatus stat = getRobotState();
+				stat.setOrientation(newDir);
+				robot.getRobotStatus().put(robot.getID(), stat);
+				robot.setOkRcvd(false);
+			}
+			newDir = Orientation.addDirection(getRobotState().getOrientation(), newDir);
+			robot.driveCommand(newDir);
 		}
-	}
-
-	/**
-	 * The method takes a start- and a end-node to calculate a corresponding
-	 * navigation command to reach the end-node.
-	 * 
-	 * @param startNode
-	 *            The start-node.
-	 * @param endNode
-	 *            The end-node.
-	 */
-	private void sendCommand(int[] startNode, int[] endNode) {
-		Orientation direction = Orientation.UNKNOWN;
-
-		if (startNode[0] < endNode[0])
-			direction = Orientation.LEFT;
-		else if (startNode[0] > endNode[0])
-			direction = Orientation.RIGHT;
-		else if (startNode[1] < endNode[1])
-			direction = Orientation.UP;
-		else if (startNode[1] > endNode[1])
-			direction = Orientation.DOWN;
-
-		Orientation command = Orientation.addDirection(getRobotState()
-				.getOrientation(), direction);
-
-		robot.driveCommand(command);
 	}
 
 	/**
