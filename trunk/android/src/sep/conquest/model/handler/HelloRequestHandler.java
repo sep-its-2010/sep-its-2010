@@ -7,7 +7,7 @@ import sep.conquest.model.requests.HelloRequest;
 import sep.conquest.model.requests.MessageType;
 
 /**
- * Handles DriveRequest messages.
+ * Handles HelloRequest messages.
  * 
  * @author Andreas Poxrucker
  * 
@@ -17,14 +17,14 @@ public class HelloRequestHandler extends Handler {
 	/**
 	 * The LogicThread that executes the content.
 	 */
-	private LogicThread thread;
+	private LogicThread executor;
 
 	/**
 	 * Constructor calling constructor of super class.
 	 */
 	public HelloRequestHandler(Handler next, LogicThread exec) {
 		super(next);
-		thread = exec;
+		executor = exec;
 	}
 
 	/**
@@ -39,24 +39,22 @@ public class HelloRequestHandler extends Handler {
 	 */
 	@Override
 	public boolean handleRequest(IRequest request) {
-		if (!(request.getKind() == MessageType.HELLO))
+		if (request.getKind() == MessageType.HELLO) {
+		  HelloRequest req = (HelloRequest) request;
+
+      if (!executor.getRobot().getRobotStatus()
+          .containsKey(req.getSender())) {
+        
+        // add status of robot
+        executor.getRobot().getRobotStatus().put(req.getSender(),
+            new RobotStatus());
+        
+        // send hello request
+        executor.getRobot().sendHello();
+      }
+      return true;
+		} else {
 			return super.handleRequest(request);
-		else {
-			HelloRequest req = (HelloRequest) request;
-
-			if (!thread.getRobot().getRobotStatus()
-					.containsKey(req.getSender())) {
-				
-				// add status of robot
-				thread.getRobot().getRobotStatus().put(req.getSender(),
-						new RobotStatus());
-				
-				// send hello request
-				thread.getRobot().sendHello();
-			}
-
-			return true;
 		}
 	}
-
 }

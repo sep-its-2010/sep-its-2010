@@ -2,6 +2,7 @@ package sep.conquest.model.handler;
 
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.ControlledRequest;
 import sep.conquest.model.requests.MessageType;
 
 /**
@@ -15,14 +16,14 @@ public class ControlledRequestHandler extends Handler {
 	/**
 	 * The LogicThread that executes the content.
 	 */
-	private LogicThread thread;
+	private LogicThread executor;
 
 	/**
 	 * Constructor calling constructor of super class.
 	 */
 	public ControlledRequestHandler(Handler next, LogicThread exec) {
 		super(next);
-		thread = exec;
+		executor = exec;
 	}
 
 	/**
@@ -37,11 +38,14 @@ public class ControlledRequestHandler extends Handler {
 	 */
 	@Override
 	public boolean handleRequest(IRequest request) {
-		if (!(request.getKind() == MessageType.CONTROL_ENABLE))
-			return super.handleRequest(request);
-		else {
-			thread.getRobot().setControlled(true);			
-			return true;
+		if (request.getKind() == MessageType.CONTROL_ENABLE) {
+		  ControlledRequest req = (ControlledRequest) request;
+		  
+		  // Get controlled state out of the message and set according robot state.
+		  executor.getRobot().setControlled(req.isControlled());      
+      return true;
+		} else {
+	    return super.handleRequest(request);
 		}	
 	}
 }

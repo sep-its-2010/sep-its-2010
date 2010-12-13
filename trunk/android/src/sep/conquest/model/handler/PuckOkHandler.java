@@ -1,9 +1,7 @@
 package sep.conquest.model.handler;
 
-import java.util.UUID;
-
 import sep.conquest.model.IRequest;
-import sep.conquest.model.LogicThread;
+import sep.conquest.model.requests.MessageType;
 
 /**
  * Handles PuckOK messages coming from the Bluetooth Adapter.
@@ -14,16 +12,10 @@ import sep.conquest.model.LogicThread;
 public class PuckOkHandler extends Handler {
 
   /**
-   * The LogicThread that executes the content.
-   */
-  private LogicThread executor;
-  
-  /**
    * Constructor calling constructor of super class.
    */
-  public PuckOkHandler(Handler next, LogicThread exec) {
+  public PuckOkHandler(Handler next) {
     super(next);
-    executor = exec;
   }
   
   /**
@@ -38,8 +30,10 @@ public class PuckOkHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-    // TODO Auto-generated method stub
-    return false;
+    if (request.getKind().equals(MessageType.RESPONSE_OK)) {
+      return true;
+    } else {
+      return super.handleRequest(request);
+    }
   }
-
 }

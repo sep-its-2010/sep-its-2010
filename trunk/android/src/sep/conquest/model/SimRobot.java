@@ -1,5 +1,10 @@
 package sep.conquest.model;
 
+/**
+ * 
+ * @author Andreas Poxrucker
+ *
+ */
 public class SimRobot {
 
   /**

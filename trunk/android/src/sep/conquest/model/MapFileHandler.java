@@ -55,7 +55,7 @@ public class MapFileHandler {
    * @throws FileNotFoundException
    *           No file with name filename has been found.
    */
-  public static ImportContainer openMap(String filename) throws IOException,
+  public static SimConfiguration openMap(String filename) throws IOException,
       FileNotFoundException {
 
     if (filename != null) {
@@ -125,7 +125,7 @@ public class MapFileHandler {
       // Close readers and return reconstructed map.
       bReader.close();
       fReader.close();
-      return new ImportContainer(map, positions, orientations);
+      return new SimConfiguration(map, positions, orientations);
     } else {
       // Thrown, when filename equals null.
       throw new IllegalArgumentException();
