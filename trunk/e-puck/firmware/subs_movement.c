@@ -1,15 +1,53 @@
+#include <stdlib.h>
+
 #include "hal_motors.h"
-#include "hal_led.h"
 #include "com.h"
 #include "com_types.h"
 #include "sen_line.h"
 
 #include "subs_movement.h"
 
-static bool s_blTurningActive = false; ///< Indicates if the robot is currently performing turnings.
-static uint8_t s_ui8PerformedTurnings = 0; ///< Holds a counter for the already performed 90°-turnings.
-static int8_t s_i8DemandedTurnings = 0; ///< Holds the number of demanded turnings.
-static com_EMessageType_t s_eCurrentMessageType; ///< Specifies the last smartphone-message-type.
+/*!
+ * \brief
+ * Indicates if the robot is currently in a turning-state.
+ */
+static bool s_blTurningActive = false;
+
+/*!
+ * \brief
+ * Holds the number of already performed 90°-turnings.
+ */
+static uint8_t s_ui8PerformedTurnings = 0;
+
+/*!
+ * \brief
+ * Holds the number of demanded turnings.
+ *
+ * This is a value in the range from -1 to 2.
+ * Negative values indicate turnings in counter-clockwise direction, positive values indicate turnings in clockwise direction.
+ */
+static int8_t s_i8DemandedTurnings = 0;
+
+/*!
+ * \brief
+ * Specifies the type of the last smartphone-message.
+ */
+static com_EMessageType_t s_eCurrentMessageType;
+
+/*!
+ * \brief
+ * Holds the current line-speed of the robot in steps-per-seconds.
+ * 
+ * \remarks
+ * Values above below -1000 or above 1000 can cause malfunctioning of the motors.
+ */
+volatile int16_t subs_movement_i16CurrentLineSpeed = 0;
+
+/*!
+ * \brief
+ * Holds the current angular-speed of the robot.
+ */
+volatile int16_t subs_movement_i16CurrentAngularSpeed = 0;
 
 static bool cbHandleRequestMove( IN const com_SMessage_t* const _lppodMessage);
 static bool cbHandleRequestTurn( IN const com_SMessage_t* const _lppodMessage);
@@ -26,7 +64,8 @@ static bool cbHandleRequestSetSpeed( IN const com_SMessage_t* const _lppodMessag
  * If there is one the robot starts to perform the demanded movement and sends an acknowledgment to the smartphone and deletes this message.
  */
 bool subs_movement_run( void) {
-	bool blMovementChanged = false;
+
+	bool blActed = false;
 	com_SMessage_t podOkMessage = { COM_MESSAGE_TYPE__RESPONSE_OK, {0}};
 
 	switch( s_eCurrentMessageType) {
@@ -35,17 +74,19 @@ bool subs_movement_run( void) {
 			// Turning not active? -> Start to perform the demanded turnings.
 			if( !s_blTurningActive) {
 				s_blTurningActive = true;
-				//hal_motors_setSpeed( hal_motors_si16CurrentLineSpeed, hal_motors_si16CurrentAngularSpeed);
+				hal_motors_setSpeed( subs_movement_i16CurrentLineSpeed, subs_movement_i16CurrentAngularSpeed);
 			
 			// Exit turning-state after all demanded turnings have been performed.
 			} else if( s_blTurningActive) {
 				sen_line_SData_t podSensorData = {{0}};
 				sen_line_read( &podSensorData);
+				sen_line_rescale( &podSensorData, &podSensorData);
 				
 				// Crossed a line? -> One turning is done.
-				if( (2 * podSensorData.aui16Data[0] < 1) || // @TODO 1 durch EEPROM-Kalibrierwert ersetzen
-					(2 * podSensorData.aui16Data[1] < 1) ||
-					(2 * podSensorData.aui16Data[2] < 1)) {
+				if( ((podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_MOVEMENT__LINE_THRESHOLD) ||
+					(podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_MOVEMENT__LINE_THRESHOLD) ||
+					(podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_MOVEMENT__LINE_THRESHOLD)) &&
+					(abs(hal_motors_getStepsLeft()) >= s_ui8PerformedTurnings * 200)) {
 					s_ui8PerformedTurnings++;
 				}
 
@@ -59,25 +100,26 @@ bool subs_movement_run( void) {
 					com_send( &podOkMessage);
 				}				
 			}			
-			blMovementChanged = true;			
+			blActed = true;			
 			break;
 		}
 		case COM_MESSAGE_TYPE__REQUEST_MOVE: {
-			//hal_motors_setSpeed( hal_motors_si16CurrentLineSpeed, hal_motors_si16CurrentAngularSpeed);
-			blMovementChanged = true;
+			hal_motors_setSpeed( subs_movement_i16CurrentLineSpeed, subs_movement_i16CurrentAngularSpeed);
 			com_send( &podOkMessage);
+			blActed = true;
 			break;
 		}
-		case COM_MESSAGE_TYPE__REQUEST_SET_SPEED: {
-			blMovementChanged = true;
+		case COM_MESSAGE_TYPE__REQUEST_SET_SPEED: {			
 			com_send( &podOkMessage);
+			blActed = true;
 			break;
 		}
 		default: {
-			
+			break;
 		}
 	}
-	return blMovementChanged;
+
+	return blActed;
 }
 
 /*!
@@ -103,20 +145,22 @@ bool subs_movement_run( void) {
 bool cbHandleRequestTurn(
 	IN const com_SMessage_t* const _lppodMessage
 	) {
+
 	bool blHandledMessage = false;
 	
 	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_TURN) {
 		s_eCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_TURN;
-		s_i8DemandedTurnings = _lppodMessage->aui8Data[0];
+		s_i8DemandedTurnings = (((_lppodMessage->aui8Data[0] % 4) + 4) % 4);
 
 		if( s_i8DemandedTurnings > 0) {
-			//hal_motors_si16CurrentAngularSpeed = 250;
+			subs_movement_i16CurrentAngularSpeed = 250;
 		} else if( s_i8DemandedTurnings <= 0) {
-			//hal_motors_si16CurrentAngularSpeed = -250;
+			subs_movement_i16CurrentAngularSpeed = -250;
 		}		
-		//hal_motors_si16CurrentLineSpeed = 0;
+		subs_movement_i16CurrentLineSpeed = 0;
 		blHandledMessage = true;
 	}
+
 	return blHandledMessage;
 }
 
@@ -142,12 +186,14 @@ bool cbHandleRequestTurn(
 bool cbHandleRequestMove(
 	IN const com_SMessage_t* const _lppodMessage
 	) {
+
 	bool blHandledMessage = false;
 
 	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_MOVE) {
 		s_eCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_MOVE;
 		blHandledMessage = true;
 	}
+
 	return blHandledMessage;
 }
 
@@ -173,14 +219,22 @@ bool cbHandleRequestMove(
 bool cbHandleRequestSetSpeed(
 	IN const com_SMessage_t* const _lppodMessage
 	) {
+
 	bool blHandledMessage = false;
 
 	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_SET_SPEED) {
 		s_eCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_SET_SPEED;
-		//hal_motors_si16CurrentLineSpeed = _lppodMessage->aui8Data[0] * 10;
-		//hal_motors_si16CurrentAngularSpeed = 0;
+		subs_movement_i16CurrentLineSpeed = _lppodMessage->aui8Data[0] * 10;
+
+		if( abs(subs_movement_i16CurrentLineSpeed) > 1000) {
+			subs_movement_i16CurrentLineSpeed = 0;
+			com_SMessage_t podRejectSetSpeed = {COM_MESSAGE_TYPE__RESPONSE_REJECTED, {0}};
+			com_send( &podRejectSetSpeed);
+		}
+		subs_movement_i16CurrentAngularSpeed = 0;
 		blHandledMessage = true;
 	}
+
 	return blHandledMessage;
 }
 
@@ -191,10 +245,11 @@ bool cbHandleRequestSetSpeed(
  * Registers all handler of this subsumption-layer for the Chain-of-Responsibility pattern.
  */
 void subs_movement_reset( void) {
+
 	s_blTurningActive = false;
 	s_ui8PerformedTurnings = 0;
-	//hal_motors_si16CurrentLineSpeed = 600;
-	//hal_motors_si16CurrentAngularSpeed = 0;
+	subs_movement_i16CurrentLineSpeed = SUBS_MOVEMENT__INITIAL_LINE_SPEED;
+	subs_movement_i16CurrentAngularSpeed = 0;
 	com_register( cbHandleRequestTurn);
 	com_register( cbHandleRequestMove);
 	com_register( cbHandleRequestSetSpeed);

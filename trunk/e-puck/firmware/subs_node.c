@@ -2,6 +2,7 @@
 #include "com.h"
 #include "sen_line.h"
 #include "conquest_types.h"
+#include "hal_led.h"
 
 #include "subs_node.h"
 
@@ -11,7 +12,7 @@
  * \remarks
  * The node-type is UNKNOWN by default and will be set after a node has been detected.
  */
-uint8_t subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__UNKNOWN;
+volatile uint8_t subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__UNKNOWN;
 
 /*!
  * \brief
@@ -37,6 +38,7 @@ static uint16_t s_ui16AvgLeft = 0;
  */
 static uint16_t s_ui16AvgRight = 0;
 
+
 /*!
  * \brief
  * Analyzes if the robot is above a node.
@@ -58,8 +60,8 @@ bool subs_node_run( void) {
 
 	// node detection-measurement
 	// @TODO Werte ersetzen
- 	if (((s_podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT]) < SUBS_NODE__DETECTION_THRESHOLD) ||
- 		((s_podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT]) < SUBS_NODE__DETECTION_THRESHOLD)) {
+ 	if (((s_podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT]) < SUBS_NODE__LINE_THRESHOLD) ||
+ 		((s_podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT]) < SUBS_NODE__LINE_THRESHOLD)) {
 		s_ui16AvgLeft += s_podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT];
 		s_ui16AvgRight += s_podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT];
 		s_ui8NodeDetectionCounter++;
@@ -81,17 +83,21 @@ bool subs_node_run( void) {
 
 		// analyze the shape of the node		
 		if( (s_ui16AvgLeft < 1) &&( s_ui16AvgRight < 1) && (2 * s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < 1) ) { // 1 wird ersetzt durch den jeweiligen EEPROM-Kalibrierwert
-			subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__CROSS;
+			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__CROSS;
+			hal_led_switchOn(HAL_LED_PIN_BV__0);
+			hal_led_switchOn(HAL_LED_PIN_BV__2);
+			hal_led_switchOn(HAL_LED_PIN_BV__4);
+			hal_led_switchOn(HAL_LED_PIN_BV__6);
 		} else if( (s_ui16AvgLeft < 1) &&( s_ui16AvgRight < 1)) {
-			subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_T;
+			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_T;
 		} else if( (s_ui16AvgLeft < 1) && (2 * s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < 1)) {
-			subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__RIGHT_T;
+			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__RIGHT_T;
 		} else if( (s_ui16AvgRight < 1) && (2 * s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < 1)) {
-			subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__LEFT_T;
+			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__LEFT_T;
 		} else if( s_ui16AvgLeft < 1) {
-			subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_RIGHT_EDGE;
+			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_RIGHT_EDGE;
 		} else if( s_ui16AvgRight < 1) {
-			subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_LEFT_EDGE;
+			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_LEFT_EDGE;
 		}
 		s_ui16AvgLeft = 0;
 		s_ui16AvgRight = 0;
@@ -106,7 +112,7 @@ bool subs_node_run( void) {
 		hal_motors_setSteps( 0);
 		hal_motors_setSpeed( 0, 0);
 		com_SMessage_t podHitNodeMessage = { COM_MESSAGE_TYPE__RESPONSE_HIT_NODE, {0}};
-		podHitNodeMessage.aui8Data[0] = subs_node_sui8CurrentNodeType;
+		podHitNodeMessage.aui8Data[0] = subs_node_ui8CurrentNodeType;
 		com_send( &podHitNodeMessage);
 		s_blDetectionActive = false;
 		blActed = true;
@@ -122,7 +128,7 @@ bool subs_node_run( void) {
  */
 void subs_node_reset( void) {
 
-	subs_node_sui8CurrentNodeType = CONQUEST_NODE_TYPE__UNKNOWN;
+	subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__UNKNOWN;
 	s_blDetectionActive = false;
 	s_ui8NodeDetectionCounter = 0;
 	s_ui16AvgLeft = 0;

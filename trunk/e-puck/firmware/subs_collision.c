@@ -45,15 +45,15 @@ bool subs_collision_run( void) {
 	if( !s_blPreventionActive && blActed) {		
 
 		// Decide into which direction the e-puck should turn.
-// 		if( (subs_node_sui8CurrentNodeType == CONQUEST_NODE_TYPE__TOP_LEFT_EDGE) ||
-// 			(subs_node_sui8CurrentNodeType == CONQUEST_NODE_TYPE__LEFT_T) ||
-// 			(subs_node_sui8CurrentNodeType == CONQUEST_NODE_TYPE__CROSS)) {
-// 			hal_motors_setSpeed( 0, SUBS_COLLISION__TURNING_SPEED);
-// 		} else if( (subs_node_sui8CurrentNodeType == CONQUEST_NODE_TYPE__TOP_RIGHT_EDGE) ||
-// 			(subs_node_sui8CurrentNodeType == CONQUEST_NODE_TYPE__RIGHT_T) ||
-// 			(subs_node_sui8CurrentNodeType == CONQUEST_NODE_TYPE__TOP_T)) {
-// 			hal_motors_setSpeed( 0, -SUBS_COLLISION__TURNING_SPEED);
-// 		}
+ 		if( (subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__TOP_LEFT_EDGE) ||
+ 			(subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__LEFT_T) ||
+ 			(subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__CROSS)) {
+ 			hal_motors_setSpeed( 0, SUBS_COLLISION__TURNING_SPEED);
+ 		} else if( (subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__TOP_RIGHT_EDGE) ||
+ 			(subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__RIGHT_T) ||
+ 			(subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__TOP_T)) {
+ 			hal_motors_setSpeed( 0, -SUBS_COLLISION__TURNING_SPEED);
+ 		}
 		s_blPreventionActive = true;
 	
 	// Exit collision-prevention and reset state

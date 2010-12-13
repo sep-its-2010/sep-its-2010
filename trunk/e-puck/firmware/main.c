@@ -67,7 +67,7 @@ void cbBlinker(
 int main( void) {
 
 	subs_init();
-	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
+//	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
 	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
 // 	subs_register( subs_collision_run, subs_collision_reset, 0xDF);
 // 	subs_register( subs_movement_run, subs_movement_reset, 0xCF);
@@ -89,7 +89,7 @@ int main( void) {
 	hal_uart1_enable( true);
 //	hal_uart1_puts( "SEP 2010 ITS e-puck & Android Project\r\n");
 
-//	hal_motors_setSpeed( 800, 0);
+	hal_motors_setSpeed( 600, 0);
 
 	uint16_t ui16Test = 9;
 	char cstrTest[] = "This is an EEPROM test string.";
@@ -110,6 +110,7 @@ int main( void) {
 //	com_register( cbDemoMessageHandler);
 	for( ;;) {
 		com_processIncoming();
+	
 	}
 }
 
