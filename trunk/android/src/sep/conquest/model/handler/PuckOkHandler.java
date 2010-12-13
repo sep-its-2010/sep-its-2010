@@ -1,6 +1,7 @@
 package sep.conquest.model.handler;
 
 import sep.conquest.model.IRequest;
+import sep.conquest.model.LogicThread;
 import sep.conquest.model.requests.MessageType;
 
 /**
@@ -12,10 +13,16 @@ import sep.conquest.model.requests.MessageType;
 public class PuckOkHandler extends Handler {
 
   /**
+   * The LogicThread that executes the content.
+   */
+  private LogicThread executor;
+  
+  /**
    * Constructor calling constructor of super class.
    */
-  public PuckOkHandler(Handler next) {
+  public PuckOkHandler(Handler next, LogicThread exec) {
     super(next);
+    executor = exec;
   }
   
   /**
@@ -31,9 +38,9 @@ public class PuckOkHandler extends Handler {
   @Override
   public boolean handleRequest(IRequest request) {
     if (request.getKind().equals(MessageType.RESPONSE_OK)) {
+      executor.getRobot().setOkRcvd(true);
       return true;
-    } else {
-      return super.handleRequest(request);
     }
+    return false;
   }
 }

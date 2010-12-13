@@ -55,7 +55,7 @@ public class HandlerFactory {
    * @return Reference on first handler of chain.
    */
   public static Handler getPuckBTChain(LogicThread executor) {	  
-	  Handler okHndl = new PuckOkHandler(null);
+	  Handler okHndl = new PuckOkHandler(null, executor);
 	  Handler abyssHndl = new PuckAbyssHandler(okHndl, executor);
 	  Handler hitHndl = new PuckNodeHitHandler(abyssHndl, executor);
 	  Handler statHndl = new PuckStatusHandler(hitHndl, executor);
