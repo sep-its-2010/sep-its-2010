@@ -11,7 +11,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -20,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 /**
@@ -130,7 +128,7 @@ public class Export extends Activity {
 
   private void displayMapFiles() {
     fileList = new ArrayAdapter<String>(this, R.layout.list_item,
-        MapFileHandler.getFileList());
+        MapFileHandler.getMapFileList());
     lsMaps.setAdapter(fileList);
   }
 

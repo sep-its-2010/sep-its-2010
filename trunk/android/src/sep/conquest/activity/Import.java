@@ -68,6 +68,8 @@ public class Import extends Activity {
     lsMaps = (ListView) findViewById(R.id.lsMaps);
     lsMaps.setOnItemClickListener(new OnItemClickListener() {
 
+      private int lastSelected;
+
       /**
        * Handles clicks on items of ListView containing the available maps.
        * 
@@ -82,15 +84,31 @@ public class Import extends Activity {
        */
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id) {
+        // The TexView that has been selected.
         TextView txtMap = (TextView) view;
         Resources res = getResources();
-        selectedMap = txtMap.getText().toString();
-        txtMap.setTextColor(res.getColor(R.color.list_item_not_selected));
+
+        // Update name of selected map and change the text color of the
+        // corresponding TextView.
+        if (lastSelected == position) {
+          if (selectedMap == null) {
+            selectedMap = txtMap.getText().toString();
+            txtMap.setTextColor(res.getColor(R.color.list_item_selected));
+          } else {
+            selectedMap = null;
+            txtMap.setTextColor(res.getColor(R.color.list_item_not_selected));
+          }
+        } else {
+          selectedMap = txtMap.getText().toString();
+          TextView txtLastSelected = (TextView) parent.getChildAt(lastSelected);
+          txtLastSelected.setTextColor(res
+              .getColor(R.color.list_item_not_selected));
+          lastSelected = position;
+        }
       }
     });
-
-    // Display the list of found map files from the file system in the ListView.
-    displayMapFiles();
+    // Display the files found in the application directory.
+    displayFiles();
   }
 
   /**
@@ -121,16 +139,17 @@ public class Import extends Activity {
 
         // Intent message to start other Activities.
         Intent start = new Intent();
+        start.putExtra(EXTRA_FILE_PATH, selectedMap);
 
         switch (mode) {
         case SIMULATION_MAP:
-          // If Import has been opened by Simulation put file name
-          start.putExtra(EXTRA_FILE_PATH, selectedMap);
+          // If Import was launched to open a simulator configuration, set
+          // result code and finish Activity.
           setResult(RESULT_OK, start);
           finish();
           break;
         case IMPORT_MAP:
-          start.putExtra(EXTRA_FILE_PATH, selectedMap);
+          // If Import was launched to view a map, start Map Activity.
           start.setComponent(new ComponentName(getApplicationContext()
               .getPackageName(), Map.class.getName()));
           startActivity(start);
@@ -144,15 +163,37 @@ public class Import extends Activity {
     return true;
   }
 
-  private void displayMapFiles() {
-    String[] files = MapFileHandler.getFileList();
+  /**
+   * Displays all files found in the application directory.
+   * 
+   * If Import was launched to open Simulator configuration, only .sim
+   * files are displayed.
+   * 
+   * If Import was launched to view a map, only .sep files are displayed.
+   */
+  private void displayFiles() {
+    // Determine Import mode.
+    ImportMode mode = (ImportMode) getIntent().getSerializableExtra(
+        ImportMode.class.toString());
 
+    // Saves the file names returned by the MapFileHandler class.
+    String[] files = null;
+    
+    switch (mode) {
+    case IMPORT_MAP:
+      // Get all the map files (.sep).
+      files = MapFileHandler.getMapFileList();
+      break;
+    case SIMULATION_MAP:
+      // Get all the simulator configurations (.sim).
+      files = MapFileHandler.getSimFileList();
+      break;
+    }
     // If files equals null then storage is not readable.
     if (files == null) {
       displayMessage(getString(R.string.ERR_MSG_STORAGE_NOT_READABLE), true);
     } else {
-      fileList = new ArrayAdapter<String>(this, R.layout.list_item,
-          MapFileHandler.getFileList());
+      fileList = new ArrayAdapter<String>(this, R.layout.list_item, files);
       lsMaps.setAdapter(fileList);
     }
   }
@@ -173,8 +214,7 @@ public class Import extends Activity {
         new DialogInterface.OnClickListener() {
 
           /**
-           * Handles click on "ok" button of dialog
-           * Simply closes the dialog.
+           * Handles click on "ok" button of dialog Simply closes the dialog.
            */
           public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
