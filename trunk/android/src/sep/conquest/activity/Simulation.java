@@ -12,6 +12,7 @@ import sep.conquest.model.MapFileHandler;
 import sep.conquest.model.MapNode;
 import sep.conquest.model.Orientation;
 import sep.conquest.model.PuckFactory;
+import sep.conquest.model.SimConfiguration;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -170,7 +171,7 @@ public class Simulation extends Activity {
 				
 				String mapName = data.getStringExtra(Import.EXTRA_FILE_PATH);
 				try {
-					ImportContainer container = MapFileHandler.openMap(mapName);
+					SimConfiguration container = MapFileHandler.openMap(mapName);
 					map = container.getMap();
 					robotPositions = container.getPositions();
 					ori = container.getOrientations();
