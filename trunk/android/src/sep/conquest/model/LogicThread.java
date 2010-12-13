@@ -25,7 +25,7 @@ public class LogicThread implements Runnable {
 	/**
 	 * A instance of the AStarPathFinder class for shortest-path-finding.
 	 */
-	private AStarPathFinder aStar = new AStarPathFinder();
+	private AStarPathFinder aStar;
 
 	/**
 	 * A reference to the robot.
@@ -150,6 +150,7 @@ public class LogicThread implements Runnable {
 	 */
 	public void driveTo() {
 		int[][] dest = { getRobotState().getIntentPosition() };
+		aStar = new AStarPathFinder();
 		PathNode[] path = aStar
 				.find(robot, getRobotState().getPosition(), dest);
 		
@@ -177,9 +178,9 @@ public class LogicThread implements Runnable {
 		Orientation direction = Orientation.UNKNOWN;
 
 		if (startNode[0] < endNode[0])
-			direction = Orientation.RIGHT;
-		else if (startNode[0] > endNode[0])
 			direction = Orientation.LEFT;
+		else if (startNode[0] > endNode[0])
+			direction = Orientation.RIGHT;
 		else if (startNode[1] < endNode[1])
 			direction = Orientation.UP;
 		else if (startNode[1] > endNode[1])

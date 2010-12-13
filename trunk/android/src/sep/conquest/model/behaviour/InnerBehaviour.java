@@ -3,8 +3,8 @@ package sep.conquest.model.behaviour;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import sep.conquest.model.GraphNode;
 import sep.conquest.model.GridMap;
@@ -42,7 +42,7 @@ public final class InnerBehaviour extends Behaviour {
     	boolean ret = super.execute(map, robot);
     	
     	LinkedList<GraphNode> frontiers = robot.getMap().getFrontierList();
-    	Map<Integer, Set<Orientation>> innerNodes = new TreeMap<Integer, Set<Orientation>>();
+    	Map<Integer, Set<Orientation>> innerNodes = new ConcurrentHashMap<Integer, Set<Orientation>>();
     	GridMap gridMap = robot.getMap();
     	
     	for (GraphNode frontier: frontiers) {

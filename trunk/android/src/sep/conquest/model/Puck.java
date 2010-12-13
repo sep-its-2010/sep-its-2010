@@ -132,6 +132,11 @@ public abstract class Puck implements IComClient, IRobot {
 	 */
 	protected int btMessageLen = 0;	
 	
+	/**
+	 * Indicates whether an OK-message was received.
+	 */
+	private boolean okRcvd = false;
+	
 
 	/**
 	 * Constructor initializing ID, local map, own state, logic thread and
@@ -353,5 +358,23 @@ public abstract class Puck implements IComClient, IRobot {
 	 */
 	public boolean isControlled() {
 		return controlled;
+	}
+
+	/**
+	 * Sets the ok-received flag.
+	 * 
+	 * @param okRcvd
+	 */
+	public void setOkRcvd(boolean okRcvd) {
+		this.okRcvd = okRcvd;
+	}
+
+	/**
+	 * Indicates whether an ok-message was received.
+	 * 
+	 * @return
+	 */
+	public boolean isOkRcvd() {
+		return okRcvd;
 	}
 }
