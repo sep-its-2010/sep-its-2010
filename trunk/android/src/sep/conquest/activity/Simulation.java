@@ -67,6 +67,8 @@ public class Simulation extends Activity {
 	private int mNumber;
 	
 	private boolean mFirstRun = false;
+	
+	private ArrayAdapter<String> numberAdapter;
 
 	/**
 	 * Called when the Activity is initially created.
@@ -85,9 +87,10 @@ public class Simulation extends Activity {
 		map = new GridMap();
 		
 		Spinner numberOfRobots = (Spinner) findViewById(R.id.spNumber);
-		ArrayAdapter<?> numberAdapter = ArrayAdapter.createFromResource(this, R.array.numberRobots, android.R.layout.simple_spinner_item);
+		numberAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
 		numberAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		numberOfRobots.setAdapter(numberAdapter);
+		numberAdapter.add("load Map first");
 		numberOfRobots.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			public void onItemSelected(AdapterView<?> parent, View v,
@@ -189,7 +192,11 @@ public class Simulation extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+				mNumber = 0;
+				numberAdapter.clear();
+				for (int i = 0; i < robotPositions.length; i++) {
+					numberAdapter.add("" + (i+1));
+				}
 				setRobotPositions();
 				drawPreview(map.getMapAsList(), map.getMapBorders());
 				mFirstRun = true;
