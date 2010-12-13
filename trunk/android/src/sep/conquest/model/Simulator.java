@@ -251,7 +251,7 @@ public class Simulator {
     int newY = pos[1];
     Orientation ori = getOrientation(id);
     int turnCount = 0;
-    
+
     // Update current position of the robot.
     switch (ori) {
     case UP:
@@ -272,7 +272,7 @@ public class Simulator {
       break;
     }
 
-    // If new position can not be attended because of a collision,
+    // Check, if new position can not be attended because of a collision.
     if (collision(newX, newY)) {
       collide(id);
       setOrientation(id, Orientation
@@ -294,16 +294,14 @@ public class Simulator {
         if (getNumberOfCollisions(id) % 2 == 0) {
           // Get NodeType of new position.
           NodeType node = getNodeType(pos[0] / 3, pos[1] / 3);
-          
-          
-        // Turns the corners and T-crosses, so they can be added to the map
-		  NodeType finalNodeType = Utility.turnAround(turnCount, node);
-          
+
+          // Turns the corners and T-crosses, so they can be added to the map
+          NodeType finalNodeType = Utility.turnAround(turnCount, node);
+
           // Write message type "node hit" to first two bytes.
           response[0] = (byte) (Puck.RES_HITNODE & 0xFF);
           response[1] = (byte) ((Puck.RES_HITNODE >> 8) & 0xFF);
-          
-          
+
           // Write node type to third byte.
           response[2] = (byte) finalNodeType.ordinal();
         } else {
@@ -344,7 +342,8 @@ public class Simulator {
    * Increases the number of collisions that a certain robot suffers while
    * moving from one node to the next.
    * 
-   * @param id The robot that collided. 
+   * @param id
+   *          The robot that collided.
    */
   public void collide(UUID id) {
     if ((id != null) && robots.containsKey(id)) {
@@ -355,10 +354,11 @@ public class Simulator {
   }
 
   /**
-   * Returns the number of collision a robot has suffered while moving 
-   * from a node to the next.
+   * Returns the number of collision a robot has suffered while moving from a
+   * node to the next.
    * 
-   * @param id The robot of interest.
+   * @param id
+   *          The robot of interest.
    * 
    * @return The number of collisions.
    */
@@ -406,7 +406,8 @@ public class Simulator {
   /**
    * Returns the output buffer for a certain UUID.
    * 
-   * @param id The registered robot.
+   * @param id
+   *          The registered robot.
    * @return The output buffer byte array of length zero, if there is no
    *         message, or of length 32 if there is a message.
    */

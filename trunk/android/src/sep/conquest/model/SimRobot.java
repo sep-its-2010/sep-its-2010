@@ -3,7 +3,7 @@ package sep.conquest.model;
 /**
  * 
  * @author Andreas Poxrucker
- *
+ * 
  */
 public class SimRobot {
 
@@ -36,10 +36,10 @@ public class SimRobot {
    * Indicates whether robot is moving.
    */
   private boolean isMoving = false;
-  
+
   /**
-   * Indicates, how many collisions have happened until robot
-   * reaches the next node.
+   * Indicates, how many collisions have happened until robot reaches the next
+   * node.
    */
   private int collisionCounter = 0;
 
@@ -87,9 +87,11 @@ public class SimRobot {
    *         message.
    */
   public byte[] readBuffer() {
-    byte[] message = outputBuffer.clone();
-    outputBuffer = new byte[0];
-    return message;
+    synchronized (outputBuffer) {
+      byte[] message = outputBuffer.clone();
+      outputBuffer = new byte[0];
+      return message;
+    }
   }
 
   /**
@@ -99,15 +101,18 @@ public class SimRobot {
    *          The message to write on the output buffer.
    */
   public void writeBuffer(byte[] message) {
-    if (message.length == 32) {
-      outputBuffer = message.clone();
-    } else {
-      throw new IllegalArgumentException("Illegal message length");
+    synchronized (outputBuffer) {
+      if (message.length == 32) {
+        outputBuffer = message.clone();
+      } else {
+        throw new IllegalArgumentException("Illegal message length");
+      }
     }
   }
 
   /**
    * Adds a new request message
+   * 
    * @param request
    */
   public void addRequest(IRequest request) {
@@ -117,7 +122,7 @@ public class SimRobot {
       throw new IllegalArgumentException("Request must not equal null");
     }
   }
-  
+
   /**
    * Returns request message from the input buffer.
    * 
@@ -126,7 +131,7 @@ public class SimRobot {
   public IRequest getRequest() {
     return inputBuffer;
   }
-  
+
   /**
    * Resets the input buffer to null.
    */
@@ -210,25 +215,25 @@ public class SimRobot {
    */
   public void setMoving(boolean moving) {
     isMoving = moving;
-    
+
     // If robot is not moving because it has reached a node
     // reset collision counter.
     if (!moving) {
       collisionCounter = 0;
     }
   }
-  
+
   /**
-   * Increases the number of collisions that have occurred while
-   * not standing on a node.
+   * Increases the number of collisions that have occurred while not standing on
+   * a node.
    */
   public void collide() {
     collisionCounter++;
   }
-  
+
   /**
-   * Returns the number of collisions that have occurred while
-   * not standing on a node.
+   * Returns the number of collisions that have occurred while not standing on a
+   * node.
    * 
    * @return The number of collisions.
    */
