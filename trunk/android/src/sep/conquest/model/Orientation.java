@@ -24,23 +24,22 @@ package sep.conquest.model;
 public enum Orientation {
 	
 	/**
-	 * Orientation along initial defined 'up' direction.
-	 * @return 
+	 * Orientation along initial defined 'up' direction. (growing y-coordinates)
 	 */
 	UP,
 
 	/**
-	 * Orientation 180 degree turned.
+	 * Orientation 180 degree turned. (shrinking y-coordinates)
 	 */
 	DOWN,
 
 	/**
-	 * Orientation 90 degree left.
+	 * Orientation 90 degree left. (growing x-coordinates)
 	 */
 	LEFT,
 
 	/**
-	 * Orientation 90 degree right.
+	 * Orientation 90 degree right. (shrinking x-coordinates)
 	 */
 	RIGHT,
 
