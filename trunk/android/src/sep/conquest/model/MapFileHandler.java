@@ -65,7 +65,7 @@ public class MapFileHandler {
    *           No file with name filename has been found.
    */
   public static SimConfiguration openConfiguration(String filename)
-      throws IOException, FileNotFoundException, NumberFormatException {
+      throws IOException, FileNotFoundException {
 
     if (filename != null) {
       // Create new file with passed file name.
@@ -80,7 +80,13 @@ public class MapFileHandler {
       // The headline contains a single digit (0-6) about how many Pucks
       // will take part in an exploration.
       String headline = bReader.readLine();
-      int number = Integer.parseInt(headline);
+      int number;
+      
+      try {
+        number = Integer.parseInt(headline);
+      } catch (NumberFormatException ex) {
+        throw new IOException("Illegal file format");
+      }
 
       // Number must be between 0 and 6
       if ((number < 1) || (number > 6)) {
@@ -108,8 +114,15 @@ public class MapFileHandler {
         if ((tokens.length < 3) || (tokens.length > 4)) {
           throw new IOException("Illegal file format");
         } else {
-          int x = Integer.parseInt(tokens[0]);
-          int y = Integer.parseInt(tokens[1]);
+          int x;
+          int y;
+          
+          try {
+            x = Integer.parseInt(tokens[0]);
+            y = Integer.parseInt(tokens[1]);
+          } catch (NumberFormatException ex) {
+            throw new IOException("Illegal file format");
+          }
           NodeType type = NodeType.valueOf(tokens[2]);
           map.addNode(x, y, type);
 
@@ -118,7 +131,13 @@ public class MapFileHandler {
           // The value of the fourth token (0-3) indicates the orientation of
           // robot.
           if (tokens.length == 4) {
-            int index = Integer.parseInt(tokens[3]);
+            int index;;
+            
+            try {
+              index = Integer.parseInt(tokens[3]);
+            } catch (NumberFormatException ex) {
+              throw new IOException("Illegal file format");
+            }
             
             // If orientation is invalid, throw Exception.
             if ((index > 3) || (index < 0)) {
