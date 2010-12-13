@@ -179,9 +179,7 @@ public class PuckNodeHitHandler extends Handler {
 			StatusUpdateRequest statusUpdateReq = new StatusUpdateRequest(
 					executor.getRobot().getID(), null, statusOfRobot);
 			executor.getRobot().broadcast(statusUpdateReq);
-			
-			// drive to next node on path
-			executor.driveTo();	
+
 			return true;
 		}
 			
