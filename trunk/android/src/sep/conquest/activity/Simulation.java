@@ -65,6 +65,8 @@ public class Simulation extends Activity {
 	 * Saves the chosen position in the spinner.
 	 */
 	private int mNumber;
+	
+	private boolean mFirstRun = false;
 
 	/**
 	 * Called when the Activity is initially created.
@@ -92,6 +94,11 @@ public class Simulation extends Activity {
 					int position, long id) {
 				
 				mNumber = position;
+				if (mFirstRun) {
+					setRobotPositions();
+					drawPreview(map.getMapAsList(), map.getMapBorders());
+				}
+							
 			}
 
 			public void onNothingSelected(AdapterView<?> arg0) {
@@ -171,7 +178,7 @@ public class Simulation extends Activity {
 				
 				String mapName = data.getStringExtra(Import.EXTRA_FILE_PATH);
 				try {
-					SimConfiguration container = MapFileHandler.openMap(mapName);
+					SimConfiguration container = MapFileHandler.openConfiguration(mapName);
 					map = container.getMap();
 					robotPositions = container.getPositions();
 					ori = container.getOrientations();
@@ -183,14 +190,19 @@ public class Simulation extends Activity {
 					e.printStackTrace();
 				}
 				
-				positions.clear();
-				for (int j = 0; j < robotPositions.length; j++) {
-					int x = robotPositions[j][0];
-					int y = robotPositions[j][1];
-					positions.add(new EpuckPosition(x, y, "0"));
-				}
+				setRobotPositions();
 				drawPreview(map.getMapAsList(), map.getMapBorders());
+				mFirstRun = true;
 			}
+		}
+	}
+	
+	private void setRobotPositions() {
+		positions.clear();
+		for (int j = 0; j < mNumber+1; j++) {
+			int x = robotPositions[j][0];
+			int y = robotPositions[j][1];
+			positions.add(new EpuckPosition(x, y, "0"));
 		}
 	}
 	
