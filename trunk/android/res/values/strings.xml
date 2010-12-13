@@ -39,4 +39,6 @@
 <string name="TXT_OK">Ok</string>
 <string name="MSG_SUCCESSFULLY_SAVED">Map successfully saved.</string>
 <string name="ERR_MSG_NOT_SUCCESSFULLY_SAVED">Error: Could not save map to file system.</string>
+<string name="TXT_NUMBER_NODES">Number of Nodes</string>
+<string name="TXT_OVERRUN_NODES">Overrun Nodes</string>
 </resources>
