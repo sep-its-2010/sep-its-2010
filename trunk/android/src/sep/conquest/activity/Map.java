@@ -169,8 +169,9 @@ public class Map extends Activity implements Observer {
 		mRobotAdapter.add("none");
 		for (UUID key : id) {
 			int[] position = cu.getRobotStatus().get(key).getPosition();
-			mPositions.add(new EpuckPosition(position[0], position[1], ""));
-			mRobotAdapter.add(key.toString());
+			String name = cu.getRobotName(key);
+			mPositions.add(new EpuckPosition(position[0], position[1], name));
+			mRobotAdapter.add(name);
 		}
 		
 		draw.setMap(cu.getMapList(), cu.getBorders());

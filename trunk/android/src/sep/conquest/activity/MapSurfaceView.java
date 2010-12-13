@@ -737,16 +737,7 @@ public class MapSurfaceView extends SurfaceView
         mRobotSelect = selector;
     }
     
-    public final void setDrawable(boolean isDrawing) {
-    	//ExecutorService service = Executors.newSingleThreadExecutor();
-    	if (isDrawing) {
-    		mThread.start();
-    		
-    	} else {
-    		mThread.setPaused(true);
-    	}
 
-    }
     
 
 
