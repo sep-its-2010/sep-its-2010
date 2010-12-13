@@ -65,7 +65,7 @@ public class MapFileHandler {
    *           No file with name filename has been found.
    */
   public static SimConfiguration openConfiguration(String filename)
-      throws IOException, FileNotFoundException {
+      throws IOException, FileNotFoundException, NumberFormatException {
 
     if (filename != null) {
       // Create new file with passed file name.
@@ -83,7 +83,7 @@ public class MapFileHandler {
       int number = Integer.parseInt(headline);
 
       // Number must be between 0 and 6
-      if ((number < 0) || (number > 6)) {
+      if ((number < 1) || (number > 6)) {
         throw new IOException("Illegal file format");
       }
 
@@ -119,13 +119,19 @@ public class MapFileHandler {
           // robot.
           if (tokens.length == 4) {
             int index = Integer.parseInt(tokens[3]);
+            
+            // If orientation is invalid, throw Exception.
+            if ((index > 3) || (index < 0)) {
+              throw new IOException("Configuration contains illegal orientation");
+            }
+            
             Orientation ori = Orientation.values()[index];
             int[] pos = { x, y };
             positions[posRead] = pos;
             orientations[posRead] = ori;
             posRead++;
 
-            if (posRead > number) {
+            if (posRead > (number - 1)) {
               throw new IOException("Illegal file format");
             }
           }
@@ -134,6 +140,11 @@ public class MapFileHandler {
       // Close readers and return reconstructed map.
       bReader.close();
       fReader.close();
+      
+      // If map contains frontier nodes then map is invalid.
+      if (map.getFrontierList().size() != 0) {
+        throw new IOException("File contains an invalid map");
+      }
       return new SimConfiguration(map, positions, orientations);
     } else {
       // Thrown, when filename equals null.

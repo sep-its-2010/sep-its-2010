@@ -100,6 +100,7 @@ public class Import extends Activity {
           }
         } else {
           selectedMap = txtMap.getText().toString();
+          txtMap.setTextColor(res.getColor(R.color.list_item_selected));
           TextView txtLastSelected = (TextView) parent.getChildAt(lastSelected);
           txtLastSelected.setTextColor(res
               .getColor(R.color.list_item_not_selected));
