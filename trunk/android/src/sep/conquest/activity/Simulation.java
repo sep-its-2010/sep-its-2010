@@ -187,7 +187,7 @@ public class Simulation extends Activity {
 				for (int j = 0; j < robotPositions.length; j++) {
 					int x = robotPositions[j][0];
 					int y = robotPositions[j][1];
-					positions.add(new EpuckPosition(x, y, null));
+					positions.add(new EpuckPosition(x, y, "0"));
 				}
 				drawPreview(map.getMapAsList(), map.getMapBorders());
 			}
