@@ -14,7 +14,9 @@ import sep.conquest.model.Orientation;
 import sep.conquest.model.PuckFactory;
 import sep.conquest.model.SimConfiguration;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -68,6 +70,8 @@ public class Simulation extends Activity {
 	
 	private boolean mFirstRun = false;
 	
+	private Spinner numberOfRobots;
+	
 	private ArrayAdapter<String> numberAdapter;
 
 	/**
@@ -86,11 +90,11 @@ public class Simulation extends Activity {
 		positions = new LinkedList<EpuckPosition>();
 		map = new GridMap();
 		
-		Spinner numberOfRobots = (Spinner) findViewById(R.id.spNumber);
+		numberOfRobots = (Spinner) findViewById(R.id.spNumber);
 		numberAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
 		numberAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		numberOfRobots.setAdapter(numberAdapter);
-		numberAdapter.add("load Map first");
+		numberOfRobots.setEnabled(false);
 		numberOfRobots.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			public void onItemSelected(AdapterView<?> parent, View v,
@@ -186,12 +190,13 @@ public class Simulation extends Activity {
 					robotPositions = container.getPositions();
 					ori = container.getOrientations();
 				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					displayMessage(getString(R.string.ERR_MSG_FILE_NOT_FOUND), true);
+					return;
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					displayMessage(getString(R.string.ERR_MSG_INVALID_FILE), true);
+					return;
 				}
+				numberOfRobots.setEnabled(true);
 				mNumber = 0;
 				numberAdapter.clear();
 				for (int i = 0; i < robotPositions.length; i++) {
@@ -212,5 +217,26 @@ public class Simulation extends Activity {
 			positions.add(new EpuckPosition(x, y, "0"));
 		}
 	}
+	
+	  /**
+	   * Displays a message on top of the Activity.
+	   * 
+	   * @param message
+	   *          The message to display.
+	   */
+	  private void displayMessage(String message, boolean isError) {
+	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setMessage(message);
+	    builder.setCancelable(false);
+	    builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+	      
+	      public void onClick(DialogInterface dialog, int which) {
+	        dialog.dismiss();
+	        
+	      }
+	    });
+	    AlertDialog alert = builder.create();
+	    alert.show();
+	  }
 	
 }
