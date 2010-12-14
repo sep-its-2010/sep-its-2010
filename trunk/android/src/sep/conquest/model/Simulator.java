@@ -255,20 +255,20 @@ public class Simulator {
     // Update current position of the robot.
     switch (ori) {
     case UP:
-      newY++;
-      turnCount = 2;
-      break;
-    case DOWN:
       newY--;
       turnCount = 0;
       break;
-    case LEFT:
-      newX++;
-      turnCount = 3;
+    case DOWN:
+      newY++;
+      turnCount = 2;
       break;
-    case RIGHT:
+    case LEFT:
       newX--;
       turnCount = 1;
+      break;
+    case RIGHT:
+      newX++;
+      turnCount = 3;
       break;
     }
 
