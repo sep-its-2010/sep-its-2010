@@ -206,7 +206,7 @@ public class LogicThread implements Runnable {
 			// handle bluetooth messages
 			IRequest request = getBTMessage();
 			if (request != null) {
-				ConquestLog.addMessage(this, "Work on "+request.getKind().name());
+				ConquestLog.addMessage(this, robot.getName()+" :"+request.getKind().name());
 				btHandler.handleRequest(request);
 				changed = true;
 			}
@@ -214,7 +214,7 @@ public class LogicThread implements Runnable {
 			// handle broadcast messages
 			if (!bcQueue.isEmpty()) {
 				IRequest req = bcQueue.poll();
-				ConquestLog.addMessage(this, "Work on "+req.getKind().name());
+				ConquestLog.addMessage(this, robot.getName()+" :"+req.getKind().name());
 				bcHandler.handleRequest(req);
 				changed = true;
 			}

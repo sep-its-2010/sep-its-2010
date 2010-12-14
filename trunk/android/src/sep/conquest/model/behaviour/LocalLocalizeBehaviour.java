@@ -1,11 +1,14 @@
 package sep.conquest.model.behaviour;
 
 import java.util.Map;
+import java.util.UUID;
 
 import sep.conquest.model.Orientation;
 import sep.conquest.model.Puck;
+import sep.conquest.model.RobotStatus;
 import sep.conquest.model.State;
 import sep.conquest.model.requests.MessageType;
+import sep.conquest.util.Utility;
 
 /**
  * LocalLocalizeBehaviour represents a behaviour for localizing adjacent robots.
@@ -14,6 +17,8 @@ import sep.conquest.model.requests.MessageType;
  * @author Andreas Wilhelm
  */
 public final class LocalLocalizeBehaviour extends Behaviour {
+	
+	public static Map<UUID, Integer> startPositions;
 
     /**
      * The constructor enables chain-handling by calling the constructor of
@@ -39,7 +44,9 @@ public final class LocalLocalizeBehaviour extends Behaviour {
 			super.writeSocket(robot, request);
     	} else {
     		awaitResponse = false;
-    		robot.getRobotStatus().get(robot.getID()).setOrientation(Orientation.UP);
+    		RobotStatus status = robot.getRobotStatus().get(robot.getID());
+    		status.setOrientation(Orientation.UP);
+    		status.setPosition(Utility.extractCoordinates(startPositions.get(robot.getID())));
     		robot.changeBehaviour(State.EXPLORE);
     	} 
         return super.execute(map, robot);
