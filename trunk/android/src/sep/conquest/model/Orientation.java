@@ -7,16 +7,16 @@ package sep.conquest.model;
  * described in the following: 
  * 
  * UP: Means that the puck looks in the
- * direction of growing y-coordinates 
- * 
- * DOWN: Means that the puck looks in the
  * direction of shrinking y-coordinates 
  * 
+ * DOWN: Means that the puck looks in the
+ * direction of growing y-coordinates 
+ * 
  * LEFT: Means that the puck looks in
- * the direction of growing x-coordinates 
+ * the direction of shrinking x-coordinates 
  * 
  * RIGHT: Means that the puck look
- * in the direction of shrinking x-coordinates
+ * in the direction of growing x-coordinates
  * 
  * @author Andreas Poxrucker
  * 

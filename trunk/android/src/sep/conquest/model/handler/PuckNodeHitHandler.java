@@ -72,7 +72,7 @@ public class PuckNodeHitHandler extends Handler {
 			case UP:
 				/*
 				 * position x = (bufferPosition[0]) position y =
-				 * (bufferPosition[1] + 1)
+				 * (bufferPosition[1] - 1)
 				 */
 				newCoordinateY--;
 				turnCount = 0;
@@ -80,14 +80,14 @@ public class PuckNodeHitHandler extends Handler {
 			case DOWN:
 				/*
 				 * position x = (bufferPosition[0]) position y =
-				 * (bufferPosition[1] - 1)
+				 * (bufferPosition[1] + 1)
 				 */
 				newCoordinateY++;
 				turnCount = 2;
 				break;
 			case LEFT:
 				/*
-				 * position x = (bufferPosition[0] + 1) position y =
+				 * position x = (bufferPosition[0] - 1) position y =
 				 * (bufferPosition[1])
 				 */
 				newCoordinateX--;
@@ -95,7 +95,7 @@ public class PuckNodeHitHandler extends Handler {
 				break;
 			case RIGHT:
 				/*
-				 * position x = (bufferPosition[0] - 1) position y =
+				 * position x = (bufferPosition[0] + 1) position y =
 				 * (bufferPosition[1])
 				 */
 				newCoordinateX++;
