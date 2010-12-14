@@ -47,6 +47,7 @@ public final class LocalLocalizeBehaviour extends Behaviour {
     		RobotStatus status = robot.getRobotStatus().get(robot.getID());
     		status.setOrientation(Orientation.UP);
     		status.setPosition(Utility.extractCoordinates(startPositions.get(robot.getID())));
+    		robot.getMap().addNode(status.getPosition()[0], status.getPosition()[1], status.getNodeType());
     		robot.changeBehaviour(State.EXPLORE);
     	} 
         return super.execute(map, robot);
