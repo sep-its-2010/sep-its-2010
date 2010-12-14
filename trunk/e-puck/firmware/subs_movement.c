@@ -175,7 +175,7 @@ bool cbHandleRequestTurn(
  * True, if a message has been handled by this function, false otherwise.
  *
  * Computes the type of the message by analyzing the first and second Byte of the message.
- * If this handler is responsible 
+ * If this handler is responsible the robot gets the advice to start moving as soon as subs_run is called.
  * 
  * \remarks
  * Handler-functions have to be registered during the reset function.

@@ -1,8 +1,8 @@
 #include <string.h>
 
-#include "hal_led.h"
 #include "hal_motors.h"
 #include "sen_line.h"
+#include "subs_movement.h"
 
 #include "subs_line.h"
 
@@ -10,7 +10,7 @@
 #define KRC 2.5	//2.5		// stability limit
 #define TC 0.4	//0.2		// loop time
 #define IMAX 1500.0			// max integration sum
-#define INITIAL_SPEED 600	// initial speed // @TODO Geschwindigkeit muss global hinterlegt werden
+//#define INITIAL_SPEED 600	// initial speed // @TODO Geschwindigkeit muss global hinterlegt werden
 #define SPEED_MAX 1000		// maximum speed
 #define SPEED_MIN 0			// minimum speed
 
@@ -24,8 +24,8 @@ const float tv = 0.12 * TC;
 
 // constants for pid-controller (PID-adjust-algorithm)
 const float yp = 1.0;
-// const float yi = (t / tn);
-// const float yd = (tv / t);
+//const float yi = (t / tn);
+//const float yd = (tv / t);
 
 static float y_old = 0.0;
 static float diff_new = 0.0;
@@ -44,10 +44,13 @@ static float diff_sum = 0.0;
  * Therefor a PID-controlling-algorithm is deployed.
  */
 bool subs_line_run( void) {	
-
+	
+	int16_t i16CurrentLineSpeed = subs_movement_getCurrentLineSpeed();
+	//int16_t i16CurrentAngularSpeed = subs_movement_getCurrentAngularSpeed();
 	float y_new = 0;
 	sen_line_SData_t podSensorData = {{0}};
 	sen_line_read( &podSensorData);
+	sen_line_rescale( &podSensorData, &podSensorData);
 
 	// calculate integration-part
 	diff_sum += diff_new;
@@ -70,12 +73,12 @@ bool subs_line_run( void) {
 	y_new = kr * yp * diff_new;
 
 	// set motor speed
-	if (INITIAL_SPEED + (int)(y_new / 2) > SPEED_MAX) {
-		y_new = 2 * (SPEED_MAX - INITIAL_SPEED) - 1;
-	}else if (INITIAL_SPEED - (int)(y_new / 2) < SPEED_MIN) {
-		y_new = 2 * (INITIAL_SPEED - SPEED_MIN) + 1;
+	if( i16CurrentLineSpeed + (int)(y_new / 2) > SPEED_MAX) {
+		y_new = 2 * (SPEED_MAX - i16CurrentLineSpeed) - 1;
+	} else if( i16CurrentLineSpeed - (int)(y_new / 2) < SPEED_MIN) {
+		y_new = 2 * (i16CurrentLineSpeed - SPEED_MIN) + 1;
 	}
-	hal_motors_setSpeed(INITIAL_SPEED, (int)(y_new / 2));
+	hal_motors_setSpeed( i16CurrentLineSpeed, (int)(y_new / 2));
 
 	// store static values
 	diff_old = diff_new;

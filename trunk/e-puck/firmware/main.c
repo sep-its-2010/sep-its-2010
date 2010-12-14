@@ -20,6 +20,9 @@
 
 #include "conquest.h"
 
+#include "sen_line.h"
+#include "sen_line_types.h"
+
 
 /*!
  * \brief
@@ -67,8 +70,8 @@ void cbBlinker(
 int main( void) {
 
 	subs_init();
-//	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
-	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
+	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
+//	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
 // 	subs_register( subs_collision_run, subs_collision_reset, 0xDF);
 // 	subs_register( subs_movement_run, subs_movement_reset, 0xCF);
 // 	subs_register( subs_movement_run, subs_movement_reset, 0xBF);
@@ -89,7 +92,24 @@ int main( void) {
 	hal_uart1_enable( true);
 //	hal_uart1_puts( "SEP 2010 ITS e-puck & Android Project\r\n");
 
-	hal_motors_setSpeed( 600, 0);
+//	hal_motors_setSpeed( 700, 0);
+	// TEST
+	sen_line_SData_t podLineSensors;
+	sen_line_read( &podLineSensors);
+	if( podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] > 0) {
+		hal_motors_setSpeed( 200, 0);
+	} else if ( podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] > 100) {
+		hal_motors_setSpeed( 400, 0);
+	} else if ( podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] > 200) {
+		hal_motors_setSpeed( 600, 0);
+	} else if ( podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] > 300) {
+		hal_motors_setSpeed( 800, 0);
+	} else if ( podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] > 400) {
+		hal_motors_setSpeed( 1000, 0);
+	} else if ( podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] > 500) {
+		hal_motors_setSpeed( 0, 0);
+	}
+
 
 	uint16_t ui16Test = 9;
 	char cstrTest[] = "This is an EEPROM test string.";
@@ -99,7 +119,6 @@ int main( void) {
 
 	for( ;;)
 		;
-
 
 	// Real time clock with 100Hz
 	hal_rtc_init( FCY / 256 / 100);

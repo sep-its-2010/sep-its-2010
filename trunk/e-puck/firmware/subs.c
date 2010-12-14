@@ -1,6 +1,14 @@
 #include <string.h>
 
 #include "subs.h"
+#include "com.h"
+#include "hal_rtc.h"
+#include "sen_line.h"
+#include "subs_abyss.h"
+#include "subs_node.h"
+#include "sen_prox.h"
+#include "subs_collision.h"
+#include "hal_led.h"
 
 /*!
  * \brief
@@ -21,6 +29,10 @@ static subs_SBehaviorPriorityList_t s_apodBehaviors[SUBS_MAX_BEHAVIORS];
  */
 static subs_SBehaviorPriorityList_t* s_lppodFirstBehavior = NULL;
 
+static bool cbHandleRequestStatus( IN const com_SMessage_t* const _lppodMessage);
+static bool cbHandleRequestReset( IN const com_SMessage_t* const _lppodMessage);
+static bool cbHandleRequestSetLED( IN const com_SMessage_t* const _lppodMessage);
+
 
 /*!
  * \brief
@@ -38,6 +50,9 @@ void subs_init( void) {
 
 	memset( s_apodBehaviors, 0, sizeof( s_apodBehaviors) / sizeof( *s_apodBehaviors));
 	s_lppodFirstBehavior = NULL;
+	com_register( cbHandleRequestStatus);
+	com_register( cbHandleRequestReset);
+	com_register( cbHandleRequestSetLED);
 }
 
 
@@ -91,6 +106,9 @@ void subs_reset( void) {
 			fnReset();
 		}
 	}
+	com_register( cbHandleRequestStatus);
+	com_register( cbHandleRequestReset);
+	com_register( cbHandleRequestSetLED);
 }
 
 
@@ -231,4 +249,138 @@ void subs_unregister(
 			memset( lppodCurrent, 0, sizeof( *lppodCurrent));
 		}
 	}
+}
+
+/*!
+ * \brief
+ * Handles status-requests.
+ * 
+ * \param _podMessage
+ * Specifies the message which has to be analyzed.
+ * 
+ * \returns
+ * True, if a message has been handled by this function, false otherwise.
+ *
+ * Computes the type of the message by analyzing the first and second Byte of the message.
+ * If this handler is responsible a message containing all current status-data will be created and sent to the smartphone.
+ * 
+ * \remarks
+ * Handler-functions have to be registered.
+ */
+bool cbHandleRequestStatus(
+	IN const com_SMessage_t* const _lppodMessage
+	) {
+
+	bool blHandledMessage = false;
+
+	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_STATUS) {
+		com_SMessage_t podStatusResponse = {COM_MESSAGE_TYPE__RESPONSE_STATUS, {0}};
+
+		// record system up-time in little endian format
+		uint32_t ui32SystemUpTime = hal_rtc_getSystemUpTime();
+ 		podStatusResponse.aui8Data[0] = (ui32SystemUpTime & 0x000000FF);
+		podStatusResponse.aui8Data[1] = (ui32SystemUpTime & 0x0000FF00) >> 8;
+ 		podStatusResponse.aui8Data[2] = (ui32SystemUpTime & 0x00FF0000) >> 16;
+ 		podStatusResponse.aui8Data[3] = (ui32SystemUpTime & 0xFF000000) >> 24;
+
+		// record abyss status
+		sen_line_SData_t podSensorData= {{0}};
+		sen_line_read( &podSensorData);
+		sen_line_rescale( &podSensorData, &podSensorData);
+
+		if( podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD) {
+			podStatusResponse.aui8Data[3 + SEN_LINE_SENSOR__LEFT] = true;
+		}
+		if( podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD) {
+			podStatusResponse.aui8Data[3 + SEN_LINE_SENSOR__MIDDLE] = true;
+		}
+		if( podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD) {
+			podStatusResponse.aui8Data[3 + SEN_LINE_SENSOR__RIGHT] = true;
+		}
+
+		// record collision status
+		sen_prox_SData_t podProxSensorData = {{0}};
+		sen_prox_getCurrent( &podProxSensorData);
+
+		for( uint8_t i = 0; i < sizeof(podProxSensorData.aui8Data); i++) {
+			if( podProxSensorData.aui8Data[i] > SUBS_COLLISION__PROX_THRESHOLD) {
+				podStatusResponse.aui8Data[7 + i] = true;
+			}
+		}
+
+		// record last visited node-type
+		podStatusResponse.aui8Data[15] = subs_node_getCurrentNodeType();
+
+		blHandledMessage = true;
+	}
+
+	return blHandledMessage;
+}
+
+/*!
+ * \brief
+ * Handles reset-requests.
+ * 
+ * \param _podMessage
+ * Specifies the message which has to be analyzed.
+ * 
+ * \returns
+ * True, if a message has been handled by this function, false otherwise.
+ *
+ * Computes the type of the message by analyzing the first and second Byte of the message.
+ * If this handler is responsible the robot will be reset to its default state.
+ * 
+ * \remarks
+ * Handler-functions have to be registered during the reset function.
+ */
+bool cbHandleRequestReset(
+	IN const com_SMessage_t* const _lppodMessage
+	) {
+
+	bool blHandledMessage = false;
+
+	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_STATUS) {
+		subs_reset();
+		blHandledMessage = true;
+	}
+
+	return blHandledMessage;
+}
+
+/*!
+ * \brief
+ * Handles SetLED-requests.
+ * 
+ * \param _podMessage
+ * Specifies the message which has to be analyzed.
+ * 
+ * \returns
+ * True, if a message has been handled by this function, false otherwise.
+ *
+ * Computes the type of the message by analyzing the first and second Byte of the message.
+ * If this handler is responsible the LEDs which are specified in the first ten bytes of the message-data will be switched on, all other LEDs will be switched off.
+ * 
+ * \remarks
+ * Handler-functions have to be registered during the reset function.
+ */
+bool cbHandleRequestSetLED(
+	IN const com_SMessage_t* const _lppodMessage
+	) {
+
+	bool blHandledMessage = false;
+
+	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_SET_LED) {
+		uint16_t ui16LEDsToSet = 0;
+
+		for( uint8_t ui8 = 0; ui8 < 10; ui8++) {
+			if( _lppodMessage->aui8Data[ui8] == true) {
+				ui16LEDsToSet++;
+				ui16LEDsToSet = ui16LEDsToSet << 1;
+			}
+		}
+		hal_led_set(ui16LEDsToSet);
+		blHandledMessage = true;
+	}
+
+	return blHandledMessage;
 }
