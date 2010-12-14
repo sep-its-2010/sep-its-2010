@@ -153,6 +153,7 @@ public class Import extends Activity {
           // If Import was launched to view a map, start Map Activity.
           start.setComponent(new ComponentName(getApplicationContext()
               .getPackageName(), Map.class.getName()));
+          start.putExtra(MapMode.class.toString(), MapMode.IMPORT);
           startActivity(start);
           break;
         }

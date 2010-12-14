@@ -7,7 +7,6 @@ import java.util.List;
 
 import sep.conquest.R;
 import sep.conquest.model.GridMap;
-import sep.conquest.model.ImportContainer;
 import sep.conquest.model.MapFileHandler;
 import sep.conquest.model.MapNode;
 import sep.conquest.model.Orientation;

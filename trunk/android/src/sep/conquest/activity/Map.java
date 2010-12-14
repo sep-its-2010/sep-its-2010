@@ -1,6 +1,9 @@
 package sep.conquest.activity;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -9,8 +12,13 @@ import java.util.UUID;
 import sep.conquest.R;
 import sep.conquest.controller.Controller;
 import sep.conquest.model.ConquestUpdate;
+import sep.conquest.model.GridMap;
+import sep.conquest.model.MapFileHandler;
+import sep.conquest.model.MapNode;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -37,6 +45,8 @@ public class Map extends Activity implements Observer {
 	private ArrayAdapter < String > mRobotAdapter;
 	
 	private LinkedList < EpuckPosition > mPositions;
+	
+	private MapMode mMode;
 
     /**
      * Is implemented by Activity and is called when the map class is accessed.
@@ -83,16 +93,27 @@ public class Map extends Activity implements Observer {
         });
         
         setSpinner();
+        
+        mMode = (MapMode) getIntent().getSerializableExtra(MapMode.class.toString());
+        if (mMode == MapMode.IMPORT) {
+        	
+        	mRobotSelect.setEnabled(false);
+        	loadMap();
+        }
     }
     
     public void onResume() {
     	super.onResume();
+    	if (mMode != MapMode.IMPORT) {
     	Controller.getInstance().getEnv().addObserver(this);
+    	}
     }
     
     public void onPause() {
     	super.onPause();
-    	Controller.getInstance().getEnv().deleteObserver(this);
+    	if (mMode != MapMode.IMPORT) {
+        	Controller.getInstance().getEnv().deleteObserver(this);
+        	}
     }
 
     /**
@@ -154,7 +175,29 @@ public class Map extends Activity implements Observer {
         return true;
     }
     
-    public void setSpinner() {
+    private void loadMap() {
+    	String mapName = getIntent().getStringExtra(Import.EXTRA_FILE_PATH);
+    	try {
+			GridMap container = MapFileHandler.openMap(mapName);
+			drawMap(container.getMapAsList(), container.getMapBorders());
+		} catch (FileNotFoundException e) {
+			displayMessage(getString(R.string.ERR_MSG_FILE_NOT_FOUND), true);
+			return;
+		} catch (IOException e) {
+			displayMessage(getString(R.string.ERR_MSG_INVALID_FILE), true);
+			return;
+		}
+		
+    }
+    
+    private void drawMap(List<MapNode> map, int[] borders) {
+    	MapSurfaceView draw = (MapSurfaceView) findViewById(R.id.map_view);
+		
+		draw.setMode(MapMode.IMPORT);
+		draw.setMap(map, borders);
+    }
+    
+    private void setSpinner() {
     	MapSurfaceView map = (MapSurfaceView) findViewById(R.id.map_view);
     	map.setSpinner(mRobotSelect);
     }
@@ -178,5 +221,26 @@ public class Map extends Activity implements Observer {
 		draw.setRobotPosition(mPositions);
 
 	}
+	
+	  /**
+	   * Displays a message on top of the Activity.
+	   * 
+	   * @param message
+	   *          The message to display.
+	   */
+	  private void displayMessage(String message, boolean isError) {
+	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setMessage(message);
+	    builder.setCancelable(false);
+	    builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+	      
+	      public void onClick(DialogInterface dialog, int which) {
+	        dialog.dismiss();
+	        
+	      }
+	    });
+	    AlertDialog alert = builder.create();
+	    alert.show();
+	  }
 
 }

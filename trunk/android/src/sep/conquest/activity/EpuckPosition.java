@@ -1,6 +1,5 @@
 package sep.conquest.activity;
 
-import java.util.UUID;
 
 /**
  * This class saves the position of every single e-puck within the map. The

@@ -3,9 +3,6 @@ package sep.conquest.activity;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import sep.conquest.model.MapNode;
 import android.content.Context;
