@@ -150,7 +150,7 @@ public class MapFileHandler {
             orientations[posRead] = ori;
             posRead++;
 
-            if (posRead > (number - 1)) {
+            if (posRead > number) {
               throw new IOException("Illegal file format");
             }
           }

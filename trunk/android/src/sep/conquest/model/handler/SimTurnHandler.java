@@ -66,8 +66,9 @@ public class SimTurnHandler extends Handler {
       byte turn = msg[2];
 
       // Set new orientation of the robot in the simulator.
-      sim.setOrientation(sender, Orientation.getTurnedOrientation(turn, sim
-          .getOrientation(sender)));
+      Orientation newOri = Orientation.getTurnedOrientation(turn, sim
+          .getOrientation(sender));
+      sim.setOrientation(sender, newOri);
 
       // Write message type "ok" to first two bytes and write whole message
       // to the output buffer.

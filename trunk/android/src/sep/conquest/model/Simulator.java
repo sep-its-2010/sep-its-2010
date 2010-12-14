@@ -267,7 +267,7 @@ public class Simulator {
       turnCount = 3;
       break;
     case RIGHT:
-      newX++;
+      newX--;
       turnCount = 1;
       break;
     }

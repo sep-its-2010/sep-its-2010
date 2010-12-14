@@ -29,14 +29,14 @@ public enum Orientation {
 	UP,
 
 	/**
-	 * Orientation 180 degree turned. (shrinking y-coordinates)
-	 */
-	DOWN,
-
-	/**
 	 * Orientation 90 degree left. (growing x-coordinates)
 	 */
 	LEFT,
+	
+	/**
+   * Orientation 180 degree turned. (shrinking y-coordinates)
+   */
+  DOWN,
 
 	/**
 	 * Orientation 90 degree right. (shrinking x-coordinates)
