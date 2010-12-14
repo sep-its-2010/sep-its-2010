@@ -18,7 +18,7 @@ public class DriveRequest extends Request {
     /**
      * The specific drive command of the request message.
      */
-    private Orientation driveCommand;
+    private int driveCommand;
     
     /**
      * The constructor expects a drive-command and a corresponding robot.
@@ -28,7 +28,21 @@ public class DriveRequest extends Request {
      */
     public DriveRequest(UUID sender, UUID[] receiver, Orientation command) {
         super(sender, receiver);
-        driveCommand = command;
+        switch (command) {
+        case UP:
+        	driveCommand = 0;
+        	break;
+        case DOWN:
+        	driveCommand = 2;
+        	break;
+        case LEFT:
+        	driveCommand = -1;
+        case RIGHT:
+        	driveCommand = 1;
+        default:
+        	driveCommand = 0;
+        }
+        
     }
 
     /* (non-Javadoc)
@@ -43,7 +57,7 @@ public class DriveRequest extends Request {
      * 
      * @return The drive-command.
      */
-    public Orientation getCommand() {
+    public int getCommand() {
         return driveCommand;
     }
 }

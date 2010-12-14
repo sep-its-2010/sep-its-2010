@@ -241,18 +241,18 @@ public abstract class Puck implements IComClient, IRobot {
    * 
    * @param direction
    */
-  public void driveCommand(Orientation direction) {
-    switch (direction) {
-    case UP:
+  public void driveCommand(int turns) {
+    switch (turns) {
+    case 0:
       this.forward();
       break;
-    case DOWN:
+    case 2:
       this.turn();
       break;
-    case LEFT:
+    case -1:
       this.left();
       break;
-    case RIGHT:
+    case 1:
       this.right();
       break;
     default:
@@ -309,7 +309,7 @@ public abstract class Puck implements IComClient, IRobot {
     byte[] request = new byte[32];
     request[0] = (byte) (MessageType.REQUEST_TURN.getTypeCode() & 0xff);
     request[1] = (byte) ((MessageType.REQUEST_TURN.getTypeCode() >> 8) & 0xff);
-    request[2] = (byte) 1; // turn right
+    request[2] = (byte) -1;
 
     writeSocket(request);
   }
@@ -318,7 +318,7 @@ public abstract class Puck implements IComClient, IRobot {
     byte[] request = new byte[32];
     request[0] = (byte) (MessageType.REQUEST_TURN.getTypeCode() & 0xff);
     request[1] = (byte) ((MessageType.REQUEST_TURN.getTypeCode() >> 8) & 0xff);
-    request[2] = (byte) -1; // turn left
+    request[2] = (byte) 1;
 
     writeSocket(request);
   }

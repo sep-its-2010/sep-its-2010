@@ -249,17 +249,19 @@ public class Simulator {
     int[] pos = getPosition(id);
     int newX = pos[0];
     int newY = pos[1];
-    Orientation ori = getOrientation(id);
+    Orientation ori = getOrientation(id); // get global orientation
+    Orientation loc = robots.get(id).getInitialOrientation(); // get local ori.
+    ori = Orientation.turn(loc, ori);
     int turnCount = 0;
 
     // Update current position of the robot.
     switch (ori) {
     case UP:
-      newY--;
+      newY++;
       turnCount = 0;
       break;
     case DOWN:
-      newY++;
+      newY--;
       turnCount = 2;
       break;
     case LEFT:

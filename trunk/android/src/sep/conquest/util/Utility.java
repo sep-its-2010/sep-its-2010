@@ -80,5 +80,4 @@ public final class Utility {
 		}
 		return bufferNodeType;
 	}
-	
 }

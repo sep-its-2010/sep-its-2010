@@ -49,11 +49,66 @@ public enum Orientation {
 	UNKNOWN;
 	
 	public static Orientation getTurnedOrientation(int turn, Orientation ori) {
+		
 	  if (ori == UNKNOWN) {
 	    return UNKNOWN;
 	  } else {
-	    int newOriOrdinal = (ori.ordinal() + (turn % 4) + 4) % 4;
-	    return Orientation.values()[newOriOrdinal];
+		switch(ori) {
+		case UP:
+			switch (turn) {
+			case -1:
+				return RIGHT;
+			case 0:
+				return UP;
+			case 1:
+				return LEFT;
+			case 2:
+				return DOWN;
+			default: 
+				return ori;
+			}
+		case DOWN:
+			switch (turn) {
+			case -1:
+				return LEFT;
+			case 0:
+				return DOWN;
+			case 1:
+				return RIGHT;
+			case 2:
+				return UP;
+			default: 
+				return ori;
+			}
+		case LEFT:
+			switch (turn) {
+			case -1:
+				return UP;
+			case 0:
+				return LEFT;
+			case 1:
+				return DOWN;
+			case 2:
+				return RIGHT;
+			default: 
+				return ori;
+			}	
+		case RIGHT:
+			switch (turn) {
+			case -1:
+				return DOWN;
+			case 0:
+				return RIGHT;
+			case 1:
+				return UP;
+			case 2:
+				return LEFT;
+			default: 
+				return ori;
+			}
+		default:
+			return ori;
+		}
 	  }
 	}
 	
@@ -72,6 +127,8 @@ public enum Orientation {
 		return direction;
 	}
 	
+	
+	
 	/**
 	 * The method adds a orientation of the robot and a desired direction to
 	 * get the turning-command.
@@ -80,51 +137,104 @@ public enum Orientation {
 	 * @param dir The direction in which the robot should drive.
 	 * @return The resulting turning-direction.
 	 */
-	public static Orientation addDirection(Orientation ori, Orientation dir) {
+	public static int addDirection(Orientation ori, Orientation dir) {
 		switch (ori) {
 		case UP:
-			return dir;
+			switch (dir) {
+			case UP:
+				return 0;
+			case DOWN:
+				return 2;
+			case LEFT:
+				return -1;
+			case RIGHT:
+				return 1;
+			default:
+				return 0;
+			}
 		case DOWN:
 			switch (dir) {
 			case UP:
-				return DOWN;
+				return 2;
 			case DOWN:
-				return UP;
+				return 0;
+			case LEFT:
+				return -1;
+			case RIGHT:
+				return 1;
+			default:
+				return 0;
+			}
+		case LEFT:
+			switch (dir) {
+			case UP:
+				return -1;
+			case DOWN:
+				return 1;
+			case LEFT:
+				return 0;
+			case RIGHT:
+				return 2;
+			default:
+				return 0;
+			}
+		case RIGHT:
+			switch (dir) {
+			case UP:
+				return 1;
+			case DOWN:
+				return -1;
+			case LEFT:
+				return 2;
+			case RIGHT:
+				return 0;
+			default:
+				return 0;
+			}
+		default:
+			return 0;
+		}
+	}
+	
+	public static Orientation turn(Orientation initial, Orientation dir) {
+		switch (initial) {
+		case UP:
+			switch(dir) {
 			case LEFT:
 				return RIGHT;
 			case RIGHT:
+				return LEFT;
+			default:
+				return dir;
+			}
+		case RIGHT:
+			switch(dir) {
+			case LEFT:
+				return DOWN;
+			case RIGHT:
+				return UP;
+			case UP:
+				return RIGHT;
+			case DOWN:
 				return LEFT;
 			default:
 				return dir;
 			}
 		case LEFT:
-			switch (dir) {
-			case UP:
-				return RIGHT;
-			case DOWN:
-				return LEFT;
+			switch(dir) {
 			case LEFT:
 				return UP;
 			case RIGHT:
 				return DOWN;
-			default:
-				return dir;
-			}
-		case RIGHT:
-			switch (dir) {
 			case UP:
 				return LEFT;
 			case DOWN:
 				return RIGHT;
-			case LEFT:
-				return DOWN;
-			case RIGHT:
-				return UP;
 			default:
 				return dir;
 			}
 		default:
 			return dir;
 		}
-	}
+	}		
 }

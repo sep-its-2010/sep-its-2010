@@ -173,8 +173,9 @@ public class LogicThread implements Runnable {
 				robot.getRobotStatus().put(robot.getID(), stat);
 				robot.setOkRcvd(false);
 			}
-			newDir = Orientation.addDirection(getRobotState().getOrientation(), newDir);
-			robot.driveCommand(newDir);
+			
+			int command = Orientation.addDirection(getRobotState().getOrientation(), newDir);
+			robot.driveCommand(command);
 		}
 	}
 

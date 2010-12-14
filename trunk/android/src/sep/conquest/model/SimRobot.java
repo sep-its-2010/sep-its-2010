@@ -263,4 +263,9 @@ public class SimRobot {
     isMoving = false;
     collisionCounter++;
   }
+  
+  //TODO kommentar
+  public Orientation getInitialOrientation() {
+	  return initialOrientation;
+  }
 }

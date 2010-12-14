@@ -74,7 +74,7 @@ public class PuckNodeHitHandler extends Handler {
 				 * position x = (bufferPosition[0]) position y =
 				 * (bufferPosition[1] - 1)
 				 */
-				newCoordinateY--;
+				newCoordinateY++;
 				turnCount = 0;
 				break;
 			case DOWN:
@@ -82,7 +82,7 @@ public class PuckNodeHitHandler extends Handler {
 				 * position x = (bufferPosition[0]) position y =
 				 * (bufferPosition[1] + 1)
 				 */
-				newCoordinateY++;
+				newCoordinateY--;
 				turnCount = 2;
 				break;
 			case LEFT:
@@ -141,6 +141,15 @@ public class PuckNodeHitHandler extends Handler {
 				break;
 			case MapNode.TOPT:
 				typeOfNewNode = NodeType.TOPT;
+				break;
+			case MapNode.BOTTOMLEFTEDGE:
+				typeOfNewNode = NodeType.BOTTOMLEFTEDGE;
+				break;
+			case MapNode.BOTTOMRIGHTEDGE:
+				typeOfNewNode = NodeType.BOTTOMRIGHTEDGE;
+				break;
+			case MapNode.BOTTOMT:
+				typeOfNewNode = NodeType.BOTTOMT;
 				break;
 			}
 			
