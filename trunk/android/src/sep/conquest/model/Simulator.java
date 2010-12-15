@@ -254,10 +254,10 @@ public class Simulator {
     // Update current position of the robot.
     switch (ori) {
     case UP:
-      newY--;
+      newY++;
       break;
     case DOWN:
-      newY++;
+      newY--;
       break;
     case LEFT:
       newX--;
