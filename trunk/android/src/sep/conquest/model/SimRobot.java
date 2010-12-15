@@ -15,7 +15,7 @@ public class SimRobot {
   /**
    * The initial orientation of the robot.
    */
-  private final Orientation initialGlobalOrientation;
+  private final Orientation initialOrientation;
 
   /**
    * The current position of the robot.
@@ -28,15 +28,10 @@ public class SimRobot {
   private long timestamp;
 
   /**
-   * The current global orientation of the robot.
+   * The current orientation if the robot.
    */
-  private Orientation globalOrientation;
-  
-  /**
-   * The current local orientation of the robot.
-   */
-  private Orientation localOrientation;
-  
+  private Orientation orientation;
+
   /**
    * Indicates whether robot is moving.
    */
@@ -68,25 +63,14 @@ public class SimRobot {
    * @param initialOrientation
    *          The initial orientation of the robot.
    */
-  public SimRobot(int[] initialPosition, Orientation initialGlobalOrientation) {
+  public SimRobot(int[] initialPosition, Orientation initialOrientation) {
     // If one of the arguments equals null, throw exception.
-    if ((initialPosition != null) && (initialGlobalOrientation != null)) {
-      
-      // Get timestamp to calculate system up time.
+    if ((initialPosition != null) && (initialOrientation != null)) {
       timestamp = System.currentTimeMillis();
-      
-      // Save initial position and orientation on the global map.
-      this.initialGlobalOrientation = initialGlobalOrientation;
+      this.initialOrientation = initialOrientation;
       this.initialPosition = initialPosition.clone();
-      
-      // Set initial positon and orientation on the global map.
       position = initialPosition.clone();
-      globalOrientation = initialGlobalOrientation;
-      
-      // Set initial local orientation.
-      localOrientation = Orientation.UP;
-      
-      // Initialize output buffer.
+      orientation = initialOrientation;
       outputBuffer = new byte[0];
     } else {
       throw new IllegalArgumentException(
@@ -191,48 +175,24 @@ public class SimRobot {
   }
 
   /**
-   * Returns the current global orientation of the robot.
+   * Returns the current orientation of the robot.
    * 
    * @return The current orientation of the robot.
    */
-  public Orientation getGlobalOrientation() {
-    return globalOrientation;
-  }
-  
-  /**
-   * Returns the current local orientation of the robot.
-   * 
-   * @return The current orientation of the robot.
-   */
-  public Orientation getLocalOrientation() {
-    return localOrientation;
+  public Orientation getOrientation() {
+    return orientation;
   }
 
   /**
-   * Sets the current global orientation of the robot to a new orientation.
+   * Sets the current orientation of the robot to a new orientation.
    * 
    * @param newOrientation
    *          The new orientation of the robot.
    */
-  public void setGlobalOrientation(Orientation newOrientation) {
+  public void setOrientation(Orientation newOrientation) {
     // If new orientation is invalid, throw exception.
     if (newOrientation != null) {
-      globalOrientation = newOrientation;
-    } else {
-      throw new IllegalArgumentException("New orientation can not be null");
-    }
-  }
-  
-  /**
-   * Sets the current local orientation of the robot to a new orientation.
-   * 
-   * @param newOrientation
-   *          The new orientation of the robot.
-   */
-  public void setLocalOrientation(Orientation newOrientation) {
-    // If new orientation is invalid, throw exception.
-    if (newOrientation != null) {
-      localOrientation = newOrientation;
+      orientation = newOrientation;
     } else {
       throw new IllegalArgumentException("New orientation can not be null");
     }
@@ -294,29 +254,14 @@ public class SimRobot {
    * Resets the state to its initial values.
    */
   public void reset() {
-    // Get new timestamp.
+    // Get new timestamp
     timestamp = System.currentTimeMillis();
-    
-    // Reset position to initial values from the file.
     position[0] = initialPosition[0];
     position[1] = initialPosition[1];
-    
-    // Reset global orientation to initial orientation from the file.
-    globalOrientation = initialGlobalOrientation;
-    
-    // Reset local orientation.
-    localOrientation = Orientation.UP;
-    
-    // Reset output and input buffers.
+    orientation = initialOrientation;
     outputBuffer = new byte[0];
     inputBuffer = null;
-    
-    // Reset moving state and collision counter.
-    setMoving(false);
-  }
-  
-  //TODO kommentar
-  public Orientation getInitialOrientation() {
-	  return initialGlobalOrientation;
+    isMoving = false;
+    collisionCounter++;
   }
 }

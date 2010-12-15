@@ -65,18 +65,17 @@ public class SimTurnHandler extends Handler {
       // The third byte in the message contains the turn value.
       byte turn = msg[2];
 
-      // Set new global orientation of the robot in the simulator.
-      Orientation globalOri = sim.getGlobalOrientation(sender);
-      Orientation newGlobalOri = Orientation.getTurnedOrientation(turn, globalOri);
-      sim.setGlobalOrientation(sender, newGlobalOri);
-      Orientation newLocalOri = Orientation.turn(sim.getInitialOrientation(sender), newGlobalOri);
-      sim.setLocalOrientation(sender, newLocalOri);
+      // Set orientation of the robot in the simulator.
+      Orientation ori = sim.getOrientation(sender);
+      sim.setOrientation(sender, Orientation.getTurnedOrientation(turn, ori));
 
       // Write message type "ok" to first two bytes and write whole message
       // to the output buffer.
       byte[] response = new byte[32];
       response[0] = (byte) (Puck.RES_OK & 0xFF);
       response[1] = (byte) ((Puck.RES_OK >> 8) & 0xFF);
+      
+      // Write message to output buffer and clear input buffer.
       sim.writeBuffer(sender, response);
       sim.clearRequest(sender);
       return true;

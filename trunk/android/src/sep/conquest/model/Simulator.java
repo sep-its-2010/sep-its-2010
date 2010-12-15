@@ -201,163 +201,37 @@ public class Simulator {
   }
 
   /**
-   * Returns the current global orientation of a robot.
+   * Returns the current orientation of a robot.
    * 
    * @param id
    *          The id of the robot whose orientation is requested.
    * @return The requested orientation.
    */
-  public Orientation getGlobalOrientation(UUID id) {
+  public Orientation getOrientation(UUID id) {
     if ((id != null) && robots.containsKey(id)) {
-      return robots.get(id).getGlobalOrientation();
+      return robots.get(id).getOrientation();
     } else {
       throw new IllegalArgumentException("Asked for orientation of unknown id");
     }
   }
 
   /**
-   * Sets the global orientation of a robot.
+   * Sets the orientation of a robot.
    * 
    * @param id
    *          The id of the robot whose orientation is to set.
    * @param newOrientation
    *          The new orientation of the robot.
    */
-  public void setGlobalOrientation(UUID id, Orientation newOrientation) {
+  public void setOrientation(UUID id, Orientation newOrientation) {
     if ((id != null) && robots.containsKey(id) && (newOrientation != null)) {
-      robots.get(id).setGlobalOrientation(newOrientation);
+      robots.get(id).setOrientation(newOrientation);
     } else {
       throw new IllegalArgumentException(
           "Asked to set orientation of unknown id");
     }
-  }
-  
-  /**
-   * Returns the current local orientation of a robot.
-   * 
-   * @param id
-   *          The id of the robot whose orientation is requested.
-   * @return The requested orientation.
-   */
-  public Orientation getLocalOrientation(UUID id) {
-    if ((id != null) && robots.containsKey(id)) {
-      return robots.get(id).getLocalOrientation();
-    } else {
-      throw new IllegalArgumentException("Asked for orientation of unknown id");
-    }
-  }
-  
-  /**
-   * Sets the local orientation of a robot.
-   * 
-   * @param id
-   *          The id of the robot whose orientation is to set.
-   * @param newOrientation
-   *          The new orientation of the robot.
-   */
-  public void setLocalOrientation(UUID id, Orientation newOrientation) {
-    if ((id != null) && robots.containsKey(id) && (newOrientation != null)) {
-      robots.get(id).setLocalOrientation(newOrientation);
-    } else {
-      throw new IllegalArgumentException(
-          "Asked to set orientation of unknown id");
-    }
-  }
-  
-  public Orientation getInitialOrientation(UUID id) {
-    return robots.get(id).getInitialOrientation();
   }
 
-  private NodeType calculateNodeTypesToPuckOrientation(Orientation ori, NodeType typeOfNode){
-	  switch(typeOfNode){
-	  case TOPLEFTEDGE:
-		  if(ori == Orientation.RIGHT){
-			  return NodeType.TOPRIGHTEDGE;
-		  } else if(ori == Orientation.UP){
-			  return NodeType.TOPLEFTEDGE;
-		  } else {
-			  throw new IllegalArgumentException("TopLeftEdge can be reached from" +
-			  		"Right and Up not from: " + ori);
-		  }
-	  case TOPRIGHTEDGE:
-		  if(ori == Orientation.UP){
-			  return NodeType.TOPRIGHTEDGE;
-		  } else if(ori == Orientation.LEFT){
-			  return NodeType.TOPLEFTEDGE;
-		  } else {
-			  throw new IllegalArgumentException("TopRightEdge can be reached from" +
-				  		"Left and Up not from: " + ori);
-		  }
-	  case BOTTOMLEFTEDGE:
-		  if(ori == Orientation.RIGHT){
-			  return NodeType.TOPLEFTEDGE;
-		  } else if(ori == Orientation.DOWN){
-			  return NodeType.TOPRIGHTEDGE;
-		  } else {
-			  throw new IllegalArgumentException("BottomLeftEdge can be reached from" +
-				  		"Right and Down not from: " + ori);
-		  }
-	  case BOTTOMRIGHTEDGE:
-		  if(ori == Orientation.LEFT){
-			  return NodeType.TOPRIGHTEDGE;
-		  } else if(ori == Orientation.DOWN){
-			  return NodeType.TOPLEFTEDGE;
-		  } else {
-			  throw new IllegalArgumentException("BottomRightEdge can be reached from" +
-				  		"Left and Down not from: " + ori);
-		  }
-	  case BOTTOMT:
-		  if(ori == Orientation.LEFT){
-			  return NodeType.RIGHTT;
-		  } else if(ori == Orientation.DOWN){
-			  return NodeType.TOPT;
-		  } else if(ori == Orientation.RIGHT){
-			  return NodeType.LEFTT;			 
-		  } else {
-			  throw new IllegalArgumentException("BOTTOMT can be reached from" +
-				  		"Left and Down and Right not from: " + ori);
-		  }
-	  case CROSS:
-		  return NodeType.CROSS;
-	  case LEFTT:
-		  if(ori == Orientation.RIGHT){
-			  return NodeType.TOPT;
-		  } else if(ori == Orientation.DOWN){
-			  return NodeType.RIGHTT;
-		  } else if(ori == Orientation.UP){
-			  return NodeType.LEFTT;			 
-		  } else {
-			  throw new IllegalArgumentException("LEFTT can be reached from" +
-				  		"Up and Down and Right not from: " + ori);
-		  }
-	  case RIGHTT:
-		  if(ori == Orientation.LEFT){
-			  return NodeType.TOPT;
-		  } else if(ori == Orientation.DOWN){
-			  return NodeType.LEFTT;
-		  } else if(ori == Orientation.UP){
-			  return NodeType.RIGHTT;			 
-		  } else {
-			  throw new IllegalArgumentException("RIGHTT can be reached from" +
-				  		"Left and Down and Up not from: " + ori);
-		  }
-	  case TOPT:
-		  if(ori == Orientation.LEFT){
-			  return NodeType.LEFTT;
-		  } else if(ori == Orientation.UP){
-			  return NodeType.TOPT;
-		  } else if(ori == Orientation.RIGHT){
-			  return NodeType.RIGHTT;			 
-		  } else {
-			  throw new IllegalArgumentException("TOPT can be reached from" +
-				  		"Left and Up and Right not from: " + ori);
-		  }
-	  default:
-		  		throw new IllegalArgumentException("Failure: " + typeOfNode + " , " + ori);
-	  }
-  }
-  
-  
   /**
    * Moves a robot one step further.
    * 
@@ -375,21 +249,15 @@ public class Simulator {
     int[] pos = getPosition(id);
     int newX = pos[0];
     int newY = pos[1];
-    Orientation globalOri = getGlobalOrientation(id);
-    Orientation localOri = getLocalOrientation(id);
-    int turnCount = Orientation.addDirection(localOri, globalOri);
-    
-    if (turnCount == -1) {
-      turnCount = 3;
-    }
+    Orientation ori = getOrientation(id);
 
     // Update current position of the robot.
-    switch (globalOri) {
+    switch (ori) {
     case UP:
-      newY++;
+      newY--;
       break;
     case DOWN:
-      newY--;
+      newY++;
       break;
     case LEFT:
       newX--;
@@ -402,9 +270,8 @@ public class Simulator {
     // Check, if new position can not be attended because of a collision.
     if (collision(newX, newY)) {
       collide(id);
-      setGlobalOrientation(id, Orientation
-          .getTurnedOrientation(2, globalOri));
-      setLocalOrientation(id, Orientation.getTurnedOrientation(2, localOri));
+      setOrientation(id, Orientation
+          .getTurnedOrientation(2, getOrientation(id)));
     } else {
       // Assign new position.
       pos[0] = newX;
@@ -422,16 +289,14 @@ public class Simulator {
         if (getNumberOfCollisions(id) % 2 == 0) {
           // Get NodeType of new position.
           NodeType node = getNodeType(pos[0] / 3, pos[1] / 3);
-
-          // Turns the corners and T-crosses, so they can be added to the map
-          NodeType finalNodeType = Utility.turnAround(turnCount, node);
+          node = Utility.calculateNodeTypesToPuckOrientation(ori, node);
 
           // Write message type "node hit" to first two bytes.
           response[0] = (byte) (Puck.RES_HITNODE & 0xFF);
           response[1] = (byte) ((Puck.RES_HITNODE >> 8) & 0xFF);
 
           // Write node type to third byte.
-          response[2] = (byte) finalNodeType.ordinal();
+          response[2] = (byte) node.ordinal();
         } else {
           // Write message type "collision" to first two bytes.
           response[0] = (byte) (Puck.RES_COLLISION & 0xFF);
