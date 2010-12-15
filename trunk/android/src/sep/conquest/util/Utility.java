@@ -1,6 +1,7 @@
 package sep.conquest.util;
 
 import sep.conquest.model.NodeType;
+import sep.conquest.model.Orientation;
 
 /**
  * The utility class for the e-puck conquest application.
@@ -80,4 +81,94 @@ public final class Utility {
 		}
 		return bufferNodeType;
 	}
+	
+	public NodeType calculateNodeTypesToPuckOrientation(Orientation ori, NodeType typeOfNode){
+    switch(typeOfNode){
+    case TOPLEFTEDGE:
+      if(ori == Orientation.RIGHT){
+        return NodeType.TOPRIGHTEDGE;
+      } else if(ori == Orientation.UP){
+        return NodeType.TOPLEFTEDGE;
+      } else {
+        throw new IllegalArgumentException("TopLeftEdge can be reached from" +
+            "Right and Up not from: " + ori);
+      }
+    case TOPRIGHTEDGE:
+      if(ori == Orientation.UP){
+        return NodeType.TOPRIGHTEDGE;
+      } else if(ori == Orientation.LEFT){
+        return NodeType.TOPLEFTEDGE;
+      } else {
+        throw new IllegalArgumentException("TopRightEdge can be reached from" +
+              "Left and Up not from: " + ori);
+      }
+    case BOTTOMLEFTEDGE:
+      if(ori == Orientation.RIGHT){
+        return NodeType.TOPLEFTEDGE;
+      } else if(ori == Orientation.DOWN){
+        return NodeType.TOPRIGHTEDGE;
+      } else {
+        throw new IllegalArgumentException("BottomLeftEdge can be reached from" +
+              "Right and Down not from: " + ori);
+      }
+    case BOTTOMRIGHTEDGE:
+      if(ori == Orientation.LEFT){
+        return NodeType.TOPRIGHTEDGE;
+      } else if(ori == Orientation.DOWN){
+        return NodeType.TOPLEFTEDGE;
+      } else {
+        throw new IllegalArgumentException("BottomRightEdge can be reached from" +
+              "Left and Down not from: " + ori);
+      }
+    case BOTTOMT:
+      if(ori == Orientation.LEFT){
+        return NodeType.RIGHTT;
+      } else if(ori == Orientation.DOWN){
+        return NodeType.TOPT;
+      } else if(ori == Orientation.RIGHT){
+        return NodeType.LEFTT;       
+      } else {
+        throw new IllegalArgumentException("BOTTOMT can be reached from" +
+              "Left and Down and Right not from: " + ori);
+      }
+    case CROSS:
+      return NodeType.CROSS;
+    case LEFTT:
+      if(ori == Orientation.RIGHT){
+        return NodeType.TOPT;
+      } else if(ori == Orientation.DOWN){
+        return NodeType.RIGHTT;
+      } else if(ori == Orientation.UP){
+        return NodeType.LEFTT;       
+      } else {
+        throw new IllegalArgumentException("LEFTT can be reached from" +
+              "Up and Down and Right not from: " + ori);
+      }
+    case RIGHTT:
+      if(ori == Orientation.LEFT){
+        return NodeType.TOPT;
+      } else if(ori == Orientation.DOWN){
+        return NodeType.LEFTT;
+      } else if(ori == Orientation.UP){
+        return NodeType.RIGHTT;      
+      } else {
+        throw new IllegalArgumentException("RIGHTT can be reached from" +
+              "Left and Down and Up not from: " + ori);
+      }
+    case TOPT:
+      if(ori == Orientation.LEFT){
+        return NodeType.LEFTT;
+      } else if(ori == Orientation.UP){
+        return NodeType.TOPT;
+      } else if(ori == Orientation.RIGHT){
+        return NodeType.RIGHTT;      
+      } else {
+        throw new IllegalArgumentException("TOPT can be reached from" +
+              "Left and Up and Right not from: " + ori);
+      }
+    default:
+          throw new IllegalArgumentException("Failure: " + typeOfNode + " , " + ori);
+    }
+  }
+
 }
