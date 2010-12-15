@@ -4,19 +4,15 @@ package sep.conquest.model;
  * Represents the directions the pucks can be adjusted. The source of the
  * coordinate system is in the left upper corner and the x-coordinate grows
  * downwards. The y-coordinate grows rightwards. The Orientation of the puck is
- * described in the following: 
+ * described in the following:
  * 
- * UP: Means that the puck looks in the
- * direction of shrinking y-coordinates 
+ * UP: Means that the puck looks in the direction of shrinking y-coordinates
  * 
- * DOWN: Means that the puck looks in the
- * direction of growing y-coordinates 
+ * DOWN: Means that the puck looks in the direction of growing y-coordinates
  * 
- * LEFT: Means that the puck looks in
- * the direction of shrinking x-coordinates 
+ * LEFT: Means that the puck looks in the direction of shrinking x-coordinates
  * 
- * RIGHT: Means that the puck look
- * in the direction of growing x-coordinates
+ * RIGHT: Means that the puck look in the direction of growing x-coordinates
  * 
  * @author Andreas Poxrucker
  * 
@@ -26,93 +22,122 @@ public enum Orientation {
 	/**
 	 * Orientation along initial defined 'up' direction. (growing y-coordinates)
 	 */
-	UP,
+	UP(0),
 
 	/**
 	 * Orientation 90 degree left. (growing x-coordinates)
 	 */
-	LEFT,
-	
+	LEFT(-1),
+
 	/**
-   * Orientation 180 degree turned. (shrinking y-coordinates)
-   */
-  DOWN,
+	 * Orientation 180 degree turned. (shrinking y-coordinates)
+	 */
+	DOWN(2),
 
 	/**
 	 * Orientation 90 degree right. (shrinking x-coordinates)
 	 */
-	RIGHT,
+	RIGHT(1),
 
 	/**
 	 * Orientation is unknown.
 	 */
-	UNKNOWN;
+	UNKNOWN(0);
+
+	private static final int C_UP = 0;
+	private static final int C_LEFT = -1;
+	private static final int C_RIGHT = 1;
+	private static final int C_DOWN = 2;	
 	
-	public static Orientation getTurnedOrientation(int turn, Orientation ori) {
-		
-	  if (ori == UNKNOWN) {
-	    return UNKNOWN;
-	  } else {
-		switch(ori) {
-		case UP:
-			switch (turn) {
-			case -1:
-				return RIGHT;
-			case 0:
-				return UP;
-			case 1:
-				return LEFT;
-			case 2:
-				return DOWN;
-			default: 
-				return ori;
-			}
-		case DOWN:
-			switch (turn) {
-			case -1:
-				return LEFT;
-			case 0:
-				return DOWN;
-			case 1:
-				return RIGHT;
-			case 2:
-				return UP;
-			default: 
-				return ori;
-			}
-		case LEFT:
-			switch (turn) {
-			case -1:
-				return UP;
-			case 0:
-				return LEFT;
-			case 1:
-				return DOWN;
-			case 2:
-				return RIGHT;
-			default: 
-				return ori;
-			}	
-		case RIGHT:
-			switch (turn) {
-			case -1:
-				return DOWN;
-			case 0:
-				return RIGHT;
-			case 1:
-				return UP;
-			case 2:
-				return LEFT;
-			default: 
-				return ori;
-			}
-		default:
-			return ori;
-		}
-	  }
+	/**
+	 * The orientation level.
+	 */
+	private int orientation;
+
+	/**
+	 * The private constructor to enable orientation values.
+	 * 
+	 * @param orientation
+	 */
+	private Orientation(int orientation) {
+		this.orientation = orientation;
 	}
 	
-	public static Orientation getTurnedOrientation(int[] startNode, int[] endNode) {
+	/**
+	 * Returns the orientation value.
+	 * 
+	 * @return The orientation value.
+	 */
+	public int getOrientation() {
+		return orientation;
+	}
+
+	public static Orientation getTurnedOrientation(int turn, Orientation ori) {
+
+		if (ori == UNKNOWN) {
+			return UNKNOWN;
+		} else {
+			switch (ori) {
+			case UP:
+				switch (turn) {
+				case C_LEFT:
+					return RIGHT;
+				case C_UP:
+					return UP;
+				case C_RIGHT:
+					return LEFT;
+				case C_DOWN:
+					return DOWN;
+				default:
+					return ori;
+				}
+			case DOWN:
+				switch (turn) {
+				case C_LEFT:
+					return LEFT;
+				case C_UP:
+					return DOWN;
+				case C_RIGHT:
+					return RIGHT;
+				case C_DOWN:
+					return UP;
+				default:
+					return ori;
+				}
+			case LEFT:
+				switch (turn) {
+				case C_LEFT:
+					return UP;
+				case C_UP:
+					return LEFT;
+				case C_RIGHT:
+					return DOWN;
+				case C_DOWN:
+					return RIGHT;
+				default:
+					return ori;
+				}
+			case RIGHT:
+				switch (turn) {
+				case C_LEFT:
+					return DOWN;
+				case C_UP:
+					return RIGHT;
+				case C_RIGHT:
+					return UP;
+				case C_DOWN:
+					return LEFT;
+				default:
+					return ori;
+				}
+			default:
+				return ori;
+			}
+		}
+	}
+
+	public static Orientation getTurnedOrientation(int[] startNode,
+			int[] endNode) {
 		Orientation direction = Orientation.UNKNOWN;
 
 		if (startNode[0] < endNode[0])
@@ -123,18 +148,18 @@ public enum Orientation {
 			direction = Orientation.UP;
 		else if (startNode[1] > endNode[1])
 			direction = Orientation.DOWN;
-		
+
 		return direction;
 	}
-	
-	
-	
+
 	/**
-	 * The method adds a orientation of the robot and a desired direction to
-	 * get the turning-command.
+	 * The method adds a orientation of the robot and a desired direction to get
+	 * the turning-command.
 	 * 
-	 * @param ori The orientation of the robot.
-	 * @param dir The direction in which the robot should drive.
+	 * @param ori
+	 *            The orientation of the robot.
+	 * @param dir
+	 *            The direction in which the robot should drive.
 	 * @return The resulting turning-direction.
 	 */
 	public static int addDirection(Orientation ori, Orientation dir) {
@@ -142,64 +167,64 @@ public enum Orientation {
 		case UP:
 			switch (dir) {
 			case UP:
-				return 0;
+				return UP.getOrientation();
 			case DOWN:
-				return 2;
+				return DOWN.getOrientation();
 			case LEFT:
-				return -1;
+				return LEFT.getOrientation();
 			case RIGHT:
-				return 1;
+				return RIGHT.getOrientation();
 			default:
-				return 0;
+				return UP.getOrientation();
 			}
 		case DOWN:
 			switch (dir) {
 			case UP:
-				return 2;
+				return DOWN.getOrientation();
 			case DOWN:
-				return 0;
+				return UP.getOrientation();
 			case LEFT:
-				return -1;
+				return LEFT.getOrientation();
 			case RIGHT:
-				return 1;
+				return RIGHT.getOrientation();
 			default:
-				return 0;
+				return DOWN.getOrientation();
 			}
 		case LEFT:
 			switch (dir) {
 			case UP:
-				return -1;
+				return LEFT.getOrientation();
 			case DOWN:
-				return 1;
+				return RIGHT.getOrientation();
 			case LEFT:
-				return 0;
+				return UP.getOrientation();
 			case RIGHT:
-				return 2;
+				return DOWN.getOrientation();
 			default:
-				return 0;
+				return UP.getOrientation();
 			}
 		case RIGHT:
 			switch (dir) {
 			case UP:
-				return 1;
+				return RIGHT.getOrientation();
 			case DOWN:
-				return -1;
+				return LEFT.getOrientation();
 			case LEFT:
-				return 2;
+				return DOWN.getOrientation();
 			case RIGHT:
-				return 0;
+				return UP.getOrientation();
 			default:
-				return 0;
+				return UP.getOrientation();
 			}
 		default:
-			return 0;
+			return UP.getOrientation();
 		}
 	}
-	
+
 	public static Orientation turn(Orientation initial, Orientation dir) {
 		switch (initial) {
 		case UP:
-			switch(dir) {
+			switch (dir) {
 			case LEFT:
 				return RIGHT;
 			case RIGHT:
@@ -208,7 +233,7 @@ public enum Orientation {
 				return dir;
 			}
 		case RIGHT:
-			switch(dir) {
+			switch (dir) {
 			case LEFT:
 				return DOWN;
 			case RIGHT:
@@ -221,7 +246,7 @@ public enum Orientation {
 				return dir;
 			}
 		case LEFT:
-			switch(dir) {
+			switch (dir) {
 			case LEFT:
 				return UP;
 			case RIGHT:
@@ -236,5 +261,5 @@ public enum Orientation {
 		default:
 			return dir;
 		}
-	}		
+	}
 }

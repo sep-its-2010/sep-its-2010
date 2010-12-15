@@ -115,7 +115,7 @@ public class LogicThread implements Runnable {
 	 */
 	private Map<Integer, Integer> initMap() {
 		Map<Integer, Integer> map = new TreeMap<Integer, Integer>();
-		for (GraphNode node: robot.getMap().getFrontierList()) {
+		for (GraphNode node : robot.getMap().getFrontierList()) {
 			map.put(Utility.makeKey(node.getXValue(), node.getYValue()), 0);
 		}
 		return map;
@@ -150,14 +150,15 @@ public class LogicThread implements Runnable {
 	 */
 	public void driveTo() {
 		int[][] dest = { getRobotState().getIntentPosition() };
-		
+
 		// calculate best path to destination
 		aStar = new AStarPathFinder();
 		PathNode[] path = aStar
-				.find(robot, getRobotState().getPosition(), dest);		
+				.find(robot, getRobotState().getPosition(), dest);
 		if (path == null)
-			throw new IllegalStateException("Error! A-Star calculated wrong" +
-					"path from "+getRobotState().getPosition()+" to "+dest);
+			throw new IllegalStateException("Error! A-Star calculated wrong"
+					+ "path from " + getRobotState().getPosition() + " to "
+					+ dest);
 
 		// If a path to an intended destination exists, send an appropriate
 		// drive command. In case of turn-commands in order to drive to the
@@ -165,16 +166,18 @@ public class LogicThread implements Runnable {
 		if (path[0].getPathCosts() > 0) {
 			MapNode nextMapNode = (MapNode) path[0].getNext().getNode();
 			int[] node = { nextMapNode.getXValue(), nextMapNode.getYValue() };
-			Orientation newDir = Orientation.getTurnedOrientation(getRobotState().getPosition(), node);
-			
+			Orientation newDir = Orientation.getTurnedOrientation(
+					getRobotState().getPosition(), node);
+
 			if (robot.isOkRcvd()) {
 				RobotStatus stat = getRobotState();
 				stat.setOrientation(newDir);
 				robot.getRobotStatus().put(robot.getID(), stat);
 				robot.setOkRcvd(false);
 			}
-			
-			int command = Orientation.addDirection(getRobotState().getOrientation(), newDir);
+
+			int command = Orientation.addDirection(getRobotState()
+					.getOrientation(), newDir);
 			robot.driveCommand(command);
 		}
 	}
@@ -190,8 +193,7 @@ public class LogicThread implements Runnable {
 		byte[] message = robot.readSocket();
 		if (message.length > 0) {
 			return new PuckRequest(message, robot);
-		}
-		else
+		} else
 			return null;
 	}
 
@@ -207,7 +209,8 @@ public class LogicThread implements Runnable {
 			// handle bluetooth messages
 			IRequest request = getBTMessage();
 			if (request != null) {
-				ConquestLog.addMessage(this, robot.getName()+" :"+request.getKind().name());
+				ConquestLog.addMessage(this, robot.getName() + " :"
+						+ request.getKind().name());
 				btHandler.handleRequest(request);
 				changed = true;
 			}
@@ -215,7 +218,8 @@ public class LogicThread implements Runnable {
 			// handle broadcast messages
 			if (!bcQueue.isEmpty()) {
 				IRequest req = bcQueue.poll();
-				ConquestLog.addMessage(this, robot.getName()+" :"+req.getKind().name());
+				ConquestLog.addMessage(this, robot.getName() + " :"
+						+ req.getKind().name());
 				bcHandler.handleRequest(req);
 				changed = true;
 			}
