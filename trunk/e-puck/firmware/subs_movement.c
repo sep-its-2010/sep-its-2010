@@ -253,7 +253,7 @@ bool cbHandleRequestSetSpeed(
 void subs_movement_reset( void) {
 
 	s_blTurningActive = false;
-	s_ui8PerformedTurnings = 0;
+	s_ui8NumberOfDetectedLines = 0;
 	subs_movement_i16CurrentLineSpeed = SUBS_MOVEMENT__INITIAL_LINE_SPEED;
 	subs_movement_i16CurrentAngularSpeed = 0;
 	com_register( cbHandleRequestTurn);
