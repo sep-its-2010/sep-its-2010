@@ -64,40 +64,36 @@ public class AStarPathFinderTest{
 
 	private void fillMap(GridMap map) {
 		// create map
-		map.addNode(0, 0, NodeType.TOPLEFTEDGE);
-		map.addNode(1, 0, NodeType.TOPT);
-		map.addNode(2, 0, NodeType.TOPT);
-		map.addNode(3, 0, NodeType.TOPT);
-		map.addNode(4, 0, NodeType.TOPRIGHTEDGE);
-		map.addNode(0, 1, NodeType.LEFTT);
-		map.addNode(1, 1, NodeType.CROSS);
-		map.addNode(2, 1, NodeType.CROSS);
-		map.addNode(3, 1, NodeType.CROSS);		
-		map.addNode(4, 1, NodeType.RIGHTT);
-		map.addNode(0, 2, NodeType.LEFTT);
-		map.addNode(1, 2, NodeType.CROSS);
-		map.addNode(2, 2, NodeType.CROSS);
-		map.addNode(3, 2, NodeType.CROSS);		
-		map.addNode(4, 2, NodeType.CROSS);			
-		map.addNode(5, 2, NodeType.TOPT);
-		map.addNode(6, 2, NodeType.TOPRIGHTEDGE);
-		map.addNode(0, 3, NodeType.BOTTOMLEFTEDGE);
-		map.addNode(1, 3, NodeType.BOTTOMT);	
-		map.addNode(2, 3, NodeType.CROSS);
+		map.addNode(0, 0, NodeType.BOTTOMRIGHTEDGE);
+		map.addNode(1, 0, NodeType.BOTTOMT);
+		map.addNode(2, 0, NodeType.BOTTOMT);
+		map.addNode(3, 0, NodeType.BOTTOMT);
+		map.addNode(4, 0, NodeType.BOTTOMT);
+		map.addNode(5, 0, NodeType.BOTTOMLEFTEDGE);
+		map.addNode(0, 1, NodeType.RIGHTT);
+		map.addNode(3, 1, NodeType.CROSS);
+		map.addNode(5, 1, NodeType.LEFTT);
+		map.addNode(0, 2, NodeType.RIGHTT);
+		map.addNode(3, 2, NodeType.CROSS);
+		map.addNode(5, 2, NodeType.LEFTT);
+		map.addNode(0, 3, NodeType.RIGHTT);
 		map.addNode(3, 3, NodeType.CROSS);
-		map.addNode(4, 3, NodeType.CROSS);		
-		map.addNode(5, 3, NodeType.CROSS);	
-		map.addNode(6, 3, NodeType.RIGHTT);
-		map.addNode(2, 4, NodeType.LEFTT);	
-		map.addNode(3, 4, NodeType.CROSS);
-		map.addNode(4, 4, NodeType.CROSS);		
-		map.addNode(5, 4, NodeType.CROSS);	
-		map.addNode(6, 4, NodeType.RIGHTT);	
-		map.addNode(2, 5, NodeType.BOTTOMLEFTEDGE);			
-		map.addNode(3, 5, NodeType.BOTTOMT);
-		map.addNode(4, 5, NodeType.BOTTOMT);			
-		map.addNode(5, 5, NodeType.BOTTOMT);	
-		map.addNode(6, 5, NodeType.BOTTOMRIGHTEDGE);	
+		map.addNode(5, 3, NodeType.LEFTT);
+		map.addNode(0, 4, NodeType.TOPRIGHTEDGE);
+		map.addNode(1, 4, NodeType.TOPT);
+		map.addNode(2, 4, NodeType.TOPT);
+		map.addNode(3, 4, NodeType.TOPT);
+		map.addNode(4, 4, NodeType.TOPT);
+		map.addNode(5, 4, NodeType.TOPLEFTEDGE);
+		map.addNode(1, 1, NodeType.CROSS);
+		map.addNode(1, 2, NodeType.CROSS);
+		map.addNode(1, 3, NodeType.CROSS);
+		map.addNode(2, 1, NodeType.CROSS);
+		map.addNode(2, 2, NodeType.CROSS);
+		map.addNode(2, 3, NodeType.CROSS);
+		map.addNode(4, 1, NodeType.CROSS);
+		map.addNode(4, 2, NodeType.CROSS);
+		map.addNode(4, 3, NodeType.CROSS);
 	}
 	
 	/**

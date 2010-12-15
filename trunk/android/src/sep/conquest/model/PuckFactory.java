@@ -7,6 +7,9 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import sep.conquest.model.behaviour.LocalLocalizeBehaviour;
+import sep.conquest.util.Utility;
+
 import android.bluetooth.BluetoothSocket;
 
 /**
@@ -46,11 +49,14 @@ public class PuckFactory {
       throw new IllegalArgumentException("Invalid set of robots passed");
     } else {
       // Iterate over set and create RealPuck for each device.
+	LocalLocalizeBehaviour.startPositions = new TreeMap<UUID, Integer>();
+	int i = 0;
       for (BluetoothSocket robot : robots) {
         UUID newUUID = UUID.randomUUID();
         String name = robot.getRemoteDevice().getName();
         Puck newPuck = new RealPuck(robot, newUUID, name);
         man.addClient(newUUID, newPuck);
+        LocalLocalizeBehaviour.startPositions.put(newUUID, Utility.makeKey(i++, 0));    	        
       }
       // initiate handshaking of the robots
       Puck first = (Puck) (man.getClients())[0];

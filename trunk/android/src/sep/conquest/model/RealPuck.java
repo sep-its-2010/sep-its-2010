@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import sep.conquest.model.requests.FailureRequest;
 import sep.conquest.util.ConquestLog;
 
 import android.bluetooth.BluetoothSocket;
@@ -56,6 +57,9 @@ public class RealPuck extends Puck {
 				out.write(message);
 				out.flush();
 			} catch (IOException e) {
+				FailureRequest req = new FailureRequest(getID(), null, FailureType.BLUETOOTHFAILURE);
+				ComManager comMan = ComManager.getInstance();
+				comMan.broadcast(req);
 				ConquestLog.addMessage(this, "Can't write message to socket!");
 			}
 			return true;

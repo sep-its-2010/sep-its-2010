@@ -175,7 +175,7 @@ public enum Orientation {
 			case RIGHT:
 				return RIGHT.getOrientation();
 			default:
-				return UP.getOrientation();
+				return dir.getOrientation();
 			}
 		case DOWN:
 			switch (dir) {
@@ -184,40 +184,40 @@ public enum Orientation {
 			case DOWN:
 				return UP.getOrientation();
 			case LEFT:
-				return LEFT.getOrientation();
-			case RIGHT:
 				return RIGHT.getOrientation();
+			case RIGHT:
+				return LEFT.getOrientation();
 			default:
-				return DOWN.getOrientation();
+				return dir.getOrientation();
 			}
 		case LEFT:
 			switch (dir) {
 			case UP:
-				return LEFT.getOrientation();
-			case DOWN:
 				return RIGHT.getOrientation();
+			case DOWN:
+				return LEFT.getOrientation();
 			case LEFT:
 				return UP.getOrientation();
 			case RIGHT:
 				return DOWN.getOrientation();
 			default:
-				return UP.getOrientation();
+				return dir.getOrientation();
 			}
 		case RIGHT:
 			switch (dir) {
 			case UP:
-				return RIGHT.getOrientation();
-			case DOWN:
 				return LEFT.getOrientation();
+			case DOWN:
+				return RIGHT.getOrientation();
 			case LEFT:
 				return DOWN.getOrientation();
 			case RIGHT:
 				return UP.getOrientation();
 			default:
-				return UP.getOrientation();
+				return dir.getOrientation();
 			}
 		default:
-			return UP.getOrientation();
+			return dir.getOrientation();
 		}
 	}
 
