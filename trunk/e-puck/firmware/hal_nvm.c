@@ -32,7 +32,7 @@ enum {
  * Write remarks for  here.
  * 
  * \see
- * Separate items with the '|' character.
+ * executeOperation
  */
 typedef enum {
 	OPERATION__FLASH_ERASE_ROW = 0x4041, ///< Specifies a flash memory row erase operation.

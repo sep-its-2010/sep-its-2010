@@ -113,7 +113,7 @@ bool sen_line_calibrate(
 	// => a_0 = y_black - a_1 * x_black
 	*/
 
-	int16_t aai16[SEN_LINE_NUM_SENSORS][2];
+	int16_t aai16[SEN_LINE_NUM_SENSORS][NUM_COEFFICIENTS];
 	const uint16_t ui16DeltaNominal = SEN_LINE_NOMINAL_WHITE_LEVEL - SEN_LINE_NOMINAL_BLACK_LEVEL;
 	for( uint16_t ui16 = 0; blSuccess && ui16 < SEN_LINE_NUM_SENSORS; ui16++) {
 		if( _lppodRawBlackLevel->aui16Data[ui16] > SEN_LINE_UPPER_BOUND ||
@@ -130,7 +130,9 @@ bool sen_line_calibrate(
 	}
 
 	if( blSuccess) {
-		memcpy( s_aai16Coefficients, aai16, sizeof( aai16));
+
+		// Element addressing is required due to compiler optimization
+		memcpy( &s_aai16Coefficients[0][0], &aai16[0][0], sizeof( aai16));
 	}
 
 	return blSuccess;
@@ -164,9 +166,9 @@ void sen_line_rescale(
 	) {
 
 	for( uint16_t ui16 = 0; ui16 < SEN_LINE_NUM_SENSORS; ui16++) {
-		const int32_t i32ScalarRescale = s_aai16Coefficients[ui16][0] * COEFFICIENT_SCALAR + 
-			s_aai16Coefficients[ui16][1] * _lppodRawData->aui16Data[ui16];
-		const int16_t i16Rescale = i32ScalarRescale / COEFFICIENT_SCALAR;
+		const int32_t i32ScalarRescale = (int32_t)s_aai16Coefficients[ui16][1] * _lppodRawData->aui16Data[ui16];
+		const int16_t i16Rescale = s_aai16Coefficients[ui16][0] + (int16_t)( i32ScalarRescale / COEFFICIENT_SCALAR);
+
 		if( i16Rescale < SEN_LINE_LOWER_BOUND) {
 			_lppodRescaledData->aui16Data[ui16] = SEN_LINE_LOWER_BOUND;
 		} else if( i16Rescale > SEN_LINE_UPPER_BOUND) {

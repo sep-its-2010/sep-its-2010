@@ -10,6 +10,9 @@
 
 #include "hal_nvm.h"
 
+#include <stdio.h>
+#include "sen_line.h"
+
 #include "subs.h"
 #include "subs_abyss.h"
 #include "subs_calibration.h"
@@ -58,6 +61,22 @@ void cbSubsumptionEvent(
 }
 
 
+
+void cbSensEvent(
+	IN const hal_rtc_handle_t _hEvent
+	);
+void cbSensEvent(
+	IN const hal_rtc_handle_t UNUSED _hEvent
+	) {
+
+	sen_line_SData_t podData;
+	sen_line_read( &podData);
+	sen_line_rescale( &podData, &podData);
+	char cstrBuffer[100];
+	sprintf( cstrBuffer, "current l:%d m:%d r:%d\r\n", podData.aui16Data[0], podData.aui16Data[1], podData.aui16Data[2]);
+	hal_uart1_puts( cstrBuffer);
+}
+
 void cbBlinker(
 	IN const hal_rtc_handle_t _hEvent
 	);
@@ -95,52 +114,17 @@ int main( void) {
 
 //	hal_uart1_puts( "SEP 2010 ITS e-puck & Android Project\r\n");
 	//	hal_motors_setSpeed( 700, 0);
-	
-	// LINE_SENSOR-TEST
-	sen_line_SData_t podLineSensors = {{0}};
-	sen_line_read( &podLineSensors);
-	sen_line_rescale( &podLineSensors, &podLineSensors);
-	if (podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] == 0){
-		hal_led_switchOn( 1);
-	}
-	if ( podLineSensors.aui16Data[SEN_LINE_SENSOR__LEFT] == 0) {
-		hal_led_switchOn( 2);
-	}
-	if ( podLineSensors.aui16Data[SEN_LINE_SENSOR__RIGHT] == 0) {
-		hal_led_switchOn( 128);
-	}
-
-	// PROX-SENSOR TEST
-// 	sen_prox_SData_t podProxSensors = {{0}};
-// 	sen_prox_getCurrent( &podProxSensors);
-// 	uint16_t temp = 1;	
-// 	for( uint8_t ui8 = 0; ui8 < SEN_PROX_SENSORS; ui8++) {
-// 		if( podProxSensors.aui8Data[ui8] == 0) {			
-// 			hal_led_switchOn(temp);
-// 			temp = temp << 1;
-// 		}
-// 	}
-
-
-	uint16_t ui16Test = 9;
-	char cstrTest[] = "This is an EEPROM test string.";
-	hal_nvm_writeEEPROM( ui16Test, cstrTest, sizeof( cstrTest));
-	hal_nvm_readEEPROM( ui16Test, cstrTest, sizeof( cstrTest));
-	hal_uart1_puts( cstrTest);
-
-	for( ;;)
-		;
 
 	// Real time clock with 100Hz
 	hal_rtc_init( FCY / 256 / 100);
 	hal_rtc_register( cbSubsumptionEvent, 1, true);
 	hal_rtc_register( cbBlinker, 50, true);
+	hal_rtc_register( cbSensEvent, 25, true);
 
 	com_init();
-//	com_register( cbDemoMessageHandler);
+	com_register( cbDemoMessageHandler);
 	for( ;;) {
 		com_processIncoming();
-	
 	}
 }
 

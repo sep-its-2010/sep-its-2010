@@ -5,6 +5,9 @@
 #include "hal_nvm.h"
 #include "sen_line.h"
 
+#include <stdio.h>
+#include "hal_uart1.h"
+
 #include "subs_calibration.h"
 
 
