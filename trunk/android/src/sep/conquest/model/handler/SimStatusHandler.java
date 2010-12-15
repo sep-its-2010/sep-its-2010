@@ -4,9 +4,11 @@ import java.util.UUID;
 
 import sep.conquest.model.IRequest;
 import sep.conquest.model.NodeType;
+import sep.conquest.model.Orientation;
 import sep.conquest.model.Puck;
 import sep.conquest.model.Simulator;
 import sep.conquest.model.requests.MessageType;
+import sep.conquest.util.Utility;
 
 /**
  * Handles status request messages that are sent to the simulator.
@@ -65,6 +67,16 @@ public class SimStatusHandler extends Handler {
       // Write node type to 17th byte.
       int[] pos = sim.getPosition(sender);
       NodeType node = sim.getNodeType(pos[0] / 3, pos[1] / 3);
+      
+      Orientation globalOri = sim.getGlobalOrientation(sender);
+      Orientation localOri = sim.getLocalOrientation(sender);
+      int turnCount = Orientation.addDirection(localOri, globalOri);
+      
+      if (turnCount == -1) {
+        turnCount = 3;
+      }
+      node = Utility.turnAround(turnCount, node);
+      
       response[17] = (byte) node.ordinal();
       sim.writeBuffer(sender, response);
       sim.clearRequest(sender);

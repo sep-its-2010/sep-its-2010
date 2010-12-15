@@ -229,7 +229,7 @@ public class LogicThread implements Runnable {
 				Map<Integer, Integer> map = initMap();
 				if (stateBehaviour.execute(map, robot)) {
 					getRobotState().setIntentPosition(getBestNode(map));
-					driveTo();
+  					driveTo();
 				}
 			} else
 				Thread.yield();
