@@ -1,5 +1,6 @@
 package sep.conquest.model;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeMap;
@@ -82,6 +83,26 @@ public class GridMap{
 		mapBorders[this.MINYVALUEONMAP] = Integer.MAX_VALUE;
 		mapBorders[this.MINXVALUEONMAP] = Integer.MAX_VALUE;
 	}
+	
+	/**
+	 * toString-Method for debugging. Output: Xvalue, YValue, NodeType
+	 */
+	public void toStringer() {
+
+		System.out.println("Size of map: " + mapTree.size());
+
+		Collection<GraphNode> it = mapTree.values();
+		Iterator<GraphNode> ite = it.iterator();
+		while (ite.hasNext()) {
+			GraphNode bufferNode = (GraphNode) ite.next();
+			System.out.println("X-Value: " + bufferNode.getXValue());
+			System.out.println("Y-Value: " + bufferNode.getYValue());
+			System.out.println("Node-Type: " + bufferNode.getNodeType());
+		}
+	}
+	
+	
+	
 	
 	/**
 	 * Creates an instance of the type GraphNode, inserts it in the attribute
