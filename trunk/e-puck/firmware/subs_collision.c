@@ -6,6 +6,7 @@
 #include "sen_line.h"
 #include "subs_node.h"
 #include "conquest_types.h"
+#include "subs_movement.h"
 
 #include "subs_collision.h"
 
@@ -80,7 +81,7 @@ bool subs_collision_run( void) {
 				s_ui8DetectionCounter = 0;
 				s_blPreventionActive = false;
 				hal_motors_setSteps( 0);
-				hal_motors_setSpeed( 0, 600); // @TODO Werte für speed (irgendwo global hinterlegt)
+				hal_motors_setSpeed( subs_movement_getCurrentLineSpeed(), 0);
 			}
 			blActed = true;
 		}		

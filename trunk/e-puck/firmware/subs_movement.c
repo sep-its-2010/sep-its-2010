@@ -15,15 +15,16 @@ static bool s_blTurningActive = false;
 
 /*!
  * \brief
- * Holds the number of already performed 90°-turnings.
+ * Holds the number of detected lines on the surface.
+ * This value helps to compute the number of already performed turnings.
  */
-static uint8_t s_ui8PerformedTurnings = 0;
+static uint8_t s_ui8NumberOfDetectedLines = 0;
 
 /*!
  * \brief
  * Holds the number of demanded turnings.
  *
- * This is a value in the range from -1 to 2.
+ * This is a value in the range from -2 to 2.
  * Negative values indicate turnings in counter-clockwise direction, positive values indicate turnings in clockwise direction.
  */
 static int8_t s_i8DemandedTurnings = 0;
@@ -74,6 +75,7 @@ bool subs_movement_run( void) {
 			// Turning not active? -> Start to perform the demanded turnings.
 			if( !s_blTurningActive) {
 				s_blTurningActive = true;
+				hal_motors_setSteps( 0);
 				hal_motors_setSpeed( subs_movement_i16CurrentLineSpeed, subs_movement_i16CurrentAngularSpeed);
 			
 			// Exit turning-state after all demanded turnings have been performed.
@@ -86,16 +88,16 @@ bool subs_movement_run( void) {
 				if( ((podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_MOVEMENT__LINE_THRESHOLD) ||
 					(podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_MOVEMENT__LINE_THRESHOLD) ||
 					(podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_MOVEMENT__LINE_THRESHOLD)) &&
-					(abs(hal_motors_getStepsLeft()) >= s_ui8PerformedTurnings * 200)) {
-					s_ui8PerformedTurnings++;
+					(abs(hal_motors_getStepsLeft()) >= s_ui8NumberOfDetectedLines * 300)) {
+					s_ui8NumberOfDetectedLines++;
 				}
 
 				// Performed all demanded turnings? -> Reset state and send message.
-				if( s_ui8PerformedTurnings == s_i8DemandedTurnings) {
+				if( (s_ui8NumberOfDetectedLines - 1) == s_i8DemandedTurnings) {
 					hal_motors_setSpeed( 0, 0);
 					hal_motors_setSteps( 0);
 					s_blTurningActive = false;
-					s_ui8PerformedTurnings = 0;
+					s_ui8NumberOfDetectedLines = 0;
 					s_i8DemandedTurnings = 0;
 					com_send( &podOkMessage);
 				}				
@@ -138,6 +140,7 @@ bool subs_movement_run( void) {
  * 
  * \remarks
  * Handler-functions have to be registered during the reset function.
+ * Integers between -2 and 2 are expected.
  *
  * \see
  * cbHandleRequestMove | cbHandleRequestSetSpeed
@@ -150,13 +153,16 @@ bool cbHandleRequestTurn(
 	
 	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_TURN) {
 		s_eCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_TURN;
-		s_i8DemandedTurnings = (((_lppodMessage->aui8Data[0] % 4) + 4) % 4);
+		s_i8DemandedTurnings = (_lppodMessage->aui8Data[0]); // @TODO hier werden werte aus -2 bis 2 erwartet, mit signed integern könnte man sich die bit operationen sparen
 
-		if( s_i8DemandedTurnings > 0) {
+		// First data-bit == 0? -> positiv integer -> turn right
+		if( ((s_i8DemandedTurnings >> 7) & 0) && (s_i8DemandedTurnings != 0)) {
 			subs_movement_i16CurrentAngularSpeed = 250;
-		} else if( s_i8DemandedTurnings <= 0) {
+		}
+		// First data-bit == 1? -> negative integer -> turn left
+		else if( (s_i8DemandedTurnings >> 7) & 1) {
 			subs_movement_i16CurrentAngularSpeed = -250;
-		}		
+		}	
 		subs_movement_i16CurrentLineSpeed = 0;
 		blHandledMessage = true;
 	}
