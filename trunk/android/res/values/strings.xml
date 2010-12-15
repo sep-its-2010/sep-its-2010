@@ -41,4 +41,7 @@
 <string name="ERR_MSG_NOT_SUCCESSFULLY_SAVED">Error: Could not save map to file system.</string>
 <string name="TXT_NUMBER_NODES">Number of Nodes</string>
 <string name="TXT_OVERRUN_NODES">Overrun Nodes</string>
+<string name="MNU_STOP">Stop</string>
+<string name="MNU_PAUSE">Pause</string>
+<string name="MNU_STEP">Step</string>
 </resources>

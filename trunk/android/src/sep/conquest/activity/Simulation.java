@@ -82,7 +82,7 @@ public class Simulation extends Activity {
 	 *            Bundle of state information, saved when Activity was executed
 	 *            before.
 	 */
-	public void onCreate(Bundle savedInstanceState) {
+	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.simulation_main);
 		
@@ -96,8 +96,8 @@ public class Simulation extends Activity {
 		numberOfRobots.setEnabled(false);
 		numberOfRobots.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-			public void onItemSelected(AdapterView<?> parent, View v,
-					int position, long id) {
+			public void onItemSelected(final AdapterView<?> parent, final View v,
+					final int position, final long id) {
 				
 				mNumber = position;
 				if (mFirstRun) {
@@ -107,7 +107,7 @@ public class Simulation extends Activity {
 							
 			}
 
-			public void onNothingSelected(AdapterView<?> arg0) {
+			public void onNothingSelected(final AdapterView<?> arg0) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -115,11 +115,11 @@ public class Simulation extends Activity {
 		
 	}
 	
-	public void onResume() {
+	public final void onResume() {
 		super.onResume();
 	}
 	
-	public void onPause() {
+	public final void onPause() {
 		super.onPause();
 	}
 
@@ -129,7 +129,7 @@ public class Simulation extends Activity {
 	 * @param menu
 	 *            Reference on menu that has to be set.
 	 */
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public final boolean onCreateOptionsMenu(final Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.simulation_menu, menu);
 		return true;
@@ -141,7 +141,7 @@ public class Simulation extends Activity {
 	 * @param item
 	 *            The menu item that has been selected.
 	 */
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public final boolean onOptionsItemSelected(final MenuItem item) {
 
 		Intent start = new Intent();
 
@@ -169,7 +169,7 @@ public class Simulation extends Activity {
 	 * 
 	 * @param map Contains an imported map.
 	 */
-	public void drawPreview(List<MapNode> map, int[] borders) {
+	private void drawPreview(final List<MapNode> map, final int[] borders) {
 		MapSurfaceView preview = (MapSurfaceView) findViewById(R.id.im_preview);
 		
 		preview.setMode(MapMode.PREVIEW);
@@ -180,7 +180,7 @@ public class Simulation extends Activity {
 	/**
 	 * Gets the file path and file name as result of the import intent.
 	 */
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	protected final void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		if (requestCode == REQUEST_SIM_CONFIG) {
 			if (resultCode == RESULT_OK) {
 				
@@ -226,13 +226,13 @@ public class Simulation extends Activity {
 	   * @param message
 	   *          The message to display.
 	   */
-	  private void displayMessage(String message, boolean isError) {
+	  private void displayMessage(final String message, final boolean isError) {
 	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	    builder.setMessage(message);
 	    builder.setCancelable(false);
 	    builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
 	      
-	      public void onClick(DialogInterface dialog, int which) {
+	      public void onClick(final DialogInterface dialog, final int which) {
 	        dialog.dismiss();
 	        
 	      }

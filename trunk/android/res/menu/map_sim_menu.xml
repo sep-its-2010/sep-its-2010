@@ -2,8 +2,17 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/mnuStatistics"
-          android:icon="@drawable/mnu_statistics"
-          android:title="@string/MNU_STATISTICS" />
+    <item android:id="@+id/mnuStart"
+          android:icon="@drawable/mnu_start"
+          android:title="@string/MNU_START" />
+    <item android:id="@+id/mnuStop"
+          android:icon="@drawable/mnu_stop"
+          android:title="@string/MNU_STOP" />
+    <item android:id="@+id/mnuPause"
+          android:icon="@drawable/mnu_pause"
+          android:title="@string/MNU_PAUSE" />
+    <item android:id="@+id/mnuStep"
+          android:icon="@drawable/mnu_step"
+          android:title="@string/MNU_STEP" />                  
 
 </menu>

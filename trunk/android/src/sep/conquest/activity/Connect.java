@@ -243,6 +243,13 @@ public final class Connect extends Activity {
       start.putExtra(ImportMode.class.toString(), ImportMode.IMPORT_MAP);
       startActivity(start);
       break;
+      
+    case R.id.mnuDebug:
+        start.putExtra(MapMode.class.toString(), MapMode.SIMULATION);
+        start.setComponent(new ComponentName(getApplicationContext()
+            .getPackageName(), Map.class.getName()));
+        startActivity(start);
+        break;
 
     }
     return true;

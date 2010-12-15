@@ -96,7 +96,8 @@ public class Map extends Activity implements Observer {
         
         mMode = (MapMode) getIntent().getSerializableExtra(MapMode.class.toString());
         if (mMode == MapMode.IMPORT) {
-        	
+        	MapSurfaceView view = (MapSurfaceView) findViewById(R.id.map_view);
+        	view.setMode(mMode);
         	mRobotSelect.setEnabled(false);
         	loadMap();
         }
@@ -168,6 +169,18 @@ public class Map extends Activity implements Observer {
                     .getPackageName(), Export.class.getName()));
             startActivity(export);
             break;
+            
+        case R.id.mnuStart:
+        	break;
+        	
+        case R.id.mnuStop:
+        	break;
+        	
+        case R.id.mnuPause:
+        	break;
+        	
+        case R.id.mnuStep:
+        	break;
 
         default:
             return super.onOptionsItemSelected(item);
