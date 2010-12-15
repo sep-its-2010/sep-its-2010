@@ -141,9 +141,9 @@ public enum Orientation {
 		Orientation direction = Orientation.UNKNOWN;
 
 		if (startNode[0] < endNode[0])
-			direction = Orientation.LEFT;
-		else if (startNode[0] > endNode[0])
 			direction = Orientation.RIGHT;
+		else if (startNode[0] > endNode[0])
+			direction = Orientation.LEFT;
 		else if (startNode[1] < endNode[1])
 			direction = Orientation.UP;
 		else if (startNode[1] > endNode[1])
@@ -162,7 +162,7 @@ public enum Orientation {
 	 *            The direction in which the robot should drive.
 	 * @return The resulting turning-direction.
 	 */
-	public static int addDirection(Orientation ori, Orientation dir) {
+	public static int addGlobalDirection(Orientation ori, Orientation dir) {
 		switch (ori) {
 		case UP:
 			switch (dir) {
@@ -262,4 +262,73 @@ public enum Orientation {
 			return dir;
 		}
 	}
+	
+	/**
+   * The method adds a orientation of the robot and a desired direction to get
+   * the turning-command.
+   * 
+   * @param ori
+   *            The orientation of the robot.
+   * @param dir
+   *            The direction in which the robot should drive.
+   * @return The resulting turning-direction.
+   */
+  public static int addLocalDirection(Orientation ori, Orientation dir) {
+    switch (ori) {
+    case UP:
+      switch (dir) {
+      case UP:
+        return UP.getOrientation();
+      case DOWN:
+        return DOWN.getOrientation();
+      case LEFT:
+        return RIGHT.getOrientation();
+      case RIGHT:
+        return LEFT.getOrientation();
+      default:
+        return UP.getOrientation();
+      }
+    case DOWN:
+      switch (dir) {
+      case UP:
+        return DOWN.getOrientation();
+      case DOWN:
+        return UP.getOrientation();
+      case LEFT:
+        return LEFT.getOrientation();
+      case RIGHT:
+        return RIGHT.getOrientation();
+      default:
+        return DOWN.getOrientation();
+      }
+    case LEFT:
+      switch (dir) {
+      case UP:
+        return LEFT.getOrientation();
+      case DOWN:
+        return RIGHT.getOrientation();
+      case LEFT:
+        return UP.getOrientation();
+      case RIGHT:
+        return DOWN.getOrientation();
+      default:
+        return UP.getOrientation();
+      }
+    case RIGHT:
+      switch (dir) {
+      case UP:
+        return RIGHT.getOrientation();
+      case DOWN:
+        return LEFT.getOrientation();
+      case LEFT:
+        return DOWN.getOrientation();
+      case RIGHT:
+        return UP.getOrientation();
+      default:
+        return UP.getOrientation();
+      }
+    default:
+      return UP.getOrientation();
+    }
+  }
 }

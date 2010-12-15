@@ -176,7 +176,7 @@ public final class Utility {
 
   public static NodeType calculateNodeTypesToRealWorld(
       NodeType typeOfNodeEpuck, Orientation globalOrientationOfPuck) {
-    int turnCount = Orientation.addDirection(globalOrientationOfPuck,
+    int turnCount = Orientation.addGlobalDirection(globalOrientationOfPuck,
         Orientation.UP);
     return turnAround(turnCount, typeOfNodeEpuck);
   }
