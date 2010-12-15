@@ -67,7 +67,7 @@ public class PuckNodeHitHandler extends Handler {
 			int newCoordinateX = bufferPosition[0];
 			int newCoordinateY = bufferPosition[1];
 			int turnCount = 0;
-
+			
 			switch (puckOrientation) {
 			case UP:
 				/*
@@ -91,7 +91,7 @@ public class PuckNodeHitHandler extends Handler {
 				 * (bufferPosition[1])
 				 */
 				newCoordinateX--;
-				turnCount = 1;
+				turnCount = 3;
 				break;
 			case RIGHT:
 				/*
@@ -99,7 +99,7 @@ public class PuckNodeHitHandler extends Handler {
 				 * (bufferPosition[1])
 				 */
 				newCoordinateX++;
-				turnCount = 3;
+				turnCount = 1;
 				break;
 			default:
 				/*
