@@ -1,7 +1,6 @@
 package sep.conquest.model.behaviour;
 
 import java.util.Map;
-import java.util.TreeMap;
 
 import sep.conquest.model.Puck;
 import sep.conquest.model.State;
@@ -31,11 +30,7 @@ public abstract class Behaviour implements IBehaviour {
      */
     protected boolean awaitResponse = false;    
     
-	/**
-	 * A map for the first behaviours per state-level.
-	 */
-	private static TreeMap <State, IBehaviour> entryBehaviours = 
-		new TreeMap<State, IBehaviour>();    
+
     
     /**
      * The constructor sets the reference to the previous Behaviour in the chain
@@ -46,9 +41,6 @@ public abstract class Behaviour implements IBehaviour {
      * @param prev The reference to the previous Behaviour.
      */
     protected Behaviour(State stateLevel, IBehaviour prev) {
-    	if (!entryBehaviours.containsKey(stateLevel)) {
-    		entryBehaviours.put(stateLevel, this);
-    	}    	
     	this.stateLevel = stateLevel;
     	if (prev != null) {
     		prev.setNextBehaviour(this);
@@ -62,17 +54,6 @@ public abstract class Behaviour implements IBehaviour {
      */
     public State getStateLevel() {
     	return stateLevel;
-    }
-    
-    /**
-     * Returns the first Behaviour of a given state. If there's no Behaviour,
-     * a null pointer will be returned.
-     * 
-     * @param stateLevel The state-level for the expected Behaviour.
-     * @return The first Behaviour of the specified state-level.
-     */
-    public static IBehaviour getFirstBehaviour(State stateLevel) {
-    	return entryBehaviours.get(stateLevel);
     }
     
     /**

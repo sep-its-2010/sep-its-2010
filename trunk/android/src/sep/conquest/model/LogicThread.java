@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import sep.conquest.model.behaviour.Behaviour;
 import sep.conquest.model.behaviour.BehaviourFactory;
 import sep.conquest.model.behaviour.IBehaviour;
 import sep.conquest.model.handler.Handler;
@@ -61,9 +60,7 @@ public class LogicThread implements Runnable {
 	public LogicThread(Puck robot) {
 		this.robot = robot;
 		State state = robot.getRobotStatus().get(robot.getID()).getState();
-		BehaviourFactory.createBehaviourChain(state);
-		stateBehaviour = Behaviour
-				.getFirstBehaviour(getRobotState().getState());
+		stateBehaviour = BehaviourFactory.createBehaviourChain(state);
 		bcHandler = HandlerFactory.getPuckBCChain(this);
 		btHandler = HandlerFactory.getPuckBTChain(this);
 	}
@@ -85,7 +82,7 @@ public class LogicThread implements Runnable {
 	 */
 	public void changeBehaviour(State state) {
 		BehaviourFactory.createBehaviourChain(state);
-		stateBehaviour = Behaviour.getFirstBehaviour(state);
+		stateBehaviour = BehaviourFactory.createBehaviourChain(state);
 		ConquestLog.addMessage(this, "Behaviour changed to "
 				+ stateBehaviour.getClass().toString());
 	}
