@@ -400,61 +400,63 @@ public class GridMap {
   private void setFrontierNodes(int direction, GraphNode newNode) {
     NodeType type = NodeType.FRONTIERNODE;
     GraphNode newFrontierNode = null;
-
-    int key;
-    switch (direction) {
-    // left neighbour
-    case 0:
-      // Create new frontierNode
-      newFrontierNode = new GraphNode(newNode.getXValue() - 1, newNode
-          .getYValue(), type);
-      // Set new neighbourhood
-      newNode.setNeighbours(newNode.LEFTNEIGHBOUR, newFrontierNode);
-      newFrontierNode.setNeighbours(newFrontierNode.RIGHTNEIGHBOUR, newNode);
-      // insert in mapTree
-      key = Utility.makeKey(newFrontierNode.getXValue(), newFrontierNode
-          .getYValue());
-      this.mapTree.put(key, newFrontierNode);
-      break;
-    // right neighbour
-    case 1:
-      // Create new frontierNode
-      newFrontierNode = new GraphNode(newNode.getXValue() + 1, newNode
-          .getYValue(), type);
-      // Set new neighbourhood
-      newNode.setNeighbours(newNode.RIGHTNEIGHBOUR, newFrontierNode);
-      newFrontierNode.setNeighbours(newFrontierNode.LEFTNEIGHBOUR, newNode);
-      // insert in mapTree
-      key = Utility.makeKey(newFrontierNode.getXValue(), newFrontierNode
-          .getYValue());
-      this.mapTree.put(key, newFrontierNode);
-      break;
-    // bottom neighbour
-    case 2:
-      newFrontierNode = new GraphNode(newNode.getXValue(),
-          newNode.getYValue() + 1, type);
-      // Set new neighbourhood
-      newNode.setNeighbours(newNode.BOTTOMNEIGHBOUR, newFrontierNode);
-      newFrontierNode.setNeighbours(newFrontierNode.TOPNEIGHBOUR, newNode);
-      // insert in mapTree
-      key = Utility.makeKey(newFrontierNode.getXValue(), newFrontierNode
-          .getYValue());
-      this.mapTree.put(key, newFrontierNode);
-      break;
-    // upper neighbour
-    case 3:
-      newFrontierNode = new GraphNode(newNode.getXValue(),
-          newNode.getYValue() - 1, type);
-      // Set new neighbourhood
-      newNode.setNeighbours(newNode.TOPNEIGHBOUR, newFrontierNode);
-      newFrontierNode.setNeighbours(newFrontierNode.BOTTOMNEIGHBOUR, newNode);
-      // insert in mapTree
-      key = Utility.makeKey(newFrontierNode.getXValue(), newFrontierNode
-          .getYValue());
-      this.mapTree.put(key, newFrontierNode);
-      break;
+    if(!(newNode != null)){
+    	int key;
+        switch (direction) {
+        // left neighbour
+        case 0:
+          // Create new frontierNode
+          newFrontierNode = new GraphNode(newNode.getXValue() - 1, newNode
+              .getYValue(), type);
+          // Set new neighbourhood
+          newNode.setNeighbours(newNode.LEFTNEIGHBOUR, newFrontierNode);
+          newFrontierNode.setNeighbours(newFrontierNode.RIGHTNEIGHBOUR, newNode);
+          // insert in mapTree
+          key = Utility.makeKey(newFrontierNode.getXValue(), newFrontierNode
+              .getYValue());
+          this.mapTree.put(key, newFrontierNode);
+          break;
+        // right neighbour
+        case 1:
+          // Create new frontierNode
+          newFrontierNode = new GraphNode(newNode.getXValue() + 1, newNode
+              .getYValue(), type);
+          // Set new neighbourhood
+          newNode.setNeighbours(newNode.RIGHTNEIGHBOUR, newFrontierNode);
+          newFrontierNode.setNeighbours(newFrontierNode.LEFTNEIGHBOUR, newNode);
+          // insert in mapTree
+          key = Utility.makeKey(newFrontierNode.getXValue(), newFrontierNode
+              .getYValue());
+          this.mapTree.put(key, newFrontierNode);
+          break;
+        // bottom neighbour
+        case 2:
+          newFrontierNode = new GraphNode(newNode.getXValue(),
+              newNode.getYValue() + 1, type);
+          // Set new neighbourhood
+          newNode.setNeighbours(newNode.BOTTOMNEIGHBOUR, newFrontierNode);
+          newFrontierNode.setNeighbours(newFrontierNode.TOPNEIGHBOUR, newNode);
+          // insert in mapTree
+          key = Utility.makeKey(newFrontierNode.getXValue(), newFrontierNode
+              .getYValue());
+          this.mapTree.put(key, newFrontierNode);
+          break;
+        // upper neighbour
+        case 3:
+          newFrontierNode = new GraphNode(newNode.getXValue(),
+              newNode.getYValue() - 1, type);
+          // Set new neighbourhood
+          newNode.setNeighbours(newNode.TOPNEIGHBOUR, newFrontierNode);
+          newFrontierNode.setNeighbours(newFrontierNode.BOTTOMNEIGHBOUR, newNode);
+          // insert in mapTree
+          key = Utility.makeKey(newFrontierNode.getXValue(), newFrontierNode
+              .getYValue());
+          this.mapTree.put(key, newFrontierNode);
+          break;
+        }
+        this.frontierList.add(newFrontierNode);	
     }
-    this.frontierList.add(newFrontierNode);
+    
   }
 
   /**
