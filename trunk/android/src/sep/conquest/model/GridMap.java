@@ -254,7 +254,7 @@ public class GridMap {
    *          The Node which gets new neighbours
    */
   private void setNeighbours(GraphNode newNode) {
-	  if(!(newNode == null)){
+	  if(!(newNode.getNodeType()==null)){
 		  NodeType type = newNode.getNodeType();
 		    switch (type) {
 		    // There has to be set the right and upper neighbour of the node
