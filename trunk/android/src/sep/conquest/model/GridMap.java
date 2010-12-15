@@ -260,49 +260,49 @@ public class GridMap{
 		NodeType type = newNode.getNodeType();
 		switch (type) {
 		// There has to be set the right and upper neighbour of the node
-		case BOTTOMLEFTEDGE:
+		case TOPRIGHTEDGE:
 			this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
 			this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
 			break;
 		// There has to be set the left and upper neighbour of the node
-		case BOTTOMRIGHTEDGE:
+		case TOPLEFTEDGE:
 			this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
 			this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
 			break;
 		// There has to be set the right and lower neighbour of the node
-		case TOPLEFTEDGE:
+		case BOTTOMRIGHTEDGE:
 			this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
 			this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
 			break;
 		// There has to be set the left and lower neighbour of the node
-		case TOPRIGHTEDGE:
+		case BOTTOMLEFTEDGE:
 			this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
 			this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
 			break;
 		// There has to be set the left and right and upper neighbour of the
 		// node
-		case BOTTOMT:
+		case TOPT:
 			this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
 			this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
 			this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
 			break;
 		// There has to be set the right and lower and upper neighbour of the
 		// node
-		case LEFTT:
+		case RIGHTT:
 			this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
 			this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
 			this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
 			break;
 		// There has to be set the left and lower and upper neighbour of the
 		// node
-		case RIGHTT:
+		case LEFTT:
 			this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
 			this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
 			this.searchAndsetNeighbour(newNode.TOPNEIGHBOUR, newNode);
 			break;
 		// There has to be set the left and lower and right neighbour of the
 		// node
-		case TOPT:
+		case BOTTOMT:
 			this.searchAndsetNeighbour(newNode.BOTTOMNEIGHBOUR, newNode);
 			this.searchAndsetNeighbour(newNode.LEFTNEIGHBOUR, newNode);
 			this.searchAndsetNeighbour(newNode.RIGHTNEIGHBOUR, newNode);
