@@ -170,5 +170,10 @@ public final class Utility {
           throw new IllegalArgumentException("Failure: " + typeOfNode + " , " + ori);
     }
   }
+	
+	public NodeType calculateNodeTypesToRealWorld(NodeType typeOfNodeEpuck, Orientation globalOrientationOfPuck){
+		int turnCount = Orientation.addDirection(globalOrientationOfPuck, Orientation.UP);
+		return turnAround(turnCount, typeOfNodeEpuck);
+	}
 
 }
