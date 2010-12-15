@@ -82,6 +82,15 @@ public final class Utility {
 		return bufferNodeType;
 	}
 	
+	/**
+	 * Calculates the real NodeTypes of the simulation to the "local" sight of
+	 * the Puck in the case it looks forward (means UP). In the PuckNodeHitHandler
+	 * the NodeType will be turned again to the absolute local sight of the Puck
+	 * 
+	 * @param ori The Orientation of the puck in the map
+	 * @param typeOfNode The NodeType on the real map
+	 * @return The typeOfNode for the Puck
+	 */
 	public NodeType calculateNodeTypesToPuckOrientation(Orientation ori, NodeType typeOfNode){
     switch(typeOfNode){
     case TOPLEFTEDGE:
@@ -171,6 +180,15 @@ public final class Utility {
     }
   }
 	
+	/**
+	 * This method is needed in the beginning of the exploration. After turning
+	 * 360 degrees the puck sends the NodeType. Here it will be turned to the
+	 * right direction to the real map
+	 * 
+	 * @param typeOfNodeEpuck The NodeType of the sight of the puck
+	 * @param globalOrientationOfPuck The direction in which the puck looks
+	 * @return The NodeType for the real map.
+	 */
 	public NodeType calculateNodeTypesToRealWorld(NodeType typeOfNodeEpuck, Orientation globalOrientationOfPuck){
 		int turnCount = Orientation.addDirection(globalOrientationOfPuck, Orientation.UP);
 		return turnAround(turnCount, typeOfNodeEpuck);
