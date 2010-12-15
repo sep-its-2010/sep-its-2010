@@ -3,9 +3,6 @@ package sep.conquest.model.handler;
 import java.util.UUID;
 
 import sep.conquest.model.IRequest;
-import sep.conquest.model.NodeType;
-import sep.conquest.model.Orientation;
-import sep.conquest.model.Puck;
 import sep.conquest.model.Simulator;
 import sep.conquest.model.requests.MessageType;
 
