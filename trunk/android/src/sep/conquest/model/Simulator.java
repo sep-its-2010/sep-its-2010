@@ -201,35 +201,71 @@ public class Simulator {
   }
 
   /**
-   * Returns the current orientation of a robot.
+   * Returns the current global orientation of a robot.
    * 
    * @param id
    *          The id of the robot whose orientation is requested.
    * @return The requested orientation.
    */
-  public Orientation getOrientation(UUID id) {
+  public Orientation getGlobalOrientation(UUID id) {
     if ((id != null) && robots.containsKey(id)) {
-      return robots.get(id).getOrientation();
+      return robots.get(id).getGlobalOrientation();
     } else {
       throw new IllegalArgumentException("Asked for orientation of unknown id");
     }
   }
 
   /**
-   * Sets the orientation of a robot.
+   * Sets the global orientation of a robot.
    * 
    * @param id
    *          The id of the robot whose orientation is to set.
    * @param newOrientation
    *          The new orientation of the robot.
    */
-  public void setOrientation(UUID id, Orientation newOrientation) {
+  public void setGlobalOrientation(UUID id, Orientation newOrientation) {
     if ((id != null) && robots.containsKey(id) && (newOrientation != null)) {
-      robots.get(id).setOrientation(newOrientation);
+      robots.get(id).setGlobalOrientation(newOrientation);
     } else {
       throw new IllegalArgumentException(
           "Asked to set orientation of unknown id");
     }
+  }
+  
+  /**
+   * Returns the current local orientation of a robot.
+   * 
+   * @param id
+   *          The id of the robot whose orientation is requested.
+   * @return The requested orientation.
+   */
+  public Orientation getLocalOrientation(UUID id) {
+    if ((id != null) && robots.containsKey(id)) {
+      return robots.get(id).getLocalOrientation();
+    } else {
+      throw new IllegalArgumentException("Asked for orientation of unknown id");
+    }
+  }
+  
+  /**
+   * Sets the local orientation of a robot.
+   * 
+   * @param id
+   *          The id of the robot whose orientation is to set.
+   * @param newOrientation
+   *          The new orientation of the robot.
+   */
+  public void setLocalOrientation(UUID id, Orientation newOrientation) {
+    if ((id != null) && robots.containsKey(id) && (newOrientation != null)) {
+      robots.get(id).setLocalOrientation(newOrientation);
+    } else {
+      throw new IllegalArgumentException(
+          "Asked to set orientation of unknown id");
+    }
+  }
+  
+  public Orientation getInitialOrientation(UUID id) {
+    return robots.get(id).getInitialOrientation();
   }
 
   /**
@@ -249,36 +285,36 @@ public class Simulator {
     int[] pos = getPosition(id);
     int newX = pos[0];
     int newY = pos[1];
-    Orientation ori = getOrientation(id); // get global orientation
-    Orientation loc = robots.get(id).getInitialOrientation(); // get local ori.
-    ori = Orientation.turn(loc, ori);
-    int turnCount = 0;
+    Orientation globalOri = getGlobalOrientation(id);
+    Orientation localOri = getLocalOrientation(id);
+    int turnCount = Orientation.addDirection(localOri, globalOri);
+    
+    if (turnCount == -1) {
+      turnCount = 3;
+    }
 
     // Update current position of the robot.
-    switch (ori) {
+    switch (globalOri) {
     case UP:
       newY++;
-      turnCount = 0;
       break;
     case DOWN:
       newY--;
-      turnCount = 2;
       break;
     case LEFT:
       newX--;
-      turnCount = 1;
       break;
     case RIGHT:
       newX++;
-      turnCount = 3;
       break;
     }
 
     // Check, if new position can not be attended because of a collision.
     if (collision(newX, newY)) {
       collide(id);
-      setOrientation(id, Orientation
-          .getTurnedOrientation(2, getOrientation(id)));
+      setGlobalOrientation(id, Orientation
+          .getTurnedOrientation(2, globalOri));
+      setLocalOrientation(id, Orientation.getTurnedOrientation(2, localOri));
     } else {
       // Assign new position.
       pos[0] = newX;
