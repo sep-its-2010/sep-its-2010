@@ -29,9 +29,7 @@ public abstract class Behaviour implements IBehaviour {
      * Indicates whether the behaviour waits for a response from the robot.
      */
     protected boolean awaitResponse = false;    
-    
-
-    
+        
     /**
      * The constructor sets the reference to the previous Behaviour in the chain
      * as well as its state-level. If this is the first entry for a specific

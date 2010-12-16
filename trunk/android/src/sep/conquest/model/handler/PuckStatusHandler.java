@@ -8,6 +8,7 @@ import sep.conquest.model.NodeType;
 import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.MessageType;
 import sep.conquest.model.requests.PuckRequest;
+import sep.conquest.util.ConquestLog;
 
 /**
  * Handles PuckStatus messages coming from the Bluetooth Adapter.

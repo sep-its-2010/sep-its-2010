@@ -8,6 +8,7 @@ import sep.conquest.model.Puck;
 import sep.conquest.model.RobotStatus;
 import sep.conquest.model.State;
 import sep.conquest.model.requests.MessageType;
+import sep.conquest.util.ConquestLog;
 import sep.conquest.util.Utility;
 
 /**
@@ -19,6 +20,8 @@ import sep.conquest.util.Utility;
 public final class LocalLocalizeBehaviour extends Behaviour {
 	
 	public static Map<UUID, Integer> startPositions;
+	
+	private boolean statusRequested = false;
 
     /**
      * The constructor enables chain-handling by calling the constructor of
@@ -36,21 +39,22 @@ public final class LocalLocalizeBehaviour extends Behaviour {
      */
     public boolean execute(Map<Integer, Integer> map, Puck robot) {
     	
-    	if (!awaitResponse) {
-    		byte[] request = new byte[32];
-			request[0] = (byte) (MessageType.REQUEST_STATUS.getTypeCode() & 0xff);
-			request[1] = (byte) ((MessageType.REQUEST_STATUS.getTypeCode() >> 8) & 0xff);
-	
-			super.writeSocket(robot, request);
-    	} else {
-    		awaitResponse = false;
-    		RobotStatus status = robot.getRobotStatus().get(robot.getID());
-    		status.setOrientation(Orientation.UP);
-    		status.setPosition(Utility.extractCoordinates(startPositions.get(robot.getID())));
-    		robot.getMap().addNode(status.getPosition()[0], status.getPosition()[1], status.getNodeType());
-    		robot.changeBehaviour(State.EXPLORE);
-    	} 
-        return super.execute(map, robot);
+    	if (!robot.isMessageExpected()) {
+    		if (!statusRequested) {
+    			byte[] request = new byte[32];
+    			request[0] = (byte) (MessageType.REQUEST_STATUS.getTypeCode() & 0xff);
+    			request[1] = (byte) ((MessageType.REQUEST_STATUS.getTypeCode() >> 8) & 0xff);
+    			statusRequested = true;
+    			super.writeSocket(robot, request);
+    		} else {	 
+    			RobotStatus status = robot.getRobotStatus().get(robot.getID());
+				ConquestLog.addMessage(this, robot.getName() + " " + (status.getNodeType() != null));
+	    		status.setOrientation(Orientation.UP);
+	    		status.setPosition(Utility.extractCoordinates(startPositions.get(robot.getID())));
+	    		robot.getMap().addNode(status.getPosition()[0], status.getPosition()[1], status.getNodeType());
+	    		robot.changeBehaviour(State.EXPLORE);
+    		} 
+    	}
+		return super.execute(map, robot);    
     }
-    
 }
