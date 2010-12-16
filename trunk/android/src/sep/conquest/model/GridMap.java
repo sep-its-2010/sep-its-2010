@@ -403,7 +403,7 @@ public class GridMap {
   private void setFrontierNodes(int direction, GraphNode newNode) {
     NodeType type = NodeType.FRONTIERNODE;
     GraphNode newFrontierNode = null;
-    if(!(newNode != null)){
+    if(newNode != null){
     	int key;
         switch (direction) {
         // left neighbour
