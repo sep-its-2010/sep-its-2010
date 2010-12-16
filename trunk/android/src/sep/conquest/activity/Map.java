@@ -12,6 +12,7 @@ import java.util.UUID;
 import sep.conquest.R;
 import sep.conquest.controller.Controller;
 import sep.conquest.model.ConquestUpdate;
+import sep.conquest.model.Environment;
 import sep.conquest.model.GridMap;
 import sep.conquest.model.MapFileHandler;
 import sep.conquest.model.MapNode;
@@ -120,6 +121,13 @@ public class Map extends Activity implements Observer {
     	if (mMode != MapMode.IMPORT) {
         	Controller.getInstance().getEnv().deleteObserver(this);
         	}
+    }
+    
+    public void onDestroy() {
+    	super.onDestroy();
+    	Environment.reset();
+    	
+    	
     }
 
     /**

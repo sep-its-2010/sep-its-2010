@@ -405,6 +405,7 @@ public class MapSurfaceView extends SurfaceView
         private void drawFirstLayer(final Canvas c, final int offsetX,
                 final int offsetY) {
             // Draw first layer: Visited Rects and Nodes
+        	synchronized(mMap) {
             Iterator < MapNode > mapIt = mMap.iterator();
             MapNode mn;
             while (mapIt.hasNext()) {
@@ -417,28 +418,28 @@ public class MapSurfaceView extends SurfaceView
                 paint.setColor(0xff000000);
                 switch (mn.getNodeType()) {
                 case BOTTOMLEFTEDGE:
-                    drawBottomLeftEdge(c, xValue, yValue);
-                    break;
-                case BOTTOMRIGHTEDGE:
-                    drawBottomRightEdge(c, xValue, yValue);
-                    break;
-                case BOTTOMT:
-                    drawBottomT(c, xValue, yValue);
-                    break;
-                case TOPLEFTEDGE:
-                    drawTopLeftEdge(c, xValue, yValue);
-                    break;
-                case TOPRIGHTEDGE:
                     drawTopRightEdge(c, xValue, yValue);
                     break;
-                case TOPT:
+                case BOTTOMRIGHTEDGE:
+                    drawTopLeftEdge(c, xValue, yValue);
+                    break;
+                case BOTTOMT:
                     drawTopT(c, xValue, yValue);
                     break;
+                case TOPLEFTEDGE:
+                    drawBottomRightEdge(c, xValue, yValue);
+                    break;
+                case TOPRIGHTEDGE:
+                    drawBottomLeftEdge(c, xValue, yValue);
+                    break;
+                case TOPT:
+                    drawBottomT(c, xValue, yValue);
+                    break;
                 case LEFTT:
-                    drawLeftT(c, xValue, yValue);
+                    drawRightT(c, xValue, yValue);
                     break;
                 case RIGHTT:
-                    drawRightT(c, xValue, yValue);
+                    drawLeftT(c, xValue, yValue);
                     break;
                 case CROSS:
                     drawCross(c, xValue, yValue);
@@ -447,6 +448,7 @@ public class MapSurfaceView extends SurfaceView
                     break;
                 }
             }
+        	}
         }
 
         /**
@@ -459,6 +461,7 @@ public class MapSurfaceView extends SurfaceView
         private void drawSecondLayer(final Canvas c, final int offsetX,
                                      final int offsetY) {
             // Draw the second layer: Robots
+        	synchronized(mPositions) {
             Iterator < EpuckPosition > posIt = mPositions.iterator();
             EpuckPosition epp;
             while (posIt.hasNext()) {
@@ -472,6 +475,7 @@ public class MapSurfaceView extends SurfaceView
                 }
 
             }
+        	}
         }
 
         /**
@@ -756,7 +760,9 @@ public class MapSurfaceView extends SurfaceView
      */
     public final void setRobotPosition(
                       final LinkedList < EpuckPosition > list) {
-        mPositions = list;
+    	synchronized(mPositions) {
+        mPositions = (LinkedList<EpuckPosition>) list.clone();
+    	}
     }
 
     /**
