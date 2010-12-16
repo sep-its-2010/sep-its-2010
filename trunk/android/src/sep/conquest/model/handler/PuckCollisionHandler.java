@@ -1,8 +1,12 @@
 package sep.conquest.model.handler;
 
 
+import android.os.AsyncTask.Status;
+import sep.conquest.model.ComManager;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.Orientation;
+import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.CollisionRequest;
 import sep.conquest.model.requests.MessageType;
 import sep.conquest.model.requests.PuckRequest;
@@ -49,9 +53,16 @@ public class PuckCollisionHandler extends Handler {
 		  byte[] bufferMessage = colRes.getMessage();
 		  boolean[] colArray = new boolean[8];
 		  for(int i = 0 ; i < 8; i++){
-			  //colArray;
+			  if (bufferMessage[i] != 0)
+				  colArray[i] = true;
 		  }
-		  //CollisionRequest colRes = new CollisionRequest(executor.getRobot(), null, executor.getRobot().getRobotStatus().get(executor.getRobot()));
+		  CollisionRequest req = new CollisionRequest(executor.getRobot().getID(), null, colArray);
+		  ComManager comMan = ComManager.getInstance();
+		  comMan.broadcast(req);
+		  
+		  // set position to the last node
+		  RobotStatus status = executor.getRobot().getRobotStatus().get(executor.getRobot().getID());
+		  status.setOrientation(Orientation.turn(status.getOrientation()));
 		  
 		  return true;
 	  }    

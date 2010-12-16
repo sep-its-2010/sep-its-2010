@@ -264,6 +264,26 @@ public enum Orientation {
 	}
 	
 	/**
+	 * Turn a direction by 180°.
+	 * 
+	 * @param dir The direction.
+	 * @return The turned direction.
+	 */
+	public static Orientation turn(Orientation dir) {
+		switch (dir) {
+		case UP:
+			return DOWN;
+		case DOWN:
+			return UP;
+		case LEFT:
+			return RIGHT;
+		case RIGHT:
+			return LEFT;
+		default: return UP;
+		}
+	}
+	
+	/**
    * The method adds a orientation of the robot and a desired direction to get
    * the turning-command.
    * 

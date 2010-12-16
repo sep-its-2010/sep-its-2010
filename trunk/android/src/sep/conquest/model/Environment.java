@@ -24,7 +24,7 @@ public class Environment extends Observable implements IComClient {
 	/**
 	 * The static instance to implement the singleton pattern.
 	 */
-	private static final Environment INSTANCE = new Environment();
+	private static Environment INSTANCE = new Environment();
 
 	/**
 	 * The local id of the Environment.
@@ -75,6 +75,13 @@ public class Environment extends Observable implements IComClient {
 	 */
 	public static Environment getInstance() {
 		return INSTANCE;
+	}
+	
+	/**
+	 * Resets the environment.
+	 */
+	public static void reset() {
+		INSTANCE = new Environment();
 	}
 
 	/**
