@@ -150,6 +150,7 @@ public class Simulation extends Activity {
 			start.setComponent(new ComponentName(getApplicationContext()
 					.getPackageName(), sep.conquest.activity.Map.class.getName()));
 			PuckFactory.createVirtualPucks(map, robotPositions, ori);
+			start.putExtra(MapMode.class.toString(), MapMode.SIMULATION);
 			startActivity(start);
 			break;
 		case R.id.mnuOpen:

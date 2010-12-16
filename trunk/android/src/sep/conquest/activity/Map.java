@@ -15,6 +15,7 @@ import sep.conquest.model.ConquestUpdate;
 import sep.conquest.model.GridMap;
 import sep.conquest.model.MapFileHandler;
 import sep.conquest.model.MapNode;
+import sep.conquest.model.PuckFactory;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -92,7 +93,7 @@ public class Map extends Activity implements Observer {
 
         });
         
-        setSpinner();
+        //setSpinner();
         
         mMode = (MapMode) getIntent().getSerializableExtra(MapMode.class.toString());
         if (mMode == MapMode.IMPORT) {
@@ -171,15 +172,19 @@ public class Map extends Activity implements Observer {
             break;
             
         case R.id.mnuStart:
+        	PuckFactory.getSimulator().start();
         	break;
         	
         case R.id.mnuStop:
+        	//not implemented yet
         	break;
         	
         case R.id.mnuPause:
+        	PuckFactory.getSimulator().pause();
         	break;
         	
         case R.id.mnuStep:
+        	PuckFactory.getSimulator().step();
         	break;
 
         default:
