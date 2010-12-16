@@ -93,7 +93,7 @@ public class Map extends Activity implements Observer {
 
         });
         
-        //setSpinner();
+        
         
         mMode = (MapMode) getIntent().getSerializableExtra(MapMode.class.toString());
         if (mMode == MapMode.IMPORT) {
@@ -101,6 +101,10 @@ public class Map extends Activity implements Observer {
         	view.setMode(mMode);
         	mRobotSelect.setEnabled(false);
         	loadMap();
+        } else if (mMode == MapMode.EXPLORATION) {
+        	setSpinner();
+        } else {
+        	mRobotSelect.setEnabled(false);
         }
     }
     
@@ -226,13 +230,13 @@ public class Map extends Activity implements Observer {
 		
 		Set<UUID> id = cu.getRobotStatus().keySet();
 		mPositions.clear();
-		mRobotAdapter.clear();
-		mRobotAdapter.add("none");
+		//mRobotAdapter.clear();
+		//mRobotAdapter.add("none");
 		for (UUID key : id) {
 			int[] position = cu.getRobotStatus().get(key).getPosition();
 			String name = cu.getRobotName(key);
 			mPositions.add(new EpuckPosition(position[0], position[1], name));
-			mRobotAdapter.add(name);
+			//mRobotAdapter.add(name);
 		}
 		
 		draw.setMap(cu.getMapList(), cu.getBorders());
