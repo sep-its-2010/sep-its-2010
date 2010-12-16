@@ -116,10 +116,12 @@ public class PuckFactory {
       Simulator sim = new Simulator(map, posMap, oriMap);
       simulator = sim;
 
+      LocalLocalizeBehaviour.startPositions = new TreeMap<UUID, Integer>();
       int i = 0;
       for (UUID id : ids) {
         Puck newPuck = new VirtualPuck(id, sim, ROBOT_NAME + i);
         man.addClient(id, newPuck);
+        LocalLocalizeBehaviour.startPositions.put(id, Utility.makeKey(i, 0));
         i++;
       }
       // initiate handshaking of the robots
