@@ -119,12 +119,22 @@ public class Simulator {
   public void addRequest(IRequest request) {
     if (request != null) {
       UUID sender = request.getSender();
+      SimRobot robot = robots.get(sender);
+      
+      if (robot.hasRequest()) {
+        throw new IllegalArgumentException("Asked to override message");
+      }
       robots.get(sender).addRequest(request);
     } else {
       throw new IllegalArgumentException("Request must not equal null");
     }
   }
 
+  /**
+   * Resets the input buffer of a robot.
+   * 
+   * @param id The id of the robot.
+   */
   public void clearRequest(UUID id) {
     if ((id != null) && robots.containsKey(id)) {
       robots.get(id).clearRequest();

@@ -68,7 +68,7 @@ public class SimStatusHandler extends Handler {
       if ((pos[0] % 3 != 0) || (pos[1] % 3 != 0)) {
       //  throw new IllegalArgumentException("Robot is not on a valid position");
       }
-      NodeType node = sim.getNodeType(pos[0] / 3, pos[1] / 3);
+      NodeType node = sim.getNodeType(pos[0], pos[1]);
       node = Utility.calculateNodeTypesToRealWorld(node, sim.getOrientation(sender));
       response[17] = (byte) node.ordinal();
       sim.writeBuffer(sender, response);
