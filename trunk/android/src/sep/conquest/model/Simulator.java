@@ -93,6 +93,12 @@ public class Simulator {
             throw new IllegalArgumentException(
                 "Illegal initial position passed");
           }
+          
+          // If start position is valid, convert coordinates to simulator
+          // coordinates (multiply them by three).
+          pos[0] = pos[0] * 3;
+          pos[1] = pos[1] * 3;
+          
           Orientation or = initialOrientations.get(id);
 
           // Check, if initial orientation is invalid.
