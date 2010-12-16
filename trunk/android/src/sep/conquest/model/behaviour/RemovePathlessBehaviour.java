@@ -41,6 +41,9 @@ public final class RemovePathlessBehaviour extends Behaviour {
 	 */
 	public boolean execute(Map<Integer, Integer> map, Puck robot) {
 		
+		if (robot.isMessageExpected())
+			return false;		
+		
 		List<Integer> toRemove = new ArrayList<Integer>();
 		for (Integer key: map.keySet()) {
 			AStarPathFinder aStar = new AStarPathFinder();
