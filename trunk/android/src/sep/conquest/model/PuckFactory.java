@@ -25,6 +25,11 @@ public class PuckFactory {
    * The beginning of a robot name used to create names for VirtualPucks.
    */
   private static final String ROBOT_NAME = "e-puck_";
+  
+  /**
+   * The Simulator used with the VirtualPucks.
+   */
+  private static Simulator simulator;
 
   /**
    * Creates a new RealPuck instance for each BluetoothDevice of the set and
@@ -109,6 +114,7 @@ public class PuckFactory {
         oriMap.put(newId, ori[i]);
       }
       Simulator sim = new Simulator(map, posMap, oriMap);
+      simulator = sim;
 
       int i = 0;
       for (UUID id : ids) {
@@ -124,5 +130,15 @@ public class PuckFactory {
       throw new IllegalArgumentException(
           "Map, position and orientation must not equal null");
     }
+  }
+  
+  /**
+   * Returns the simulator used with the current set of VirtualPucks or null,
+   * if no VirtualPucks have been created so far.
+   * 
+   * @return Simulator or null.
+   */
+  public static Simulator getSimulator() {
+    return simulator;
   }
 }
