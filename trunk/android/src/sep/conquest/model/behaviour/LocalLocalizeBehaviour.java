@@ -3,6 +3,7 @@ package sep.conquest.model.behaviour;
 import java.util.Map;
 import java.util.UUID;
 
+import sep.conquest.model.NodeType;
 import sep.conquest.model.Orientation;
 import sep.conquest.model.Puck;
 import sep.conquest.model.RobotStatus;
@@ -20,6 +21,7 @@ import sep.conquest.util.Utility;
 public final class LocalLocalizeBehaviour extends Behaviour {
 	
 	public static Map<UUID, Integer> startPositions;
+	public static Map<UUID, Orientation> startOrientations;
 	
 	private boolean statusRequested = false;
 
@@ -49,9 +51,12 @@ public final class LocalLocalizeBehaviour extends Behaviour {
     		} else {	 
     			RobotStatus status = robot.getRobotStatus().get(robot.getID());
 				ConquestLog.addMessage(this, robot.getName() + " " + (status.getNodeType() != null));
-	    		status.setOrientation(Orientation.UP);
+				Orientation pOri = startOrientations.get(robot.getID());
+	    		status.setOrientation(pOri);
 	    		status.setPosition(Utility.extractCoordinates(startPositions.get(robot.getID())));
-	    		robot.getMap().addNode(status.getPosition()[0], status.getPosition()[1], status.getNodeType());
+	    		NodeType nType = Utility.calculateNodeTypesToRealWorld(status.getNodeType(), pOri);
+	    		status.setNodeType(nType);
+	    		robot.getMap().addNode(status.getPosition()[0], status.getPosition()[1], nType);
 	    		robot.changeBehaviour(State.EXPLORE);
     		} 
     	}

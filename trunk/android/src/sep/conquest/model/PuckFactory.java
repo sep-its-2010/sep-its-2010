@@ -102,6 +102,8 @@ public class PuckFactory {
       Map<UUID, Orientation> oriMap = new TreeMap<UUID, Orientation>();
 
       // Create new ids and mapping to position and orientation
+      LocalLocalizeBehaviour.startPositions = new TreeMap<UUID, Integer>();
+      LocalLocalizeBehaviour.startOrientations = new TreeMap<UUID, Orientation>();      
       for (int i = 0; i < positions.length; i++) {
         UUID newId = UUID.randomUUID();
         ids.add(newId);
@@ -112,16 +114,16 @@ public class PuckFactory {
         }
         posMap.put(newId, positions[i]);
         oriMap.put(newId, ori[i]);
+        LocalLocalizeBehaviour.startPositions.put(newId, Utility.makeKey(positions[i][0], positions[i][1]));
+        LocalLocalizeBehaviour.startOrientations.put(newId, ori[i]);
       }
       Simulator sim = new Simulator(map, posMap, oriMap);
       simulator = sim;
 
-      LocalLocalizeBehaviour.startPositions = new TreeMap<UUID, Integer>();
       int i = 0;
       for (UUID id : ids) {
         Puck newPuck = new VirtualPuck(id, sim, ROBOT_NAME + i);
         man.addClient(id, newPuck);
-        LocalLocalizeBehaviour.startPositions.put(id, Utility.makeKey(i, 0));
         i++;
       }
       // initiate handshaking of the robots

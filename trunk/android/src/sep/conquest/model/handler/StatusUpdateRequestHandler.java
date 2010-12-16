@@ -2,6 +2,7 @@ package sep.conquest.model.handler;
 
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.NodeType;
 import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.MessageType;
 import sep.conquest.model.requests.StatusUpdateRequest;
@@ -51,6 +52,12 @@ public class StatusUpdateRequestHandler extends Handler {
 				// The status which is sent with the message
 				RobotStatus newBufferRobotStatus = statusReq.getStatus();
 				oldStatus.setRobotStatus(newBufferRobotStatus);
+				
+				// in case of a new node => add it to the map
+				int[] pos = statusReq.getStatus().getPosition();
+				NodeType nType = statusReq.getStatus().getNodeType();
+				if (nType != null)
+					executor.getRobot().getMap().addNode(pos[0], pos[1], nType);				
 				return true;
 			} else
 				return false;				
