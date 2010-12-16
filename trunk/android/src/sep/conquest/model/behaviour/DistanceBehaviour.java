@@ -1,6 +1,8 @@
 package sep.conquest.model.behaviour;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import sep.conquest.model.AStarPathFinder;
@@ -42,7 +44,16 @@ public final class DistanceBehaviour extends Behaviour {
 		
 		boolean ret = super.execute(map, robot);
 
+		List<GraphNode> toRemove = new ArrayList<GraphNode>();
 		LinkedList<GraphNode> frontiers = robot.getMap().getFrontierList();
+		for (GraphNode frontier: frontiers) {
+			Integer key = Utility.makeKey(frontier.getXValue(), frontier.getYValue());
+			if (!map.containsKey(key))
+				toRemove.add(frontier);
+		}
+		for (GraphNode node: toRemove)
+			frontiers.remove(node);
+		
 		AStarPathFinder astar = new AStarPathFinder();
 		RobotStatus status = robot.getRobotStatus().get(robot.getID());
 		int[][] destinations = new int[frontiers.size()][2];
