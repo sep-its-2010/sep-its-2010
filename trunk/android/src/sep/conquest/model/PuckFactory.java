@@ -55,13 +55,15 @@ public class PuckFactory {
     } else {
       // Iterate over set and create RealPuck for each device.
 	LocalLocalizeBehaviour.startPositions = new TreeMap<UUID, Integer>();
+	LocalLocalizeBehaviour.startOrientations = new TreeMap<UUID, Orientation>();
 	int i = 0;
       for (BluetoothSocket robot : robots) {
         UUID newUUID = UUID.randomUUID();
         String name = robot.getRemoteDevice().getName();
         Puck newPuck = new RealPuck(robot, newUUID, name);
         man.addClient(newUUID, newPuck);
-        LocalLocalizeBehaviour.startPositions.put(newUUID, Utility.makeKey(i++, 0));    	        
+        LocalLocalizeBehaviour.startPositions.put(newUUID, Utility.makeKey(i++, 0)); 
+        LocalLocalizeBehaviour.startOrientations.put(newUUID, Orientation.UP);
       }
       // initiate handshaking of the robots
       Puck first = (Puck) (man.getClients())[0];
