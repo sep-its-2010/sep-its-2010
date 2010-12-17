@@ -223,6 +223,13 @@ public abstract class Puck implements IComClient, IRobot {
    * @param state
    */
   public void changeBehaviour(State state) {
+	StackTraceElement[] trace =  Thread.currentThread().getStackTrace();
+	ConquestLog.addMessage(this, trace[trace.length-1].toString());
+	ConquestLog.addMessage(this, trace[trace.length-2].toString());
+	ConquestLog.addMessage(this, trace[trace.length-3].toString());
+	ConquestLog.addMessage(this, trace[trace.length-4].toString());
+	ConquestLog.addMessage(this, trace[trace.length-5].toString());
+	  
     RobotStatus status = getRobotStatus().get(id);
     if (state != status.getState()) {
       status.setState(state);
@@ -382,5 +389,17 @@ public abstract class Puck implements IComClient, IRobot {
 	 */
 	public boolean isOkRcvd() {
 		return okRcvd;
+	}
+	
+	/**
+	 * Destroys the Puck.
+	 */
+	public void destroy() { 
+		executor.shutdown();
+		try {
+			this.finalize();
+		} catch (Throwable e) {
+			throw new IllegalStateException("Error! Couldn't destroy Puck " + name);
+		}
 	}
 }

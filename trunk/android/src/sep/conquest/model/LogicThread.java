@@ -175,6 +175,8 @@ public class LogicThread implements Runnable {
 
 			int command = Orientation.addLocalDirection(getRobotState()
 					.getOrientation(), newDir);
+			if (command == 2)
+				ConquestLog.addMessage(this, "turn man");
 			robot.driveCommand(command);
 		}
 	}

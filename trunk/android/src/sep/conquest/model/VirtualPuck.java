@@ -72,4 +72,10 @@ public class VirtualPuck extends Puck {
 		}
 		return new byte[0];	
 	}
+	
+	@Override
+	public void destroy() {
+		sim.stop();
+		super.destroy();
+	}
 }

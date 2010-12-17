@@ -107,4 +107,14 @@ public class RealPuck extends Puck {
 		return new byte[0];	
 
 	}
+	
+	@Override
+	public void destroy() {
+		try {
+			mybtSocket.close();
+		} catch (IOException e) {
+			throw new IllegalStateException("Error! Couldn't destroy BT-Socket");
+		}
+		super.destroy();
+	}
 }

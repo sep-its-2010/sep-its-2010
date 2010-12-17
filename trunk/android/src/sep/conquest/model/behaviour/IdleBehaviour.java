@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import sep.conquest.model.Puck;
 import sep.conquest.model.State;
+import sep.conquest.util.ConquestLog;
 
 /**
  * LocalLocalizeBehaviour represents a behaviour for localizing adjacent robots.
@@ -34,6 +35,7 @@ public final class IdleBehaviour extends Behaviour {
     public boolean execute(Map<Integer, Integer> map, Puck robot) {
     	
     	if (!timerActive) {
+    		timerActive = true;
 	    	Timer timer = new Timer();
 	        timer.schedule(new ExecuteTimer(robot), 5000);    		
     	}
