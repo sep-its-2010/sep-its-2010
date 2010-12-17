@@ -4,7 +4,7 @@
 #include "common.h"
 
 enum {
-	SUBS_MOVEMENT__LINE_THRESHOLD = 200, ///< Specifies the threshold below which a line is detected by the groundsensors.
+	SUBS_MOVEMENT__LINE_THRESHOLD = 300, ///< Specifies the threshold below which a line is detected by the groundsensors.
 	SUBS_MOVEMENT__INITIAL_LINE_SPEED = 600 ///< Specifies the default line speed.
 };
 

@@ -75,4 +75,6 @@ bool cbDemoMessageHandler(
 	IN const com_SMessage_t* _lppodMessage
 	);
 
+void conquest_init( void);
+
 #endif /* conquest_h__ */
