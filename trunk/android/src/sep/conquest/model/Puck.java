@@ -19,6 +19,12 @@ import sep.conquest.util.ConquestLog;
  * 
  */
 public abstract class Puck implements IComClient, IRobot {
+  
+  public static final int MSG_LENGTH = 32;
+  
+  public static final int TYPE_FIRST_BYTE = 0;
+  public static final int TYPE_SECOND_BYTE = 1;
+  public static final int NODE_BYTE = 17;
 
   /**
    * Represents the byte-Code for the messageType RESPONSE_OK
