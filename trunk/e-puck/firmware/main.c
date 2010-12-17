@@ -23,11 +23,6 @@
 
 #include "conquest.h"
 
-#include "sen_line.h"
-#include "sen_line_types.h"
-#include "sen_prox.h"
-#include "sen_prox_types.h"
-
 
 /*!
  * \brief
@@ -94,10 +89,10 @@ int main( void) {
 	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
 	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
 // 	subs_register( subs_collision_run, subs_collision_reset, 0xDF);
-	subs_register( subs_movement_run, subs_movement_reset, 0xCF);
-	subs_register( subs_movement_run, subs_movement_reset, 0xBF);
- 	subs_register( subs_node_run, subs_node_reset, 0xAF);
-// 	subs_register( subs_line_run, subs_line_reset, 0x9F);
+// 	subs_register( subs_movement_run, subs_movement_reset, 0xCF);
+// 	subs_register( subs_movement_run, subs_movement_reset, 0xBF);
+// 	subs_register( subs_node_run, subs_node_reset, 0xAF);
+ 	subs_register( subs_line_run, subs_line_reset, 0x9F);
 	subs_reset();
 
 	hal_sel_init();
@@ -113,14 +108,13 @@ int main( void) {
 	hal_uart1_enable( true);
 
 //	hal_uart1_puts( "SEP 2010 ITS e-puck & Android Project\r\n");
-//	hal_motors_setSpeed( 600, 0);
-	hal_led_set( 255);
+	hal_motors_setSpeed( 800, 0);
 
 	// Real time clock with 100Hz
 	hal_rtc_init( FCY / 256 / 100);
 	hal_rtc_register( cbSubsumptionEvent, 1, true);
-//	hal_rtc_register( cbBlinker, 50, true);
-	hal_rtc_register( cbSensEvent, 25, true);
+	hal_rtc_register( cbBlinker, 50, true);
+//	hal_rtc_register( cbSensEvent, 25, true);
 
 	conquest_init();
 	com_init();	

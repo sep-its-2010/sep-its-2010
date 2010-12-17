@@ -2,35 +2,29 @@
 
 #include "hal_motors.h"
 #include "sen_line.h"
-#include "subs_movement.h"
+#include "conquest.h"
 
 #include "subs_line.h"
 
-#define T 20.0				// Interrupt interval for pid-controller
-#define KRC 2.5	//2.5		// stability limit
-#define TC 0.4	//0.2		// loop time
-#define IMAX 1500.0			// max integration sum
-//#define INITIAL_SPEED 600	// initial speed // @TODO Geschwindigkeit muss global hinterlegt werden
-#define SPEED_MAX 1000		// maximum speed
-#define SPEED_MIN 0			// minimum speed
+#define T 20.0f				// Interrupt interval for pid-controller
+#define KRC 2.5f	//2.5		// stability limit
+#define TC 0.4f	//0.2		// loop time
+#define IMAX 1500			// max integration sum
 
-//IFS0bits.T1IF = 0; // clear interrupt flag
 const float t = (T / 1000.0); // timer interval in ms
 
 // constants for pid-controller (ziegler-nichols rules)
-const float kr = 0.6 * KRC;
-const float tn = 0.5 * TC;
-const float tv = 0.12 * TC;
+const float kr = 0.6f * KRC;
+const float tn = 0.5f * TC;
+const float tv = 0.12f * TC;
 
 // constants for pid-controller (PID-adjust-algorithm)
 const float yp = 1.0;
-//const float yi = (t / tn);
-//const float yd = (tv / t);
+#define yi ( t / tn)
+#define yd ( tv / t)
 
-static float y_old = 0.0;
-static float diff_new = 0.0;
-static float diff_old = 0.0;
-static float diff_sum = 0.0;
+static int16_t s_i16DeltaSum = 0;
+static int16_t s_i16DeltaOld = 0;
 
 /*!
  * \brief
@@ -44,47 +38,44 @@ static float diff_sum = 0.0;
  * Therefor a PID-controlling-algorithm is deployed.
  */
 bool subs_line_run( void) {	
-	
-	int16_t i16CurrentLineSpeed = subs_movement_getCurrentLineSpeed();
-	//int16_t i16CurrentAngularSpeed = subs_movement_getCurrentAngularSpeed();
-	float y_new = 0;
-	sen_line_SData_t podSensorData = {{0}};
-	sen_line_read( &podSensorData);
-	sen_line_rescale( &podSensorData, &podSensorData);
 
-	// calculate integration-part
-	diff_sum += diff_new;
-	if (diff_sum > IMAX) diff_sum = IMAX;
-	if (diff_sum < -IMAX) diff_sum = -IMAX;
+	uint16_t ui16RequestedLineSpeed = 500;//conquest_getRequestedLineSpeed();
+	if( ui16RequestedLineSpeed) {
 
-	// get new difference of sensor[0] to sensor[2]
-	diff_new = podSensorData.aui16Data[2] - podSensorData.aui16Data[0];// - (l_calibrate[0][2] - l_calibrate[0][0]); // @TODO Kalibrierwerte ausm EEPROM
+		// calculate integration-part
+		s_i16DeltaSum += s_i16DeltaOld;
+		if( s_i16DeltaSum > IMAX) {
+			s_i16DeltaSum = IMAX;
+		} else if( s_i16DeltaSum < -IMAX) {
+			s_i16DeltaSum = -IMAX;
+		}
 
-	// calculate integration-part
-	diff_sum += diff_new;
-	if (diff_sum > IMAX) diff_sum = IMAX;
-	if (diff_sum < -IMAX) diff_sum = -IMAX;
+		// Get delta left to right
+		sen_line_SData_t podSensorData;
+		sen_line_read( &podSensorData);
+		sen_line_rescale( &podSensorData, &podSensorData);
+		const int16_t i16DeltaNew = podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] - podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT];
 
-	// get new difference of sensor[0] to sensor[2]
-	diff_new = podSensorData.aui16Data[2] - podSensorData.aui16Data[0];// - (l_calibrate[0][2] - l_calibrate[0][0]); // @TODO EEPROM-Kalibrierwerte
+		// PID-adjust-algorithm
+		float y_new = kr * ( yp * i16DeltaNew + yi * s_i16DeltaSum + yd * ( i16DeltaNew - s_i16DeltaOld));
+		s_i16DeltaOld = i16DeltaNew;
 
-	// PID-adjust-algorithm
-//	y_new = kr * (yp * diff_new + yi * diff_sum + yd * (diff_new - diff_old));
-	y_new = kr * yp * diff_new;
-
-	// set motor speed
-	if( i16CurrentLineSpeed + (int)(y_new / 2) > SPEED_MAX) {
-		y_new = 2 * (SPEED_MAX - i16CurrentLineSpeed) - 1;
-	} else if( i16CurrentLineSpeed - (int)(y_new / 2) < SPEED_MIN) {
-		y_new = 2 * (i16CurrentLineSpeed - SPEED_MIN) + 1;
+		// Constrain & set speed
+		int16_t i16AngularSpeed = y_new / 2;
+		if( i16AngularSpeed > HAL_MOTORS_MAX_ABS_SPEED) {
+			i16AngularSpeed = HAL_MOTORS_MAX_ABS_SPEED;
+		} else if( i16AngularSpeed < -HAL_MOTORS_MAX_ABS_SPEED) {
+			i16AngularSpeed = -HAL_MOTORS_MAX_ABS_SPEED;
+		}
+		if( (int16_t)ui16RequestedLineSpeed + i16AngularSpeed > HAL_MOTORS_MAX_ABS_SPEED) {
+			ui16RequestedLineSpeed = HAL_MOTORS_MAX_ABS_SPEED - i16AngularSpeed;
+		} else if( (int16_t)ui16RequestedLineSpeed + i16AngularSpeed < -HAL_MOTORS_MAX_ABS_SPEED) {
+			ui16RequestedLineSpeed = i16AngularSpeed - HAL_MOTORS_MAX_ABS_SPEED;
+		}
+		hal_motors_setSpeed( ui16RequestedLineSpeed, i16AngularSpeed);
 	}
-	hal_motors_setSpeed( i16CurrentLineSpeed, (int)(y_new / 2));
 
-	// store static values
-	diff_old = diff_new;
-	y_old = y_new;
-
-	return true;
+	return ui16RequestedLineSpeed;
 }
 
 /*!
@@ -95,4 +86,6 @@ bool subs_line_run( void) {
  */
 void subs_line_reset( void) {
 
+	s_i16DeltaSum = 0;
+	s_i16DeltaOld = 0;
 }

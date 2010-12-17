@@ -23,7 +23,7 @@ static const EType_t s_aaeMap[DIM_X][DIM_Y] = {
 };
 
 static EDirection_t s_eDirection = DIRECTION_UP;
-static uint16_t s_ui16Speed = INITIAL_SPEED;
+volatile uint16_t conquest_ui16Speed = INITIAL_SPEED;
 static uint16_t s_ui16PosX = INITIAL_POS_X;
 static uint16_t s_ui16PosY = INITIAL_POS_Y;
 
@@ -64,7 +64,7 @@ bool cbDemoMessageHandler(
 	switch( _lppodMessage->eType) {
 		case COM_MESSAGE_TYPE__REQUEST_RESET: {
 			s_eDirection = DIRECTION_UP;
-			s_ui16Speed = INITIAL_SPEED;
+			conquest_ui16Speed = INITIAL_SPEED;
 			s_ui16PosX = INITIAL_POS_X;
 			s_ui16PosY = INITIAL_POS_Y;
 			hal_led_switchOff( TYPE__CROSS & 0xFF);
@@ -108,7 +108,7 @@ bool cbDemoMessageHandler(
 
 			if( _lppodMessage->aui8Data[0]) {
 				for( uint16_t ui16 = 0; ui16 < abs( ( (int8_t)_lppodMessage->aui8Data[0]) % 4); ui16++) {
-					hal_motors_setSpeed( 0, (int8_t)_lppodMessage->aui8Data[0] < 0 ? -s_ui16Speed : s_ui16Speed);
+					hal_motors_setSpeed( 0, (int8_t)_lppodMessage->aui8Data[0] < 0 ? -conquest_ui16Speed : conquest_ui16Speed);
 					hal_motors_setSteps( 0);
 					while( hal_motors_getStepsLeft() < TURN_STEPS && hal_motors_getStepsRight() < TURN_STEPS)
 						;
@@ -138,7 +138,7 @@ bool cbDemoMessageHandler(
 					s_ui16PosX--;
 				}
 
-				hal_motors_setSpeed( s_ui16Speed, 0);
+				hal_motors_setSpeed( conquest_ui16Speed, 0);
 				hal_motors_setSteps( 0);
 				while( hal_motors_getStepsLeft() < FOWARD_STEPS && hal_motors_getStepsRight() < FOWARD_STEPS)
 					;
@@ -157,7 +157,7 @@ bool cbDemoMessageHandler(
 		case COM_MESSAGE_TYPE__REQUEST_SET_SPEED: {
 			com_SMessage_t podResponse;
 			if( _lppodMessage->aui8Data[0] <= 100) {
-				s_ui16Speed = 10 * _lppodMessage->aui8Data[0];
+				conquest_ui16Speed = 10 * _lppodMessage->aui8Data[0];
 				podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_OK;
 			} else {
 				podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_REJECTED;
