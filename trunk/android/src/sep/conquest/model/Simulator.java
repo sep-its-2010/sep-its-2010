@@ -93,12 +93,12 @@ public class Simulator {
             throw new IllegalArgumentException(
                 "Illegal initial position passed");
           }
-          
+
           // If start position is valid, convert coordinates to simulator
           // coordinates (multiply them by three).
           pos[0] = pos[0] * 3;
           pos[1] = pos[1] * 3;
-          
+
           Orientation or = initialOrientations.get(id);
 
           // Check, if initial orientation is invalid.
@@ -126,7 +126,7 @@ public class Simulator {
     if (request != null) {
       UUID sender = request.getSender();
       SimRobot robot = robots.get(sender);
-      
+
       if (robot.hasRequest()) {
         throw new IllegalArgumentException("Asked to override message");
       }
@@ -139,7 +139,8 @@ public class Simulator {
   /**
    * Resets the input buffer of a robot.
    * 
-   * @param id The id of the robot.
+   * @param id
+   *          The id of the robot.
    */
   public void clearRequest(UUID id) {
     if ((id != null) && robots.containsKey(id)) {
@@ -288,6 +289,18 @@ public class Simulator {
       collide(id);
       setOrientation(id, Orientation
           .getTurnedOrientation(2, getOrientation(id)));
+
+      // If collision was detected while standing on a node
+      if ((pos[0] % 3 == 0) && (pos[1] % 3 == 0)) {
+        // Message that is written on the output buffer
+        byte[] response = new byte[Puck.MSG_LENGTH];
+        
+        // Write message type "collision" to first two bytes.
+        response[Puck.TYPE_FIRST_BYTE] = (byte) (Puck.RES_COLLISION & 0xFF);
+        response[Puck.TYPE_SECOND_BYTE] = (byte) ((Puck.RES_COLLISION >> 8) & 0xFF);
+        setMoving(id, false);
+        writeBuffer(id, response);
+      }
     } else {
       // Assign new position.
       pos[0] = newX;
