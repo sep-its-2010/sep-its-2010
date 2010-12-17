@@ -262,6 +262,6 @@ public class SimRobot {
     outputBuffer = new byte[0];
     inputBuffer = null;
     isMoving = false;
-    collisionCounter++;
+    collisionCounter = 0;
   }
 }

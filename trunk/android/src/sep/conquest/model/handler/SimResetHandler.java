@@ -7,10 +7,31 @@ import sep.conquest.model.Puck;
 import sep.conquest.model.Simulator;
 import sep.conquest.model.requests.MessageType;
 
+/**
+ * Handles reset request messages that are sent to the simulator.
+ * 
+ * Calls reset method of corresponding robot.
+ * 
+ * @author Andreas Poxrucker
+ * 
+ */
 public class SimResetHandler extends Handler {
 
+  /**
+   *  Reference on simulator that received the message.
+   */
   private Simulator sim;
 
+  /**
+   * Constructor.
+   * 
+   * Sets reference on next Handler (if used in a chain) and on simulator.
+   * 
+   * @param next
+   *          The next Handler in chain.
+   * @param simulator
+   *          The simulator that has received the message and has to respond.
+   */
   public SimResetHandler(Handler next, Simulator simulator) {
     super(next);
     sim = simulator;
@@ -41,9 +62,9 @@ public class SimResetHandler extends Handler {
 
       // Write message type "ok" to first two bytes and write whole message
       // to the output buffer.
-      byte[] response = new byte[32];
-      response[0] = (byte) (Puck.RES_OK & 0xFF);
-      response[1] = (byte) ((Puck.RES_OK >> 8) & 0xFF);
+      byte[] response = new byte[Puck.MSG_LENGTH];
+      response[Puck.TYPE_FIRST_BYTE] = (byte) (Puck.RES_OK & 0xFF);
+      response[Puck.TYPE_SECOND_BYTE] = (byte) ((Puck.RES_OK >> 8) & 0xFF);
       sim.writeBuffer(sender, response);
       sim.clearRequest(sender);
       return true;

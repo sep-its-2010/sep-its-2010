@@ -20,7 +20,9 @@ import sep.conquest.model.requests.VirtualPuckRequest;
  */
 public class SimTurnHandler extends Handler {
 
-  // Reference on simulator that received the message.
+  /**
+   * Reference on simulator that received the message.
+   */
   private Simulator sim;
 
   /**
@@ -71,9 +73,9 @@ public class SimTurnHandler extends Handler {
 
       // Write message type "ok" to first two bytes and write whole message
       // to the output buffer.
-      byte[] response = new byte[32];
-      response[0] = (byte) (Puck.RES_OK & 0xFF);
-      response[1] = (byte) ((Puck.RES_OK >> 8) & 0xFF);
+      byte[] response = new byte[Puck.MSG_LENGTH];
+      response[Puck.TYPE_FIRST_BYTE] = (byte) (Puck.RES_OK & 0xFF);
+      response[Puck.TYPE_SECOND_BYTE] = (byte) ((Puck.RES_OK >> 8) & 0xFF);
       
       // Write message to output buffer and clear input buffer.
       sim.writeBuffer(sender, response);

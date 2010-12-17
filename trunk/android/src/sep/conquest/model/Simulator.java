@@ -24,7 +24,7 @@ public class Simulator {
   /**
    * The timer period.
    */
-  private static final long PERIOD = 1000;
+  private static final long PERIOD = 100;
 
   /**
    * The loaded map within the simulator.
@@ -297,7 +297,7 @@ public class Simulator {
       // write HitNode message and set moving state false.
       if ((newX % 3 == 0) && (newY % 3 == 0)) {
         // Message that is written on the output buffer
-        byte[] response = new byte[32];
+        byte[] response = new byte[Puck.MSG_LENGTH];
 
         // If number of collisions during one move is divisible by two
         // robot has attended its intended node.
@@ -308,15 +308,15 @@ public class Simulator {
           node = Utility.calculateNodeTypesToPuckOrientation(ori, node);
 
           // Write message type "node hit" to first two bytes.
-          response[0] = (byte) (Puck.RES_HITNODE & 0xFF);
-          response[1] = (byte) ((Puck.RES_HITNODE >> 8) & 0xFF);
+          response[Puck.TYPE_FIRST_BYTE] = (byte) (Puck.RES_HITNODE & 0xFF);
+          response[Puck.TYPE_SECOND_BYTE] = (byte) ((Puck.RES_HITNODE >> 8) & 0xFF);
 
           // Write node type to third byte.
           response[2] = (byte) node.ordinal();
         } else {
           // Write message type "collision" to first two bytes.
-          response[0] = (byte) (Puck.RES_COLLISION & 0xFF);
-          response[1] = (byte) ((Puck.RES_COLLISION >> 8) & 0xFF);
+          response[Puck.TYPE_FIRST_BYTE] = (byte) (Puck.RES_COLLISION & 0xFF);
+          response[Puck.TYPE_SECOND_BYTE] = (byte) ((Puck.RES_COLLISION >> 8) & 0xFF);
         }
         writeBuffer(id, response);
 

@@ -19,7 +19,9 @@ import sep.conquest.util.Utility;
  */
 public class SimStatusHandler extends Handler {
 
-  // Reference on simulator that received the message.
+  /**
+   * Reference on simulator that received the message.
+   */
   private Simulator sim;
 
   /**
@@ -52,9 +54,9 @@ public class SimStatusHandler extends Handler {
       UUID sender = request.getSender();
       
       // Write message type "status" to first two bytes.
-      byte[] response = new byte[32];
-      response[0] = (byte) (Puck.RES_STATUS & 0xFF);
-      response[1] = (byte) ((Puck.RES_STATUS >> 8) & 0xFF);
+      byte[] response = new byte[Puck.MSG_LENGTH];
+      response[Puck.TYPE_FIRST_BYTE] = (byte) (Puck.RES_STATUS & 0xFF);
+      response[Puck.TYPE_SECOND_BYTE] = (byte) ((Puck.RES_STATUS >> 8) & 0xFF);
       
       // Write system up time to next four bytes.
       int time = sim.getSystemUpTime(sender);     
@@ -70,7 +72,7 @@ public class SimStatusHandler extends Handler {
       }
       NodeType node = sim.getNodeType(pos[0] / 3, pos[1] / 3);
       node = Utility.calculateNodeTypesToRealWorld(node, sim.getOrientation(sender));
-      response[17] = (byte) node.ordinal();
+      response[Puck.NODE_BYTE] = (byte) node.ordinal();
       sim.writeBuffer(sender, response);
       sim.clearRequest(sender);
       return true;
