@@ -47,7 +47,10 @@ void _T1Interrupt( void) {
 	hal_int_clearFlag( HAL_INT_SOURCE__TIMER1);
 
 	for( uint16_t ui16 = 0; ui16 < HAL_RTC_MAX_EVENTS; ui16++) {
-		if( s_apodEvents[ui16].ui16Period && ++s_apodEvents[ui16].ui16CurrentTicks >= s_apodEvents[ui16].ui16Period) {
+		if( s_apodEvents[ui16].ui16Period && 
+			s_apodEvents[ui16].blActive &&
+			++s_apodEvents[ui16].ui16CurrentTicks >= s_apodEvents[ui16].ui16Period) {
+
 			s_apodEvents[ui16].ui16CurrentTicks = 0;
 			s_apodEvents[ui16].fnEvent( ui16);
 		}

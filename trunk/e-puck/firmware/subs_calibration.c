@@ -1,12 +1,9 @@
-#include <libpic30.h>
-
+#include "hal_led.h"
 #include "hal_sel.h"
 #include "hal_motors.h"
 #include "hal_nvm.h"
+#include "hal_rtc.h"
 #include "sen_line.h"
-
-#include <stdio.h>
-#include "hal_uart1.h"
 
 #include "subs_calibration.h"
 
@@ -15,7 +12,8 @@ enum {
 	LEFT_MOTOR = 0, ///< Specifies the local index for data concerning the left motor.
 	RIGHT_MOTOR = 1, ///< Specifies the local index for data concerning the right motor.
 	BLACK_LEVEL = 0, ///< Specifies the local index for the black level calibration values.
-	WHITE_LEVEL = 1 ///< Specifies the local index for the white level calibration values.
+	WHITE_LEVEL = 1, ///< Specifies the local index for the white level calibration values.
+	NUM_ERROR_BLINKS = 6 ///< Specifies the amount of LED blinks when a calibration error occurs.
 };
 
 
@@ -39,7 +37,22 @@ static EState_t s_eStatus = STATE__NOT_CALIBRATED;
 static sen_line_SData_t s_podLevels[2];
 static int16_t s_ai16SpeedBackup[2];
 static uint16_t s_aui16StepCounterBackup[2];
+static uint16_t s_ui16BlinkCount = 0;
+static hal_rtc_handle_t s_hBlinkEvent = HAL_RTC_INVALID_HANDLE;
 
+
+static void cbInvalidCalibrationBlinker(
+	IN const hal_rtc_handle_t _hEvent
+	) {
+
+	if( ++s_ui16BlinkCount > NUM_ERROR_BLINKS * 2) {
+		s_ui16BlinkCount = 0;
+		(void)hal_rtc_deactivate( _hEvent);
+		(void)hal_rtc_reset( _hEvent);
+	} else {
+		hal_led_toggle( 0xFF);
+	}
+}
 
 /*!
  * \brief
@@ -62,7 +75,9 @@ bool subs_calibration_run( void) {
 	switch( s_eStatus) {
 		case STATE__NOT_CALIBRATED: {
 			hal_nvm_readEEPROM( 0, s_podLevels, sizeof( s_podLevels));
-			(void)sen_line_calibrate( &s_podLevels[BLACK_LEVEL], &s_podLevels[WHITE_LEVEL]);
+			if( !sen_line_calibrate( &s_podLevels[BLACK_LEVEL], &s_podLevels[WHITE_LEVEL])) {
+				(void)hal_rtc_activate( s_hBlinkEvent);
+			}
 			s_eStatus = STATE__WAIT;
 			break;
 		}
@@ -82,8 +97,11 @@ bool subs_calibration_run( void) {
 			if( hal_motors_getStepsLeft() >= SUBS_CALIBRATION_DISTANCE &&
 				hal_motors_getStepsRight() >= SUBS_CALIBRATION_DISTANCE) {
 
-				hal_nvm_writeEEPROM( 0, s_podLevels, sizeof( s_podLevels));
-				(void)sen_line_calibrate( &s_podLevels[BLACK_LEVEL], &s_podLevels[WHITE_LEVEL]);
+				if( !sen_line_calibrate( &s_podLevels[BLACK_LEVEL], &s_podLevels[WHITE_LEVEL])) {
+					(void)hal_rtc_activate( s_hBlinkEvent);
+				} else {
+					hal_nvm_writeEEPROM( 0, s_podLevels, sizeof( s_podLevels));
+				}
 				hal_motors_setSpeedLeft( s_ai16SpeedBackup[LEFT_MOTOR]);
 				hal_motors_setSpeedRight( s_ai16SpeedBackup[RIGHT_MOTOR]);
 				hal_motors_setStepsLeft( s_aui16StepCounterBackup[LEFT_MOTOR]);
@@ -130,4 +148,11 @@ bool subs_calibration_run( void) {
 void subs_calibration_reset( void) {
 
 	s_eStatus = STATE__NOT_CALIBRATED;
+	s_ui16BlinkCount = 0;
+	if( s_hBlinkEvent == HAL_RTC_INVALID_HANDLE) {
+		s_hBlinkEvent = hal_rtc_register( cbInvalidCalibrationBlinker, 10, false);
+	} else {
+		(void)hal_rtc_deactivate( s_hBlinkEvent);
+		(void)hal_rtc_reset( s_hBlinkEvent);
+	}
 }

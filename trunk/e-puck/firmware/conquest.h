@@ -77,7 +77,7 @@ bool cbDemoMessageHandler(
 	IN const com_SMessage_t* _lppodMessage
 	);
 
-void conquest_init( void)
+void conquest_init( void);
 
 static inline uint16_t conquest_getRequestedLineSpeed( void);
 

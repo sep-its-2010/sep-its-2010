@@ -85,6 +85,24 @@ void cbBlinker(
 
 int main( void) {
 
+	hal_sel_init();
+	hal_led_init();
+	hal_motors_init();
+
+	hal_i2c_init( 150, true);
+
+	// Configuring the primary UART for the bluetooth module
+	ringbuf_init( hal_uart1_getRxRingBuffer(), s_aui8RxBufferSpace, sizeof( s_aui8RxBufferSpace));
+	ringbuf_init( hal_uart1_getTxRingBuffer(), s_aui8TxBufferSpace, sizeof( s_aui8TxBufferSpace));
+	hal_uart1_configure( HAL_UART_CONFIG__8N1, UART1_BAUDRATE_DIVISOR);
+	hal_uart1_enable( true);
+
+	com_init();
+	com_register( cbDemoMessageHandler);
+
+	// Real time clock with 100Hz
+	hal_rtc_init( FCY / 256 / 100);
+
 	subs_init();
 	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
 	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
@@ -95,30 +113,15 @@ int main( void) {
  	subs_register( subs_line_run, subs_line_reset, 0x9F);
 	subs_reset();
 
-	hal_sel_init();
-	hal_led_init();
-	hal_motors_init();
-
-	hal_i2c_init( 150, false);
-
-	// Configuring the primary UART for the bluetooth module
-	ringbuf_init( hal_uart1_getRxRingBuffer(), s_aui8RxBufferSpace, sizeof( s_aui8RxBufferSpace));
-	ringbuf_init( hal_uart1_getTxRingBuffer(), s_aui8TxBufferSpace, sizeof( s_aui8TxBufferSpace));
-	hal_uart1_configure( HAL_UART_CONFIG__8N1, UART1_BAUDRATE_DIVISOR);
-	hal_uart1_enable( true);
+	conquest_init();
 
 //	hal_uart1_puts( "SEP 2010 ITS e-puck & Android Project\r\n");
 	hal_motors_setSpeed( 800, 0);
 
-	// Real time clock with 100Hz
-	hal_rtc_init( FCY / 256 / 100);
 	hal_rtc_register( cbSubsumptionEvent, 1, true);
 	hal_rtc_register( cbBlinker, 50, true);
 //	hal_rtc_register( cbSensEvent, 25, true);
 
-	conquest_init();
-	com_init();	
-	com_register( cbDemoMessageHandler);
 	for( ;;) {
 		com_processIncoming();
 	}

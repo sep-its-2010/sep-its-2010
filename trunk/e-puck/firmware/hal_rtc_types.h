@@ -15,7 +15,7 @@ enum {
  * \see
  * HAL_RTC_INVALID_HANDLE
  */
-typedef int16_t hal_rtc_handle_t;
+typedef uint16_t hal_rtc_handle_t;
 
 
 /*!

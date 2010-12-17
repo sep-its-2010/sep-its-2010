@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 
 #include "hal_motors.h"
 #include "sen_line.h"
@@ -6,7 +7,7 @@
 
 #include "subs_line.h"
 
-#define T 20.0f				// Interrupt interval for pid-controller
+#define T 10.0f				// Interrupt interval for pid-controller
 #define KRC 2.5f	//2.5		// stability limit
 #define TC 0.4f	//0.2		// loop time
 #define IMAX 1500			// max integration sum
@@ -39,7 +40,7 @@ static int16_t s_i16DeltaOld = 0;
  */
 bool subs_line_run( void) {	
 
-	uint16_t ui16RequestedLineSpeed = 500;//conquest_getRequestedLineSpeed();
+	uint16_t ui16RequestedLineSpeed = conquest_getRequestedLineSpeed();
 	if( ui16RequestedLineSpeed) {
 
 		// calculate integration-part
@@ -67,10 +68,8 @@ bool subs_line_run( void) {
 		} else if( i16AngularSpeed < -HAL_MOTORS_MAX_ABS_SPEED) {
 			i16AngularSpeed = -HAL_MOTORS_MAX_ABS_SPEED;
 		}
-		if( (int16_t)ui16RequestedLineSpeed + i16AngularSpeed > HAL_MOTORS_MAX_ABS_SPEED) {
-			ui16RequestedLineSpeed = HAL_MOTORS_MAX_ABS_SPEED - i16AngularSpeed;
-		} else if( (int16_t)ui16RequestedLineSpeed + i16AngularSpeed < -HAL_MOTORS_MAX_ABS_SPEED) {
-			ui16RequestedLineSpeed = i16AngularSpeed - HAL_MOTORS_MAX_ABS_SPEED;
+		if( ui16RequestedLineSpeed + abs( i16AngularSpeed) > HAL_MOTORS_MAX_ABS_SPEED) {
+			ui16RequestedLineSpeed = HAL_MOTORS_MAX_ABS_SPEED - abs( i16AngularSpeed);
 		}
 		hal_motors_setSpeed( ui16RequestedLineSpeed, i16AngularSpeed);
 	}
