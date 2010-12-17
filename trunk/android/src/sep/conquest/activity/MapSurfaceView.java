@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import sep.conquest.model.GridMap;
 import sep.conquest.model.MapNode;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -184,7 +185,7 @@ public class MapSurfaceView extends SurfaceView
     public final void surfaceDestroyed(final SurfaceHolder holder) {
         boolean retry = true;
         mThread.setPaused(true);
-
+        
         while (retry) {
             try {
                 mThread.join();
@@ -346,7 +347,7 @@ public class MapSurfaceView extends SurfaceView
             int offsetX = Math.abs(minX);
 
             //scale the map or scroll it
-            if (mMode == MapMode.PREVIEW || mMode == MapMode.IMPORT) {
+            if (mMode == MapMode.PREVIEW || mMode == MapMode.IMPORT || mMode == MapMode.SIMULATION) {
                 autoScaling(c, (maxX - minX + 1),
                                (maxY - minY + 1), displayX, displayY);
             } else {

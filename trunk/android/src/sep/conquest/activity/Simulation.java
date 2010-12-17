@@ -147,9 +147,17 @@ public class Simulation extends Activity {
 
 		switch (item.getItemId()) {
 		case R.id.mnuStart:
+			int[][] pos = new int[mNumber+1][2];
+			Orientation[] orientation = new Orientation[mNumber + 1];
+			for (int i = 0; i < mNumber+1; i++) {
+				pos[i][0] = robotPositions[i][0];
+				pos[i][1] = robotPositions[i][1];
+				orientation[i] = ori[i];
+			}
+			
 			start.setComponent(new ComponentName(getApplicationContext()
 					.getPackageName(), sep.conquest.activity.Map.class.getName()));
-			PuckFactory.createVirtualPucks(map, robotPositions, ori);
+			PuckFactory.createVirtualPucks(map, pos, orientation);
 			start.putExtra(MapMode.class.toString(), MapMode.SIMULATION);
 			startActivity(start);
 			break;

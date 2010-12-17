@@ -235,6 +235,7 @@ public class Map extends Activity implements Observer {
 	public void update(Observable obs, Object data) {
 		ConquestUpdate cu = (ConquestUpdate) data;
 		MapSurfaceView draw = (MapSurfaceView) findViewById(R.id.map_view);
+		System.out.println("GOT UPDATE!!! OK!");
 		
 		Set<UUID> id = cu.getRobotStatus().keySet();
 		mPositions.clear();
