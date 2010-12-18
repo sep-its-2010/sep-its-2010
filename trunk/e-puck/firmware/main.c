@@ -116,7 +116,7 @@ int main( void) {
 	conquest_init();
 
 //	hal_uart1_puts( "SEP 2010 ITS e-puck & Android Project\r\n");
-	hal_motors_setSpeed( 800, 0);
+	hal_motors_setSpeed( 1000, 0);
 
 	hal_rtc_register( cbSubsumptionEvent, 1, true);
 	hal_rtc_register( cbBlinker, 50, true);

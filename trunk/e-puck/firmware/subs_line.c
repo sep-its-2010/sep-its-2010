@@ -1,4 +1,3 @@
-#include <string.h>
 #include <stdlib.h>
 
 #include "hal_motors.h"
@@ -7,66 +6,90 @@
 
 #include "subs_line.h"
 
-#define T 10.0f				// Interrupt interval for pid-controller
-#define KRC 2.5f	//2.5		// stability limit
-#define TC 0.4f	//0.2		// loop time
-#define IMAX 1500			// max integration sum
-
-const float t = (T / 1000.0); // timer interval in ms
-
-// constants for pid-controller (ziegler-nichols rules)
-const float kr = 0.6f * KRC;
-const float tn = 0.5f * TC;
-const float tv = 0.12f * TC;
-
-// constants for pid-controller (PID-adjust-algorithm)
-const float yp = 1.0;
-#define yi ( t / tn)
-#define yd ( tv / t)
-
-static int16_t s_i16DeltaSum = 0;
-static int16_t s_i16DeltaOld = 0;
 
 /*!
  * \brief
- * Keeps the robot on the line.
+ * Holds the current integration part of the PID feedback controller.
+ * 
+ * \remarks
+ * #subs_line_reset() should be called to clear the integration part when a new line tracing operation starts.
+ * 
+ * \see
+ * subs_line_run | subs_line_reset
+ */
+static int16_t s_i16DeltaSum = 0;
+
+
+/*!
+ * \brief
+ * Holds the delta left-to-right line sensor of the previous cycle.
+ * 
+ * \remarks
+ * #subs_line_reset() should be called to clear the delta when a new line tracing operation starts.
+ * 
+ * \see
+ * subs_line_run
+ */
+static int16_t s_i16DeltaOld = 0;
+
+
+/*!
+ * \brief
+ * Subsumption layer for line following.
  * 
  * \returns
- * True, as this is the last subsumption-behavior and will always be performed and start a new cycle afterwards.
+ * - \c true: adjusted motor speed
+ * - \c false: motors not active
  * 
- * Collects data from the ground-sensors and uses these values to compute slight movement changes,
- * which shall keep the robot above the line he is currently following.
- * Therefor a PID-controlling-algorithm is deployed.
+ * Uses the difference of the calibrated left and right line sensors as input to a PID feedback controller.
+ * The controller is fix point based and can be configured through #SUBS_LINE_P_FIXPOINT_FACTOR, #SUBS_LINE_I_FIXPOINT_FACTOR and
+ * #SUBS_LINE_D_FIXPOINT_FACTOR.
+ * 
+ * \remarks
+ * - The frame time needs to be constant.
+ * - The line speed will never #exceed conquest_getRequestedLineSpeed().
+ *
+ * \warning
+ * - The line sensors need to be calibrated before (#sen_line_calibarte()).
+ * - The motors abstraction layer needs to be initialized (#hal_motors_init()).
+ * 
+ * \see
+ * subs_line_reset
  */
 bool subs_line_run( void) {	
 
 	uint16_t ui16RequestedLineSpeed = conquest_getRequestedLineSpeed();
 	if( ui16RequestedLineSpeed) {
 
-		// calculate integration-part
-		s_i16DeltaSum += s_i16DeltaOld;
-		if( s_i16DeltaSum > IMAX) {
-			s_i16DeltaSum = IMAX;
-		} else if( s_i16DeltaSum < -IMAX) {
-			s_i16DeltaSum = -IMAX;
-		}
-
-		// Get delta left to right
+		// Get delta left-to-right line sensor
 		sen_line_SData_t podSensorData;
 		sen_line_read( &podSensorData);
 		sen_line_rescale( &podSensorData, &podSensorData);
 		const int16_t i16DeltaNew = podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] - podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT];
+		
+		// Constrain integration part
+		s_i16DeltaSum += s_i16DeltaOld;
+		if( s_i16DeltaSum > SUBS_LINE_MAX_ABS_INTEGRATION) {
+			s_i16DeltaSum = SUBS_LINE_MAX_ABS_INTEGRATION;
+		} else if( s_i16DeltaSum < -SUBS_LINE_MAX_ABS_INTEGRATION) {
+			s_i16DeltaSum = -SUBS_LINE_MAX_ABS_INTEGRATION;
+		}
 
-		// PID-adjust-algorithm
-		float y_new = kr * ( yp * i16DeltaNew + yi * s_i16DeltaSum + yd * ( i16DeltaNew - s_i16DeltaOld));
+		// PID algorithm
+		const int32_t i32FixpointP = SUBS_LINE_P_FIXPOINT_FACTOR * (int32_t)i16DeltaNew;
+		const int32_t i32FixpointI = SUBS_LINE_I_FIXPOINT_FACTOR * (int32_t)s_i16DeltaSum;
+		const int32_t i32FixpointD = SUBS_LINE_D_FIXPOINT_FACTOR * (int32_t)( i16DeltaNew - s_i16DeltaOld);
+		const int32_t i32PID = ( i32FixpointP + i32FixpointI + i32FixpointD) / SUBS_LINE_PID_FIXPOINT_OFFSET;
 		s_i16DeltaOld = i16DeltaNew;
 
 		// Constrain & set speed
-		int16_t i16AngularSpeed = y_new / 2;
-		if( i16AngularSpeed > HAL_MOTORS_MAX_ABS_SPEED) {
+		int16_t i16AngularSpeed;
+		if( i32PID / 2 > HAL_MOTORS_MAX_ABS_SPEED) {
 			i16AngularSpeed = HAL_MOTORS_MAX_ABS_SPEED;
-		} else if( i16AngularSpeed < -HAL_MOTORS_MAX_ABS_SPEED) {
+		} else if( i32PID / 2 < -HAL_MOTORS_MAX_ABS_SPEED) {
 			i16AngularSpeed = -HAL_MOTORS_MAX_ABS_SPEED;
+		} else {
+			i16AngularSpeed = (int16_t)( i32PID / 2);
 		}
 		if( ui16RequestedLineSpeed + abs( i16AngularSpeed) > HAL_MOTORS_MAX_ABS_SPEED) {
 			ui16RequestedLineSpeed = HAL_MOTORS_MAX_ABS_SPEED - abs( i16AngularSpeed);
@@ -77,11 +100,18 @@ bool subs_line_run( void) {
 	return ui16RequestedLineSpeed;
 }
 
+
 /*!
  * \brief
- * Resets  all values of the PID-controller.
+ * Resets the line following layer.
  * 
- * Sets all parameter, which are used to compute the movement-adjustments of the robot back to default values.
+ * The internal state of the PID feedback controller is reset.
+ * 
+ * \remarks
+ * This function should be called whenever a new line tracing operation starts.
+ * 
+ * \see
+ * subs_line_run
  */
 void subs_line_reset( void) {
 
