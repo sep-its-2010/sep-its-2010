@@ -6,7 +6,8 @@
 
 enum {
 	SUBS_ABYSS_THRESHOLD = 210, ///< Specifies the line sensor threshold below which an abyss is detected.
-	SUBS_ABYSS_REGRESSION = 200 ///< Specifies the amount of steps to drive backwards in case an abyss is detected.
+	SUBS_ABYSS_REGRESSION = 200, ///< Specifies the amount of steps to drive backwards in case an abyss is detected.
+	SUBS_ABYSS_REGRESSION_SPEED = 500 ///< Specifies the absolute speed to drive backwards in case an abyss is detected.
 };
 
 
