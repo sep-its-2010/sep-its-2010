@@ -50,7 +50,7 @@ static int16_t s_i16DeltaOld = 0;
  * - The line speed will never #exceed conquest_getRequestedLineSpeed().
  *
  * \warning
- * - The line sensors need to be calibrated before (#sen_line_calibarte()).
+ * - The line sensors need to be calibrated before (#sen_line_calibrate()).
  * - The motors abstraction layer needs to be initialized (#hal_motors_init()).
  * 
  * \see

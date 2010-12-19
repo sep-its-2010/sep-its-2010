@@ -1,5 +1,3 @@
-
-// Required for abs()
 #include <stdlib.h>
 
 #include "hal_int.h"

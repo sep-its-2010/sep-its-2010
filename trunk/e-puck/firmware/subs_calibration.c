@@ -13,7 +13,9 @@ enum {
 	RIGHT_MOTOR = 1, ///< Specifies the local index for data concerning the right motor.
 	BLACK_LEVEL = 0, ///< Specifies the local index for the black level calibration values.
 	WHITE_LEVEL = 1, ///< Specifies the local index for the white level calibration values.
-	NUM_ERROR_BLINKS = 6 ///< Specifies the amount of LED blinks when a calibration error occurs.
+	BLINK_AMOUNT = 6, ///< Specifies the amount of LED blinks when a calibration error occurs.
+	BLINK_MASK = HAL_LED_PIN_MASK__CIRCULAR, ///< Specifies the LEDs to be toggled when a calibration error occurs.
+	BLINK_INTERVAL = 10 ///< Specifies the blink interval in time units defined by #hal_rtc_init().
 };
 
 
@@ -33,40 +35,144 @@ typedef enum {
 } EState_t;
 
 
-static EState_t s_eStatus = STATE__NOT_CALIBRATED;
-static sen_line_SData_t s_podLevels[2];
-static int16_t s_ai16SpeedBackup[2];
-static uint16_t s_aui16StepCounterBackup[2];
-static uint16_t s_ui16BlinkCount = 0;
-static hal_rtc_handle_t s_hBlinkEvent = HAL_RTC_INVALID_HANDLE;
-
-
 static void cbInvalidCalibrationBlinker(
 	IN const hal_rtc_handle_t _hEvent
-	) {
+	);
 
-	if( ++s_ui16BlinkCount > NUM_ERROR_BLINKS * 2) {
-		s_ui16BlinkCount = 0;
-		(void)hal_rtc_deactivate( _hEvent);
-		(void)hal_rtc_reset( _hEvent);
-	} else {
-		hal_led_toggle( 0xFF);
-	}
-}
 
 /*!
  * \brief
- * Collects calibration values of the ground-sensors smartphone.
- *
- * \returns
- * True if the calibration has not been performed yet, false otherwise.
+ * Holds the current calibration state.
  * 
- * If the e-puck is correctly set up above a black line and its selector is at position '0' sensor data are collected.
- * After driving a few centimeters the robot is supposed to be above a white pane and collects again sensor data for the calibration.
- * These values are stored in the EEPROM.
+ * \see
+ * subs_calibration_reset
+ */
+static EState_t s_eStatus = STATE__NOT_CALIBRATED;
+
+
+/*!
+ * \brief
+ * Holds the back level and white level measurement.
+ * 
+ * The two levels need to be buffered because the actual line sensor calibration with #sen_line_calibrate() takes place
+ * when the e-puck returned to its point of origin.
+ * 
+ * \see
+ * subs_calibration_run
+ */
+static sen_line_SData_t s_podLevels[2];
+
+
+/*!
+ * \brief
+ * Holds a backup of the left and right motor speed before the calibration.
+ * 
+ * To continue any interrupted higher subsumption logic the speed of the left and right step motors and their associated
+ * step counters are saved because this layer also needs to access these, too.
+ * 
+ * \remarks
+ * Any speed changes by any lower subsumption layer during calibration is undone after the calibration finishes.
+ * 
+ * \see
+ * subs_calibration_run | s_aui16StepCounterBackup
+ */
+static int16_t s_ai16SpeedBackup[2];
+
+
+/*!
+ * \brief
+ * Holds a backup of the left and right step counters of the associated step motors before the calibration.
+ * 
+ * To continue any interrupted higher subsumption logic the speed of the left and right step motors and their associated
+ * step counters are saved because this layer also needs to access these, too.
+ * 
+ * \remarks
+ * Any speed changes by any lower subsumption layer during calibration is undone after the calibration finishes.
+ * 
+ * \see
+ * subs_calibration_run | s_ai16SpeedBackup
+ */
+static uint16_t s_aui16StepCounterBackup[2];
+
+
+/*!
+ * \brief
+ * Holds the current toggle count of the calibration error visualization.
+ * 
+ * \see
+ * cbInvalidCalibrationBlinker
+ */
+static uint16_t s_ui16ToggleCount = 0;
+
+
+/*!
+ * \brief
+ * Holds the handle to the calibration error visualization event.
+ * 
+ * \remarks
+ * #subs_calibration_reset() needs to be called to register the event. Otherwise the handle is invalid.
+ * 
+ * \see
+ * cbInvalidCalibrationBlinker
+ */
+static hal_rtc_handle_t s_hBlinkEvent = HAL_RTC_INVALID_HANDLE;
+
+
+/*!
+ * \brief
+ * Visualizes a calibration error by blinking LEDs.
+ * 
+ * \param _hEvent
+ * Specifies the unique event handle.
+ * 
+ * In case the back level and white level calibration values are invalid this event is activated.
+ * 
+ * \remarks
+ * #subs_calibration_reset() needs to be called to register the event.
  *
  * \see
- * subs_calibrate_reset
+ * sen_line_calibrate | s_hBlinkEvent
+ */
+void cbInvalidCalibrationBlinker(
+	IN const hal_rtc_handle_t _hEvent
+	) {
+
+	// 1 blink := toggle LEDs twice
+	if( ++s_ui16ToggleCount > BLINK_AMOUNT * 2) {
+		s_ui16ToggleCount = 0;
+		hal_rtc_deactivate( _hEvent);
+		hal_rtc_reset( _hEvent);
+	} else {
+		hal_led_toggle( BLINK_MASK);
+	}
+}
+
+
+/*!
+ * \brief
+ * Subsumption layer for line sensor calibration.
+ * 
+ * \returns
+ * - \c true: calibration active
+ * - \c false: calibration inactive
+ * 
+ * When no calibration has taken place so far, the calibration values are read from the EEPROM. If these values are invalid, the
+ * error visualization event (#cbInvalidCalibrationBlinker()) is activated.
+ *
+ * When the initial calibration has taken place already and the selector is witched to #SUBS_CALIBRATION_SELECTOR, the measurement
+ * routine is entered. This requires that the e-puck is standing on the black level underground with all three line sensors.
+ * The line sensors are read and their values are buffered as the new black level. Then the robot drives a specified amount of
+ * steps (#SUBS_CALIBRATION_DISTANCE). It is now supposed to stand on the white level underground. Another measurement is taken
+ * which is buffered as the new white level. After returning to its point of origin the line sensors are calibrated
+ * (#sen_line_calibrate) and the buffered values are stored in the EEPROM on success.
+ * 
+ * \remarks
+ * - #subs_line_reset() should be called to initialize the layer.
+ * - Any ongoing higher subsumption actions will be interrupted and resumed after this layer finishes.
+ *
+ * \warning
+ * - The motors abstraction layer needs to be initialized (#hal_motors_init()).
+ * - The I2C abstraction layer needs to be initialized (#hal_i2c_init()).
  */
 bool subs_calibration_run( void) {
 
@@ -76,7 +182,7 @@ bool subs_calibration_run( void) {
 		case STATE__NOT_CALIBRATED: {
 			hal_nvm_readEEPROM( 0, s_podLevels, sizeof( s_podLevels));
 			if( !sen_line_calibrate( &s_podLevels[BLACK_LEVEL], &s_podLevels[WHITE_LEVEL])) {
-				(void)hal_rtc_activate( s_hBlinkEvent);
+				hal_rtc_activate( s_hBlinkEvent);
 			}
 			s_eStatus = STATE__WAIT;
 			break;
@@ -98,7 +204,7 @@ bool subs_calibration_run( void) {
 				hal_motors_getStepsRight() >= SUBS_CALIBRATION_DISTANCE) {
 
 				if( !sen_line_calibrate( &s_podLevels[BLACK_LEVEL], &s_podLevels[WHITE_LEVEL])) {
-					(void)hal_rtc_activate( s_hBlinkEvent);
+					hal_rtc_activate( s_hBlinkEvent);
 				} else {
 					hal_nvm_writeEEPROM( 0, s_podLevels, sizeof( s_podLevels));
 				}
@@ -139,20 +245,29 @@ bool subs_calibration_run( void) {
 	return blActed;
 }
 
+
 /*!
  * \brief
- * Resets the calibration-data of the robot.
- *
- * Deletes all former calibration-data from the EEPROM.
+ * Resets the calibration layer.
+ * 
+ * The current state of the calibration layer is reset and the blinker event is registered if this did not already happen.
+ * The event is initially inactive and will never be unregistered.
+ * 
+ * \warning
+ * - The LED abstraction layer needs to be initialized (#hal_led_init()).
+ * - The real time clock needs to be initialized (#hal_rtc_init()).
+ * 
+ * \see
+ * subs_calibration_run
  */
 void subs_calibration_reset( void) {
 
 	s_eStatus = STATE__NOT_CALIBRATED;
-	s_ui16BlinkCount = 0;
+	s_ui16ToggleCount = 0;
 	if( s_hBlinkEvent == HAL_RTC_INVALID_HANDLE) {
-		s_hBlinkEvent = hal_rtc_register( cbInvalidCalibrationBlinker, 10, false);
+		s_hBlinkEvent = hal_rtc_register( cbInvalidCalibrationBlinker, BLINK_INTERVAL, false);
 	} else {
-		(void)hal_rtc_deactivate( s_hBlinkEvent);
-		(void)hal_rtc_reset( s_hBlinkEvent);
+		hal_rtc_deactivate( s_hBlinkEvent);
+		hal_rtc_reset( s_hBlinkEvent);
 	}
 }
