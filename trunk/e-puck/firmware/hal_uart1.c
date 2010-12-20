@@ -19,9 +19,9 @@ ringbuf_SContext_t hal_uart1_podTxBuffer = { NULL, 0, 0, 0 };
 ringbuf_SContext_t hal_uart1_podRxBuffer = { NULL, 0, 0, 0 };
 
 
-void ISR NO_AUTO_PSV _U1TXInterrupt( void);
+void _ISR NO_AUTO_PSV _U1TXInterrupt( void);
 
-void ISR NO_AUTO_PSV _U1RXInterrupt( void);
+void _ISR NO_AUTO_PSV _U1RXInterrupt( void);
 
 
 /*!

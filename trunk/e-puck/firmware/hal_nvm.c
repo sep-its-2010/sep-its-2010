@@ -12,8 +12,8 @@
 
 enum {
 	EEPROM_SIZE = 4096, ///< Specifies the size in bytes of the internal EEPROM.
-	EEPROM_WORDS_PER_ROW = 16, ///< Specifies the amount of EEPROM words within one EEPROM row.
-	EEPROM_BYTES_PER_WORD = 2, ///< Specifies the amount of bytes within one EEPROM word.
+	EEPROM_WORDS_PER_ROW = _EE_ROW / _EE_WORD, ///< Specifies the amount of EEPROM words within one EEPROM row.
+	EEPROM_BYTES_PER_WORD = _EE_WORD, ///< Specifies the amount of bytes within one EEPROM word.
 	EEPROM_PSV_ADDR_UPPER = 0xFF, ///< Specifies the upper address (8 bit) for the EEPROM PSV window.
 	EEPROM_PSV_ADDR_LOWER_OFFSET = 0x7000, ///< Specifies the offset within the lower address (15 bit) for the EEPROM PSV window.
 	EEPROM_NVM_ADDR_UPPER = 0x7F, ///< Specifies the upper address (7 bit) for the EEPROM NVM page.
@@ -35,13 +35,13 @@ enum {
  * executeOperation
  */
 typedef enum {
-	OPERATION__FLASH_ERASE_ROW = 0x4041, ///< Specifies a flash memory row erase operation.
-	OPERATION__FLASH_WRITE_ROW = 0x4001, ///< Specifies a flash memory row write operation.
-	OPERATION__EEPROM_ERASE_WORD = 0x4044, ///< Specifies an EEPROM word erase operation.
-	OPERATION__EEPROM_WRITE_WORD = 0x4004, ///< Specifies an EEPROM word write operation.
-	OPERATION__EEPROM_ERASE_ROW = 0x4045, ///< Specifies an EEPROM row erase operation.
-	OPERATION__EEPROM_WRITE_ROW = 0x4005, ///< Specifies an EEPROM row write operation.
-	OPERATION__EEPROM_ERASE_ALL = 0x4046, ///< Specifies a full EEPROM erase operation.
+	OPERATION__FLASH_ERASE_ROW = _FLASH_ERASE_CODE, ///< Specifies a flash memory row erase operation.
+	OPERATION__FLASH_WRITE_ROW = _FLASH_WRITE_ROW_CODE, ///< Specifies a flash memory row write operation.
+	OPERATION__EEPROM_ERASE_WORD = _EE_ERASE_WORD_CODE, ///< Specifies an EEPROM word erase operation.
+	OPERATION__EEPROM_WRITE_WORD = _EE_WORD_WRITE_CODE, ///< Specifies an EEPROM word write operation.
+	OPERATION__EEPROM_ERASE_ROW = _EE_ERASE_ROW_CODE, ///< Specifies an EEPROM row erase operation.
+	OPERATION__EEPROM_WRITE_ROW = _EE_ROW_WRITE_CODE, ///< Specifies an EEPROM row write operation.
+	OPERATION__EEPROM_ERASE_ALL = _EE_ERASE_ALL_CODE, ///< Specifies a full EEPROM erase operation.
 	OPERATION__CONFIG_WRITE = 0x4008 ///< Specifies a configuration write operation.
 } EOperation_t;
 
@@ -94,8 +94,8 @@ void executeOperation(
  * \brief
  * Writes data to the internal EEPROM.
  * 
- * \param _ui16Destination
- * Specifies the relative destination address within the EEPROM.
+ * \param _addrDestination
+ * Specifies the program memory space address.
  * 
  * \param _lpvSource
  * Specifies the source buffer.
@@ -123,7 +123,7 @@ void executeOperation(
  * hal_nvm_readEEPROM
  */
 bool hal_nvm_writeEEPROM(
-	IN const uint16_t _ui16Destination,
+	IN const _prog_addressT _addrDestination,
 	IN const void* const _lpvSource,
 	IN const uint16_t _ui16Length
 	) {
@@ -131,9 +131,11 @@ bool hal_nvm_writeEEPROM(
 	bool blSuccess = false;
 
 	// Check bounds
-	if( ( _ui16Destination < EEPROM_SIZE) && 
+	const uint16_t ui16EEPROMAddr = (uint16_t)_addrDestination - EEPROM_NVM_ADDR_LOWER_OFFSET;
+	if( ( (uint16_t)( _addrDestination >> 16) == EEPROM_NVM_ADDR_UPPER) &&
+		( (uint16_t)_addrDestination >= EEPROM_NVM_ADDR_LOWER_OFFSET) && 
 		( _ui16Length <= EEPROM_SIZE) &&
-		( EEPROM_SIZE >= _ui16Destination + _ui16Length)) {
+		( EEPROM_SIZE >= ui16EEPROMAddr + _ui16Length)) {
 
 		HAL_INT_ATOMIC_BLOCK() {
 
@@ -144,10 +146,10 @@ bool hal_nvm_writeEEPROM(
 			CORCONbits.PSV = true;
 
 			// Holds the offset of the EEPROM row boundary
-			const uint16_t ui16BaseOffset = _ui16Destination & ( EEPROM_WORDS_PER_ROW * EEPROM_BYTES_PER_WORD - 1);
+			const uint16_t ui16BaseOffset = ui16EEPROMAddr & ( EEPROM_WORDS_PER_ROW * EEPROM_BYTES_PER_WORD - 1);
 
 			// Holds the current EEPROM row (with correct alignment)
-			uint16_t ui16CurRowAddr = _ui16Destination - ui16BaseOffset;
+			uint16_t ui16CurRowAddr = ui16EEPROMAddr - ui16BaseOffset;
 
 			uint16_t ui16Written = 0;
 			while( ui16Written < _ui16Length) {
@@ -207,8 +209,8 @@ bool hal_nvm_writeEEPROM(
  * \brief
  * Reads data from the internal EEPROM.
  * 
- * \param _ui16Source
- * Specifies the relative source address within the internal EEPROM.
+ * \param _addrSource
+ * Specifies the program memory space address.
  * 
  * \param _lpvDestination
  * Specifies the destination buffer.
@@ -230,7 +232,7 @@ bool hal_nvm_writeEEPROM(
  * hal_nvm_readEEPROM
  */
 bool hal_nvm_readEEPROM(
-	IN const uint16_t _ui16Source,
+	IN const _prog_addressT _addrSource,
 	OUT void* const _lpvDestination,
 	IN const uint16_t _ui16Length
 	) {
@@ -238,9 +240,11 @@ bool hal_nvm_readEEPROM(
 	bool blSuccess = false;
 
 	// Check bounds
-	if( ( _ui16Source < EEPROM_SIZE) && 
+	const uint16_t ui16EEPROMAddr = (uint16_t)_addrSource - EEPROM_NVM_ADDR_LOWER_OFFSET;
+	if( ( (uint16_t)( _addrSource >> 16) == EEPROM_NVM_ADDR_UPPER) &&
+		( (uint16_t)_addrSource >= EEPROM_NVM_ADDR_LOWER_OFFSET) && 
 		( _ui16Length <= EEPROM_SIZE) &&
-		( EEPROM_SIZE >= _ui16Source + _ui16Length)) {
+		( EEPROM_SIZE >= ui16EEPROMAddr + _ui16Length)) {
 
 		HAL_INT_ATOMIC_BLOCK() {
 			const uint8_t ui8BackupPSVPAG = PSVPAG;
@@ -248,7 +252,7 @@ bool hal_nvm_readEEPROM(
 			PSVPAG = EEPROM_PSV_ADDR_UPPER;
 			CORCONbits.PSV = true;
 
-			const uint16_t ui16EffectiveAddress = ( _ui16Source + EEPROM_PSV_ADDR_LOWER_OFFSET) | PSV_ADDRESS_ENABLE;
+			const uint16_t ui16EffectiveAddress = ( ui16EEPROMAddr + EEPROM_PSV_ADDR_LOWER_OFFSET) | PSV_ADDRESS_ENABLE;
 			memcpy( _lpvDestination, (const void*)ui16EffectiveAddress, _ui16Length);
 
 			PSVPAG = ui8BackupPSVPAG;

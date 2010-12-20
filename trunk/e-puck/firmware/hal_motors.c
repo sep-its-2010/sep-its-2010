@@ -5,9 +5,9 @@
 #include "hal_motors.h"
 
 
-void ISR AUTO_PSV _T5Interrupt( void);
+void _ISR NO_AUTO_PSV _T5Interrupt( void);
 
-void ISR AUTO_PSV _T4Interrupt( void);
+void _ISR NO_AUTO_PSV _T4Interrupt( void);
 
 static void stepLeft( void);
 

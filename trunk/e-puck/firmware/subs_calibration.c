@@ -1,3 +1,6 @@
+#include <p30f6014A.h>
+#include <libpic30.h>
+
 #include "hal_led.h"
 #include "hal_sel.h"
 #include "hal_motors.h"
@@ -61,6 +64,16 @@ static EState_t s_eStatus = STATE__NOT_CALIBRATED;
  * subs_calibration_run
  */
 static sen_line_SData_t s_podLevels[2];
+
+
+/*!
+ * \brief
+ * Holds the back level and white level calibration values.
+ * 
+ * \see
+ * subs_calibration_run
+ */
+static sen_line_SData_t _EEDATA( 2) s_podCalibrationLevels[2];
 
 
 /*!
@@ -180,7 +193,9 @@ bool subs_calibration_run( void) {
 
 	switch( s_eStatus) {
 		case STATE__NOT_CALIBRATED: {
-			hal_nvm_readEEPROM( 0, s_podLevels, sizeof( s_podLevels));
+			_prog_addressT addrCalibrationValues;
+			_init_prog_address( addrCalibrationValues, s_podCalibrationLevels);
+			hal_nvm_readEEPROM( addrCalibrationValues, s_podLevels, sizeof( s_podLevels));
 			if( !sen_line_calibrate( &s_podLevels[BLACK_LEVEL], &s_podLevels[WHITE_LEVEL])) {
 				hal_rtc_activate( s_hBlinkEvent);
 			}
@@ -206,7 +221,9 @@ bool subs_calibration_run( void) {
 				if( !sen_line_calibrate( &s_podLevels[BLACK_LEVEL], &s_podLevels[WHITE_LEVEL])) {
 					hal_rtc_activate( s_hBlinkEvent);
 				} else {
-					hal_nvm_writeEEPROM( 0, s_podLevels, sizeof( s_podLevels));
+					_prog_addressT addrCalibrationValues;
+					_init_prog_address( addrCalibrationValues, s_podCalibrationLevels);
+					hal_nvm_writeEEPROM( addrCalibrationValues, s_podLevels, sizeof( s_podLevels));
 				}
 				hal_motors_setSpeedLeft( s_ai16SpeedBackup[LEFT_MOTOR]);
 				hal_motors_setSpeedRight( s_ai16SpeedBackup[RIGHT_MOTOR]);

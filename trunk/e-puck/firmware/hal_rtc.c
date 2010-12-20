@@ -7,7 +7,7 @@
 #include "hal_rtc.h"
 
 
-void ISR AUTO_PSV _T1Interrupt( void);
+void _ISR NO_AUTO_PSV _T1Interrupt( void);
 
 
 /*!

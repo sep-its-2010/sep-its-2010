@@ -15,7 +15,7 @@
  * A marker to define denoting function parameters which are only read but not modified.
  * 
  * \see
- * OUT | INOUT | OPT
+ * OUT | INOUT | OPT | UNUSED
  */
 #define IN
 
@@ -24,7 +24,7 @@
  * A marker to define denoting function parameters which are only modified but not read.
  * 
  * \see
- * IN | INOUT | OPT
+ * IN | INOUT | OPT | UNUSED
  */
 #define OUT
 
@@ -33,7 +33,7 @@
  * A marker to define denoting function parameters which are read and modified.
  * 
  * \see
- * IN | OUT | OPT
+ * IN | OUT | OPT | UNUSED
  */
 #define INOUT
 
@@ -43,16 +43,41 @@
  * A marker to define denoting function parameters which are optional.
  * 
  * \see
- * IN | OUT | INOUT
+ * IN | OUT | INOUT | UNUSED
  */
 #define OPT
 
 
-#define ISR					__attribute__( ( __interrupt__))
-#define AUTO_PSV			__attribute__( ( auto_psv))
-#define NO_AUTO_PSV			__attribute__( ( no_auto_psv))
-#define USE_SHADOWING		__attribute__( ( shadow))
-#define UNUSED				__attribute__( ( unused))
+/*!
+ * \brief
+ * A marker to define denoting function parameters which are intentionally unused.
+ * 
+ * \see
+ * IN | OUT | INOUT
+ */
+#define UNUSED __attribute__( ( unused))
+
+
+/*!
+ * \brief
+ * Enables automatic PSV management.
+ *
+ * This function attribute is required for ISRs which use constants-in-code.
+ * 
+ * \see
+ * NO_AUTO_PSV
+ */
+#define AUTO_PSV __attribute__( ( auto_psv))
+
+
+/*!
+ * \brief
+ * Disables automatic PSV management.
+ * 
+ * \see
+ * AUTO_PSV
+ */
+#define NO_AUTO_PSV	__attribute__( ( no_auto_psv))
 
 
 #endif /* comdef_h__ */

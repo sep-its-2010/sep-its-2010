@@ -396,6 +396,13 @@
 					Switch="-Wno-variadic-macros"
 					DefaultValue="true"
 				/>
+				<BooleanProperty
+					Name="ProceduralOptimization"
+					DisplayName="Run Procedural Abstraction Stage"
+					Description="When the procedural abstraction optimization is enabled inline assembly code must be limited to valid machine instructions. Invalid machine instructions or instruction sequences, or assembler directives must not be used."
+					Switch="-mpa"
+					DefaultValue="true"
+				/>
 			</Properties>
 		</CustomBuildRule>
 		<CustomBuildRule

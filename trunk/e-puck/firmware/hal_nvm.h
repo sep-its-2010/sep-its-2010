@@ -3,16 +3,18 @@
 
 #include "common.h"
 
+#include <libpic30.h>
+
 
 bool hal_nvm_writeEEPROM(
-	IN const uint16_t _ui16Destination,
+	IN const _prog_addressT _addrDestination,
 	IN const void* const _lpvSource,
 	IN const uint16_t _ui16Length
 	);
 
 
 bool hal_nvm_readEEPROM(
-	IN const uint16_t _ui16Source,
+	IN const _prog_addressT _addrSource,
 	OUT void* const _lpvDestination,
 	IN const uint16_t _ui16Length
 	);
