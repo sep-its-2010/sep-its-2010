@@ -1,8 +1,13 @@
 package sep.conquest.model.handler;
 
+import java.util.UUID;
+
 import sep.conquest.model.FailureType;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.Puck;
+import sep.conquest.model.RobotStatus;
+import sep.conquest.model.State;
 import sep.conquest.model.requests.FailureRequest;
 import sep.conquest.model.requests.MessageType;
 
@@ -39,12 +44,21 @@ public class FailureRequestHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-		String message;
 		if (!(request.getKind() == MessageType.FAILURE)) {
 			return super.handleRequest(request);
 		} else {
 			FailureRequest failReq = (FailureRequest) request;
-			if (failReq.getFailureType() == FailureType.ABYSS) {
+			UUID sender = failReq.getSender();
+			
+			if (failReq.getFailureType() == FailureType.BLUETOOTHFAILURE) {
+			  Puck robot = executor.getRobot();
+			  synchronized(robot) {
+			    RobotStatus status = robot.getRobotStatus().get(sender);
+			    status.setState(State.ERROR);
+			  }
+			}
+			
+			/*if (failReq.getFailureType() == FailureType.ABYSS) {
 				message = "An Abyss was discovered..Uahhhh! "
 						+ failReq.getSender();
 				throw new IllegalStateException(message);
@@ -57,9 +71,8 @@ public class FailureRequestHandler extends Handler {
 				throw new IllegalStateException(message);
 			} else if (failReq.getFailureType() == FailureType.NODEOBSTRUCTION) {
 				message = "Cannot reach the node! " + failReq.getSender();
-			}
+			}*/
 			return true;
 		}
   }
-
 }

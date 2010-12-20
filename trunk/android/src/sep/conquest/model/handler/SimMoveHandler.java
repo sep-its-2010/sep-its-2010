@@ -18,7 +18,7 @@ import sep.conquest.model.requests.MessageType;
 public class SimMoveHandler extends Handler {
 
   /**
-   *  Reference on simulator that received the message.
+   * Reference on simulator that received the message.
    */
   private final Simulator sim;
 
@@ -40,8 +40,8 @@ public class SimMoveHandler extends Handler {
   /**
    * Handles move request messages.
    * 
-   * Sets moving state of robot to moving, clears input buffer and starts
-   * moving the robot.
+   * Sets moving state of robot to moving, clears input buffer and starts moving
+   * the robot.
    */
   @Override
   public boolean handleRequest(IRequest request) {
@@ -52,15 +52,16 @@ public class SimMoveHandler extends Handler {
     if (request.getKind().equals(MessageType.REQUEST_MOVE)) {
       // The sender of the message
       UUID sender = request.getSender();
-      
+
       // Set moving state.
       sim.setMoving(sender, true);
-      
-      // Clear input buffer 
+
+      // Clear input buffer
       sim.clearRequest(sender);
-      
+
       // Start movement.
       sim.moveRobot(sender);
+
       return true;
     } else {
       return super.handleRequest(request);
