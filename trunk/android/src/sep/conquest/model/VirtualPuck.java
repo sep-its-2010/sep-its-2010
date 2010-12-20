@@ -2,6 +2,7 @@ package sep.conquest.model;
 
 import java.util.UUID;
 import sep.conquest.model.requests.VirtualPuckRequest;
+import sep.conquest.util.ConquestLog;
 
 /**
  * This class inherits from the class puck and represents an virtual
@@ -52,7 +53,7 @@ public class VirtualPuck extends Puck {
 		// if a message is expected => read socket
 		if (isMessageExpected()) {		
 			byte[] message = sim.readBuffer(getID());
-
+		
 			// check message length
 			if ((btMessageLen + message.length) > MSGLENGTH)
 				throw new IllegalArgumentException("Message from socket is "
@@ -68,7 +69,9 @@ public class VirtualPuck extends Puck {
 			if (MSGLENGTH == btMessageLen) {
 				super.expectMessage = false;
 				return btMessage;
-			}			
+			}else if (btMessageLen > 0)
+				ConquestLog.addMessage(this, this.getName() + ": " + btMessage.toString());
+
 		}
 		return new byte[0];	
 	}

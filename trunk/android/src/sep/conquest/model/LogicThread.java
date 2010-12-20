@@ -52,6 +52,11 @@ public class LogicThread implements Runnable {
 	private ConcurrentLinkedQueue<IRequest> bcQueue = new ConcurrentLinkedQueue<IRequest>();
 
 	/**
+	 * The awaiting turn command.
+	 */
+	private Orientation turn = Orientation.UNKNOWN;
+	
+	/**
 	 * The constructor of LogicThread assigns the robot as well as its status to
 	 * attributes.
 	 * 
@@ -168,15 +173,16 @@ public class LogicThread implements Runnable {
 
 			if (robot.isOkRcvd()) {
 				RobotStatus stat = getRobotState();
-				stat.setOrientation(newDir);
+				stat.setOrientation(turn);
 				robot.getRobotStatus().put(robot.getID(), stat);
 				robot.setOkRcvd(false);
 			}
 
 			int command = Orientation.addLocalDirection(getRobotState()
 					.getOrientation(), newDir);
-			if (command == 2)
-				ConquestLog.addMessage(this, "turn man");
+
+			turn = Orientation.getTurnedOrientation(command, getRobotState()
+					.getOrientation());
 			robot.driveCommand(command);
 		}
 	}

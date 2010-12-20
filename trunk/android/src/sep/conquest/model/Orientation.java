@@ -351,4 +351,25 @@ public enum Orientation {
       return UP.getOrientation();
     }
   }
+  
+  /**
+   * Returns the Orientation of a specified integer value.
+   * 
+ * @param ori The orientation as integer value.
+ * @return The returned Orientation.
+ */
+public static Orientation getOrientation(int ori) {
+	  switch (ori) {
+	  case C_DOWN:
+		  return DOWN;
+	  case C_UP:
+		  return UP;
+	  case C_LEFT:
+		  return LEFT;
+	  case C_RIGHT:
+		  return RIGHT;
+	  default:
+		  return UP;
+	  }
+  }
 }
