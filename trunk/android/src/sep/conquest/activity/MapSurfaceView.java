@@ -342,17 +342,30 @@ public class MapSurfaceView extends SurfaceView
             minY = mBorders[1];
             maxX = mBorders[2];
             maxY = mBorders[3];
+            //System.out.println("minX: " + minX + " maxX: " + maxX + "\nminY: " + minY + " maxY: " + maxY);
             }
-            int offsetY = Math.abs(minY);
-            int offsetX = Math.abs(minX);
+            
+            int offsetX = 0;
+            int offsetY = 0;
+            if (minY < 0) {
+            	offsetY = Math.abs(minY);
+            } else if (minY > 0) {
+            	offsetY = -minY;
+            }
+            if (minX < 0) {
+            	offsetX = Math.abs(minX);
+            } else if (minX > 0) {
+            	offsetX = -minX;
+            }
 
             //scale the map or scroll it
-            if (mMode == MapMode.PREVIEW || mMode == MapMode.IMPORT || mMode == MapMode.SIMULATION) {
+            if (mMode == MapMode.PREVIEW || mMode == MapMode.IMPORT) {
                 autoScaling(c, (maxX - minX + 1),
                                (maxY - minY + 1), displayX, displayY);
             } else {
                 int boundX = 0;
                 int boundY = 0;
+                
                 if (displayX < (maxX - minX + 1) * mScaleValue) {
                     boundX = (maxX - minX + 1) * mScaleValue;
                 } else {
@@ -407,10 +420,11 @@ public class MapSurfaceView extends SurfaceView
                 final int offsetY) {
             // Draw first layer: Visited Rects and Nodes
         	synchronized(mMap) {
-            Iterator < MapNode > mapIt = mMap.iterator();
+        		Iterator < MapNode > mapIt = mMap.iterator();
             MapNode mn;
             while (mapIt.hasNext()) {
                 mn = mapIt.next();
+                //System.out.println("X: " + mn.getXValue() + " Y: " + mn.getYValue());
                 int xValue = (mn.getXValue() + offsetX) * mScaleValue;
                 int yValue = (mn.getYValue() + offsetY) * mScaleValue;
 
@@ -461,23 +475,24 @@ public class MapSurfaceView extends SurfaceView
          */
         private void drawSecondLayer(final Canvas c, final int offsetX,
                                      final int offsetY) {
-            // Draw the second layer: Robots
-        	synchronized(mPositions) {
-            Iterator < EpuckPosition > posIt = mPositions.iterator();
-            EpuckPosition epp;
-            while (posIt.hasNext()) {
-                epp = posIt.next();
-                if (epp.getID().equals(mSelectedRobot)) {
-                    selectEpuck(c, (epp.getX() + offsetX) * mScaleValue,
-                                   (epp.getY() + offsetY) * mScaleValue);
-                } else {
-                    drawEpuck(c, (epp.getX() + offsetX) * mScaleValue,
-                                 (epp.getY() + offsetY) * mScaleValue);
-                }
-
-            }
-        	}
-        }
+			// Draw the second layer: Robots
+			synchronized (mPositions) {
+				Iterator<EpuckPosition> posIt = mPositions.iterator();
+				EpuckPosition epp;
+				while (posIt.hasNext()) {
+					epp = posIt.next();
+					if (epp.getID().equals(mSelectedRobot)) {
+						selectEpuck(c, (epp.getX() + offsetX)
+								* mScaleValue, (epp.getY() + offsetY)
+								* mScaleValue);
+					} else {
+						drawEpuck(c, (epp.getX() + offsetX)
+								* mScaleValue, (epp.getY() + offsetY)
+								* mScaleValue);
+					}
+				}
+			}
+		}
 
         /**
          * This method gets a canvas as attribute, which provides drawing

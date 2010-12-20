@@ -123,13 +123,16 @@ public class PuckFactory {
       simulator = sim;
 
       int i = 0;
+      Puck first = null;
       for (UUID id : ids) {
         Puck newPuck = new VirtualPuck(id, sim, ROBOT_NAME + i);
+        if (first == null) {
+        	first = newPuck;
+        }
         man.addClient(id, newPuck);
         i++;
       }
       // initiate handshaking of the robots
-      Puck first = (Puck) man.getClients()[0];
       first.sendHello();
       return true;
     } else {

@@ -141,6 +141,7 @@ public class Map extends Activity implements Observer {
         MenuInflater inflater = getMenuInflater();
         MapMode mode = (MapMode) getIntent().
                        getSerializableExtra(MapMode.class.toString());
+        mMode = mode;
 
         switch(mode) {
         case EXPLORATION: inflater.inflate(R.menu.map_exp_menu, menu); break;
@@ -233,6 +234,7 @@ public class Map extends Activity implements Observer {
     }
 
 	public void update(Observable obs, Object data) {
+		synchronized(data) {
 		ConquestUpdate cu = (ConquestUpdate) data;
 		MapSurfaceView draw = (MapSurfaceView) findViewById(R.id.map_view);
 		System.out.println("GOT UPDATE!!! OK!");
@@ -248,9 +250,10 @@ public class Map extends Activity implements Observer {
 			//mRobotAdapter.add(name);
 		}
 		
+		draw.setMode(mMode);
 		draw.setMap(cu.getMapList(), cu.getBorders());
 		draw.setRobotPosition(mPositions);
-
+		}
 	}
 	
 	  /**
