@@ -32,10 +32,19 @@ public final class Utility {
    * @return The coordinates as an int-array.
    */
   public static int[] extractCoordinates(int key) {
-    int cord[] = new int[2];
-    cord[0] = (key & 0xFFFF);
-    cord[1] = (key >> 16) ^ cord[0];
-    return cord;
+	  int cord[] = new int[2];
+	    int reg = (key & 0xFFFF);
+	    //Signed Bit of X-Coordinate
+	    int negativeX = (key & 0x8000)>>15;
+		  //x-coordinate is negative:
+		  if(negativeX == 1){
+			  cord[0] = reg - 0x10000;
+				  cord[1] = (key >> 16) ^ cord[0];
+		  } else {
+			  cord[0] = (key & 0xFFFF);
+			    cord[1] = (key >> 16) ^ cord[0];
+		  }
+	    return cord;
   }
 
   /**
