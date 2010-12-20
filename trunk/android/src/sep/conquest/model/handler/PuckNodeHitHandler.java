@@ -5,10 +5,12 @@ import sep.conquest.model.LogicThread;
 import sep.conquest.model.MapNode;
 import sep.conquest.model.NodeType;
 import sep.conquest.model.Orientation;
+import sep.conquest.model.Puck;
 import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.MessageType;
 import sep.conquest.model.requests.PuckRequest;
 import sep.conquest.model.requests.StatusUpdateRequest;
+import sep.conquest.util.ConquestLog;
 import sep.conquest.util.Utility;
 
 /**
@@ -48,8 +50,14 @@ public class PuckNodeHitHandler extends Handler {
 		if (!(hitNodeReq.getKind() == MessageType.RESPONSE_HIT_NODE)) {
 			return super.handleRequest(request);
 		} else {
-			RobotStatus statusOfRobot = executor.getRobot().getRobotStatus()
+		  Puck robot = executor.getRobot();
+		  synchronized(robot) {
+			RobotStatus statusOfRobot = robot.getRobotStatus()
 					.get(hitNodeReq.getSender());
+			
+	    ConquestLog.addMessage(this, "Puck --> "+ robot.getName() + ": Hit Node");
+
+			
 			// Get the actual position of the robot to add the node in the map
 			int[] bufferPosition = statusOfRobot.getPosition();
 			// Get the orientation of the robot to add the node in the map
@@ -166,7 +174,7 @@ public class PuckNodeHitHandler extends Handler {
 			 */			
 			if(!(returnedToLastNode)){
 				// Add the new node to local map of the robot
-				executor.getRobot().getMap().addNode(newCoordinateX,
+				robot.getMap().addNode(newCoordinateX,
 						newCoordinateY, finalNodeType);
 				// Sets the new position in the status of the robot
 				bufferPosition[0] = newCoordinateX;
@@ -174,7 +182,7 @@ public class PuckNodeHitHandler extends Handler {
 			} else {
 				// Add the new node to local map of the robot with its old
 				// coordinates because it returned to the node
-				executor.getRobot().getMap().addNode(bufferPosition[0],
+				robot.getMap().addNode(bufferPosition[0],
 						bufferPosition[1], finalNodeType);	
 			}
 
@@ -186,9 +194,9 @@ public class PuckNodeHitHandler extends Handler {
 			// Should I create a new RobotStatus or can I use the Status of the
 			// actual sender?!
 			StatusUpdateRequest statusUpdateReq = new StatusUpdateRequest(
-					executor.getRobot().getID(), null, statusOfRobot);
-			executor.getRobot().broadcast(statusUpdateReq);
-
+					robot.getID(), null, statusOfRobot);
+			robot.broadcast(statusUpdateReq);
+		  }
 			return true;
 		}
 			

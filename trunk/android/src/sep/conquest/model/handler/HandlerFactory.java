@@ -39,7 +39,6 @@ public class HandlerFactory {
 	  Handler intHndl = new IntentRequestHandler(helloHndl, executor);
 	  Handler spdHndl = new SpeedRequestHandler(intHndl, executor);
 	  Handler statHndl = new StatusUpdateRequestHandler(spdHndl, executor);	
-	  
     return statHndl;
   }
   
@@ -60,8 +59,8 @@ public class HandlerFactory {
 	  Handler hitHndl = new PuckNodeHitHandler(abyssHndl, executor);
 	  Handler statHndl = new PuckStatusHandler(hitHndl, executor);
 	  Handler colHndl = new PuckCollisionHandler(statHndl, executor);
-	  
-	  return colHndl;
+	  Handler rejHndl = new PuckRejectHandler(colHndl, executor);
+	  return rejHndl;
   }
   
   /**

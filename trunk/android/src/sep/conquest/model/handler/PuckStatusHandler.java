@@ -5,9 +5,11 @@ import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
 import sep.conquest.model.MapNode;
 import sep.conquest.model.NodeType;
+import sep.conquest.model.Puck;
 import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.MessageType;
 import sep.conquest.model.requests.PuckRequest;
+import sep.conquest.util.ConquestLog;
 
 /**
  * Handles PuckStatus messages coming from the Bluetooth Adapter.
@@ -46,6 +48,10 @@ public class PuckStatusHandler extends Handler {
 	  if(!(statusReq.getKind() == MessageType.RESPONSE_STATUS)){
 		  return super.handleRequest(request);
 	  } else {
+	     Puck robot =executor.getRobot();
+	     synchronized(robot) {
+	     ConquestLog.addMessage(this, "Puck --> "+ robot.getName() + ": Status");
+
 		    /*
 			 * Message looks like: 
 			 * Byte[0-1]: MessageType 
@@ -79,7 +85,7 @@ public class PuckStatusHandler extends Handler {
 		  	
 		  	// Updates the RobotStatus of the actual robot
 		  	if(isCollision){
-		  		executor.getRobot().getRobotStatus().get(statusReq.getSender())
+		  		robot.getRobotStatus().get(statusReq.getSender())
 				.setSensorCollisionArray(collisionArrayForPuck);
 		  	}
 		  	
@@ -141,9 +147,9 @@ public class PuckStatusHandler extends Handler {
 		  	 * Don't know the position of the e-pucks 
 		  	 */
 			
-			RobotStatus bufferStatus = executor.getRobot().getRobotStatus().get(statusReq.getSender());
+			RobotStatus bufferStatus = robot.getRobotStatus().get(statusReq.getSender());
 		  	bufferStatus.setNodeType(typeOfLastVisitedNode);
-		  	
+	  }
 		  return true;
 	  }
   }

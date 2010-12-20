@@ -1,15 +1,16 @@
 package sep.conquest.model.handler;
 
 
-import android.os.AsyncTask.Status;
 import sep.conquest.model.ComManager;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
 import sep.conquest.model.Orientation;
+import sep.conquest.model.Puck;
 import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.CollisionRequest;
 import sep.conquest.model.requests.MessageType;
 import sep.conquest.model.requests.PuckRequest;
+import sep.conquest.util.ConquestLog;
 
 /**
  * Handles PuckCollison messages coming from the Bluetooth Adapter.
@@ -48,7 +49,10 @@ public class PuckCollisionHandler extends Handler {
 	  if(!(colRes.getKind()==MessageType.RESPONSE_COLLISION)){
 		  return super.handleRequest(request);
 	  } else {
-		  
+	    Puck robot = executor.getRobot();
+	    synchronized(robot) {
+      ConquestLog.addMessage(this, "Puck --> "+ robot.getName() + ": Collision");
+
 		  //The epuck stops on hardwarebased command
 		  byte[] bufferMessage = colRes.getMessage();
 		  boolean[] colArray = new boolean[8];
@@ -56,14 +60,14 @@ public class PuckCollisionHandler extends Handler {
 			  if (bufferMessage[i] != 0)
 				  colArray[i] = true;
 		  }
-		  CollisionRequest req = new CollisionRequest(executor.getRobot().getID(), null, colArray);
+		  CollisionRequest req = new CollisionRequest(robot.getID(), null, colArray);
 		  ComManager comMan = ComManager.getInstance();
 		  comMan.broadcast(req);
 		  
 		  // set position to the last node
-		  RobotStatus status = executor.getRobot().getRobotStatus().get(executor.getRobot().getID());
+		  RobotStatus status = robot.getRobotStatus().get(robot.getID());
 		  status.setOrientation(Orientation.turn(status.getOrientation()));
-		  
+	    }
 		  return true;
 	  }    
   }
