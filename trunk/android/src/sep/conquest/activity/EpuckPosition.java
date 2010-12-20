@@ -1,5 +1,7 @@
 package sep.conquest.activity;
 
+import sep.conquest.model.Orientation;
+
 
 /**
  * This class saves the position of every single e-puck within the map. The
@@ -11,19 +13,24 @@ package sep.conquest.activity;
 public class EpuckPosition {
 
     /**
-     * Saves the current x coordinate of the roboter.
+     * Saves the current x coordinate of the robot.
      */
     private int x;
 
     /**
-     * Saves the current y coordinate of the roboter.
+     * Saves the current y coordinate of the robot.
      */
     private int y;
 
     /**
-     * Saves the id of the roboter to identify it.
+     * Saves the id of the robot to identify it.
      */
     private String id;
+    
+    /**
+     * Saves the current orientation of the robot.
+     */
+    private Orientation ori;
 
     /**
      * If the MapSurfaceView detects a new e-puck on the map, a new
@@ -34,10 +41,13 @@ public class EpuckPosition {
      * @param newY Current y coordinate on the map.
      * @param newID Identifier of the roboter.
      */
-    public EpuckPosition(final int newX, final int newY, final String newID) {
+    public EpuckPosition(final int newX, final int newY, final String newID,
+    					 final Orientation orientation) {
         x = newX;
         y = newY;
         id = newID;
+        ori = orientation;
+        
     }
 
     /**
@@ -83,6 +93,15 @@ public class EpuckPosition {
      */
     public final String getID() {
         return id;
+    }
+    
+    /**
+     * Returns the orientation of the robot.
+     *
+     * @return Orientation.
+     */
+    public final Orientation getOrientation() {
+    	return ori;
     }
 
 }

@@ -186,6 +186,9 @@ public class MapSurfaceView extends SurfaceView
         boolean retry = true;
         mThread.setPaused(true);
         
+        mMap = new LinkedList();
+        mPositions = new LinkedList();
+        
         while (retry) {
             try {
                 mThread.join();
@@ -342,7 +345,6 @@ public class MapSurfaceView extends SurfaceView
             minY = mBorders[1];
             maxX = mBorders[2];
             maxY = mBorders[3];
-            //System.out.println("minX: " + minX + " maxX: " + maxX + "\nminY: " + minY + " maxY: " + maxY);
             }
             
             int offsetX = 0;
@@ -424,7 +426,6 @@ public class MapSurfaceView extends SurfaceView
             MapNode mn;
             while (mapIt.hasNext()) {
                 mn = mapIt.next();
-                //System.out.println("X: " + mn.getXValue() + " Y: " + mn.getYValue());
                 int xValue = (mn.getXValue() + offsetX) * mScaleValue;
                 int yValue = (mn.getYValue() + offsetY) * mScaleValue;
 
@@ -481,15 +482,21 @@ public class MapSurfaceView extends SurfaceView
 				EpuckPosition epp;
 				while (posIt.hasNext()) {
 					epp = posIt.next();
+					int x = (epp.getX() + offsetX) * mScaleValue;
+					int y = (epp.getY() + offsetY) * mScaleValue;
 					if (epp.getID().equals(mSelectedRobot)) {
-						selectEpuck(c, (epp.getX() + offsetX)
-								* mScaleValue, (epp.getY() + offsetY)
-								* mScaleValue);
+						selectEpuck(c, x, y);
 					} else {
-						drawEpuck(c, (epp.getX() + offsetX)
-								* mScaleValue, (epp.getY() + offsetY)
-								* mScaleValue);
+						drawEpuck(c, x, y);
 					}
+					paint.setStrokeWidth(5.0f);
+					switch (epp.getOrientation()) {
+					case DOWN: drawOrientationUp(c, x, y); break;
+					case UP: drawOrientationDown(c, x, y); break;
+					case LEFT: drawOrientationLeft(c, x, y); break;
+					case RIGHT: drawOrientationRight(c, x, y); break;
+					}
+					paint.setStrokeWidth(0f);
 				}
 			}
 		}
@@ -724,6 +731,38 @@ public class MapSurfaceView extends SurfaceView
             c.drawCircle((x + (mScaleValue / 2)), (y + (mScaleValue / 2)),
                          (mScaleValue / 4), paint);
         }
+        
+		private void drawOrientationDown(final Canvas c, final int x, 
+				final int y) {
+			paint.setColor(0xff000000);
+			c.drawLine(x + (mScaleValue / 2), y, x + (mScaleValue / 2), y + mScaleValue, paint);
+			c.drawLine(x, y + (mScaleValue / 2), x + (mScaleValue / 2), y + mScaleValue, paint);
+			c.drawLine(x + mScaleValue, y + (mScaleValue / 2), x + (mScaleValue / 2), y + mScaleValue, paint);
+		}
+
+		private void drawOrientationUp(final Canvas c, final int x,
+				final int y) {
+			paint.setColor(0xff000000);
+			c.drawLine(x + (mScaleValue / 2), y, x + (mScaleValue / 2), y + mScaleValue, paint);
+			c.drawLine(x, y + (mScaleValue / 2), x + (mScaleValue / 2), y, paint);
+			c.drawLine(x + (mScaleValue / 2), y, x + mScaleValue, y + (mScaleValue / 2), paint);
+		}
+
+		private void drawOrientationLeft(final Canvas c, final int x,
+				final int y) {
+			paint.setColor(0xff000000);
+			c.drawLine(x, y + (mScaleValue / 2), x + mScaleValue, y + (mScaleValue / 2), paint);
+			c.drawLine(x + (mScaleValue / 2), y, x, y + (mScaleValue / 2), paint);
+			c.drawLine(x, y + (mScaleValue / 2), x + (mScaleValue / 2), y + mScaleValue, paint);
+		}
+
+		private void drawOrientationRight(final Canvas c, final int x,
+				final int y) {
+			paint.setColor(0xff000000);
+			c.drawLine(x, y + (mScaleValue / 2), x + mScaleValue, y + (mScaleValue / 2), paint);
+			c.drawLine(x + (mScaleValue / 2), y, x + mScaleValue, y + (mScaleValue / 2), paint);
+			c.drawLine(x + (mScaleValue / 2), y + mScaleValue, x + mScaleValue, y + (mScaleValue / 2), paint);
+		}
 
     }
 

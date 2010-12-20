@@ -225,7 +225,8 @@ public class Simulation extends Activity {
 		for (int j = 0; j < mNumber+1; j++) {
 			int x = robotPositions[j][0];
 			int y = robotPositions[j][1];
-			positions.add(new EpuckPosition(x, y, "0"));
+			Orientation o = ori[j]; 
+			positions.add(new EpuckPosition(x, y, "", o));
 		}
 	}
 	

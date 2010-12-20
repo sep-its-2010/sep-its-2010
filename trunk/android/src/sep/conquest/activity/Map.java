@@ -16,6 +16,7 @@ import sep.conquest.model.Environment;
 import sep.conquest.model.GridMap;
 import sep.conquest.model.MapFileHandler;
 import sep.conquest.model.MapNode;
+import sep.conquest.model.Orientation;
 import sep.conquest.model.PuckFactory;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -125,7 +126,8 @@ public class Map extends Activity implements Observer {
     
     public void onDestroy() {
     	super.onDestroy();
-    	Environment.reset();
+    	//Environment.reset();
+    	finish();
     	
     	
     }
@@ -246,7 +248,8 @@ public class Map extends Activity implements Observer {
 		for (UUID key : id) {
 			int[] position = cu.getRobotStatus().get(key).getPosition();
 			String name = cu.getRobotName(key);
-			mPositions.add(new EpuckPosition(position[0], position[1], name));
+			Orientation ori = cu.getRobotStatus().get(key).getOrientation();
+			mPositions.add(new EpuckPosition(position[0], position[1], name, ori));
 			//mRobotAdapter.add(name);
 		}
 		
