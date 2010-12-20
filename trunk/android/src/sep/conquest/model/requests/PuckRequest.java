@@ -5,6 +5,7 @@ import java.util.UUID;
 import sep.conquest.model.IComClient;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.Puck;
+import sep.conquest.util.ConquestLog;
 
 
 /**
@@ -20,7 +21,7 @@ public class PuckRequest implements IRequest {
     /**
      * The byte-array of the corresponding request-message.
      */
-    private byte[] message = new byte[32];
+    private byte[] message;
     
     /**
      * The type of the message.
@@ -42,11 +43,16 @@ public class PuckRequest implements IRequest {
      * @param message The input-message to determine the type and data.
      */
     public PuckRequest(byte[] message, IComClient sender) {
-    	for (int i = 0; i < 32; i++) {
-			this.message[i] = message[i];
-		}
+	  this.message = message.clone();
 		short messageType;
 		messageType = (short) (((message[1] & 0xFF) << 8) | message[0] & 0xFF);
+		ConquestLog.addMessage(this, "Message type: " + messageType);
+		StringBuilder strb = new StringBuilder();
+		for (byte t : message) {
+		  strb.append(t + " ");
+		}
+		ConquestLog.addMessage(this, strb.toString());
+		
 		switch (messageType) {
 		case Puck.RES_OK:
 			type = MessageType.RESPONSE_OK;
@@ -63,6 +69,10 @@ public class PuckRequest implements IRequest {
 		case Puck.RES_STATUS:
 			type = MessageType.RESPONSE_STATUS;
 			break;
+		case Puck.RES_REJECT:
+		  type = MessageType.RESPONSE_REJECT;
+		default:
+		  throw new IllegalArgumentException("Illegal Puck request type passed " + messageType);
 		}	
 		this.sender = sender.getID();
     }
