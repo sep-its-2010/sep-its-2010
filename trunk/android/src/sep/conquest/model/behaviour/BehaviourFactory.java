@@ -32,6 +32,9 @@ public class BehaviourFactory {
 			@SuppressWarnings("unused")
 			CooperativeBehaviour coBeh = new CooperativeBehaviour(state, inBeh);
 			return rpBeh;
+		case RETURN:
+			ReturnBehaviour retBeh = new ReturnBehaviour(state, null);
+			return retBeh;
 		default: 
 			return null;
 		}

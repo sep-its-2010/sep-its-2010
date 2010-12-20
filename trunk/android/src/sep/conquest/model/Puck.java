@@ -20,6 +20,9 @@ import sep.conquest.util.ConquestLog;
  */
 public abstract class Puck implements IComClient, IRobot {
   
+  /**
+  * The length of a bluetooth message.
+  */	
   public static final int MSG_LENGTH = 32;
   
   public static final int TYPE_FIRST_BYTE = 0;
@@ -87,11 +90,6 @@ public abstract class Puck implements IComClient, IRobot {
   public static final short REQ_TURN = (short) 0x03FF;
 
   /**
-   * The length of a bluetooth message.
-   */
-  protected static final int MSGLENGTH = 32;
-
-  /**
    * Global unique id.
    */
   private UUID id;
@@ -130,16 +128,6 @@ public abstract class Puck implements IComClient, IRobot {
    * Indicates whether the robot expects a message from the socket.
    */
   protected boolean expectMessage = false;
-
-  /**
-   * The bluetooth message.
-   */
-  protected byte[] btMessage = new byte[MSGLENGTH];
-
-  /**
-   * The length of the current message in buffer.
-   */
-  protected int btMessageLen = 0;
 
   /**
    * Constructor initializing ID, local map, own state, logic thread and
@@ -285,15 +273,7 @@ public abstract class Puck implements IComClient, IRobot {
    * @param buffer
    *          The message that will be sent.
    */
-  public boolean writeSocket(byte[] buffer) {
-    if (!expectMessage) {
-      expectMessage = true;
-      btMessageLen = 0;
-      btMessage = new byte[MSGLENGTH];
-      return true;
-    } else
-      return false;
-  }
+  public abstract boolean writeSocket(byte[] buffer);
 
   /**
    * This method read if an incoming message has arrived at the socket.

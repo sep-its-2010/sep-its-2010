@@ -25,6 +25,10 @@ public class RealPuck extends Puck {
 	 * connects the e-puck roboter and the RealPuck.
 	 */
 	private BluetoothSocket mybtSocket;
+	
+	private int btMessageLen = 0;
+	
+	private byte[] btMessage = new byte[MSG_LENGTH];
 
 	/**
 	 * Constructor which generates an instance of the class RealPuck.
@@ -49,23 +53,25 @@ public class RealPuck extends Puck {
 	 */
 	@Override
 	public boolean writeSocket(byte[] message) {
-		if (super.writeSocket(message)) {
-			OutputStream out;
-
-			try {
+		if (!expectMessage) {
+	    	 OutputStream out;
+	    	 try {
 				out = mybtSocket.getOutputStream();
 				out.write(message);
 				out.flush();
-			} catch (IOException e) {
+				expectMessage = true;
+	    	 } catch (IOException e) {
 				FailureRequest req = new FailureRequest(getID(), null, FailureType.BLUETOOTHFAILURE);
 				ComManager comMan = ComManager.getInstance();
 				comMan.broadcast(req);
 				ConquestLog.addMessage(this, "Can't write message to socket!");
-			}
-			return true;
-		} else
-			return false;
-
+	    	 }	finally {
+	    		 btMessageLen = 0;
+	    		 btMessage = new byte[MSG_LENGTH];
+	    	 }
+	        return true;
+	     }
+	     return false;
 	}
 
 	/**
@@ -76,7 +82,7 @@ public class RealPuck extends Puck {
 	 */
 	public byte[] readSocket() {
 		// if a message is expected => read socket
-		if (isMessageExpected()) {		
+		if (expectMessage) {		
 			InputStream in;
 			byte[] message = new byte[32];
 	
@@ -85,12 +91,12 @@ public class RealPuck extends Puck {
 				in.read(message);
 			} catch (IOException e) {
 				ConquestLog.addMessage(this, "Can't read message from socket!");
-			}
-
+			}			
+			
 			// check message length
-			if ((btMessageLen + message.length) > MSGLENGTH)
+			if ((btMessageLen + message.length) > MSG_LENGTH)
 				throw new IllegalArgumentException("Message from socket is "
-						+ "longer than " + MSGLENGTH + " bytes!");
+						+ "longer than " + MSG_LENGTH + " bytes!");
 			
 			// fill up message
 			for (int i = 0; i < message.length; i++) {
@@ -99,13 +105,12 @@ public class RealPuck extends Puck {
 			}
 			
 			// return message if it's complete
-			if (MSGLENGTH == btMessageLen) {
-				super.expectMessage = false;
+			if (MSG_LENGTH == btMessageLen) {
+				expectMessage = false;
 				return btMessage;
 			}
 		}
-		return new byte[0];	
-
+		return new byte[0];			
 	}
 	
 	@Override

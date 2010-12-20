@@ -29,6 +29,16 @@ public final class ReturnBehaviour extends Behaviour {
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
      */
     public boolean execute(Map<Integer, Integer> map, Puck robot) {
-        return super.execute(map, robot);
+    	
+    	boolean changed = super.execute(map, robot);
+    	
+    	if (map.isEmpty()) {
+    		map.put(LocalLocalizeBehaviour.startPositions.get(robot.getID()), 1);
+    		changed = true;
+    	} else{
+    		robot.changeBehaviour(State.EXPLORE);
+    	}
+    	
+        return changed;
     }
 }

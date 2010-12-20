@@ -60,7 +60,7 @@ public class Environment extends Observable implements IComClient {
 	private Environment() {
 		this.id = UUID.randomUUID();
 		comManager = ComManager.getInstance();
-		comManager.addClient(this.id, this);
+		comManager.addClient(id, this);
 		gridMap = new GridMap();
 		update = new ConquestUpdate(gridMap.getMapAsList(), gridMap.getMapBorders(),
 				new TreeMap<UUID, RobotStatus>());
@@ -80,7 +80,8 @@ public class Environment extends Observable implements IComClient {
 	/**
 	 * Resets the environment.
 	 */
-	public static void reset() {
+	public void reset() {
+		comManager.removeClient(id);
 		INSTANCE = new Environment();
 	}
 

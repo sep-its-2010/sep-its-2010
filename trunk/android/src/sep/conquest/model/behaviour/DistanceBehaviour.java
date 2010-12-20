@@ -42,7 +42,7 @@ public final class DistanceBehaviour extends Behaviour {
 	 */
 	public boolean execute(Map<Integer, Integer> map, Puck robot) {
 		
-		boolean ret = super.execute(map, robot);
+		boolean changed = super.execute(map, robot);
 
 		List<GraphNode> toRemove = new ArrayList<GraphNode>();
 		LinkedList<GraphNode> frontiers = robot.getMap().getFrontierList();
@@ -71,8 +71,8 @@ public final class DistanceBehaviour extends Behaviour {
 			for (PathNode path : paths)
 			map.put(Utility.makeKey(path.getPathNode().getXValue(), path
 					.getPathNode().getYValue()), path.getPathCosts());		
-			ret = true;
+			changed = true;
 		}
-		return ret;		
+		return changed;		
 	}
 }

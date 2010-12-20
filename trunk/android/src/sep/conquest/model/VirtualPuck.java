@@ -2,7 +2,6 @@ package sep.conquest.model;
 
 import java.util.UUID;
 import sep.conquest.model.requests.VirtualPuckRequest;
-import sep.conquest.util.ConquestLog;
 
 /**
  * This class inherits from the class puck and represents an virtual
@@ -36,12 +35,13 @@ public class VirtualPuck extends Puck {
 	 * @param buffer The Message that will be sent.
 	 */
 	public boolean writeSocket(byte[] buffer){
-		if (super.writeSocket(buffer)) {
+	    if (!expectMessage) {
 			VirtualPuckRequest request = new VirtualPuckRequest(getID(),buffer);
 			sim.addRequest(request);
-			return true;
-		} else
-			return false;		
+	        expectMessage = true;
+	        return true;
+	      }
+	    return false;
 	}
 	
 	/**
@@ -51,27 +51,14 @@ public class VirtualPuck extends Puck {
 	 */
 	public byte[] readSocket(){
 		// if a message is expected => read socket
-		if (isMessageExpected()) {		
+		if (expectMessage) {		
 			byte[] message = sim.readBuffer(getID());
-		
-			// check message length
-			if ((btMessageLen + message.length) > MSGLENGTH)
-				throw new IllegalArgumentException("Message from socket is "
-						+ "longer than " + MSGLENGTH + " bytes!");
-
-			// fill up message
-			for (int i = 0; i < message.length; i++) {
-				btMessage[btMessageLen] = message[i];
-				btMessageLen++;
-			}
 			
 			// return message if it's complete
-			if (MSGLENGTH == btMessageLen) {
-				super.expectMessage = false;
-				return btMessage;
-			}else if (btMessageLen > 0)
-				ConquestLog.addMessage(this, this.getName() + ": " + btMessage.toString());
-
+			if (message.length > 0) {
+				expectMessage = false;
+				return message;
+			}
 		}
 		return new byte[0];	
 	}

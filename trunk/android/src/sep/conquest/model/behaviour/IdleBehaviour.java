@@ -6,7 +6,6 @@ import java.util.TimerTask;
 
 import sep.conquest.model.Puck;
 import sep.conquest.model.State;
-import sep.conquest.util.ConquestLog;
 
 /**
  * LocalLocalizeBehaviour represents a behaviour for localizing adjacent robots.

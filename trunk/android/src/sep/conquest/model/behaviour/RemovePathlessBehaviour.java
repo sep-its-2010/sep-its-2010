@@ -3,8 +3,6 @@ package sep.conquest.model.behaviour;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import sep.conquest.model.AStarPathFinder;
 import sep.conquest.model.PathNode;
@@ -43,6 +41,9 @@ public final class RemovePathlessBehaviour extends Behaviour {
 		
 		if (robot.isMessageExpected())
 			return false;		
+		
+		if (map.isEmpty())
+			robot.changeBehaviour(State.RETURN);
 		
 		List<Integer> toRemove = new ArrayList<Integer>();
 		for (Integer key: map.keySet()) {
