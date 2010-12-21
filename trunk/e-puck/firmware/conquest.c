@@ -32,10 +32,82 @@ static bool cbHandleRequestStatus( IN const com_SMessage_t* const _lppodMessage)
 static bool cbHandleRequestReset( IN const com_SMessage_t* const _lppodMessage);
 static bool cbHandleRequestSetLED( IN const com_SMessage_t* const _lppodMessage);
 
-static void visualizeDirection( void);
-static EType_t computeNodeType( 
-		IN const EType_t _eNodeType
-		);
+
+static EType_t calculateRelativeNodeType( 
+	IN const EType_t _eNodeType,
+	IN const EDirection_t _eDirection
+	);
+
+
+EType_t calculateRelativeNodeType(
+	IN const EType_t _eNodeType,
+	IN const EDirection_t _eDirection
+	) {
+
+	EType_t eNode = _eNodeType;
+
+	if( s_eDirection != DIRECTION_UP) {
+
+		// Rotate possible moving directions
+		uint16_t ui16RawDirections = _eNodeType & 0xFF;
+		if( s_eDirection == DIRECTION_RIGHT) {
+			ui16RawDirections <<= 6;
+			ui16RawDirections |= ui16RawDirections >> 8;
+		} else if( s_eDirection == DIRECTION_DOWN) {
+			ui16RawDirections <<= 4;
+			ui16RawDirections |= ui16RawDirections >> 8;
+		} else if( s_eDirection == DIRECTION_LEFT) {
+			ui16RawDirections <<= 2;
+			ui16RawDirections |= ui16RawDirections >> 8;
+		}
+
+		// Reconstruct node type based on the possible moving directions
+		switch( ui16RawDirections & 0xFF) {
+			case DIRECTION_LEFT | DIRECTION_DOWN | DIRECTION_RIGHT: {
+				eNode = TYPE__UP_T;
+				break;
+			}
+			case DIRECTION_UP | DIRECTION_DOWN | DIRECTION_RIGHT: {
+				eNode = TYPE__LEFT_T;
+				break;
+			}
+			case DIRECTION_UP | DIRECTION_LEFT | DIRECTION_RIGHT: {
+				eNode = TYPE__DOWN_T;
+				break;
+			}
+			case DIRECTION_UP | DIRECTION_LEFT | DIRECTION_DOWN: {
+				eNode = TYPE__RIGHT_T;
+				break;
+			}
+			case DIRECTION_UP | DIRECTION_LEFT: {
+				eNode = TYPE__UP_LEFT;
+				break;
+			}
+			case DIRECTION_UP | DIRECTION_RIGHT: {
+				eNode = TYPE__UP_RIGHT;
+				break;
+			}
+			case DIRECTION_LEFT | DIRECTION_DOWN: {
+				eNode = TYPE__DOWN_LEFT;
+				break;
+			}
+			case DIRECTION_DOWN | DIRECTION_RIGHT: {
+				eNode = TYPE__DOWN_RIGHT;
+				break;
+			}
+			case DIRECTION_UP | DIRECTION_LEFT | DIRECTION_DOWN | DIRECTION_RIGHT: {
+				eNode = TYPE__CROSS;
+				break;
+			}
+			default: {
+				eNode = TYPE__INVALID;
+			}
+		}
+	}
+
+	return eNode;
+}
+
 
 void conquest_init( void) {
 	com_register( cbHandleRequestStatus);
@@ -43,143 +115,6 @@ void conquest_init( void) {
 	com_register( cbHandleRequestSetLED);
 }
 
-void visualizeDirection( void) {
-
-	uint16_t ui16RawDirections = s_aaeMap[s_ui16PosY][s_ui16PosX] & 0xFF;
-	if( s_eDirection == DIRECTION_RIGHT) {
-		ui16RawDirections <<= 6;
-		ui16RawDirections |= ui16RawDirections >> 8;
-	} else if( s_eDirection == DIRECTION_DOWN) {
-		ui16RawDirections <<= 4;
-		ui16RawDirections |= ui16RawDirections >> 8;
-	} else if( s_eDirection == DIRECTION_LEFT) {
-		ui16RawDirections <<= 2;
-		ui16RawDirections |= ui16RawDirections >> 8;
-	}
-
-	hal_led_set( ui16RawDirections & 0xFF);
-}
-
-/*!
- * \brief
- * Translates a node-type from its global type into the node-type of the current e-puck direction.
- * 
- * \param _eGlobalNodeType
- * Specifies the global node-type which has to be translated.
- * 
- * \returns
- * The translated node-type depending on the current e-puck direction.
- * 
- * Transforms a global node-type into a node-type which is depending on the e-puck's current direction.
- */
-EType_t computeNodeType( EType_t _eGlobalNodeType) {
-	EType_t eNode = _eGlobalNodeType;
-	
-	switch( _eGlobalNodeType) {
-		
-		case TYPE__UP_T: {
-			if( s_eDirection == DIRECTION_DOWN) {
-				eNode = TYPE__DOWN_T;
-			} else if( s_eDirection == DIRECTION_LEFT) {
-				eNode = TYPE__RIGHT_T;
-			} else if( s_eDirection == DIRECTION_RIGHT) {
-				eNode = TYPE__LEFT_T;
-			}
-			break;
-		}
-
-		case TYPE__LEFT_T: {
-			if( s_eDirection == DIRECTION_DOWN) {
-				eNode = TYPE__RIGHT_T;
-			} else if( s_eDirection == DIRECTION_LEFT) {
-				eNode = TYPE__UP_T;
-			} else if( s_eDirection == DIRECTION_RIGHT) {
-				eNode = TYPE__DOWN_T;
-			}
-			break;
-		}
-		
-		case TYPE__DOWN_T: {
-			if( s_eDirection == DIRECTION_DOWN) {
-				eNode = TYPE__UP_T;
-			} else if( s_eDirection == DIRECTION_LEFT) {
-				eNode = TYPE__LEFT_T;
-			} else if( s_eDirection == DIRECTION_RIGHT) {
-				eNode = TYPE__RIGHT_T;
-			}
-			break;
-		}
-
-		case TYPE__RIGHT_T: {
-			if( s_eDirection == DIRECTION_DOWN) {
-				eNode = TYPE__LEFT_T;
-			} else if( s_eDirection == DIRECTION_LEFT) {
-				eNode = TYPE__DOWN_T;
-			} else if( s_eDirection == DIRECTION_RIGHT) {
-				eNode = TYPE__UP_T;
-			}
-			break;
-		}
-
-		case TYPE__UP_LEFT: {
-			if( s_eDirection == DIRECTION_DOWN) {
-				eNode = TYPE__DOWN_RIGHT;
-			} else if( s_eDirection == DIRECTION_LEFT) {
-				eNode = TYPE__UP_RIGHT;
-			} else if( s_eDirection == DIRECTION_RIGHT) {
-				eNode = TYPE__DOWN_LEFT;
-			}
-			break;
-		}
-
-		case TYPE__UP_RIGHT: {
-			if( s_eDirection == DIRECTION_DOWN) {
-				eNode = TYPE__DOWN_LEFT;
-			} else if( s_eDirection == DIRECTION_LEFT) {
-				eNode = TYPE__DOWN_RIGHT;
-			} else if( s_eDirection == DIRECTION_RIGHT) {
-				eNode = TYPE__UP_LEFT;
-			}
-			break;
-		}
-
-		case TYPE__DOWN_LEFT: {
-			if( s_eDirection == DIRECTION_DOWN) {
-				eNode = TYPE__UP_RIGHT;
-			} else if( s_eDirection == DIRECTION_LEFT) {
-				eNode = TYPE__UP_LEFT;
-			} else if( s_eDirection == DIRECTION_RIGHT) {
-				eNode = TYPE__DOWN_RIGHT;
-			}
-			break;
-		}
-
-		case TYPE__DOWN_RIGHT: {
-			if( s_eDirection == DIRECTION_DOWN) {
-				eNode = TYPE__UP_LEFT;
-			} else if( s_eDirection == DIRECTION_LEFT) {
-				eNode = TYPE__DOWN_LEFT;
-			} else if( s_eDirection == DIRECTION_RIGHT) {
-				eNode = TYPE__UP_RIGHT;
-			}
-			break;
-		}
-
-		case TYPE__CROSS: {
-			break;
-		}
-
-		case TYPE__INVALID: {
-			break;
-		}
-
-		default: {
-			
-		}
-	}
-
-	return eNode;
-}
 
 bool cbDemoMessageHandler(
 	IN const com_SMessage_t* _lppodMessage
@@ -205,33 +140,34 @@ bool cbDemoMessageHandler(
 			uint32_t ui32UpTime = hal_rtc_getSystemUpTime();
 			memcpy( podResponse.aui8Data, &ui32UpTime, sizeof( ui32UpTime));
 			memset( &podResponse.aui8Data[4], 0, 3 + 8);
-			podResponse.aui8Data[15] = s_aaeMap[s_ui16PosY][s_ui16PosX] >> 8;
-			visualizeDirection();
+			const EType_t eType = calculateRelativeNodeType( s_aaeMap[s_ui16PosY][s_ui16PosX], s_eDirection);
+			podResponse.aui8Data[15] = eType >> 8;
+			hal_led_set( eType & 0xFF);
 			com_send( &podResponse);
 			break;
 		}
 		case COM_MESSAGE_TYPE__REQUEST_TURN: {
-			int16_t i16NewDir = ( ( ( (int8_t)_lppodMessage->aui8Data[0]) % 4) + 4) % 4;
-			if( s_eDirection == DIRECTION_LEFT) {
-				i16NewDir += 3;
-			} else if( s_eDirection == DIRECTION_RIGHT) {
-				i16NewDir++;
-			} else if( s_eDirection == DIRECTION_DOWN) {
-				i16NewDir += 2;
-			}
-			i16NewDir %= 4;
-			if( !i16NewDir) {
-				s_eDirection = DIRECTION_UP;
-			} else if( i16NewDir == 1) {
-				s_eDirection = DIRECTION_RIGHT;
-			} else if( i16NewDir == 2) {
-				s_eDirection = DIRECTION_DOWN;
-			// i16NewDir == 3
-			} else {
-				s_eDirection = DIRECTION_LEFT;
-			}
-
 			if( _lppodMessage->aui8Data[0]) {
+				int16_t i16NewDir = ( ( ( (int8_t)_lppodMessage->aui8Data[0]) % 4) + 4) % 4;
+				if( s_eDirection == DIRECTION_LEFT) {
+					i16NewDir += 3;
+				} else if( s_eDirection == DIRECTION_RIGHT) {
+					i16NewDir++;
+				} else if( s_eDirection == DIRECTION_DOWN) {
+					i16NewDir += 2;
+				}
+				i16NewDir %= 4;
+				if( !i16NewDir) {
+					s_eDirection = DIRECTION_UP;
+				} else if( i16NewDir == 1) {
+					s_eDirection = DIRECTION_RIGHT;
+				} else if( i16NewDir == 2) {
+					s_eDirection = DIRECTION_DOWN;
+				// i16NewDir == 3
+				} else {
+					s_eDirection = DIRECTION_LEFT;
+				}
+
 				for( uint16_t ui16 = 0; ui16 < abs( ( (int8_t)_lppodMessage->aui8Data[0]) % 4); ui16++) {
 					hal_motors_setSpeed( 0, (int8_t)_lppodMessage->aui8Data[0] < 0 ? -conquest_ui16Speed : conquest_ui16Speed);
 					hal_motors_setSteps( 0);
@@ -241,7 +177,7 @@ bool cbDemoMessageHandler(
 				}
 			}
 
-			visualizeDirection();
+			hal_led_set( calculateRelativeNodeType( s_aaeMap[s_ui16PosY][s_ui16PosX], s_eDirection) & 0xFF);
 
 			com_SMessage_t podResponse;
 			podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_OK;
@@ -265,15 +201,15 @@ bool cbDemoMessageHandler(
 
 				hal_motors_setSpeed( conquest_ui16Speed, 0);
 				hal_motors_setSteps( 0);
-				while( (hal_motors_getStepsLeft() < FOWARD_STEPS) && (hal_motors_getStepsRight() < FOWARD_STEPS))
+				while( hal_motors_getStepsLeft() < FOWARD_STEPS && hal_motors_getStepsRight() < FOWARD_STEPS)
 					;
 				hal_motors_setSpeed( 0, 0);
 
-				// compute hit-node-message with node-type in e-puck direction
-				podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_HIT_NODE;				
-				podResponse.aui8Data[0] = computeNodeType( s_aaeMap[s_ui16PosY][s_ui16PosX]);
+				podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_HIT_NODE;
+				const EType_t eType = calculateRelativeNodeType( s_aaeMap[s_ui16PosY][s_ui16PosX], s_eDirection);
+				podResponse.aui8Data[0] = eType >> 8;
 				podResponse.aui8Data[1] = false;
-				visualizeDirection();
+				hal_led_set( eType & 0xFF);
 			} else {
 				podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_REJECTED;
 			}
