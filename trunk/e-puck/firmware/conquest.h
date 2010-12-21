@@ -81,11 +81,27 @@ void conquest_init( void);
 
 static inline uint16_t conquest_getRequestedLineSpeed( void);
 
+static inline void conquest_setRequestedLineSpeed(
+	IN const uint16_t _ui16RequestedSpeed
+	);
+
+
 uint16_t conquest_getRequestedLineSpeed( void) {
 
 	extern volatile uint16_t conquest_ui16Speed;
 
 	return conquest_ui16Speed;
 }
+
+
+void conquest_setRequestedLineSpeed(
+	IN const uint16_t _ui16RequestedSpeed
+	) {
+
+	extern volatile uint16_t conquest_ui16Speed;
+
+	conquest_ui16Speed = _ui16RequestedSpeed;
+}
+
 
 #endif /* conquest_h__ */
