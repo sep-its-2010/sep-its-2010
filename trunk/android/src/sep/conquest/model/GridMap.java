@@ -102,7 +102,7 @@ public class GridMap {
    * enumeration new frontierNodes (nodes which hasen't been visited yet) will
    * be created and add to the structure.
    */
-  public void addNode(int x, int y, NodeType status) {
+  public boolean addNode(int x, int y, NodeType status) {
     // updates the borders of the map
     this.updateMapBorders(x, y);
     GraphNode existingNode = this.getNode(x, y);
@@ -111,6 +111,7 @@ public class GridMap {
       // updates the state of the existing node
       this.changeState(x, y, status);
       this.setNeighbours(existingNode);
+      return false;
     } else {
       // creates a new node
       GraphNode newNode = new GraphNode(x, y, status);
@@ -122,6 +123,7 @@ public class GridMap {
       // set neighbours and especially the frontiernodes in this private
       // method
       this.setNeighbours(newNode);
+      return true;
     }
   }
 
