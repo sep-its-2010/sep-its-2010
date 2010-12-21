@@ -44,4 +44,7 @@
 <string name="MNU_STOP">Stop</string>
 <string name="MNU_PAUSE">Pause</string>
 <string name="MNU_STEP">Step</string>
+<string name="ERR_NO_MAP_SELECTED">No map selected. Please open map first.</string>
+<string name="ERR_TITLE_ERROR">Error</string>
+<string name="ERR_TITLE_WARNING">Warning</string>
 </resources>

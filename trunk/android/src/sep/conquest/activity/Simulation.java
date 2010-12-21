@@ -117,6 +117,7 @@ public class Simulation extends Activity {
 	
 	public final void onResume() {
 		super.onResume();
+		drawPreview(map.getMapAsList(), map.getMapBorders());
 	}
 	
 	public final void onPause() {
@@ -147,6 +148,10 @@ public class Simulation extends Activity {
 
 		switch (item.getItemId()) {
 		case R.id.mnuStart:
+			if (positions.size() < 1) {
+				displayMessage(getString(R.string.ERR_NO_MAP_SELECTED), false);
+				return false;
+			}
 			int[][] pos = new int[mNumber+1][2];
 			Orientation[] orientation = new Orientation[mNumber + 1];
 			for (int i = 0; i < mNumber+1; i++) {
@@ -240,6 +245,15 @@ public class Simulation extends Activity {
 	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	    builder.setMessage(message);
 	    builder.setCancelable(false);
+	    
+	    if (isError) {
+	    	builder.setTitle(getString(R.string.ERR_TITLE_ERROR));
+	    	builder.setIcon(R.drawable.err_error);
+	    } else {
+	    	builder.setTitle(getString(R.string.ERR_TITLE_WARNING));
+	    	builder.setIcon(R.drawable.err_warning);
+	    }
+	    
 	    builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
 	      
 	      public void onClick(final DialogInterface dialog, final int which) {

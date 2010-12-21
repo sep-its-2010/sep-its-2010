@@ -324,13 +324,22 @@ public final class Connect extends Activity {
    * @param message
    *          The message to display.
    */
-  private void displayMessage(String message, boolean isError) {
+  private void displayMessage(final String message, final boolean isError) {
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setMessage(message);
     builder.setCancelable(false);
+    
+    if (isError) {
+    	builder.setTitle(getString(R.string.ERR_TITLE_ERROR));
+    	builder.setIcon(R.drawable.err_error);
+    } else {
+    	builder.setTitle(getString(R.string.ERR_TITLE_WARNING));
+    	builder.setIcon(R.drawable.err_warning);
+    }
+    
     builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
       
-      public void onClick(DialogInterface dialog, int which) {
+      public void onClick(final DialogInterface dialog, final int which) {
         dialog.dismiss();
         
       }
