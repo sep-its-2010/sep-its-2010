@@ -57,16 +57,19 @@ public class PuckFactory {
 	LocalLocalizeBehaviour.startPositions = new TreeMap<UUID, Integer>();
 	LocalLocalizeBehaviour.startOrientations = new TreeMap<UUID, Orientation>();
 	int i = 0;
+	Puck first = null;
       for (BluetoothSocket robot : robots) {
         UUID newUUID = UUID.randomUUID();
         String name = robot.getRemoteDevice().getName();
         Puck newPuck = new RealPuck(robot, newUUID, name);
+        if (first == null)
+        	first = newPuck;
         man.addClient(newUUID, newPuck);
         LocalLocalizeBehaviour.startPositions.put(newUUID, Utility.makeKey(i++, 0)); 
         LocalLocalizeBehaviour.startOrientations.put(newUUID, Orientation.UP);
       }
       // initiate handshaking of the robots
-      Puck first = (Puck) (man.getClients())[0];
+      
       first.sendHello();
       return true;
     }
