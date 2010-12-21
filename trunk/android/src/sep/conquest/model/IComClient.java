@@ -23,4 +23,9 @@ public interface IComClient {
      * @return The id
      */
     UUID getID();
+    
+    /**
+     * Destroys the client.
+     */
+    void destroy();
 }

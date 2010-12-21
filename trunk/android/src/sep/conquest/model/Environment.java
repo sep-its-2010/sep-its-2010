@@ -200,4 +200,12 @@ public class Environment extends Observable implements IComClient {
 	public void loadMap(GridMap gridMap) {
 		this.gridMap = gridMap;
 	}
+
+	public void destroy() {
+		try {
+			INSTANCE.finalize();
+		} catch (Throwable e1) {
+			throw new IllegalStateException("Error. Environment couldn't be destroyed.");
+		}
+	}
 }
