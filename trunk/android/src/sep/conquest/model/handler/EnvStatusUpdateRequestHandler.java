@@ -42,17 +42,11 @@ public class EnvStatusUpdateRequestHandler extends Handler {
 			ConquestUpdate update = env.getStatus();
 			update.setRobotStatus(request.getSender(), status);			
 			if (status.getNodeType() != null) {
-				
-				// increment the explored nodes of a robot and add new node
-				// to the map
-				if (env.getMap().getNode(status.getPosition()[0],
-					status.getPosition()[1]) == null) {
+				if (env.getMap().addNode(status.getPosition()[0],
+						status.getPosition()[1], status.getNodeType())) {
 					
 					update.setExploredNodes(request.getSender(), 
 							update.getExploredNodes(request.getSender())+1);
-
-					env.getMap().addNode(status.getPosition()[0],
-						status.getPosition()[1], status.getNodeType());				
 				}
 			}
 			env.notifyObservers();
