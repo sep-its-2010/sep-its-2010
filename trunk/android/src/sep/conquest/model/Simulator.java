@@ -434,13 +434,15 @@ public class Simulator {
    *         message, or of length 32 if there is a message.
    */
   public byte[] readBuffer(UUID id) {
-    if (robots.containsKey(id)) {
-      byte[] msg = robots.get(id).readBuffer();
-      return msg;
-    } else {
-      throw new IllegalArgumentException(
-          "Unknown id asked to read output buffer");
-    }
+	  synchronized(robots) {
+	    if (robots.containsKey(id)) {
+	      byte[] msg = robots.get(id).readBuffer();
+	      return msg;
+	    } else {
+	      throw new IllegalArgumentException(
+	          "Unknown id asked to read output buffer");
+	    }
+	  }
   }
 
   /**
@@ -454,18 +456,21 @@ public class Simulator {
    *          The message to write on the output buffer.
    */
   public void writeBuffer(UUID id, byte[] msg) {
-    // Check, if there is an output buffer for id and if length of message
-    // equals 32 byte. It not, throw exception.
-    if (robots.containsKey(id)) {
-      if (msg.length == 32) {
-        robots.get(id).writeBuffer(msg);
-      } else {
-        throw new IllegalArgumentException("Message length is not equal to 32");
-      }
-    } else {
-      throw new IllegalArgumentException(
-          "Unknown id asked to write output buffer");
-    }
+	  synchronized(robots) {
+		  // Check, if there is an output buffer for id and if length of message
+		  // equals 32 byte. It not, throw exception.
+		  if (robots.containsKey(id)) {
+		      if (msg.length == 32) {
+		        robots.get(id).writeBuffer(msg);
+		      } else {
+		        throw new IllegalArgumentException("Message length is not equal to 32");
+		      }
+		    } else {
+		      throw new IllegalArgumentException(
+		          "Unknown id asked to write output buffer");
+		    }
+			  
+		  }
   }
 
   /**
