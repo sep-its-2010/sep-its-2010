@@ -59,6 +59,10 @@ public class RealPuck extends Puck {
 				out = mybtSocket.getOutputStream();
 				out.write(message);
 				out.flush();
+				StringBuffer buf = new StringBuffer();
+				for (byte b: message)
+					buf.append(b);
+				ConquestLog.addMessage(this, "Sent: " + buf);
 				expectMessage = true;
 	    	 } catch (IOException e) {
 				FailureRequest req = new FailureRequest(getID(), null, FailureType.BLUETOOTHFAILURE);
@@ -106,6 +110,10 @@ public class RealPuck extends Puck {
 			
 			// return message if it's complete
 			if (MSG_LENGTH == btMessageLen) {
+				StringBuffer buf = new StringBuffer();
+				for (byte b: message)
+					buf.append(b);				
+				ConquestLog.addMessage(this, "Read: " + buf);
 				expectMessage = false;
 				return btMessage;
 			}

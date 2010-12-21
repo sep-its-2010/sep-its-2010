@@ -28,9 +28,9 @@ public class BehaviourFactory {
 		case EXPLORE: 
 			RemovePathlessBehaviour rpBeh = new RemovePathlessBehaviour(state, null);
 			DistanceBehaviour distBeh = new DistanceBehaviour(state, rpBeh);
-			InnerBehaviour inBeh = new InnerBehaviour(state, distBeh);
+			//InnerBehaviour inBeh = new InnerBehaviour(state, distBeh);
 			@SuppressWarnings("unused")
-			CooperativeBehaviour coBeh = new CooperativeBehaviour(state, inBeh);
+			CooperativeBehaviour coBeh = new CooperativeBehaviour(state, distBeh);
 			return rpBeh;
 		case RETURN:
 			ReturnBehaviour retBeh = new ReturnBehaviour(state, null);

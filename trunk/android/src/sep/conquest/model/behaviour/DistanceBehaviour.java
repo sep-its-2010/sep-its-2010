@@ -11,6 +11,7 @@ import sep.conquest.model.PathNode;
 import sep.conquest.model.Puck;
 import sep.conquest.model.RobotStatus;
 import sep.conquest.model.State;
+import sep.conquest.util.ConquestLog;
 import sep.conquest.util.Utility;
 
 /**
@@ -68,10 +69,13 @@ public final class DistanceBehaviour extends Behaviour {
 				.find(robot, status.getPosition(), destinations);
 		
 		if (paths.length > 0) {
-			for (PathNode path : paths)
-			map.put(Utility.makeKey(path.getPathNode().getXValue(), path
-					.getPathNode().getYValue()), path.getPathCosts());		
-			changed = true;
+			for (PathNode path : paths) {
+				if (path != null) {
+					map.put(Utility.makeKey(path.getPathNode().getXValue(), path
+							.getPathNode().getYValue()), path.getPathCosts());		
+					changed = true;
+				}
+			}
 		}
 		return changed;		
 	}

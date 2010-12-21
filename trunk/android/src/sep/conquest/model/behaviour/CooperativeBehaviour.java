@@ -34,7 +34,7 @@ public final class CooperativeBehaviour extends Behaviour {
      */
     public boolean execute(Map<Integer, Integer> map, Puck robot) {
     	
-    	boolean ret = super.execute(map, robot);
+    	boolean changed = super.execute(map, robot);
     	
     	Set<UUID> keys = robot.getRobotStatus().keySet();
     	
@@ -44,12 +44,12 @@ public final class CooperativeBehaviour extends Behaviour {
     			int[] intent = status.getIntentPosition();
     			if (intent != null) {
     				if (expandIntentNode(intent, map))
-    					ret = true;
+    					changed = true;
     			}
     				
     		}
     	}    	
-        return ret;
+        return changed;
     }
     
     /**
@@ -61,22 +61,22 @@ public final class CooperativeBehaviour extends Behaviour {
      * @param map The navigation-cost-map.
      */
     private boolean expandIntentNode(int[] node, Map<Integer, Integer> map) {
-    	boolean ret = false;
+    	boolean changed = false;
     	
-    	for (int i = -5; i <= 5; i++) {
-    		for (int j = -5; j <= 5; j++) {
+    	for (int i = -8; i <= 8; i++) {
+    		for (int j = -8; j <= 8; j++) {
     			int costs = Math.abs(i)+Math.abs(j);
-    			if (costs < 5) {
+    			if (costs < 8) {
     				int key = Utility.makeKey(i+node[0], j+node[1]);
     				if (map.containsKey(key)) {
-    					map.put(key, map.get(key) + (50-costs*10)); 
-    					ret = true;
+    					map.put(key, map.get(key) + (100-costs*10)); 
+    					changed = true;
     				}
     					   				
     			}
     		}
     	}
-    	return ret;
+    	return changed;
     }
 
 }

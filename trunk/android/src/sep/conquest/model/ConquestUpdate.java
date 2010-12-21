@@ -30,6 +30,11 @@ public class ConquestUpdate implements Cloneable {
    * The names of the robots.
    */
   private Map<UUID, String> robotNames = new TreeMap<UUID, String>();
+  
+  /**
+   * The number of explored nodes by every robot.
+   */
+  private Map<UUID, Integer> exploredNodes = new TreeMap<UUID, Integer>();
 
   /**
    * The borders of the map.
@@ -68,8 +73,10 @@ public class ConquestUpdate implements Cloneable {
   public void setRobotStatus(UUID id, RobotStatus status) {
     if (robots.containsKey(id))
       robots.get(id).setRobotStatus(status);
-    else
+    else {
       robots.put(id, status);
+      exploredNodes.put(id, 0);
+    }
   }
 
   /**
@@ -139,6 +146,26 @@ public class ConquestUpdate implements Cloneable {
    */
   public int[] getBorders() {
     return borders;
+  }
+  
+  /**
+   * Returns the number of explored frontier-nodes by a specified robot.
+   * 
+   * @param id The robot id.
+   * @return The number of nodes.
+   */
+  public int getExploredNodes(UUID id) {
+	  return exploredNodes.get(id);
+  }
+  
+  /**
+   * Sets the number of explored nodes of a specified robot.
+   * 
+   * @param id The id of the robot.
+   * @param nodes The number of nodes.
+   */
+  public void setExploredNodes(UUID id, int nodes) {
+	  exploredNodes.put(id, nodes);
   }
 
   /*

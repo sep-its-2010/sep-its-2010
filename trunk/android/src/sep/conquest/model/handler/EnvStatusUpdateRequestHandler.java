@@ -1,5 +1,6 @@
 package sep.conquest.model.handler;
 
+import sep.conquest.model.ConquestUpdate;
 import sep.conquest.model.Environment;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.RobotStatus;
@@ -38,10 +39,22 @@ public class EnvStatusUpdateRequestHandler extends Handler {
 		else {
 			Environment env = Environment.getInstance();
 			RobotStatus status = ((StatusUpdateRequest) request).getStatus();
-			env.getStatus().setRobotStatus(request.getSender(), status);
-			if (status.getNodeType() != null)
-				env.getMap().addNode(status.getPosition()[0],
-					status.getPosition()[1], status.getNodeType());
+			ConquestUpdate update = env.getStatus();
+			update.setRobotStatus(request.getSender(), status);			
+			if (status.getNodeType() != null) {
+				
+				// increment the explored nodes of a robot and add new node
+				// to the map
+				if (env.getMap().getNode(status.getPosition()[0],
+					status.getPosition()[1]) == null) {
+					
+					update.setExploredNodes(request.getSender(), 
+							update.getExploredNodes(request.getSender())+1);
+
+					env.getMap().addNode(status.getPosition()[0],
+						status.getPosition()[1], status.getNodeType());				
+				}
+			}
 			env.notifyObservers();
 			return true;
 		}
