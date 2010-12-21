@@ -28,9 +28,15 @@ volatile uint16_t conquest_ui16Speed = INITIAL_SPEED;
 static uint16_t s_ui16PosX = INITIAL_POS_X;
 static uint16_t s_ui16PosY = INITIAL_POS_Y;
 
-static bool cbHandleRequestStatus( IN const com_SMessage_t* const _lppodMessage);
-static bool cbHandleRequestReset( IN const com_SMessage_t* const _lppodMessage);
-static bool cbHandleRequestSetLED( IN const com_SMessage_t* const _lppodMessage);
+static bool cbHandleRequestStatus(
+	IN const com_SMessage_t* const _lppodMessage
+	);
+static bool cbHandleRequestReset(
+	IN const com_SMessage_t* const _lppodMessage
+	);
+static bool cbHandleRequestSetLED(
+	IN const com_SMessage_t* const _lppodMessage
+	);
 
 
 static EType_t calculateRelativeNodeType( 
@@ -110,6 +116,7 @@ EType_t calculateRelativeNodeType(
 
 
 void conquest_init( void) {
+
 	com_register( cbHandleRequestStatus);
 	com_register( cbHandleRequestReset);
 	com_register( cbHandleRequestSetLED);

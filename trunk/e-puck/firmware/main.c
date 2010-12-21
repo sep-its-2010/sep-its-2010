@@ -10,9 +10,6 @@
 
 #include "hal_nvm.h"
 
-#include <stdio.h>
-#include "sen_line.h"
-
 #include "subs.h"
 #include "subs_abyss.h"
 #include "subs_calibration.h"
@@ -56,22 +53,6 @@ void cbSubsumptionEvent(
 }
 
 
-
-void cbSensEvent(
-	IN const hal_rtc_handle_t _hEvent
-	);
-void cbSensEvent(
-	IN const hal_rtc_handle_t UNUSED _hEvent
-	) {
-
-	sen_line_SData_t podData;
-	sen_line_read( &podData);
-	sen_line_rescale( &podData, &podData);
-	char cstrBuffer[100];
-	sprintf( cstrBuffer, "current l:%d m:%d r:%d\r\n", podData.aui16Data[0], podData.aui16Data[1], podData.aui16Data[2]);
-	hal_uart1_puts( cstrBuffer);
-}
-
 void cbBlinker(
 	IN const hal_rtc_handle_t _hEvent
 	);
@@ -104,13 +85,12 @@ int main( void) {
 	hal_rtc_init( FCY / 256 / 100);
 
 	subs_init();
-//	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
-//	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
+	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
+	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
 // 	subs_register( subs_collision_run, subs_collision_reset, 0xDF);
 // 	subs_register( subs_movement_run, subs_movement_reset, 0xCF);
-// 	subs_register( subs_movement_run, subs_movement_reset, 0xBF);
-//	subs_register( subs_node_run, subs_node_reset, 0xAF);
-// 	subs_register( subs_line_run, subs_line_reset, 0x9F);
+//	subs_register( subs_node_run, subs_node_reset, 0xBF);
+// 	subs_register( subs_line_run, subs_line_reset, 0xAF);
 	subs_reset();
 
 //	conquest_init();
@@ -119,8 +99,7 @@ int main( void) {
 //	hal_motors_setSpeed( 400, 0);
 
 	hal_rtc_register( cbSubsumptionEvent, 1, true);
-//	hal_rtc_register( cbBlinker, 50, true);
-//	hal_rtc_register( cbSensEvent, 25, true);
+	hal_rtc_register( cbBlinker, 50, true);
 
 	for( ;;) {
 		com_processIncoming();
