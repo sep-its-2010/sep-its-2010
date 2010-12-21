@@ -73,14 +73,17 @@ bool com_processIncoming( void) {
 
 	bool blHasMessage = false;
 
-	hal_int_disable( HAL_INT_SOURCE__UART1_RECEIVER);
 	hal_uart1_forceRxMove();
 
+	hal_int_disable( HAL_INT_SOURCE__UART1_RECEIVER);
 	const uint16_t ui16BufUsage = ringbuf_getUsage( hal_uart1_getRxRingBuffer());
+	hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
 	if( ui16BufUsage >= sizeof( com_EMessageType_t)) {
-
 		com_SMessage_t podMessage;
+		hal_int_disable( HAL_INT_SOURCE__UART1_RECEIVER);
 		ringbuf_getRange( hal_uart1_getRxRingBuffer(), &podMessage.eType, 0, sizeof( podMessage.eType));
+		hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
+
 		switch( podMessage.eType) {
 			case COM_MESSAGE_TYPE__BTM_REPLY:
 			case COM_MESSAGE_TYPE__BTM_INDICATION:
@@ -88,7 +91,10 @@ bool com_processIncoming( void) {
 			case COM_MESSAGE_TYPE__BTM_REQUEST: {
 				if( ui16BufUsage >= BTM_MIN_FRAME_LEN) {
 					uint16_t ui16DataLen = 0;
+					hal_int_disable( HAL_INT_SOURCE__UART1_RECEIVER);
 					ringbuf_getRange( hal_uart1_getRxRingBuffer(), &ui16DataLen, BTM_FRAME_DATA_LEN_OFFSET, sizeof( ui16DataLen));
+					hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
+
 					if( ui16BufUsage >= ui16DataLen + BTM_MIN_FRAME_LEN) {
 						uint8_t* const lpui8Buffer = calloc( ui16DataLen + BTM_MIN_FRAME_LEN, 1);
 						hal_uart1_read( lpui8Buffer, ui16DataLen + BTM_MIN_FRAME_LEN);
@@ -100,13 +106,10 @@ bool com_processIncoming( void) {
 // 							hal_led_set( 1);
 // 						} else {
 // 						}
-
-						hal_uart1_write( lpui8Buffer, ui16DataLen + BTM_MIN_FRAME_LEN);
+//
+//						hal_uart1_write( lpui8Buffer, ui16DataLen + BTM_MIN_FRAME_LEN);
 					}
 				}
-
-				hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
-
 				break;
 			}
 			default: {
@@ -122,8 +125,6 @@ bool com_processIncoming( void) {
 
 					blHasMessage = true;
 				}
-
-				hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
 			}
 		}
 	}
