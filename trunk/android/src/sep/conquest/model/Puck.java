@@ -53,6 +53,12 @@ public abstract class Puck implements IComClient, IRobot {
    * Represents the byte-Code for the messageType RESPONSE_ABYSS
    */
   public static final short RES_ABYSS = (short) 0x85FF;
+  
+  /**
+   * Represents the byte code for the message type RESPONSE_REJECT
+   */
+  public static final short RES_REJECT = (short) 0x86FF;
+
 
   /**
    * Represents the byte-Code for the messageType REQUEST_MOVE
