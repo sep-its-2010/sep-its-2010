@@ -8,7 +8,6 @@ import sep.conquest.model.Orientation;
 import sep.conquest.model.Puck;
 import sep.conquest.model.RobotStatus;
 import sep.conquest.model.State;
-import sep.conquest.model.requests.MessageType;
 import sep.conquest.util.ConquestLog;
 import sep.conquest.util.Utility;
 
@@ -43,14 +42,10 @@ public final class LocalLocalizeBehaviour extends Behaviour {
     	
     	if (!robot.isMessageExpected()) {
     		if (!statusRequested) {
-    			byte[] request = new byte[32];
-    			request[0] = (byte) (MessageType.REQUEST_STATUS.getTypeCode() & 0xff);
-    			request[1] = (byte) ((MessageType.REQUEST_STATUS.getTypeCode() >> 8) & 0xff);
+    			robot.requestStatus();
     			statusRequested = true;
-    			super.writeSocket(robot, request);
     		} else {	 
     			RobotStatus status = robot.getRobotStatus().get(robot.getID());
-				ConquestLog.addMessage(this, robot.getName() + " " + (status.getNodeType() != null));
 				Orientation pOri = startOrientations.get(robot.getID());
 	    		status.setOrientation(pOri);
 	    		status.setPosition(Utility.extractCoordinates(startPositions.get(robot.getID())));

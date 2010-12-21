@@ -26,11 +26,6 @@ public abstract class Behaviour implements IBehaviour {
     private State stateLevel;
 
     /**
-     * Indicates whether the behaviour waits for a response from the robot.
-     */
-    protected boolean awaitResponse = false;    
-        
-    /**
      * The constructor sets the reference to the previous Behaviour in the chain
      * as well as its state-level. If this is the first entry for a specific
      * state level, this Behaviour will set as the agent for it. 
@@ -54,17 +49,6 @@ public abstract class Behaviour implements IBehaviour {
     	return stateLevel;
     }
     
-    /**
-     * Writes a byte array to the robot-socket.
-     * 
-     * @param robot The robot.
-     * @param buffer The robot socket.
-     */
-    protected void writeSocket(Puck robot, byte[] buffer) { 
-    	if (robot.writeSocket(buffer))
-			awaitResponse = true;
-    }
-
     /* (non-Javadoc)
      * @see sep.conquest.model.IBehaviour#setNextBehaviour(sep.conquest.model.IBehaviour)
      */

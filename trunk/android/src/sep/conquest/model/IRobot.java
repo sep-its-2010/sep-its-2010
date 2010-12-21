@@ -27,6 +27,11 @@ public interface IRobot {
 	 * Sends 'turn'-command to implementing class.
 	 */
 	void turn();
+	
+	/**
+	 * Request the current status of the robot.
+	 */
+	void requestStatus();
 
 	/**
 	 * Sends command to set speed to implementing class.

@@ -69,8 +69,8 @@ public class PuckRequest implements IRequest {
 		case Puck.RES_STATUS:
 			type = MessageType.RESPONSE_STATUS;
 			break;
-		case Puck.RES_REJECT:
-		  type = MessageType.RESPONSE_REJECT;
+//		case Puck.RES_REJECT:
+//		  type = MessageType.RESPONSE_REJECT;
 		default:
 		  throw new IllegalArgumentException("Illegal Puck request type passed " + messageType);
 		}	
