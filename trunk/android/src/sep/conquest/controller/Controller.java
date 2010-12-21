@@ -44,6 +44,11 @@ public class Controller {
         return INSTANCE;
     }
     
+    public void resetEnvironment() {
+      environment.reset();
+      this.environment = Environment.getInstance();
+    }
+    
     /**
      * This method returns the environment, so the <code>Activities</code> are
      * allowed to register at the model.
