@@ -11,6 +11,7 @@
 #include "subs_abyss.h"
 #include "subs_collision.h"
 #include "subs.h"
+#include "hal_uart1.h"
 
 #include "conquest.h"
 
@@ -32,6 +33,9 @@ static bool cbHandleRequestReset( IN const com_SMessage_t* const _lppodMessage);
 static bool cbHandleRequestSetLED( IN const com_SMessage_t* const _lppodMessage);
 
 static void visualizeDirection( void);
+static EType_t computeNodeType( 
+		IN const EType_t _eNodeType
+		);
 
 void conquest_init( void) {
 	com_register( cbHandleRequestStatus);
@@ -54,6 +58,127 @@ void visualizeDirection( void) {
 	}
 
 	hal_led_set( ui16RawDirections & 0xFF);
+}
+
+/*!
+ * \brief
+ * Translates a node-type from its global type into the node-type of the current e-puck direction.
+ * 
+ * \param _eGlobalNodeType
+ * Specifies the global node-type which has to be translated.
+ * 
+ * \returns
+ * The translated node-type depending on the current e-puck direction.
+ * 
+ * Transforms a global node-type into a node-type which is depending on the e-puck's current direction.
+ */
+EType_t computeNodeType( EType_t _eGlobalNodeType) {
+	EType_t eNode = _eGlobalNodeType;
+	
+	switch( _eGlobalNodeType) {
+		
+		case TYPE__UP_T: {
+			if( s_eDirection == DIRECTION_DOWN) {
+				eNode = TYPE__DOWN_T;
+			} else if( s_eDirection == DIRECTION_LEFT) {
+				eNode = TYPE__RIGHT_T;
+			} else if( s_eDirection == DIRECTION_RIGHT) {
+				eNode = TYPE__LEFT_T;
+			}
+			break;
+		}
+
+		case TYPE__LEFT_T: {
+			if( s_eDirection == DIRECTION_DOWN) {
+				eNode = TYPE__RIGHT_T;
+			} else if( s_eDirection == DIRECTION_LEFT) {
+				eNode = TYPE__UP_T;
+			} else if( s_eDirection == DIRECTION_RIGHT) {
+				eNode = TYPE__DOWN_T;
+			}
+			break;
+		}
+		
+		case TYPE__DOWN_T: {
+			if( s_eDirection == DIRECTION_DOWN) {
+				eNode = TYPE__UP_T;
+			} else if( s_eDirection == DIRECTION_LEFT) {
+				eNode = TYPE__LEFT_T;
+			} else if( s_eDirection == DIRECTION_RIGHT) {
+				eNode = TYPE__RIGHT_T;
+			}
+			break;
+		}
+
+		case TYPE__RIGHT_T: {
+			if( s_eDirection == DIRECTION_DOWN) {
+				eNode = TYPE__LEFT_T;
+			} else if( s_eDirection == DIRECTION_LEFT) {
+				eNode = TYPE__DOWN_T;
+			} else if( s_eDirection == DIRECTION_RIGHT) {
+				eNode = TYPE__UP_T;
+			}
+			break;
+		}
+
+		case TYPE__UP_LEFT: {
+			if( s_eDirection == DIRECTION_DOWN) {
+				eNode = TYPE__DOWN_RIGHT;
+			} else if( s_eDirection == DIRECTION_LEFT) {
+				eNode = TYPE__UP_RIGHT;
+			} else if( s_eDirection == DIRECTION_RIGHT) {
+				eNode = TYPE__DOWN_LEFT;
+			}
+			break;
+		}
+
+		case TYPE__UP_RIGHT: {
+			if( s_eDirection == DIRECTION_DOWN) {
+				eNode = TYPE__DOWN_LEFT;
+			} else if( s_eDirection == DIRECTION_LEFT) {
+				eNode = TYPE__DOWN_RIGHT;
+			} else if( s_eDirection == DIRECTION_RIGHT) {
+				eNode = TYPE__UP_LEFT;
+			}
+			break;
+		}
+
+		case TYPE__DOWN_LEFT: {
+			if( s_eDirection == DIRECTION_DOWN) {
+				eNode = TYPE__UP_RIGHT;
+			} else if( s_eDirection == DIRECTION_LEFT) {
+				eNode = TYPE__UP_LEFT;
+			} else if( s_eDirection == DIRECTION_RIGHT) {
+				eNode = TYPE__DOWN_RIGHT;
+			}
+			break;
+		}
+
+		case TYPE__DOWN_RIGHT: {
+			if( s_eDirection == DIRECTION_DOWN) {
+				eNode = TYPE__UP_LEFT;
+			} else if( s_eDirection == DIRECTION_LEFT) {
+				eNode = TYPE__DOWN_LEFT;
+			} else if( s_eDirection == DIRECTION_RIGHT) {
+				eNode = TYPE__UP_RIGHT;
+			}
+			break;
+		}
+
+		case TYPE__CROSS: {
+			break;
+		}
+
+		case TYPE__INVALID: {
+			break;
+		}
+
+		default: {
+			
+		}
+	}
+
+	return eNode;
 }
 
 bool cbDemoMessageHandler(
@@ -140,12 +265,13 @@ bool cbDemoMessageHandler(
 
 				hal_motors_setSpeed( conquest_ui16Speed, 0);
 				hal_motors_setSteps( 0);
-				while( hal_motors_getStepsLeft() < FOWARD_STEPS && hal_motors_getStepsRight() < FOWARD_STEPS)
+				while( (hal_motors_getStepsLeft() < FOWARD_STEPS) && (hal_motors_getStepsRight() < FOWARD_STEPS))
 					;
 				hal_motors_setSpeed( 0, 0);
 
-				podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_HIT_NODE;
-				podResponse.aui8Data[0] = s_aaeMap[s_ui16PosY][s_ui16PosX] >> 8;
+				// compute hit-node-message with node-type in e-puck direction
+				podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_HIT_NODE;				
+				podResponse.aui8Data[0] = computeNodeType( s_aaeMap[s_ui16PosY][s_ui16PosX]);
 				podResponse.aui8Data[1] = false;
 				visualizeDirection();
 			} else {

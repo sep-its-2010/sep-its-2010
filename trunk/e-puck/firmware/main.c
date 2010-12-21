@@ -104,22 +104,22 @@ int main( void) {
 	hal_rtc_init( FCY / 256 / 100);
 
 	subs_init();
-	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
-	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
+//	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
+//	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
 // 	subs_register( subs_collision_run, subs_collision_reset, 0xDF);
 // 	subs_register( subs_movement_run, subs_movement_reset, 0xCF);
 // 	subs_register( subs_movement_run, subs_movement_reset, 0xBF);
-// 	subs_register( subs_node_run, subs_node_reset, 0xAF);
- 	subs_register( subs_line_run, subs_line_reset, 0x9F);
+//	subs_register( subs_node_run, subs_node_reset, 0xAF);
+// 	subs_register( subs_line_run, subs_line_reset, 0x9F);
 	subs_reset();
 
-	conquest_init();
+//	conquest_init();
 
 //	hal_uart1_puts( "SEP 2010 ITS e-puck & Android Project\r\n");
-	hal_motors_setSpeed( 1000, 0);
+//	hal_motors_setSpeed( 400, 0);
 
 	hal_rtc_register( cbSubsumptionEvent, 1, true);
-	hal_rtc_register( cbBlinker, 50, true);
+//	hal_rtc_register( cbBlinker, 50, true);
 //	hal_rtc_register( cbSensEvent, 25, true);
 
 	for( ;;) {

@@ -3,7 +3,7 @@
 #include "hal_motors.h"
 #include "com.h"
 #include "sen_line.h"
-#include "conquest_types.h"
+#include "conquest.h"
 #include "hal_led.h"
 #include "hal_uart1.h"
 
@@ -56,6 +56,8 @@ static uint16_t s_ui16AvgRight = 0;
  */
 bool subs_node_run( void) {
 
+	hal_uart1_puts( "NODE DETECTION \r\n");
+
 	bool blActed = false;
 	sen_line_SData_t s_podSensorData = {{0}};
 	sen_line_read( &s_podSensorData);
@@ -80,7 +82,7 @@ bool subs_node_run( void) {
 	if( (s_ui8NodeDetectionCounter >= SUBS_NODE__REQUIRED_MEASUREMENTS) &&
 		!s_blDetectionActive) {		
 	
-		hal_motors_setSteps(0);
+		hal_motors_setSteps( 0);
 		s_blDetectionActive = true;
 		blActed = true;		
 
@@ -95,37 +97,44 @@ bool subs_node_run( void) {
 		// analyze the shape of the node		
 		if( (s_ui16AvgLeft < SUBS_NODE__LINE_THRESHOLD) &&( s_ui16AvgRight < SUBS_NODE__LINE_THRESHOLD) && (s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE__LINE_THRESHOLD) ) { // 1 wird ersetzt durch den jeweiligen EEPROM-Kalibrierwert
 			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__CROSS;
+			hal_led_set( 0);
 			hal_led_switchOn(HAL_LED_PIN_BV__0);
 			hal_led_switchOn(HAL_LED_PIN_BV__2);
 			hal_led_switchOn(HAL_LED_PIN_BV__4);
 			hal_led_switchOn(HAL_LED_PIN_BV__6);
 		} else if( (s_ui16AvgLeft < SUBS_NODE__LINE_THRESHOLD) &&( s_ui16AvgRight < SUBS_NODE__LINE_THRESHOLD)) {
 			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_T;
+			hal_led_set( 0);
 			hal_led_switchOn(HAL_LED_PIN_BV__2);
 			hal_led_switchOn(HAL_LED_PIN_BV__4);
 			hal_led_switchOn(HAL_LED_PIN_BV__6);
 		} else if( (s_ui16AvgLeft < SUBS_NODE__LINE_THRESHOLD) && (s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE__LINE_THRESHOLD)) {
 			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__RIGHT_T;
+			hal_led_set( 0);
 			hal_led_switchOn(HAL_LED_PIN_BV__0);
 			hal_led_switchOn(HAL_LED_PIN_BV__4);
 			hal_led_switchOn(HAL_LED_PIN_BV__6);
 		} else if( (s_ui16AvgRight < SUBS_NODE__LINE_THRESHOLD) && (s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE__LINE_THRESHOLD)) {
 			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__LEFT_T;
+			hal_led_set( 0);
 			hal_led_switchOn(HAL_LED_PIN_BV__0);
 			hal_led_switchOn(HAL_LED_PIN_BV__2);
 			hal_led_switchOn(HAL_LED_PIN_BV__4);
 		} else if( s_ui16AvgLeft < SUBS_NODE__LINE_THRESHOLD) {
 			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_RIGHT_EDGE;
+			hal_led_set( 0);
 			hal_led_switchOn(HAL_LED_PIN_BV__4);
 			hal_led_switchOn(HAL_LED_PIN_BV__6);
 		} else if( s_ui16AvgRight < SUBS_NODE__LINE_THRESHOLD) {
 			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_LEFT_EDGE;
+			hal_led_set( 0);
 			hal_led_switchOn(HAL_LED_PIN_BV__2);
 			hal_led_switchOn(HAL_LED_PIN_BV__4);
 		}
 		
 		hal_motors_setSpeed( 0, 0);
 		hal_motors_setSteps( 0);
+		conquest_setRequestedLineSpeed( 0);
 		s_ui16AvgLeft = 0;
 		s_ui16AvgRight = 0;
 		s_ui8NodeDetectionCounter = 0;
@@ -135,6 +144,7 @@ bool subs_node_run( void) {
 		com_send( &podHitNodeMessage);
 
 		s_blDetectionActive = false;
+	} else if( s_blDetectionActive) {
 		blActed = true;
 	}
 	return blActed;
