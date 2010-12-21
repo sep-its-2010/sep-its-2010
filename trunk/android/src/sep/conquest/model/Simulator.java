@@ -12,14 +12,15 @@ import sep.conquest.model.handler.HandlerFactory;
 import sep.conquest.util.Utility;
 
 /**
- * The Simulator class represents a virtual socket for a proxy-robot within the
- * e-puck-conquest application. It is used to simulate messages for the
- * navigation-algorithms. Therefore a internal stored map is used.
+ * The Simulator class represents a virtual socket for a virtual robot within the
+ * e-puck-conquest application.
+ * It is used to simulate response messages from real e-pucks. 
+ * Therefore an internal representation of the e-pucks and a map is used.
  * 
  * @author Andreas Poxrucker
  * 
  */
-public class Simulator {
+public final class Simulator {
 
   /**
    * The timer period.
@@ -182,6 +183,17 @@ public class Simulator {
       throw new IllegalArgumentException(
           "Asked for type of node at invalid position");
     }
+  }
+  
+  /**
+   * Returns whether map contains node at passed position.
+   * 
+   * @param x The x coordinate of the position.
+   * @param y The y coordinate of the position.
+   * @return True, if map contains node, false otherwise.
+   */
+  public boolean containsNode(int x, int y) {
+    return map.getNode(x, y) != null;
   }
 
   /**
@@ -548,6 +560,7 @@ public class Simulator {
     for (UUID id : ids) {
       resetRobotState(id);
     }
+    index = 0;
   }
 
   /**

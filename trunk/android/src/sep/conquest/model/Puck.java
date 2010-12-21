@@ -385,10 +385,10 @@ public abstract class Puck implements IComClient, IRobot {
 	 */
 	public void destroy() { 
 		executor.shutdown();
-		try {
+		/*try {
 			this.finalize();
 		} catch (Throwable e) {
 			throw new IllegalStateException("Error! Couldn't destroy Puck " + name);
-		}
+		}*/
 	}
 }

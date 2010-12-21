@@ -12,7 +12,7 @@ package sep.conquest.model;
  * 
  * LEFT: Means that the puck looks in the direction of shrinking x-coordinates
  * 
- * RIGHT: Means that the puck look in the direction of growing x-coordinates
+ * RIGHT: Means that the puck looks in the direction of growing x-coordinates
  * 
  * @author Andreas Poxrucker
  * 

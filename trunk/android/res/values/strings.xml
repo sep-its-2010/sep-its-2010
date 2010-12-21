@@ -47,4 +47,7 @@
 <string name="ERR_NO_MAP_SELECTED">No map selected. Please open map first.</string>
 <string name="ERR_TITLE_ERROR">Error</string>
 <string name="ERR_TITLE_WARNING">Warning</string>
+<string name="ERR_MSG_NO_ACC_SENSOR">Your device does not have an acceleration sensor. Manual control is only possible via On-Screen-Joystick.</string>
+<string name="CONTROL_JOYSTICK">On-Screen-Joystick</string>
+<string name="CONTROL_ACC_SENSOR">Acceleration sensor</string>
 </resources>
