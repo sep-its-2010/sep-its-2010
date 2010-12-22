@@ -72,7 +72,7 @@ public class SimStatusHandler extends Handler {
       }
       NodeType node = sim.getNodeType(pos[0] / 3, pos[1] / 3);
       node = Utility.calculateNodeTypesToRealWorld(node, sim.getOrientation(sender));
-      response[Puck.NODE_BYTE] = (byte) node.ordinal();
+      response[Puck.NODE_STATUS_BYTE] = (byte) node.ordinal();
       sim.writeBuffer(sender, response);
       sim.clearRequest(sender);
       return true;
