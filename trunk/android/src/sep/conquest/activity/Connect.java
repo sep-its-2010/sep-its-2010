@@ -11,6 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 import sep.conquest.R;
+import sep.conquest.controller.Controller;
 import sep.conquest.model.PuckFactory;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -148,6 +149,7 @@ public final class Connect extends Activity {
    */
   public void onResume() {
     super.onResume();
+    Controller.getInstance().destroy();
     registerReceiver(bcReceiver, messageFilter);
   }
 
