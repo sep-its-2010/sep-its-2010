@@ -44,12 +44,6 @@ public class PuckRequest implements IRequest {
     this.message = message.clone();
     short messageType;
     messageType = (short) (((message[1] & 0xFF) << 8) | message[0] & 0xFF);
-    ConquestLog.addMessage(this, "Message type: " + messageType);
-    StringBuilder strb = new StringBuilder();
-    for (byte t : message) {
-      strb.append(t + " ");
-    }
-    ConquestLog.addMessage(this, strb.toString());
 
     switch (messageType) {
     case Puck.RES_OK:

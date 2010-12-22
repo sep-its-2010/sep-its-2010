@@ -13,19 +13,24 @@ import android.bluetooth.BluetoothSocket;
  * the smartphone. This class supports the communication via BluetoothSocket to
  * an e-puck roboter.
  * 
- * @author Florian Lorenz
+ * @author Florian Lorenz, Andreas Poxrucker
  * 
  */
 public class RealPuck extends Puck {
 
   /**
-   * Saves the BluetoothSocket which is consigned on the constructor and
-   * connects the e-puck roboter and the RealPuck.
+   * The Bluetooth socket used to communicate with the real robot.
    */
   private BluetoothSocket mybtSocket;
 
+  /**
+   * The number of bytes of the current message that have already been read.
+   */
   private int btMessageLen = 0;
 
+  /**
+   * The buffer for the current Bluetooth message.
+   */
   private byte[] btMessage = new byte[MSG_LENGTH];
 
   /**
@@ -51,11 +56,11 @@ public class RealPuck extends Puck {
   @Override
   public synchronized boolean writeSocket(byte[] message) {
     if (!expectMessage) {
-      OutputStream out;
       try {
-        out = mybtSocket.getOutputStream();
-        out.write(message);
-        out.flush();
+        synchronized (mybtSocket) {
+          OutputStream out = mybtSocket.getOutputStream();
+          out.write(message);
+        }
         expectMessage = true;
         ConquestLog.addMessage(this, getName() + " --> e-puck");
       } catch (IOException e) {
@@ -79,12 +84,17 @@ public class RealPuck extends Puck {
   public synchronized byte[] readSocket() {
     // if a message is expected => read socket
     if (expectMessage) {
+      // Saves the number of bytes read in one read procedure.
       int numberOfBytesRead = 0;
 
       try {
-        numberOfBytesRead = mybtSocket.getInputStream().read(btMessage,
-            btMessageLen, MSG_LENGTH - btMessageLen);
+        synchronized (mybtSocket) {
+          numberOfBytesRead = mybtSocket.getInputStream().read(btMessage,
+              btMessageLen, MSG_LENGTH - btMessageLen);
+        }
       } catch (IOException e) {
+        // If an exception occurs while reading from the input stream, create
+        // a FailureRequest and send it to all other participants.
         FailureRequest req = new FailureRequest(getID(), null,
             FailureType.BLUETOOTHFAILURE);
         ComManager comMan = ComManager.getInstance();
@@ -92,20 +102,33 @@ public class RealPuck extends Puck {
         ConquestLog.addMessage(this, "Can't read message to socket!");
       }
 
+      StringBuilder strb = new StringBuilder();
+      for (int i = 0; i < numberOfBytesRead; i++) {
+        strb.append(btMessage[i + btMessageLen] + " ");
+      }
+      ConquestLog.addMessage(this, strb.toString());
+      
+      // If more then one byte has been read, increase number of read bytes.
       if (numberOfBytesRead > 0) {
         btMessageLen += numberOfBytesRead;
       }
 
-      // return message if it's complete
+      // Return message if it's complete and reset buffer.
       if (MSG_LENGTH == btMessageLen) {
         btMessageLen = 0;
         expectMessage = false;
         return btMessage;
       }
     }
+    // If message length is not 32 bytes then return an empty array until
+    // complete message is received.
     return new byte[0];
   }
 
+  /**
+   * Used to destroy a RealPuck instance. Closes the Bluetooth socket and stops
+   * the LogicThread from executing.
+   */
   @Override
   public void destroy() {
     try {

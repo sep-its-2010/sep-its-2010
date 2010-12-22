@@ -18,15 +18,31 @@ import sep.conquest.util.ConquestLog;
  * 
  */
 public abstract class Puck implements IComClient, IRobot {
-  
+
   /**
-  * The length of a bluetooth message.
-  */	
+   * The length of a bluetooth message.
+   */
   public static final int MSG_LENGTH = 32;
-  
+
+  /**
+   * The position of the first type byte in a Bluetooth request message.
+   */
   public static final int TYPE_FIRST_BYTE = 0;
+
+  /**
+   * The position of the second type byte in a Bluetooth request message.
+   */
   public static final int TYPE_SECOND_BYTE = 1;
-  public static final int NODE_BYTE = 17;
+
+  /**
+   * The position of the byte containing the node type on the current position.
+   */
+  public static final int NODE_STATUS_BYTE = 17;
+
+  /**
+   * he position of the byte containing the node type in a node hit message.
+   */
+  public static final int NODE_HIT_BYTE = 2;
 
   /**
    * Represents the byte-Code for the messageType RESPONSE_OK
@@ -52,22 +68,20 @@ public abstract class Puck implements IComClient, IRobot {
    * Represents the byte-Code for the messageType RESPONSE_ABYSS
    */
   public static final short RES_ABYSS = (short) 0x85FF;
-  
+
   /**
    * Represents the byte code for the message type RESPONSE_REJECT
    */
   public static final short RES_REJECT = (short) 0x86FF;
 
-
   /**
    * Represents the byte-Code for the messageType REQUEST_MOVE
    */
   public static final short REQ_MOVE = (short) 0x04FF;
-	/**
-	 * Indicates whether an OK-message was received.
-	 */
-	private boolean okRcvd = false;
-	
+  /**
+   * Indicates whether an OK-message was received.
+   */
+  private boolean okRcvd = false;
 
   /**
    * Represents the byte-Code for the messageType REQUEST_RESET
@@ -341,16 +355,16 @@ public abstract class Puck implements IComClient, IRobot {
 
     writeSocket(request);
   }
-  
+
   /**
    * 
    */
   public void requestStatus() {
-	byte[] request = new byte[32];
-	request[0] = (byte) (REQ_STATUS & 0xff);
-	request[1] = (byte) ((REQ_STATUS >> 8) & 0xff);
-	
-	writeSocket(request);
+    byte[] request = new byte[32];
+    request[0] = (byte) (REQ_STATUS & 0xff);
+    request[1] = (byte) ((REQ_STATUS >> 8) & 0xff);
+
+    writeSocket(request);
   }
 
   /*
@@ -362,33 +376,32 @@ public abstract class Puck implements IComClient, IRobot {
     return controlled;
   }
 
-	/**
-	 * Sets the ok-received flag.
-	 * 
-	 * @param okRcvd
-	 */
-	public void setOkRcvd(boolean okRcvd) {
-		this.okRcvd = okRcvd;
-	}
+  /**
+   * Sets the ok-received flag.
+   * 
+   * @param okRcvd
+   */
+  public void setOkRcvd(boolean okRcvd) {
+    this.okRcvd = okRcvd;
+  }
 
-	/**
-	 * Indicates whether an ok-message was received.
-	 * 
-	 * @return
-	 */
-	public boolean isOkRcvd() {
-		return okRcvd;
-	}
-	
-	/**
-	 * Destroys the Puck.
-	 */
-	public void destroy() { 
-		executor.shutdown();
-		/*try {
-			this.finalize();
-		} catch (Throwable e) {
-			throw new IllegalStateException("Error! Couldn't destroy Puck " + name);
-		}*/
-	}
+  /**
+   * Indicates whether an ok-message was received.
+   * 
+   * @return
+   */
+  public boolean isOkRcvd() {
+    return okRcvd;
+  }
+
+  /**
+   * Destroys the Puck.
+   */
+  public void destroy() {
+    executor.shutdown();
+    /*
+     * try { this.finalize(); } catch (Throwable e) { throw new
+     * IllegalStateException("Error! Couldn't destroy Puck " + name); }
+     */
+  }
 }
