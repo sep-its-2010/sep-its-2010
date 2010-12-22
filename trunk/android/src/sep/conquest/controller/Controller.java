@@ -2,7 +2,9 @@ package sep.conquest.controller;
 
 import java.util.UUID;
 
+import sep.conquest.model.ComManager;
 import sep.conquest.model.Environment;
+import sep.conquest.model.IComClient;
 import sep.conquest.model.Orientation;
 import sep.conquest.model.SpeedLevel;
 
@@ -21,18 +23,10 @@ public class Controller {
     private static final Controller INSTANCE = new Controller();
     
     /**
-     * The used environment which represents the model according to the
-     * model-view-controller pattern
-     */
-    private Environment environment;
-    
-    /**
      * The private constructor to realize the singleton pattern. It also binds
      * the reference to the environment (<code>Model</code>). 
      */
-    private Controller(){
-    	environment = Environment.getInstance();
-    }
+    private Controller(){ }
     
     /**
      * The getInstance method returns the singleton object of the Controller
@@ -44,11 +38,6 @@ public class Controller {
         return INSTANCE;
     }
     
-    public void resetEnvironment() {
-      environment.reset();
-      this.environment = Environment.getInstance();
-    }
-    
     /**
      * This method returns the environment, so the <code>Activities</code> are
      * allowed to register at the model.
@@ -56,7 +45,7 @@ public class Controller {
      * @param env the environment.
      */
     public Environment getEnv() {
-        return environment;
+        return Environment.getInstance();
     }
     
     /**
@@ -65,7 +54,7 @@ public class Controller {
      * @param ID The ID of the robot.
      */
     public void left(UUID ID) {
-        environment.driveCommand(ID, Orientation.LEFT);
+    	Environment.getInstance().driveCommand(ID, Orientation.LEFT);
     }
 
     /**
@@ -74,7 +63,7 @@ public class Controller {
      * @param ID The ID of the robot.
      */
     public void right(UUID ID) {
-        environment.driveCommand(ID, Orientation.RIGHT);
+    	Environment.getInstance().driveCommand(ID, Orientation.RIGHT);
     }
     
     /**
@@ -83,7 +72,7 @@ public class Controller {
      * @param ID the ID of the robot.
      */
     public void forward(UUID ID) {
-        environment.driveCommand(ID, Orientation.UP);
+    	Environment.getInstance().driveCommand(ID, Orientation.UP);
     }    
     
     /**
@@ -92,7 +81,7 @@ public class Controller {
      * @param ID The ID of the robot.
      */
     public void turn(UUID ID) {
-        environment.driveCommand(ID, Orientation.DOWN);
+    	Environment.getInstance().driveCommand(ID, Orientation.DOWN);
     }    
     
     /**
@@ -102,7 +91,7 @@ public class Controller {
      * @param speed The speed of the robot.
      */
     public void setSpeed(UUID ID, SpeedLevel speed) {
-        environment.setSpeed(ID, speed);
+    	Environment.getInstance().setSpeed(ID, speed);
     }    
     
     /**
@@ -112,6 +101,20 @@ public class Controller {
      * @param enabled true, if the robot should be controlled, otherwise false.
      */
     public void setControlled(UUID ID, boolean enabled) {
-        environment.setControlled(ID, enabled);
-    }        
+    	Environment.getInstance().setControlled(ID, enabled);
+    }      
+    
+    public void destroy() {
+		ComManager com = ComManager.getInstance();
+		IComClient[] clients = com.getClients();
+		
+		for (IComClient client : clients) {
+			com.removeClient(client.getID());
+			client.destroy();
+		}
+    }
+    
+    public void reset() {
+    	getEnv().reset();
+    }
 }

@@ -126,8 +126,7 @@ public class Map extends Activity implements Observer {
     
     public void onDestroy() {
     	super.onDestroy();
-    	Controller.getInstance().resetEnvironment();
-    	
+    	Controller.getInstance().getEnv().reset();
     }
 
     /**

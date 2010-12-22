@@ -6,9 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sep.conquest.R;
-import sep.conquest.model.ComManager;
+import sep.conquest.controller.Controller;
 import sep.conquest.model.GridMap;
-import sep.conquest.model.IComClient;
 import sep.conquest.model.MapFileHandler;
 import sep.conquest.model.MapNode;
 import sep.conquest.model.Orientation;
@@ -121,13 +120,7 @@ public class Simulation extends Activity {
 		super.onResume();
 		drawPreview(map.getMapAsList(), map.getMapBorders());
 		
-		ComManager com = ComManager.getInstance();
-		IComClient[] clients = com.getClients();
-		
-		for (IComClient client : clients) {
-			com.removeClient(client.getID());
-			client.destroy();
-		}
+		Controller.getInstance().destroy();
 	}
 	
 	public final void onPause() {

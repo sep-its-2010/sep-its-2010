@@ -56,7 +56,7 @@ public class PuckFactory {
       // Iterate over set and create RealPuck for each device.
 	LocalLocalizeBehaviour.startPositions = new TreeMap<UUID, Integer>();
 	LocalLocalizeBehaviour.startOrientations = new TreeMap<UUID, Orientation>();
-	int i = 0;
+    Map<String, UUID> mapping = new TreeMap<String, UUID>();
 	Puck first = null;
       for (BluetoothSocket robot : robots) {
         UUID newUUID = UUID.randomUUID();
@@ -65,11 +65,18 @@ public class PuckFactory {
         if (first == null)
         	first = newPuck;
         man.addClient(newUUID, newPuck);
-        LocalLocalizeBehaviour.startPositions.put(newUUID, Utility.makeKey(i++, 0)); 
+        mapping.put(name, newUUID);
         LocalLocalizeBehaviour.startOrientations.put(newUUID, Orientation.UP);
       }
-      // initiate handshaking of the robots
       
+      // set startpositions
+      int i = 0;
+      for (String name: mapping.keySet()) {
+          LocalLocalizeBehaviour.startPositions.put(mapping.get(name), 
+        		  Utility.makeKey(i++, 0)); 
+      }
+      
+      // initiate handshaking of the robots
       first.sendHello();
       return true;
     }
@@ -108,7 +115,7 @@ public class PuckFactory {
 
       // Create new ids and mapping to position and orientation
       LocalLocalizeBehaviour.startPositions = new TreeMap<UUID, Integer>();
-      LocalLocalizeBehaviour.startOrientations = new TreeMap<UUID, Orientation>();      
+      LocalLocalizeBehaviour.startOrientations = new TreeMap<UUID, Orientation>(); 
       for (int i = 0; i < positions.length; i++) {
         UUID newId = UUID.randomUUID();
         ids.add(newId);

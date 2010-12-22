@@ -57,6 +57,11 @@ public class LogicThread implements Runnable {
 	private Orientation turn = Orientation.UNKNOWN;
 	
 	/**
+	 * Indicates whether the thread should run.
+	 */
+	private boolean run = true;
+	
+	/**
 	 * The constructor of LogicThread assigns the robot as well as its status to
 	 * attributes.
 	 * 
@@ -208,7 +213,7 @@ public class LogicThread implements Runnable {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		while (true) {
+		while (run) {
 			boolean changed = false;
 
 			// handle bluetooth messages
@@ -239,6 +244,10 @@ public class LogicThread implements Runnable {
 			} else
 				Thread.yield();
 		}
+	}
+	
+	public void destroy() {
+		run = false;
 	}
 
 }

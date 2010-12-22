@@ -385,23 +385,26 @@ public abstract class Puck implements IComClient, IRobot {
     this.okRcvd = okRcvd;
   }
 
-  /**
-   * Indicates whether an ok-message was received.
-   * 
-   * @return
-   */
-  public boolean isOkRcvd() {
-    return okRcvd;
-  }
-
-  /**
-   * Destroys the Puck.
-   */
-  public void destroy() {
-    executor.shutdown();
-    /*
-     * try { this.finalize(); } catch (Throwable e) { throw new
-     * IllegalStateException("Error! Couldn't destroy Puck " + name); }
-     */
-  }
+	/**
+	 * Indicates whether an ok-message was received.
+	 * 
+	 * @return
+	 */
+	public boolean isOkRcvd() {
+		return okRcvd;
+	}
+	
+	/**
+	 * Destroys the Puck.
+	 */
+	public void destroy() { 
+		logicThread.destroy();
+		executor.shutdown();
+		
+		try {
+			this.finalize();
+		} catch (Throwable e) {
+			throw new IllegalStateException("Error! Couldn't destroy Puck " + name);
+		}
+	}
 }

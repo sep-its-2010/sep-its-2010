@@ -10,6 +10,7 @@ import sep.conquest.model.handler.HandlerFactory;
 import sep.conquest.model.requests.ControlledRequest;
 import sep.conquest.model.requests.DriveRequest;
 import sep.conquest.model.requests.SpeedRequest;
+import sep.conquest.util.ConquestLog;
 
 /**
  * The class Environment represents the model corresponding to the Model-View-
@@ -81,6 +82,7 @@ public class Environment extends Observable implements IComClient {
 	 * Resets the environment.
 	 */
 	public void reset() {
+		INSTANCE.deleteObservers();
 		comManager.removeClient(id);
 		INSTANCE = new Environment();
 	}
@@ -202,10 +204,6 @@ public class Environment extends Observable implements IComClient {
 	}
 
 	public void destroy() {
-		try {
-			INSTANCE.finalize();
-		} catch (Throwable e1) {
-			throw new IllegalStateException("Error. Environment couldn't be destroyed.");
-		}
+		reset();
 	}
 }
