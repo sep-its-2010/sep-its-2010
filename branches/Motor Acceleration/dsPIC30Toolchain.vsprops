@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="dsPIC30Project"
+	OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+	IntermediateDirectory="$(ConfigurationName)"
+	DeleteExtensionsOnClean="*_int.*"
+	>
+	<UserMacro
+		Name="MCPU"
+		Value="30F6014A"
+		PerformEnvironmentSet="true"
+	/>
+	<UserMacro
+		Name="FCY"
+		Value="29491200"
+		PerformEnvironmentSet="true"
+	/>
+	<UserMacro
+		Name="OMF"
+		Value="elf"
+		PerformEnvironmentSet="true"
+	/>
+</VisualStudioPropertySheet>
