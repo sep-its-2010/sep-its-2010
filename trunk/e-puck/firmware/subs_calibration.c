@@ -17,7 +17,7 @@ enum {
 	BLACK_LEVEL = 0, ///< Specifies the local index for the black level calibration values.
 	WHITE_LEVEL = 1, ///< Specifies the local index for the white level calibration values.
 	BLINK_AMOUNT = 6, ///< Specifies the amount of LED blinks when a calibration error occurs.
-	BLINK_MASK = HAL_LED_PIN_MASK__CIRCULAR, ///< Specifies the LEDs to be toggled when a calibration error occurs.
+	BLINK_MASK = 0xFF, ///< Specifies the LEDs to be toggled when a calibration error occurs.
 	BLINK_INTERVAL = 10 ///< Specifies the blink interval in time units defined by #hal_rtc_init().
 };
 
@@ -73,7 +73,7 @@ static sen_line_SData_t s_podLevels[2];
  * \see
  * subs_calibration_run
  */
-static sen_line_SData_t _EEDATA( 2) s_podCalibrationLevels[2];
+static sen_line_SData_t s_podCalibrationLevels[2] _EEDATA( 2);
 
 
 /*!

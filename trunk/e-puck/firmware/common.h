@@ -80,4 +80,65 @@
 #define NO_AUTO_PSV	__attribute__( ( no_auto_psv))
 
 
+static inline int16_t max(
+	IN const int16_t _i16First,
+	IN const int16_t _i16Second
+	);
+
+static inline int16_t min(
+	IN const int16_t _i16First,
+	IN const int16_t _i16Second
+	);
+
+
+/*!
+ * \brief
+ * Returns the maximum of two operands.
+ * 
+ * \param _i16First
+ * Specifies the first operand.
+ * 
+ * \param _i16Second
+ * Specifies the second operand.
+ * 
+ * \returns
+ * The first operand if it is greater than the second one. Otherwise the second operand is returned.
+ * 
+ * \see
+ * min
+ */
+int16_t max(
+	IN const int16_t _i16First,
+	IN const int16_t _i16Second
+	) {
+
+	return _i16First > _i16Second ? _i16First : _i16Second;
+}
+
+
+/*!
+ * \brief
+ * Returns the minimum of two operands.
+ * 
+ * \param _i16First
+ * Specifies the first operand.
+ * 
+ * \param _i16Second
+ * Specifies the second operand.
+ * 
+ * \returns
+ * The first operand if it is lesser than the second one. Otherwise the second operand is returned.
+ * 
+ * \see
+ * max
+ */
+int16_t min(
+	IN const int16_t _i16First,
+	IN const int16_t _i16Second
+	) {
+
+	return _i16First < _i16Second ? _i16First : _i16Second;
+}
+
+
 #endif /* comdef_h__ */

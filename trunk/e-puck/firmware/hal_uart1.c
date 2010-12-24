@@ -1,5 +1,3 @@
-
-// Included for __delay32
 #include <libpic30.h>
 
 #include "hal_uart1.h"
