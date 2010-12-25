@@ -333,7 +333,7 @@ uint16_t ringbuf_pushRange(
 
 	// Get current write index
 	uint16_t ui16Index = ui16WriteOffset + _lppodContext->ui16ReadIndex;
-	if( ui16Index > _lppodContext->ui16Size) {
+	if( ui16Index >= _lppodContext->ui16Size) {
 		ui16Index -= _lppodContext->ui16Size;
 	}
 
@@ -342,6 +342,9 @@ uint16_t ringbuf_pushRange(
 	if( ui16Remaining > _ui16Elements) {
 		ui16Remaining = _ui16Elements;
 	}
+
+	// Advance write offset
+	_lppodContext->ui16WriteOffset = ui16WriteOffset + ui16Remaining;
 
 	// Push until wrap around
 	while( ui16Index < _lppodContext->ui16Size && ui16Remaining) {

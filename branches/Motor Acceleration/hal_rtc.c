@@ -71,7 +71,7 @@ void _T1Interrupt( void) {
  * 
  * Timer 1 will only be enabled when a period above 0 is specified.
  * The period is based on a prescaler of /256 (#HAL_RTC_PRESCALER).
- * The initial priority of the associated timer interrupt is #HAL_INT_PRIORITY__5.
+ * The initial priority of the associated timer interrupt is #HAL_INT_PRIORITY__4.
  * 
  * \remarks
  * - The initial interrupt priority may be changed by the user.
@@ -102,7 +102,7 @@ void hal_rtc_init(
 		T1CONbits.TCKPS = HAL_RTC_PRESCALER;
 		T1CONbits.TON = true;
 
-		hal_int_setPriority( HAL_INT_SOURCE__TIMER1, HAL_INT_PRIORITY__5);
+		hal_int_setPriority( HAL_INT_SOURCE__TIMER1, HAL_INT_PRIORITY__4);
 		hal_int_enable( HAL_INT_SOURCE__TIMER1);
 	}
 }

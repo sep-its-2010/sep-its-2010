@@ -44,7 +44,7 @@ void _U1TXInterrupt( void) {
 	hal_int_clearFlag( HAL_INT_SOURCE__UART1_TRANSMITTER);
 
 	// There might have been a race condition between putch, puts or write & this interrupt
-	// -> ensure that the hardware buffer is not full 
+	// -> ensure that the hardware buffer is not full
 	while( !U1STAbits.UTXBF && !ringbuf_isEmpty( &hal_uart1_podTxBuffer)) {
 		U1TXREG = ringbuf_pop( &hal_uart1_podTxBuffer);
 	}
@@ -72,10 +72,14 @@ void _U1RXInterrupt( void) {
 
 	hal_int_clearFlag( HAL_INT_SOURCE__UART1_RECEIVER);
 
-	// There might have been a race condition between getch or read & this interrupt -> ensure that there is data available 
-	while( U1STAbits.URXDA && !ringbuf_isFull( &hal_uart1_podRxBuffer)) {
-		ringbuf_push( &hal_uart1_podRxBuffer, U1RXREG);
+	// There might have been a race condition between getch or read & this interrupt -> ensure that there is data available
+	uint8_t aui8Data[5];
+	uint16_t ui16Read = 0;
+	const uint16_t ui16Free = ringbuf_getFree( &hal_uart1_podRxBuffer);
+	while( U1STAbits.URXDA && ui16Read < ui16Free) {
+		aui8Data[ui16Read++] = U1RXREG;
 	}
+	ringbuf_pushRange( &hal_uart1_podRxBuffer, aui8Data, ui16Read);
 }
 
 
@@ -89,16 +93,16 @@ void _U1RXInterrupt( void) {
  * Once enabled, the U1TX and U1RX pins are configured as an output and an input respectively,
  * overriding the TRIS and LATCH register bit settings for the corresponding I/O port pins.
  * 
- * The transmission interrupt is set to trigger on an empty hardware buffer.
- * The reception interrupt is set to trigger on a full hardware buffer.
- * The associated interrupt priorities are set to #HAL_INT_PRIORITY__6.
+ * The transmission interrupt is set to trigger on an empty hardware buffer with initial priority #HAL_INT_PRIORITY__4.
+ * The reception interrupt is set to trigger on a full hardware buffer with initial priority #HAL_INT_PRIORITY__5.
  *
  * The ring buffers must be initialized before with #ringbuf_init().
  * Their context can be retrieved with #hal_uart1_getTxRingBuffer() and #hal_uart1_getRxRingBuffer()
  * 
  * \remarks
- * - This function is interrupt safe concerning interrupts from this module.
  * - The UART should be configured before enabling it.
+ * - This function is interrupt safe concerning interrupts from this module.
+ * - The priority of the receiver interrupt should he higher or equal to the transmitter interrupt to avoid overflows.
  *
  * \warning
  * - Using uninitialized ring buffers can cause unpredictable results.
@@ -127,8 +131,8 @@ void hal_uart1_enable(
 		U1STAbits.UTXEN = true;
 	}
 
-	hal_int_setPriority( HAL_INT_SOURCE__UART1_RECEIVER, HAL_INT_PRIORITY__6);
-	hal_int_setPriority( HAL_INT_SOURCE__UART1_TRANSMITTER, HAL_INT_PRIORITY__6);
+	hal_int_setPriority( HAL_INT_SOURCE__UART1_TRANSMITTER, HAL_INT_PRIORITY__4);
+	hal_int_setPriority( HAL_INT_SOURCE__UART1_RECEIVER, HAL_INT_PRIORITY__5);
 
 	hal_int_clearFlag( HAL_INT_SOURCE__UART1_RECEIVER);
 	hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
@@ -494,9 +498,13 @@ void hal_uart1_forceRxMove( void) {
 	hal_int_disable( HAL_INT_SOURCE__UART1_RECEIVER);
 	hal_int_clearFlag( HAL_INT_SOURCE__UART1_RECEIVER);
 
-	while( U1STAbits.URXDA && !ringbuf_isFull( &hal_uart1_podRxBuffer)) {
-		ringbuf_push( &hal_uart1_podRxBuffer, U1RXREG);
+	uint8_t aui8Data[5];
+	uint16_t ui16Read = 0;
+	const uint16_t ui16Free = ringbuf_getFree( &hal_uart1_podRxBuffer);
+	while( U1STAbits.URXDA && ui16Read < ui16Free) {
+		aui8Data[ui16Read++] = U1RXREG;
 	}
+	ringbuf_pushRange( &hal_uart1_podRxBuffer, aui8Data, ui16Read);
 
 	hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
 }
