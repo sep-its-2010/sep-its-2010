@@ -11,6 +11,10 @@
  * \returns
  * The oldest element or 0xFF if there is none.
  * 
+ * \returns
+ * - The element value ranging from \c 0 to \c 255 or 
+ * - a negative value if the buffer is empty.
+ * 
  * This function contains an under run prevention. If the buffer is empty 0xFF is returned.
  *
  * \warning
@@ -21,17 +25,17 @@
  * ringbuf_init | ringbuf_isEmpty | ringbuf_pop | ringbuf_popRange | 
  * ringbuf_push | ringbuf_pushRange | ringbuf_getAt | ringbuf_getRange
  */
-uint8_t ringbuf_get(
+int16_t ringbuf_get(
 	IN const ringbuf_SContext_t* const _lppodContext
 	) {
 
-	uint8_t ui8Return = 0xFF;
+	int16_t i16Return = -1;
 
 	if( _lppodContext->ui16WriteOffset) {
-		ui8Return = _lppodContext->lpui8Storage[_lppodContext->ui16ReadIndex];
+		i16Return = _lppodContext->lpui8Storage[_lppodContext->ui16ReadIndex];
 	}
 
-	return ui8Return;
+	return i16Return;
 }
 
 
@@ -46,7 +50,8 @@ uint8_t ringbuf_get(
  * Specifies the position of the element in relation to the oldest element.
  * 
  * \returns
- * The specified element or 0xFF if there is none.
+ * - The specified element value ranging from \c 0 to \c 255 or 
+ * - a negative value if there is none.
  * 
  * This function contains an under run prevention. If the element index is out of bound 0xFF is returned.
  *
@@ -58,22 +63,22 @@ uint8_t ringbuf_get(
  * ringbuf_init | ringbuf_isEmpty | ringbuf_pop | ringbuf_popRange | 
  * ringbuf_push | ringbuf_pushRange | ringbuf_get | ringbuf_getRange
  */
-uint8_t ringbuf_getAt(
+int16_t ringbuf_getAt(
 	IN const ringbuf_SContext_t* const _lppodContext,
 	IN const uint16_t _ui16Position
 	) {
 
-	uint8_t ui8Return = 0xFF;
+	int16_t i16Return = -1;
 
 	if( _ui16Position < _lppodContext->ui16WriteOffset) {
 		uint16_t ui16Index = _lppodContext->ui16ReadIndex + _ui16Position;
 		if( ui16Index >= _lppodContext->ui16Size) {
 			ui16Index -= _lppodContext->ui16Size;
 		}
-		ui8Return = _lppodContext->lpui8Storage[ui16Index];
+		i16Return = _lppodContext->lpui8Storage[ui16Index];
 	}
 
-	return ui8Return;
+	return i16Return;
 }
 
 
@@ -88,7 +93,7 @@ uint8_t ringbuf_getAt(
  * Specifies the destination buffer.
  *
  * \param _ui16StartIndex
- * Specifies the first element to be read.
+ * Specifies the first element to be read. This position must be valid.
  *
  * \param _ui16Length
  * Specifies the number of elements to be read.
@@ -116,29 +121,34 @@ uint16_t ringbuf_getRange(
 
 	uint8_t* lpui8 = (uint8_t*)_lpvData;
 
-	// The maximal read length is constrained by the number of available elements
+	// The start position must be valid -> it cannot be greater or equal to amount of available bytes.
 	uint16_t ui16Remaining = _lppodContext->ui16WriteOffset;
-	if( _ui16Length < ui16Remaining) {
-		ui16Remaining = _ui16Length;
-	}
+	if( ui16Remaining > _ui16StartIndex) {
 
-	// Calculate the absolute index of the first element to be read
-	uint16_t ui16Index = _lppodContext->ui16ReadIndex + _ui16StartIndex;
-	if( ui16Index >= _lppodContext->ui16Size) {
-		ui16Index -= _lppodContext->ui16Size;
-	}
+		// The maximal read length is constrained by the number of available elements and the start position.
+		ui16Remaining -= _ui16StartIndex;
+		if( _ui16Length < ui16Remaining) {
+			ui16Remaining = _ui16Length;
+		}
 
-	// Read until wrap around
-	while( ui16Index < _lppodContext->ui16Size && ui16Remaining) {
-		*lpui8++ = _lppodContext->lpui8Storage[ui16Index++];
-		ui16Remaining--;
-	}
+		// Calculate the absolute index of the first element to be read
+		uint16_t ui16Index = _lppodContext->ui16ReadIndex + _ui16StartIndex;
+		if( ui16Index >= _lppodContext->ui16Size) {
+			ui16Index -= _lppodContext->ui16Size;
+		}
 
-	// Read remaining bytes after wrap around
-	ui16Index = 0;
-	while( ui16Remaining) {
-		*lpui8++ = _lppodContext->lpui8Storage[ui16Index++];
-		ui16Remaining--;
+		// Read until wrap around
+		while( ui16Index < _lppodContext->ui16Size && ui16Remaining) {
+			*lpui8++ = _lppodContext->lpui8Storage[ui16Index++];
+			ui16Remaining--;
+		}
+
+		// Read remaining bytes after wrap around
+		ui16Index = 0;
+		while( ui16Remaining) {
+			*lpui8++ = _lppodContext->lpui8Storage[ui16Index++];
+			ui16Remaining--;
+		}
 	}
 
 	return lpui8 - (uint8_t*)_lpvData;
@@ -153,7 +163,8 @@ uint16_t ringbuf_getRange(
  * Specifies the ring buffer to operate on.
  * 
  * \returns
- * The oldest element or 0xFF if there is none.
+ * - The specified element value ranging from \c 0 to \c 255 or 
+ * - a negative value if the buffer is empty.
  * 
  * This function contains an under run prevention. In case the buffer is empty, 0xFF is returned and no further action is taken.
  * Otherwise, the oldest element is removed and returned.
@@ -165,18 +176,18 @@ uint16_t ringbuf_getRange(
  * \see
  * ringbuf_init | ringbuf_isEmpty | ringbuf_get | ringbuf_getAt | ringbuf_push | ringbuf_drop
  */
-uint8_t ringbuf_pop(
+int16_t ringbuf_pop(
 	INOUT ringbuf_SContext_t* const _lppodContext
 	) {
 
-	uint8_t ui8Return = 0xFF;
+	int16_t i16Return = -1;
 
 	// Buffer volatile data
 	const uint16_t ui16WriteOffset = _lppodContext->ui16WriteOffset;
 	const uint16_t ui16ReadIndex = _lppodContext->ui16ReadIndex;
 
 	if( ui16WriteOffset) {
-		ui8Return = _lppodContext->lpui8Storage[ui16ReadIndex];
+		i16Return = _lppodContext->lpui8Storage[ui16ReadIndex];
 		_lppodContext->ui16WriteOffset = ui16WriteOffset - 1;
 		if( ui16ReadIndex + 1 >= _lppodContext->ui16Size) {
 			_lppodContext->ui16ReadIndex = 0;
@@ -185,7 +196,7 @@ uint8_t ringbuf_pop(
 		}
 	}
 
-	return ui8Return;
+	return i16Return;
 }
 
 
@@ -225,17 +236,20 @@ uint16_t ringbuf_popRange(
 
 	// The maximal read length is constrained by the number of available elements
 	uint16_t ui16Remaining = _lppodContext->ui16WriteOffset;
-	_lppodContext->ui16WriteOffset = ui16Remaining - _ui16Length;
-	if( _ui16Length < ui16Remaining) {
-		ui16Remaining = _ui16Length;
-	}
-
-	// Calculate read index after the elements were popped
 	uint16_t ui16Index = _lppodContext->ui16ReadIndex;
-	if( ui16Index < ui16Remaining) {
-		_lppodContext->ui16ReadIndex = _lppodContext->ui16Size - ui16Remaining + ui16Index;
+	if( _ui16Length < ui16Remaining) {
+		_lppodContext->ui16WriteOffset = ui16Remaining - _ui16Length;
+		ui16Remaining = _ui16Length;
+
+		// Advance read index
+		if( ui16Index + ui16Remaining >= _lppodContext->ui16Size) {
+			_lppodContext->ui16ReadIndex = ui16Remaining + ui16Index - _lppodContext->ui16Size;
+		} else {
+			_lppodContext->ui16ReadIndex = ui16Remaining + ui16Index;
+		}
 	} else {
-		_lppodContext->ui16ReadIndex = ui16Index - ui16Remaining;
+		_lppodContext->ui16WriteOffset = 0;
+		_lppodContext->ui16ReadIndex = 0;
 	}
 
 	// Read until wrap around
@@ -264,6 +278,10 @@ uint16_t ringbuf_popRange(
  *
  * \param _ui8Value
  * Specifies the value to be pushed.
+ *
+ * \returns
+ * - \c true if the element could be pushed.
+ * - \c false if no free slot was available. 
  * 
  * This function contains an overflow prevention. In case the buffer is full, no further action is taken.
  * Otherwise, the specified element is added behind any other elements.
@@ -275,7 +293,7 @@ uint16_t ringbuf_popRange(
  * \see
  * ringbuf_init | ringbuf_isFull | ringbuf_get | ringbuf_getAt | ringbuf_pop | ringbuf_popRange | ringbuf_pushRange
  */
-void ringbuf_push(
+bool ringbuf_push(
 	INOUT ringbuf_SContext_t* const _lppodContext,
 	IN const uint8_t _ui8Value
 	) {
@@ -291,6 +309,8 @@ void ringbuf_push(
 		_lppodContext->ui16WriteOffset = ui16WriteOffset + 1;
 		_lppodContext->lpui8Storage[ui16WriteIndex] = _ui8Value;
 	}
+
+	return ui16WriteOffset < _lppodContext->ui16Size;
 }
 
 
@@ -332,12 +352,12 @@ uint16_t ringbuf_pushRange(
 	const uint16_t ui16WriteOffset = _lppodContext->ui16WriteOffset;
 
 	// Get current write index
-	uint16_t ui16Index = ui16WriteOffset + _lppodContext->ui16ReadIndex;
+	uint16_t ui16Index = _lppodContext->ui16ReadIndex + ui16WriteOffset;
 	if( ui16Index >= _lppodContext->ui16Size) {
 		ui16Index -= _lppodContext->ui16Size;
 	}
 
-	// Calculate the amount of elements which can actually be pushed
+	// Calculate the amount of elements which can actually be pushed due to space limitations.
 	uint16_t ui16Remaining = _lppodContext->ui16Size - ui16WriteOffset;
 	if( ui16Remaining > _ui16Elements) {
 		ui16Remaining = _ui16Elements;
@@ -370,7 +390,10 @@ uint16_t ringbuf_pushRange(
  * Specifies the ring buffer to operate on.
  * 
  * \param _ui16Elements
- * Specifies the amount of bytes to drop. 
+ * Specifies the amount of bytes to drop.
+ *
+ * \returns
+ * The amount of dropped bytes.
  * 
  * The buffer is just cleared when dropping more bytes than there are actually available.
  *
@@ -381,21 +404,26 @@ uint16_t ringbuf_pushRange(
  * \see
  * ringbuf_init | ringbuf_clear | ringbuf_pop | ringbuf_popRange
  */
-void ringbuf_drop(
+uint16_t ringbuf_drop(
 	INOUT ringbuf_SContext_t* const _lppodContext,
 	IN const uint16_t _ui16Elements
 	) {
 
-	if( _ui16Elements >= _lppodContext->ui16Size) {
+	// Buffer volatile data
+	const uint16_t ui16WriteOffset = _lppodContext->ui16WriteOffset;
+
+	if( _ui16Elements >= ui16WriteOffset) {
 		_lppodContext->ui16ReadIndex = 0;
 		_lppodContext->ui16WriteOffset = 0;
 	} else {
-		_lppodContext->ui16WriteOffset -= _ui16Elements;
+		_lppodContext->ui16WriteOffset = ui16WriteOffset - _ui16Elements;
 		const uint16_t ui16ReadIndex = _lppodContext->ui16ReadIndex + _lppodContext->ui16Size - _ui16Elements;
 		if( ui16ReadIndex >= _lppodContext->ui16Size) {
-			_lppodContext->ui16ReadIndex -= _lppodContext->ui16Size;
+			_lppodContext->ui16ReadIndex = ui16ReadIndex - _lppodContext->ui16Size;
 		} else {
 			_lppodContext->ui16ReadIndex = ui16ReadIndex;
 		}
 	}
+
+	return ui16WriteOffset;
 }
