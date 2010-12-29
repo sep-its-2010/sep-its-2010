@@ -75,7 +75,7 @@ void _T1Interrupt( void) {
  * 
  * \remarks
  * - The initial interrupt priority may be changed by the user.
- * - This function is interrupt safe concerning interrupts from this module.
+ * - This function is interrupt safe concerning timer 1 interrupts.
  * - The module needs to be initialized.
  * - The module requires exclusive access to timer 1.
  *
@@ -129,7 +129,7 @@ void hal_rtc_init(
  * An event can safely modify itself and any other events.
  * 
  * \remarks
- * - This function is interrupt safe concerning interrupts from this module.
+ * - The priority will escalate to the timer 1 interrupt priority during operation which might lead to starvation.
  * - The module needs to be initialized.
  *
  * \warning
@@ -145,25 +145,25 @@ hal_rtc_handle_t hal_rtc_register(
 	) {
 
 	hal_rtc_handle_t hEvent = HAL_RTC_INVALID_HANDLE;
+	
+	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
+		if( _fnCallback && _ui16Period) {
+			hal_rtc_SEvent_t* lppodEvent = NULL;
+			for( uint16_t ui16 = 0; !lppodEvent && ui16 < HAL_RTC_MAX_EVENTS; ui16++) {
+				if( !s_apodEvents[ui16].ui16Period) {
+					lppodEvent = &s_apodEvents[ui16];
+					hEvent = ui16;
+				}
+			}
 
-	hal_int_disable( HAL_INT_SOURCE__TIMER1);
-	if( _fnCallback && _ui16Period) {
-		hal_rtc_SEvent_t* lppodEvent = NULL;
-		for( uint16_t ui16 = 0; !lppodEvent && ui16 < HAL_RTC_MAX_EVENTS; ui16++) {
-			if( !s_apodEvents[ui16].ui16Period) {
-				lppodEvent = &s_apodEvents[ui16];
-				hEvent = ui16;
+			if( lppodEvent) {
+				lppodEvent->blActive = _blActive;
+				lppodEvent->fnEvent = _fnCallback;
+				lppodEvent->ui16Period = _ui16Period;
+				lppodEvent->ui16CurrentTicks = 0;
 			}
 		}
-
-		if( lppodEvent) {
-			lppodEvent->blActive = _blActive;
-			lppodEvent->fnEvent = _fnCallback;
-			lppodEvent->ui16Period = _ui16Period;
-			lppodEvent->ui16CurrentTicks = 0;
-		}
 	}
-	hal_int_enable( HAL_INT_SOURCE__TIMER1);
 
 	return hEvent;
 }
@@ -179,7 +179,7 @@ hal_rtc_handle_t hal_rtc_register(
  * To get the actual time in milliseconds, one must multiply the returned value with the timer 1 period and prescaler.
  * 
  * \remarks
- * - This function is interrupt safe concerning interrupts from this module.
+ * - The priority will escalate to the timer 1 interrupt priority during operation which might lead to starvation.
  * - The module needs to be initialized.
  *
  * \warning
@@ -190,11 +190,9 @@ hal_rtc_handle_t hal_rtc_register(
  */
 uint32_t hal_rtc_getSystemUpTime( void) {
 
-	hal_int_disable( HAL_INT_SOURCE__TIMER1);
-	const uint32_t ui32CurSystemUpTime = s_ui32SystemUpTime;
-	hal_int_enable( HAL_INT_SOURCE__TIMER1);
-
-	return ui32CurSystemUpTime;
+	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
+		return s_ui32SystemUpTime;
+	}
 }
 
 
@@ -211,7 +209,7 @@ uint32_t hal_rtc_getSystemUpTime( void) {
  * An event may always unregister itself and any other events.
  * 
  * \remarks
- * - This function is interrupt safe concerning interrupts from this module.
+ * - The priority will escalate to the timer 1 interrupt priority during operation which might lead to starvation.
  * - The module needs to be initialized.
  *
  * \warning
@@ -226,11 +224,12 @@ bool hal_rtc_unregister(
 
 	bool blSuccess = false;
 
-	hal_int_disable( HAL_INT_SOURCE__TIMER1);
-	if( _hEvent < HAL_RTC_MAX_EVENTS) {
-		memset( &s_apodEvents[_hEvent], 0, sizeof( *s_apodEvents));
+	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
+		if( _hEvent < HAL_RTC_MAX_EVENTS) {
+			memset( &s_apodEvents[_hEvent], 0, sizeof( *s_apodEvents));
+			blSuccess = true;
+		}
 	}
-	hal_int_enable( HAL_INT_SOURCE__TIMER1);
 
 	return blSuccess;
 }
@@ -249,7 +248,7 @@ bool hal_rtc_unregister(
  * An event may always activate any other events.
  * 
  * \remarks
- * - This function is interrupt safe concerning interrupts from this module.
+ * - The priority will escalate to the timer 1 interrupt priority during operation which might lead to starvation.
  * - The module needs to be initialized.
  *
  * \warning
@@ -264,11 +263,12 @@ bool hal_rtc_activate(
 
 	bool blSuccess = false;
 
-	hal_int_disable( HAL_INT_SOURCE__TIMER1);
-	if( _hEvent < HAL_RTC_MAX_EVENTS) {
-		s_apodEvents[_hEvent].blActive = true;
+	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
+		if( _hEvent < HAL_RTC_MAX_EVENTS) {
+			s_apodEvents[_hEvent].blActive = true;
+			blSuccess = true;
+		}
 	}
-	hal_int_enable( HAL_INT_SOURCE__TIMER1);
 
 	return blSuccess;
 }
@@ -287,7 +287,7 @@ bool hal_rtc_activate(
  * An event may always deactivate itself and any other events.
  * 
  * \remarks
- * - This function is interrupt safe concerning interrupts from this module.
+ * - The priority will escalate to the timer 1 interrupt priority during operation which might lead to starvation.
  * - The module needs to be initialized.
  *
  * \warning
@@ -302,11 +302,12 @@ bool hal_rtc_deactivate(
 
 	bool blSuccess = false;
 
-	hal_int_disable( HAL_INT_SOURCE__TIMER1);
-	if( _hEvent < HAL_RTC_MAX_EVENTS) {
-		s_apodEvents[_hEvent].blActive = false;
+	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
+		if( _hEvent < HAL_RTC_MAX_EVENTS) {
+			s_apodEvents[_hEvent].blActive = false;
+			blSuccess = true;
+		}
 	}
-	hal_int_enable( HAL_INT_SOURCE__TIMER1);
 
 	return blSuccess;
 }
@@ -326,7 +327,7 @@ bool hal_rtc_deactivate(
  * Resetting an event only resets the associated tick counter.
  * 
  * \remarks
- * - This function is interrupt safe concerning interrupts from this module.
+ * - This function is interrupt safe concerning any interrupt with a priority lower or equal to priority of the timer 1 interrupt.
  * - The module needs to be initialized.
  *
  * \warning
@@ -341,11 +342,12 @@ bool hal_rtc_reset(
 
 	bool blSuccess = false;
 
-	hal_int_disable( HAL_INT_SOURCE__TIMER1);
-	if( _hEvent < HAL_RTC_MAX_EVENTS) {
-		s_apodEvents[_hEvent].ui16CurrentTicks = 0;
+	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
+		if( _hEvent < HAL_RTC_MAX_EVENTS) {
+			s_apodEvents[_hEvent].ui16CurrentTicks = 0;
+			blSuccess = true;
+		}
 	}
-	hal_int_enable( HAL_INT_SOURCE__TIMER1);
 
 	return blSuccess;
 }

@@ -1,11 +1,10 @@
 #include <stdio.h>
 
+#include "hal_led.h"
 #include "hal_motors.h"
 #include "com.h"
 #include "sen_line.h"
-#include "conquest.h"
-#include "hal_led.h"
-#include "hal_uart1.h"
+#include "conquest_types.h"
 
 #include "subs_node.h"
 
@@ -56,90 +55,80 @@ static uint16_t s_ui16AvgRight = 0;
  */
 bool subs_node_run( void) {
 
-	hal_uart1_puts( "NODE DETECTION \r\n");
-
 	bool blActed = false;
 	sen_line_SData_t s_podSensorData = {{0}};
 	sen_line_read( &s_podSensorData);
 	sen_line_rescale( &s_podSensorData, &s_podSensorData);
 
 	// node detection-measurement
- 	if (((s_podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_NODE__LINE_THRESHOLD) ||
- 		(s_podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_NODE__LINE_THRESHOLD)) &&
+ 	if( ( s_podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_NODE__LINE_THRESHOLD ||
+ 		s_podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_NODE__LINE_THRESHOLD) &&
 		!s_blDetectionActive) {
+
 		s_ui16AvgLeft += s_podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT];
 		s_ui16AvgRight += s_podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT];
 		s_ui8NodeDetectionCounter++;
-	} else if( (s_podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] > SUBS_NODE__LINE_THRESHOLD) &&
- 		(s_podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] > SUBS_NODE__LINE_THRESHOLD) &&
+	} else if( s_podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] > SUBS_NODE__LINE_THRESHOLD &&
+ 		s_podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] > SUBS_NODE__LINE_THRESHOLD &&
 		!s_blDetectionActive) {		
+
 		s_ui16AvgLeft = 0;
 		s_ui16AvgRight = 0;
 		s_ui8NodeDetectionCounter = 0;
 	}
 	
 	// robot is above a node -> enable node-detection-state
-	if( (s_ui8NodeDetectionCounter >= SUBS_NODE__REQUIRED_MEASUREMENTS) &&
-		!s_blDetectionActive) {		
-	
+	if( s_ui8NodeDetectionCounter >= SUBS_NODE__REQUIRED_MEASUREMENTS && !s_blDetectionActive) {
 		hal_motors_setSteps( 0);
 		s_blDetectionActive = true;
 		blActed = true;		
 
 	// Exit detection-state when still active & driven far enough; send previously analyzed node-type.
 	} else if( s_blDetectionActive &&
-		((hal_motors_getStepsLeft() >= SUBS_NODE__MOVE_ABOVE_CENTER) && 
-		(hal_motors_getStepsRight() >= SUBS_NODE__MOVE_ABOVE_CENTER))) {
+		hal_motors_getStepsLeft() >= SUBS_NODE__MOVE_ABOVE_CENTER && 
+		hal_motors_getStepsRight() >= SUBS_NODE__MOVE_ABOVE_CENTER) {
 		
 		s_ui16AvgLeft = s_ui16AvgLeft / s_ui8NodeDetectionCounter;
 		s_ui16AvgRight = s_ui16AvgRight / s_ui8NodeDetectionCounter;
 
 		// analyze the shape of the node		
-		if( (s_ui16AvgLeft < SUBS_NODE__LINE_THRESHOLD) &&( s_ui16AvgRight < SUBS_NODE__LINE_THRESHOLD) && (s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE__LINE_THRESHOLD) ) { // 1 wird ersetzt durch den jeweiligen EEPROM-Kalibrierwert
+		if( s_ui16AvgLeft < SUBS_NODE__LINE_THRESHOLD &&
+			s_ui16AvgRight < SUBS_NODE__LINE_THRESHOLD &&
+			s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE__LINE_THRESHOLD) {
+
 			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__CROSS;
-			hal_led_set( 0);
-			hal_led_switchOn(HAL_LED_PIN_BV__0);
-			hal_led_switchOn(HAL_LED_PIN_BV__2);
-			hal_led_switchOn(HAL_LED_PIN_BV__4);
-			hal_led_switchOn(HAL_LED_PIN_BV__6);
-		} else if( (s_ui16AvgLeft < SUBS_NODE__LINE_THRESHOLD) &&( s_ui16AvgRight < SUBS_NODE__LINE_THRESHOLD)) {
+			hal_led_set( HAL_LED_PIN_BV__0 | HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
+		} else if( s_ui16AvgLeft < SUBS_NODE__LINE_THRESHOLD &&
+			s_ui16AvgRight < SUBS_NODE__LINE_THRESHOLD) {
+
 			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_T;
-			hal_led_set( 0);
-			hal_led_switchOn(HAL_LED_PIN_BV__2);
-			hal_led_switchOn(HAL_LED_PIN_BV__4);
-			hal_led_switchOn(HAL_LED_PIN_BV__6);
-		} else if( (s_ui16AvgLeft < SUBS_NODE__LINE_THRESHOLD) && (s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE__LINE_THRESHOLD)) {
+			hal_led_set( HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
+		} else if( s_ui16AvgLeft < SUBS_NODE__LINE_THRESHOLD &&
+			s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE__LINE_THRESHOLD) {
+
 			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__RIGHT_T;
-			hal_led_set( 0);
-			hal_led_switchOn(HAL_LED_PIN_BV__0);
-			hal_led_switchOn(HAL_LED_PIN_BV__4);
-			hal_led_switchOn(HAL_LED_PIN_BV__6);
-		} else if( (s_ui16AvgRight < SUBS_NODE__LINE_THRESHOLD) && (s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE__LINE_THRESHOLD)) {
+			hal_led_set( HAL_LED_PIN_BV__0 | HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
+		} else if( s_ui16AvgRight < SUBS_NODE__LINE_THRESHOLD &&
+			s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE__LINE_THRESHOLD) {
+
 			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__LEFT_T;
-			hal_led_set( 0);
-			hal_led_switchOn(HAL_LED_PIN_BV__0);
-			hal_led_switchOn(HAL_LED_PIN_BV__2);
-			hal_led_switchOn(HAL_LED_PIN_BV__4);
+			hal_led_set( HAL_LED_PIN_BV__0 | HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4);
 		} else if( s_ui16AvgLeft < SUBS_NODE__LINE_THRESHOLD) {
 			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_RIGHT_EDGE;
-			hal_led_set( 0);
-			hal_led_switchOn(HAL_LED_PIN_BV__4);
-			hal_led_switchOn(HAL_LED_PIN_BV__6);
+			hal_led_set( HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
 		} else if( s_ui16AvgRight < SUBS_NODE__LINE_THRESHOLD) {
 			subs_node_ui8CurrentNodeType = CONQUEST_NODE_TYPE__TOP_LEFT_EDGE;
-			hal_led_set( 0);
-			hal_led_switchOn(HAL_LED_PIN_BV__2);
-			hal_led_switchOn(HAL_LED_PIN_BV__4);
+			hal_led_set( HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4);
 		}
 		
 		hal_motors_setSpeed( 0, 0);
 		hal_motors_setSteps( 0);
-		conquest_setRequestedLineSpeed( 0);
 		s_ui16AvgLeft = 0;
 		s_ui16AvgRight = 0;
 		s_ui8NodeDetectionCounter = 0;
 
-		com_SMessage_t podHitNodeMessage = { COM_MESSAGE_TYPE__RESPONSE_HIT_NODE, {0}};
+		com_SMessage_t podHitNodeMessage;
+		podHitNodeMessage.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE;
 		podHitNodeMessage.aui8Data[0] = subs_node_ui8CurrentNodeType;
 		com_send( &podHitNodeMessage);
 
@@ -147,6 +136,7 @@ bool subs_node_run( void) {
 	} else if( s_blDetectionActive) {
 		blActed = true;
 	}
+
 	return blActed;
 }
 

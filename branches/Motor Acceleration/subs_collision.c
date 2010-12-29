@@ -10,7 +10,7 @@
 
 #include "subs_collision.h"
 
-static com_SMessage_t s_podCollisionResponse = {COM_MESSAGE_TYPE__RESPONSE_COLLISION, {0}};
+static com_SMessage_t s_podCollisionResponse = { CONQUEST_MESSAGE_TYPE__RESPONSE_COLLISION, {0}};
 static bool s_blPreventionActive = false;
 static uint8_t s_ui8DetectionCounter = 0;
 
@@ -46,13 +46,15 @@ bool subs_collision_run( void) {
 	if( !s_blPreventionActive && blActed) {		
 
 		// Decide into which direction the e-puck should turn.
- 		if( (subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__TOP_LEFT_EDGE) ||
- 			(subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__LEFT_T) ||
- 			(subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__CROSS)) {
+ 		if( subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__TOP_LEFT_EDGE ||
+ 			subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__LEFT_T ||
+ 			subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__CROSS) {
+
  			hal_motors_setSpeed( 0, SUBS_COLLISION__TURNING_SPEED);
- 		} else if( (subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__TOP_RIGHT_EDGE) ||
- 			(subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__RIGHT_T) ||
- 			(subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__TOP_T)) {
+ 		} else if( subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__TOP_RIGHT_EDGE ||
+ 			subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__RIGHT_T ||
+ 			subs_node_getCurrentNodeType() == CONQUEST_NODE_TYPE__TOP_T) {
+
  			hal_motors_setSpeed( 0, -SUBS_COLLISION__TURNING_SPEED);
  		}
 		s_blPreventionActive = true;
@@ -61,23 +63,26 @@ bool subs_collision_run( void) {
 	} else if( s_blPreventionActive) {
 
 		// If the robot turned for nearly 180° -> scan the ground for the next line.
-		if( (hal_motors_getStepsLeft() >= SUBS_COLLISION__TURN_AROUND) &&
-			(hal_motors_getStepsRight() >= SUBS_COLLISION__TURN_AROUND)) {
+		if( hal_motors_getStepsLeft() >= SUBS_COLLISION__TURN_AROUND &&
+			hal_motors_getStepsRight() >= SUBS_COLLISION__TURN_AROUND) {
+
 			sen_line_read( &podLineSensorData);
 			sen_line_rescale( &podLineSensorData, &podLineSensorData);
 			
-			if( (podLineSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_COLLISION__LINE_THRESHOLD) || // @TODO Kalibrierwerte einsetzen
-				(podLineSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_COLLISION__LINE_THRESHOLD) ||
-				(podLineSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_COLLISION__LINE_THRESHOLD)) {
+			if( podLineSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_COLLISION__LINE_THRESHOLD ||
+				podLineSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_COLLISION__LINE_THRESHOLD ||
+				podLineSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_COLLISION__LINE_THRESHOLD) {
+
 				s_ui8DetectionCounter++;
 			} else {
 				s_ui8DetectionCounter = 0;
 			}
 
 			// Several line-detections in a row, left and/or right ground-sensor detects a white surface? -> Move in straight direction and reset collision-prevention-state.
-			if( (s_ui8DetectionCounter >= SUBS_COLLISION__REQUIRED_LINE_MEASUREMENTS) &&
-				((podLineSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] > SUBS_COLLSION__SURFACE_THRESHOLD) ||
-				(podLineSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] > SUBS_COLLSION__SURFACE_THRESHOLD))) {
+			if( s_ui8DetectionCounter >= SUBS_COLLISION__REQUIRED_LINE_MEASUREMENTS &&
+				( podLineSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] > SUBS_COLLSION__SURFACE_THRESHOLD ||
+				podLineSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] > SUBS_COLLSION__SURFACE_THRESHOLD)) {
+
 				s_ui8DetectionCounter = 0;
 				s_blPreventionActive = false;
 				hal_motors_setSteps( 0);

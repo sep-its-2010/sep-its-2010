@@ -1,5 +1,4 @@
 #include <string.h>
-#include <stdlib.h>
 
 #include "hal_uart1.h"
 #include "hal_int.h"
@@ -9,9 +8,13 @@
 
 
 enum {
-	BTM_OPCODE_SPP_TRANSPARENT_MODE = 0x11,
-	BTM_MIN_FRAME_LEN = 7,
-	BTM_FRAME_DATA_LEN_OFFSET = 3
+	BTM_SPP_INCOMING_LINK_ESTABLISHED = 0x0C, ///< Specifies the bluetooth module opcode for incoming serial connections.
+	BTM_SPP_LINK_RELEASED = 0x0E, ///< Specifies the bluetooth module opcode for closed serial connections.
+	BTM_MIN_FRAME_LEN = 7, ///< Specifies the minimal bluetooth module frame length.
+	BTM_REQUEST_MESSAGE = 0x5202, ///< Bluetooth module request message (start sequence + type).
+	BTM_RESPONSE_MESSAGE = 0x4302, ///< Bluetooth module response message (start sequence + type).
+	BTM_INDICATION_MESSAGE = 0x6902, ///< Bluetooth module indication message (start sequence + type).
+	BTM_REPLY_MESSAGE = 0x7202 ///< Bluetooth module reply message (start sequence + type).
 };
 
 
@@ -30,9 +33,25 @@ static com_fnMessageHandler_t s_afnHandlers[COM_MAX_HANDLERS] = { 0 };
 
 /*!
  * \brief
- * Initializes the bluetooth communication interface.
+ * Holds an optional connection management event callback.
  * 
- * All message handlers are cleared.
+ * \remarks
+ * The pointer is initialized by #com_init().
+ * 
+ * \see
+ * com_processIncoming
+ */
+static com_fnConnectionEvent_t s_fnConnectionEvent = NULL;
+
+
+/*!
+ * \brief
+ * Initializes the bluetooth communication interface.
+ *
+ * \param _fnConnectionEvent
+ * Specifies an optional connection management event callback.
+ * 
+ * All message handlers are cleared and the connection management callback is set. Check #com_fnConnectionEvent_t for details.
  *
  * \remarks
  * The primary UART should be initialized before using this module.
@@ -43,9 +62,12 @@ static com_fnMessageHandler_t s_afnHandlers[COM_MAX_HANDLERS] = { 0 };
  * \see
  * com_processIncoming | com_send | hal_uart1_enable | hal_uart1_configure
  */
-void com_init( void) {
+void com_init(
+	IN OPT const com_fnConnectionEvent_t _fnConnectionEvent
+	) {
 
-	memset( s_afnHandlers, 0, sizeof( s_afnHandlers) / sizeof( *s_afnHandlers));
+	memset( s_afnHandlers, 0, sizeof( s_afnHandlers));
+	s_fnConnectionEvent = _fnConnectionEvent;
 }
 
 
@@ -53,83 +75,81 @@ void com_init( void) {
  * \brief
  * Processes incoming bluetooth messages.
  * 
- * \returns
- * Whether or not an external message was dispatched.
- * 
  * Handles incoming messages according to the chain-of-responsibility pattern.
  * The handler call order is not guaranteed to be based on the registration sequence.
  * 
+ * Messages originating directly from the bluetooth module are handled separately and can trigger the connection management
+ * callback in case a connection is established or closed. The event source is already dropped when the callback triggers.
+ * 
  * \remarks
  * - The communication interface needs to be initialized.
- * - This function is interrupt safe concerning interrupts from the hal_uart1 module.
+ * - The priority will escalate to the primary UART transmitter interrupt priority only by need.
  *
  * \warning
- * This function may not be preempted by any function which accesses this module.
+ * This function may not be preempted by any function from this module but #com_send().
  * 
  * \see
  * com_init
  */
-bool com_processIncoming( void) {
+void com_processIncoming( void) {
 
-	bool blHasMessage = false;
+	hal_uart1_flushRx();
 
-	hal_uart1_forceRxMove();
+	// Get message type if available
+	uint16_t ui16BufUsage;
+	uint16_t ui16MessageType;
+	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__UART1_RECEIVER)) {
+		ui16BufUsage = ringbuf_getUsage( hal_uart1_getRxRingBuffer());
+		ringbuf_getRange( hal_uart1_getRxRingBuffer(), &ui16MessageType, 0, sizeof( ui16MessageType));
+	}
+	if( ui16BufUsage >= sizeof( ui16MessageType)) {
+		switch( ui16MessageType) {
+			case BTM_REPLY_MESSAGE:
+			case BTM_INDICATION_MESSAGE:
+			case BTM_RESPONSE_MESSAGE:
+			case BTM_REQUEST_MESSAGE: {
 
-	hal_int_disable( HAL_INT_SOURCE__UART1_RECEIVER);
-	const uint16_t ui16BufUsage = ringbuf_getUsage( hal_uart1_getRxRingBuffer());
-	hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
-	if( ui16BufUsage >= sizeof( com_EMessageType_t)) {
-		com_SMessage_t podMessage;
-		hal_int_disable( HAL_INT_SOURCE__UART1_RECEIVER);
-		ringbuf_getRange( hal_uart1_getRxRingBuffer(), &podMessage.eType, 0, sizeof( podMessage.eType));
-		hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
-
-		switch( podMessage.eType) {
-			case COM_MESSAGE_TYPE__BTM_REPLY:
-			case COM_MESSAGE_TYPE__BTM_INDICATION:
-			case COM_MESSAGE_TYPE__BTM_RESPONSE:
-			case COM_MESSAGE_TYPE__BTM_REQUEST: {
+				// Enough data for a minimal bluetooth message frame?
 				if( ui16BufUsage >= BTM_MIN_FRAME_LEN) {
-					uint16_t ui16DataLen = 0;
-					hal_int_disable( HAL_INT_SOURCE__UART1_RECEIVER);
-					ringbuf_getRange( hal_uart1_getRxRingBuffer(), &ui16DataLen, BTM_FRAME_DATA_LEN_OFFSET, sizeof( ui16DataLen));
-					hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
+					struct {
+						uint8_t ui8StartSequence;
+						uint8_t ui8Type;
+						uint8_t ui8OpCode;
+						uint16_t ui16PayloadLen;
+					} __attribute__( ( packed)) podHeader = { 0, 0, 0, 0 };
+					HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__UART1_RECEIVER)) {
+						ringbuf_getRange( hal_uart1_getRxRingBuffer(), &podHeader, 0, sizeof( podHeader));
+						if( ui16BufUsage >= podHeader.ui16PayloadLen + BTM_MIN_FRAME_LEN) {
+ 							ringbuf_drop( hal_uart1_getRxRingBuffer(), podHeader.ui16PayloadLen + BTM_MIN_FRAME_LEN);
+						}
+					}
 
-					if( ui16BufUsage >= ui16DataLen + BTM_MIN_FRAME_LEN) {
-						uint8_t* const lpui8Buffer = calloc( ui16DataLen + BTM_MIN_FRAME_LEN, 1);
-						hal_uart1_read( lpui8Buffer, ui16DataLen + BTM_MIN_FRAME_LEN);
+					// Frame complete? Incoming connection or connection closed? -> trigger event if registered.
+					if( s_fnConnectionEvent && 
+						( ui16BufUsage >= podHeader.ui16PayloadLen + BTM_MIN_FRAME_LEN) && ui16MessageType == BTM_INDICATION_MESSAGE &&
+						( podHeader.ui8OpCode == BTM_SPP_INCOMING_LINK_ESTABLISHED || podHeader.ui8OpCode == BTM_SPP_LINK_RELEASED)) {
 
-// 						if( lpui8Buffer[2] == BTM_OPCODE_SPP_TRANSPARENT_MODE &&
-// 							podMessage.eType == COM_MESSAGE_TYPE__BTM_INDICATION) {
-// 
-// 							com_blConnected = lpui8Buffer[7] > 0 ? true : false;
-// 							hal_led_set( 1);
-// 						} else {
-// 						}
-//
-//						hal_uart1_write( lpui8Buffer, ui16DataLen + BTM_MIN_FRAME_LEN);
+						s_fnConnectionEvent( podHeader.ui8OpCode == BTM_SPP_INCOMING_LINK_ESTABLISHED);
 					}
 				}
 				break;
 			}
 			default: {
+
+				// Complete external command frame?
+				com_SMessage_t podMessage;
 				if( ui16BufUsage >= sizeof( podMessage)) {
 					hal_uart1_read( &podMessage, sizeof( podMessage));
-
 					bool blProcessed = false;
 					for( uint16_t ui16 = 0; !blProcessed && ui16 < COM_MAX_HANDLERS; ui16++) {
 						if( s_afnHandlers[ui16]) {
 							blProcessed = s_afnHandlers[ui16]( &podMessage);
 						}
 					}
-
-					blHasMessage = true;
 				}
 			}
 		}
 	}
-
-	return blHasMessage;
 }
 
 
@@ -139,13 +159,8 @@ bool com_processIncoming( void) {
  * 
  * \param _lppodMessage
  * Specifies the message to be sent.
- * 
- * \remarks
- * - The communication interface needs to be initialized.
- * - This function is interrupt safe concerning interrupts from the hal_uart1 module.
  *
- * \warning
- * This function may not be preempted by any function which accesses this module.
+ * This function forwards directly to #hal_uart1_write(). Refer to that function for interrupt safety.
  * 
  * \see
  * com_init
@@ -169,15 +184,21 @@ void com_send(
  * - \c true on success
  * - \c false on error (handler already exists or callback list is full).
  * 
- * The callbacks are called by #com_processIncoming() when a new message is dispatched. One can not register more than
+ * The callbacks are called by #com_processIncoming() when a new message is dispatched. One cannot register more than
  * #COM_MAX_HANDLERS callbacks.
+ *
+ * The following message types may not be used:
+ * - \c 0x4302 (#BTM_RESPONSE_MESSAGE)
+ * - \c 0x5202 (#BTM_REQUEST_MESSAGE)
+ * - \c 0x6902 (#BTM_INDICATION_MESSAGE)
+ * - \c 0x7202 (#BTM_REPLY_MESSAGE)
  * 
  * \remarks
  * - The communication interface needs to be initialized.
- * - A handler must return \c true if it processed the message and it must return \c false otherwise.
+ * - A handler must return \c true if it processed the message or it must return \c false otherwise.
  *
  * \warning
- * This function may not be preempted by any function which accesses this module.
+ * This function may not be preempted by any function from this module but #com_send().
  * 
  * \see
  * com_init | com_unregister
@@ -220,7 +241,7 @@ bool com_register(
  * The communication interface needs to be initialized.
  *
  * \warning
- * This function may not be preempted by any function which accesses this module.
+ * This function may not be preempted by any function from this module but #com_send().
  * 
  * \see
  * com_init | com_register

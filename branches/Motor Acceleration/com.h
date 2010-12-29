@@ -11,9 +11,11 @@ enum {
 };
 
 
-void com_init( void);
+void com_init(
+	IN OPT const com_fnConnectionEvent_t _fnConnectionEvent
+	);
 
-bool com_processIncoming( void);
+void com_processIncoming( void);
 
 void com_send(
 	IN const com_SMessage_t* const _lppodMessage
