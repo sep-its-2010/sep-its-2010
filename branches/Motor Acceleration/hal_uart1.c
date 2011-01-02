@@ -181,7 +181,7 @@ void hal_uart1_enable(
  * 
  * \remarks
  * - The primary UART transmitter must be enabled.
- * - The priority will escalate to the transmitter interrupt priority only by need to reduce the risk of starvation.
+ * - The priority will escalate to the transmitter interrupt priority only by need.
  *
  * \warning
  * - This function might block forever if the transmitter interrupt is not enabled.
@@ -228,7 +228,7 @@ void hal_uart1_putch(
  * 
  * \remarks
  * - The primary UART transmitter must be enabled.
- * - The priority will escalate to the transmitter interrupt priority only by need to reduce the risk of starvation.
+ * - The priority will escalate to the transmitter interrupt priority only by need.
  *
  * \warning
  * - This function might block forever if the transmitter interrupt is not enabled.
@@ -279,7 +279,7 @@ void hal_uart1_write(
  * 
  * \remarks
  * - The primary UART transmitter must be enabled.
- * - The priority will escalate to the transmitter interrupt priority only by need to reduce the risk of starvation.
+ * - The priority will escalate to the transmitter interrupt priority only by need.
  *
  * \warning
  * - This function might block forever if the transmitter interrupt is not enabled.
@@ -328,7 +328,7 @@ void hal_uart1_puts(
  * 
  * \remarks
  * - The primary UART receiver must be enabled.
- * - The priority will escalate to the receiver interrupt priority only by need to reduce the risk of starvation.
+ * - The priority will escalate to the receiver interrupt priority only by need.
  *
  * \warning
  * - This function might block forever if the receiver interrupt is not enabled.
@@ -363,7 +363,7 @@ char hal_uart1_getch( void) {
  * 
  * \remarks
  * - The primary UART receiver must be enabled.
- * - The priority will escalate to the receiver interrupt priority only by need to reduce the risk of starvation.
+ * - The priority will escalate to the receiver interrupt priority only by need.
  *
  * \warning
  * - This function might block forever if the receiver interrupt is not enabled.
@@ -401,7 +401,7 @@ void hal_uart1_read(
  * \remarks
  * - The primary UART transmitter must be enabled.
  * - The amount of delay cycles is generated based on the baud rate divisor.
- * - The priority will escalate to the transmitter interrupt priority during operation which might lead to starvation.
+ * - The priority will escalate to the transmitter interrupt priority during operation.
  *
  * \warning
  * - This function might block forever if the transmitter interrupt is not enabled.
@@ -441,7 +441,7 @@ void hal_uart1_generateBreak( void) {
  * 
  * \remarks
  * - The primary UART transmitter must be enabled.
- * - The priority will escalate to the transmitter interrupt priority during operation which might lead to starvation.
+ * - The priority will escalate to the transmitter interrupt priority during operation.
  * 
  * \warning
  * This function may not be preempted by any function which accesses the transmission part of this module.
@@ -473,7 +473,7 @@ void hal_uart1_flushTx( void) {
  * 
  * \remarks
  * - The primary UART receiver must be enabled.
- * - The priority will escalate to the receiver interrupt priority during operation which might lead to starvation.
+ * - The priority will escalate to the receiver interrupt priority during operation.
  *
  * \warning
  * This function may not be preempted by any function which accesses the reception part of this module.

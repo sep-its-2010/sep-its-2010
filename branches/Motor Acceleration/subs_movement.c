@@ -145,7 +145,7 @@ bool subs_movement_run( void) {
  * \brief
  * Handles turn-requests.
  * 
- * \param _podMessage
+ * \param _lppodMessage
  * Specifies the message which has to be analyzed.
  * 
  * \returns
@@ -187,7 +187,7 @@ bool cbHandleRequestTurn(
  * \brief
  * Handles move-requests.
  * 
- * \param _podMessage
+ * \param _lppodMessage
  * Specifies the message which has to be analyzed.
  * 
  * \returns
@@ -220,7 +220,7 @@ bool cbHandleRequestMove(
  * \brief
  * Handles setSpeed-requests.
  * 
- * \param _podMessage
+ * \param _lppodMessage
  * Specifies the message which has to be analyzed.
  * 
  * \returns

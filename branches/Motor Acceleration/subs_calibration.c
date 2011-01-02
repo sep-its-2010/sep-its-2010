@@ -12,8 +12,6 @@
 
 
 enum {
-	LEFT_MOTOR = 0, ///< Specifies the local index for data concerning the left motor.
-	RIGHT_MOTOR = 1, ///< Specifies the local index for data concerning the right motor.
 	BLACK_LEVEL = 0, ///< Specifies the local index for the black level calibration values.
 	WHITE_LEVEL = 1, ///< Specifies the local index for the white level calibration values.
 	BLINK_AMOUNT = 6, ///< Specifies the amount of LED blinks when a calibration error occurs.
@@ -55,57 +53,12 @@ static EState_t s_eStatus = STATE__NOT_CALIBRATED;
 
 /*!
  * \brief
- * Holds the back level and white level measurement.
- * 
- * The two levels need to be buffered because the actual line sensor calibration with #sen_line_calibrate() takes place
- * when the e-puck returned to its point of origin.
- * 
- * \see
- * subs_calibration_run
- */
-static sen_line_SData_t s_podLevels[2];
-
-
-/*!
- * \brief
  * Holds the back level and white level calibration values.
  * 
  * \see
  * subs_calibration_run
  */
 static sen_line_SData_t s_podCalibrationLevels[2] _EEDATA( 2);
-
-
-/*!
- * \brief
- * Holds a backup of the left and right motor speed before the calibration.
- * 
- * To continue any interrupted higher subsumption logic the speed of the left and right step motors and their associated
- * step counters are saved because this layer also needs to access these, too.
- * 
- * \remarks
- * Any speed changes by any lower subsumption layer during calibration is undone after the calibration finishes.
- * 
- * \see
- * subs_calibration_run | s_aui16StepCounterBackup
- */
-static int16_t s_ai16SpeedBackup[2];
-
-
-/*!
- * \brief
- * Holds a backup of the left and right step counters of the associated step motors before the calibration.
- * 
- * To continue any interrupted higher subsumption logic the speed of the left and right step motors and their associated
- * step counters are saved because this layer also needs to access these, too.
- * 
- * \remarks
- * Any speed changes by any lower subsumption layer during calibration is undone after the calibration finishes.
- * 
- * \see
- * subs_calibration_run | s_ai16SpeedBackup
- */
-static uint16_t s_aui16StepCounterBackup[2];
 
 
 /*!
@@ -189,6 +142,9 @@ void cbInvalidCalibrationBlinker(
  */
 bool subs_calibration_run( void) {
 
+	static sen_line_SData_t s_podLevels[2];
+	static hal_motors_SSettings_t s_podSettings;
+
 	bool blActed = false;
 
 	switch( s_eStatus) {
@@ -225,10 +181,7 @@ bool subs_calibration_run( void) {
 					_init_prog_address( addrCalibrationValues, s_podCalibrationLevels);
 					hal_nvm_writeEEPROM( addrCalibrationValues, s_podLevels, sizeof( s_podLevels));
 				}
-				hal_motors_setSpeedLeft( s_ai16SpeedBackup[LEFT_MOTOR]);
-				hal_motors_setSpeedRight( s_ai16SpeedBackup[RIGHT_MOTOR]);
-				hal_motors_setStepsLeft( s_aui16StepCounterBackup[LEFT_MOTOR]);
-				hal_motors_setStepsRight( s_aui16StepCounterBackup[RIGHT_MOTOR]);
+				hal_motors_restoreSettings( &s_podSettings);
 				s_eStatus = STATE__CALIBRATED;
 			}
 			blActed = true;
@@ -243,11 +196,8 @@ bool subs_calibration_run( void) {
 		case STATE__WAIT: {
 			if( hal_sel_getPosition() == SUBS_CALIBRATION_SELECTOR) {
 				sen_line_read( &s_podLevels[BLACK_LEVEL]);
-				s_ai16SpeedBackup[LEFT_MOTOR] = hal_motors_getSpeedLeft();
-				s_ai16SpeedBackup[RIGHT_MOTOR] = hal_motors_getSpeedRight();
+				hal_motors_backupSettings( &s_podSettings);
 				hal_motors_setSpeed( SUBS_CALIBRATION_SPEED, 0);
-				s_aui16StepCounterBackup[LEFT_MOTOR] = hal_motors_getStepsLeft();
-				s_aui16StepCounterBackup[RIGHT_MOTOR] = hal_motors_getStepsRight();
 				hal_motors_setSteps( 0);
 				s_eStatus = STATE__WHITE_LEVEL;
 				blActed = true;

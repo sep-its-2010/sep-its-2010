@@ -129,7 +129,7 @@ void hal_rtc_init(
  * An event can safely modify itself and any other events.
  * 
  * \remarks
- * - The priority will escalate to the timer 1 interrupt priority during operation which might lead to starvation.
+ * - The priority will escalate to the timer 1 interrupt priority during operation.
  * - The module needs to be initialized.
  *
  * \warning
@@ -179,7 +179,7 @@ hal_rtc_handle_t hal_rtc_register(
  * To get the actual time in milliseconds, one must multiply the returned value with the timer 1 period and prescaler.
  * 
  * \remarks
- * - The priority will escalate to the timer 1 interrupt priority during operation which might lead to starvation.
+ * - The priority will escalate to the timer 1 interrupt priority during operation.
  * - The module needs to be initialized.
  *
  * \warning
@@ -209,7 +209,7 @@ uint32_t hal_rtc_getSystemUpTime( void) {
  * An event may always unregister itself and any other events.
  * 
  * \remarks
- * - The priority will escalate to the timer 1 interrupt priority during operation which might lead to starvation.
+ * - The priority will escalate to the timer 1 interrupt priority during operation.
  * - The module needs to be initialized.
  *
  * \warning
@@ -248,7 +248,7 @@ bool hal_rtc_unregister(
  * An event may always activate any other events.
  * 
  * \remarks
- * - The priority will escalate to the timer 1 interrupt priority during operation which might lead to starvation.
+ * - The priority will escalate to the timer 1 interrupt priority during operation.
  * - The module needs to be initialized.
  *
  * \warning
@@ -287,7 +287,7 @@ bool hal_rtc_activate(
  * An event may always deactivate itself and any other events.
  * 
  * \remarks
- * - The priority will escalate to the timer 1 interrupt priority during operation which might lead to starvation.
+ * - The priority will escalate to the timer 1 interrupt priority during operation.
  * - The module needs to be initialized.
  *
  * \warning

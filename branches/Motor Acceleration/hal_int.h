@@ -69,7 +69,7 @@ static inline void hal_int_clearFlag(
  * \brief
  * Leaves an user interrupt safe block.
  * 
- * \param _lpvDummy
+ * \param _lpiSRBackup
  * Specifies a dummy parameter which is needed by the cleanup attribute.
  *
  * The previous CPU priority is recovered.

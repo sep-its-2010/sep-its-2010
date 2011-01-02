@@ -58,6 +58,13 @@ void hal_motors_accelerate(
 	IN const int16_t _i16FinalSpeedRight
 	);
 
+void hal_motors_restoreSettings(
+	IN const hal_motors_SSettings_t* const _lppodSettings
+	);
+void hal_motors_backupSettings(
+	OUT hal_motors_SSettings_t* const _lppodSettings
+	);
+
 
 static inline int16_t hal_motors_getSpeedLeft( void);
 static inline int16_t hal_motors_getSpeedRight( void);
@@ -101,9 +108,9 @@ static inline void hal_motors_setSteps(
  */
 int16_t hal_motors_getSpeedLeft( void) {
 
-	extern volatile int16_t hal_motors_ai16Speed[];
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	return hal_motors_ai16Speed[0];
+	return hal_motors_podSettings.ai16Speed[HAL_MOTORS_LEFT];
 }
 
 
@@ -122,9 +129,9 @@ int16_t hal_motors_getSpeedLeft( void) {
  */
 int16_t hal_motors_getSpeedRight( void) {
 
-	extern volatile int16_t hal_motors_ai16Speed[];
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	return hal_motors_ai16Speed[1];
+	return hal_motors_podSettings.ai16Speed[HAL_MOTORS_RIGHT];
 }
 
 
@@ -150,9 +157,9 @@ void hal_motors_setPhaseLeft(
 	IN const hal_motors_EPhase_t _ePhase
 	) {
 
-	extern volatile hal_motors_EPhase_t hal_motors_aePhase[];
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	hal_motors_aePhase[0] = _ePhase;
+	hal_motors_podSettings.aePhase[HAL_MOTORS_LEFT] = _ePhase;
 	LATD = ( LATD & ~HAL_MOTORS_LEFT_MASK) | ( _ePhase << HAL_MOTORS_LEFT_DATA_OFFSET);
 }
 
@@ -178,9 +185,9 @@ void hal_motors_setPhaseRight(
 	IN const hal_motors_EPhase_t _ePhase
 	) {
 
-	extern volatile hal_motors_EPhase_t hal_motors_aePhase[];
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	hal_motors_aePhase[1] = _ePhase;
+	hal_motors_podSettings.aePhase[HAL_MOTORS_RIGHT] = _ePhase;
 	LATD = ( LATD & ~HAL_MOTORS_RIGHT_MASK) | ( _ePhase << HAL_MOTORS_RIGHT_DATA_OFFSET);
 }
 
@@ -200,9 +207,9 @@ void hal_motors_setPhaseRight(
  */
 hal_motors_EPhase_t hal_motors_getPhaseLeft( void) {
 
-	extern volatile hal_motors_EPhase_t hal_motors_aePhase[];
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	return hal_motors_aePhase[0];
+	return hal_motors_podSettings.aePhase[HAL_MOTORS_LEFT];
 }
 
 
@@ -221,9 +228,9 @@ hal_motors_EPhase_t hal_motors_getPhaseLeft( void) {
  */
 hal_motors_EPhase_t hal_motors_getPhaseRight( void) {
 
-	extern volatile hal_motors_EPhase_t hal_motors_aePhase[];
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	return hal_motors_aePhase[1];
+	return hal_motors_podSettings.aePhase[HAL_MOTORS_RIGHT];
 }
 
 
@@ -244,9 +251,9 @@ hal_motors_EPhase_t hal_motors_getPhaseRight( void) {
  */
 uint16_t hal_motors_getStepsLeft( void) {
 
-	extern volatile uint16_t hal_motors_aui16Steps[];
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	return hal_motors_aui16Steps[0];
+	return hal_motors_podSettings.aui16Steps[HAL_MOTORS_LEFT];
 }
 
 
@@ -267,9 +274,9 @@ uint16_t hal_motors_getStepsLeft( void) {
  */
 uint16_t hal_motors_getStepsRight( void) {
 
-	extern volatile uint16_t hal_motors_aui16Steps[];
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	return hal_motors_aui16Steps[1];
+	return hal_motors_podSettings.aui16Steps[HAL_MOTORS_RIGHT];
 }
 
 
@@ -290,9 +297,9 @@ void hal_motors_setStepsLeft(
 	IN const uint16_t _ui16Steps
 	) {
 
-	extern volatile uint16_t hal_motors_aui16Steps[];
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	hal_motors_aui16Steps[0] = _ui16Steps;
+	hal_motors_podSettings.aui16Steps[HAL_MOTORS_LEFT] = _ui16Steps;
 }
 
 
@@ -313,9 +320,9 @@ void hal_motors_setStepsRight(
 	IN const uint16_t _ui16Steps
 	) {
 
-	extern volatile uint16_t hal_motors_aui16Steps[];
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	hal_motors_aui16Steps[1] = _ui16Steps;
+	hal_motors_podSettings.aui16Steps[HAL_MOTORS_RIGHT] = _ui16Steps;
 }
 
 
@@ -336,10 +343,10 @@ void hal_motors_setSteps(
 	IN const uint16_t _ui16Steps
 	) {
 
-	extern volatile uint16_t hal_motors_aui16Steps[];
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	hal_motors_aui16Steps[0] = _ui16Steps;
-	hal_motors_aui16Steps[1] = _ui16Steps;
+	hal_motors_podSettings.aui16Steps[HAL_MOTORS_LEFT] = _ui16Steps;
+	hal_motors_podSettings.aui16Steps[HAL_MOTORS_RIGHT] = _ui16Steps;
 }
 
 

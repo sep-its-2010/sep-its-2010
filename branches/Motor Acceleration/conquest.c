@@ -260,7 +260,7 @@ bool cbDemoMessageHandler(
  * \brief
  * Handles status-requests.
  * 
- * \param _podMessage
+ * \param _lppodMessage
  * Specifies the message which has to be analyzed.
  * 
  * \returns
@@ -321,7 +321,7 @@ bool cbHandleRequestStatus(
  * \brief
  * Handles reset-requests.
  * 
- * \param _podMessage
+ * \param _lppodMessage
  * Specifies the message which has to be analyzed.
  * 
  * \returns
@@ -355,7 +355,7 @@ bool cbHandleRequestReset(
  * \brief
  * Handles SetLED-requests.
  * 
- * \param _podMessage
+ * \param _lppodMessage
  * Specifies the message which has to be analyzed.
  * 
  * \returns

@@ -1,3 +1,4 @@
+#include <string.h>
 #include <stdlib.h>
 
 #include "hal_int.h"
@@ -6,14 +7,12 @@
 #include "hal_motors.h"
 
 
-enum {
-	LEFT_MOTOR = 0, ///< Specifies the local index for data concerning the left motor.
-	RIGHT_MOTOR = 1 ///< Specifies the local index for data concerning the right motor.
-};
-
-
 void _ISR NO_AUTO_PSV _T5Interrupt( void);
 void _ISR NO_AUTO_PSV _T4Interrupt( void);
+
+static inline uint16_t convertSpeedToPeriod(
+	IN const int16_t _i16Speed
+	);
 
 static void stepLeft( void);
 static void stepRight( void);
@@ -25,59 +24,14 @@ static void cbAccalerationEvent(
 
 /*!
  * \brief
- * Holds the current step count of the left and right motors.
+ * Holds the current settings of each motor.
+ * 
+ * These include motor speed, phase, step counters and acceleration variables.
  * 
  * \see
- * hal_motors_getStepsLeft | hal_motors_getStepsRight | hal_motors_setSteps | LEFT_MOTOR | RIGHT_MOTOR
+ * hal_motors_init | hal_motors_restoreSettings | hal_motors_backupSettings
  */
-volatile uint16_t hal_motors_aui16Steps[2] = { 0 };
-
-
-/*!
- * \brief
- * Holds the current speed of the left and right motors.
- *
- * Negative values indicate a reversed direction.
- * 
- * \see
- * hal_motors_setSpeed | hal_motors_getSpeedLeft | hal_motors_getSpeedRight | LEFT_MOTOR | RIGHT_MOTOR
- */
-volatile int16_t hal_motors_ai16Speed[2] = { 0 };
-
-
-/*!
- * \brief
- * Holds the current phase of the left and right motors.
- * 
- * \see
- * hal_motors_setPhaseLeft | hal_motors_getPhaseLeft | hal_motors_setPhaseRight | hal_motors_getPhaseRight | LEFT_MOTOR | RIGHT_MOTOR
- */
-volatile hal_motors_EPhase_t hal_motors_aePhase[2];
-
-
-/*!
- * \brief
- * Holds the final speed of the left and right motors.
- *
- * The left and right motor will accelerate until they reach their final speed.
- * Negative values indicate a reversed direction.
- * 
- * \see
- * hal_motors_accelerate | hal_motors_getSpeedLeft | hal_motors_getSpeedRight | LEFT_MOTOR | RIGHT_MOTOR
- */
-static volatile int16_t s_ai16FinalSpeed[2] = { 0 };
-
-
-/*!
- * \brief
- * Holds the current acceleration of the left and right motors.
- *
- * These values are added to the current speed on each acceleration event.
- * 
- * \see
- * hal_motors_accelerate | LEFT_MOTOR | RIGHT_MOTOR
- */
-static volatile int16_t s_ai16Acceleration[2] = { 0 };
+hal_motors_SSettings_t hal_motors_podSettings;
 
 
 /*!
@@ -135,6 +89,48 @@ void _T4Interrupt( void) {
 
 /*!
  * \brief
+ * Calculates the 16 bit timer period with a /256 prescaler based on the requested steps per second.
+ * 
+ * \param _i16Speed
+ * Specifies the speed in steps per second. No range check is applied.
+ * 
+ * \returns
+ * The timer period.
+ * 
+ * The calculation is based on FCY. Frequencies above 16.77696MHz can be handled but with less precision.
+ * 
+ * \remarks
+ * - This function is interrupt safe.
+ * - FCY must be defined.
+ * 
+ * \see
+ * hal_motors_setSpeedLeft | hal_motors_setSpeedRight
+ */
+uint16_t convertSpeedToPeriod(
+	IN const int16_t _i16Speed
+	) {
+
+	uint16_t ui16Period;
+
+	// Too high frequencies require rescaling for the timer period to fit into 16 bits.
+#	if( FCY > 256 * ( ( 1 << 16) - 1))
+		// Rounding correction
+		const uint16_t ui16ClearCapture = ( FCY / 512) / abs( _i16Speed);
+		if( ui16ClearCapture > ( (uint16_t)( 1 << 15) - 1)) {
+			ui16Period = 0xFFFF;
+		} else {
+			ui16Period = ui16ClearCapture * 2;
+		}
+#	else
+		ui16Period = ( FCY / 256) / abs( _i16Speed);
+#	endif
+
+	return ui16Period;
+}
+
+
+/*!
+ * \brief
  * Advances the left step motor.
  * 
  * Advances the left step motor based on the current direction and phase and increments the associated step counter.
@@ -152,10 +148,10 @@ void _T4Interrupt( void) {
 void stepLeft( void) {
 
 	// Buffer volatile data
-	const int16_t i16CurrentSpeed = hal_motors_ai16Speed[LEFT_MOTOR];
+	const int16_t i16CurrentSpeed = hal_motors_podSettings.ai16Speed[HAL_MOTORS_LEFT];
 	if( i16CurrentSpeed) {
 		if( i16CurrentSpeed > 0) {
-			switch( hal_motors_aePhase[LEFT_MOTOR]) {
+			switch( hal_motors_podSettings.aePhase[HAL_MOTORS_LEFT]) {
 				case HAL_MOTORS_PHASE__0: {
 					hal_motors_setPhaseLeft( HAL_MOTORS_PHASE__3);
 					break;
@@ -174,7 +170,7 @@ void stepLeft( void) {
 				}
 			}
 		} else {
-			switch( hal_motors_aePhase[LEFT_MOTOR]) {
+			switch( hal_motors_podSettings.aePhase[HAL_MOTORS_LEFT]) {
 				case HAL_MOTORS_PHASE__0: {
 					hal_motors_setPhaseLeft( HAL_MOTORS_PHASE__1);
 					break;
@@ -193,7 +189,7 @@ void stepLeft( void) {
 				}
 			}
 		}
-		hal_motors_aui16Steps[LEFT_MOTOR]++;
+		hal_motors_podSettings.aui16Steps[HAL_MOTORS_LEFT]++;
 	}
 }
 
@@ -217,10 +213,10 @@ void stepLeft( void) {
 void stepRight( void) {
 
 	// Buffer volatile data
-	const int16_t i16CurrentSpeed = hal_motors_ai16Speed[RIGHT_MOTOR];
+	const int16_t i16CurrentSpeed = hal_motors_podSettings.ai16Speed[HAL_MOTORS_RIGHT];
 	if( i16CurrentSpeed) {
 		if( i16CurrentSpeed > 0) {
-			switch( hal_motors_aePhase[RIGHT_MOTOR]) {
+			switch( hal_motors_podSettings.aePhase[HAL_MOTORS_RIGHT]) {
 				case HAL_MOTORS_PHASE__0: {
 					hal_motors_setPhaseRight( HAL_MOTORS_PHASE__1);
 					break;
@@ -239,7 +235,7 @@ void stepRight( void) {
 				}
 			}
 		} else {
-			switch( hal_motors_aePhase[RIGHT_MOTOR]) {
+			switch( hal_motors_podSettings.aePhase[HAL_MOTORS_RIGHT]) {
 				case HAL_MOTORS_PHASE__0: {
 					hal_motors_setPhaseRight( HAL_MOTORS_PHASE__3);
 					break;
@@ -258,7 +254,7 @@ void stepRight( void) {
 				}
 			}
 		}
-		hal_motors_aui16Steps[RIGHT_MOTOR]++;
+		hal_motors_podSettings.aui16Steps[HAL_MOTORS_RIGHT]++;
 	}
 }
 
@@ -289,41 +285,36 @@ void cbAccalerationEvent(
 	IN const hal_rtc_handle_t _hEvent
 	) {
 
-	int16_t i16AccelerationLeft = s_ai16Acceleration[LEFT_MOTOR];
-	if( i16AccelerationLeft) {
-		int16_t i16Speed = hal_motors_ai16Speed[LEFT_MOTOR] + i16AccelerationLeft;
-		const int16_t i16FinalSpeed = s_ai16FinalSpeed[LEFT_MOTOR];
-		if( i16AccelerationLeft > 0 && i16Speed >= i16FinalSpeed) {
-			i16Speed = i16FinalSpeed;
-			i16AccelerationLeft = 0;
-		} else if( i16AccelerationLeft < 0 && i16Speed <= i16FinalSpeed) {
-			i16Speed = i16FinalSpeed;
-			i16AccelerationLeft = 0;
-		}
+	bool blDisableEvent = true;
 
-		// Do not change the order of the following two statements because setSpeedXXX() always resets the acceleration.
-		hal_motors_setSpeedLeft( i16Speed);
-		s_ai16Acceleration[LEFT_MOTOR] = i16AccelerationLeft;
+	// Preventing code duplication
+	for( uint16_t ui16 = 0; ui16 < 2; ui16++) {
+		int16_t i16Acceleration = hal_motors_podSettings.ai16Acceleration[ui16];
+		if( i16Acceleration) {
+			int16_t i16Speed = hal_motors_podSettings.ai16Speed[ui16] + i16Acceleration;
+			const int16_t i16FinalSpeed = hal_motors_podSettings.ai16FinalSpeed[ui16];
+
+			// Reached final speed?
+			if( ( i16Acceleration > 0 && i16Speed >= i16FinalSpeed) ||
+				( i16Acceleration < 0 && i16Speed <= i16FinalSpeed)) {
+
+				i16Speed = i16FinalSpeed;
+				i16Acceleration = 0;
+			} else {
+				blDisableEvent = false;
+			}
+
+			// Do not change the order of the following two statements because setSpeedXXX() always resets the acceleration.
+			if( ui16 == HAL_MOTORS_LEFT) {
+				hal_motors_setSpeedLeft( i16Speed);
+			} else {
+				hal_motors_setSpeedRight( i16Speed);
+			}
+			hal_motors_podSettings.ai16Acceleration[ui16] = i16Acceleration;
+		}
 	}
 
-	int16_t i16AccelerationRight = s_ai16Acceleration[RIGHT_MOTOR];
-	if( i16AccelerationRight) {
-		int16_t i16Speed = hal_motors_ai16Speed[RIGHT_MOTOR] + i16AccelerationRight;
-		const int16_t i16FinalSpeed = s_ai16FinalSpeed[RIGHT_MOTOR];
-		if( i16AccelerationRight > 0 && i16Speed >= i16FinalSpeed) {
-			i16Speed = i16FinalSpeed;
-			i16AccelerationRight = 0;
-		} else if( i16AccelerationRight < 0 && i16Speed <= i16FinalSpeed) {
-			i16Speed = i16FinalSpeed;
-			i16AccelerationRight = 0;
-		}
-
-		// Do not change the order of the following two statements because setSpeedXXX() always resets the acceleration.
-		hal_motors_setSpeedRight( i16Speed);
-		s_ai16Acceleration[RIGHT_MOTOR] = i16AccelerationRight;
-	}
-
-	if( !i16AccelerationLeft && !i16AccelerationRight) {
+	if( blDisableEvent) {
 		hal_rtc_deactivate( _hEvent);
 	}
 }
@@ -382,14 +373,7 @@ bool hal_motors_init(
 	T5CONbits.TCKPS = HAL_MOTORS_TIMER_PRESCALER;
 	T5CONbits.TON = true;
 
-	hal_motors_aui16Steps[LEFT_MOTOR] = 0;
-	hal_motors_aui16Steps[RIGHT_MOTOR] = 0;
-	hal_motors_ai16Speed[LEFT_MOTOR] = 0;
-	hal_motors_ai16Speed[RIGHT_MOTOR] = 0;
-	s_ai16FinalSpeed[LEFT_MOTOR] = 0;
-	s_ai16FinalSpeed[RIGHT_MOTOR] = 0;
-	s_ai16Acceleration[LEFT_MOTOR] = 0;
-	s_ai16Acceleration[RIGHT_MOTOR] = 0;
+	memset( &hal_motors_podSettings, 0, sizeof( hal_motors_podSettings));
 
 	TRISD &= ~( HAL_MOTORS_LEFT_MASK | HAL_MOTORS_RIGHT_MASK);
 	hal_motors_setPhaseLeft( HAL_MOTORS_PHASE__IDLE);
@@ -416,7 +400,7 @@ bool hal_motors_init(
  * 
  * \remarks
  * - The module needs to be initialized.
- * - The priority will escalate to the timer 5 interrupt priority during operation which might lead to starvation.
+ * - The priority will escalate to the timer 5 interrupt priority during operation.
  * - The speed will be constrained to the range [-#HAL_MOTORS_MAX_ABS_SPEED ; #HAL_MOTORS_MAX_ABS_SPEED].
  *
  * \warning
@@ -438,37 +422,16 @@ void hal_motors_setSpeedLeft(
 	}
 
 	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER5)) {
-		s_ai16Acceleration[LEFT_MOTOR] = 0;
-		hal_motors_ai16Speed[LEFT_MOTOR] = i16CorrectedSpeed;
+		hal_motors_podSettings.ai16Acceleration[HAL_MOTORS_LEFT] = 0;
+		hal_motors_podSettings.ai16Speed[HAL_MOTORS_LEFT] = i16CorrectedSpeed;
 
 		if( !i16CorrectedSpeed) {
 			PR5 = 0;
 			hal_int_clearFlag( HAL_INT_SOURCE__TIMER5);
 			hal_motors_setPhaseLeft( HAL_MOTORS_PHASE__IDLE);
 		} else {
-			uint16_t ui16Period;
-
-			// Too high frequencies require rescaling for the timer period to fit into 16 bits.
-#			if( FCY > 256 * ( ( 1 << 16) - 1))
-				// Rounding correction
-				const uint16_t ui16ClearCapture = ( FCY / 512) / abs( i16CorrectedSpeed);
-				if( ui16ClearCapture > ( (uint16_t)( 1 << 15) - 1)) {
-					ui16Period = 0xFFFF;
-				} else {
-					ui16Period = ui16ClearCapture * 2;
-				}
-#			else
-				ui16Period = ( FCY / 256) / abs( i16CorrectedSpeed);
-#			endif
-
-			PR5 = ui16Period;
+			PR5 = convertSpeedToPeriod( i16CorrectedSpeed);
 			TMR5 = 0;
-
-// 			// Prevent cycle skipping
-// 			if( TMR5 >= ui16Period) {
-// 				TMR5 = 0;
-// 				stepLeft();
-// 			}
 		}
 	}
 }
@@ -486,7 +449,7 @@ void hal_motors_setSpeedLeft(
  * 
  * \remarks
  * - The module needs to be initialized.
- * - The priority will escalate to the timer 4 interrupt priority during operation which might lead to starvation.
+ * - The priority will escalate to the timer 4 interrupt priority during operation.
  * - The speed will be constrained to the range [-#HAL_MOTORS_MAX_ABS_SPEED ; #HAL_MOTORS_MAX_ABS_SPEED].
  *
  * \warning
@@ -508,38 +471,16 @@ void hal_motors_setSpeedRight(
 	}
 
 	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER4)) {
-		s_ai16Acceleration[RIGHT_MOTOR] = 0;
-		hal_motors_ai16Speed[RIGHT_MOTOR] = i16CorrectedSpeed;
+		hal_motors_podSettings.ai16Acceleration[HAL_MOTORS_RIGHT] = 0;
+		hal_motors_podSettings.ai16Speed[HAL_MOTORS_RIGHT] = i16CorrectedSpeed;
 
 		if( !i16CorrectedSpeed) {
 			PR4 = 0;
 			hal_int_clearFlag( HAL_INT_SOURCE__TIMER4);
 			hal_motors_setPhaseRight( HAL_MOTORS_PHASE__IDLE);
 		} else {
-
-			uint16_t ui16Period;
-
-			// Too high frequencies require rescaling for the timer period to fit into 16 bits.
-#			if( FCY > 256 * ( ( 1 << 16) - 1))
-				// Rounding correction
-				const uint16_t ui16ClearCapture = ( FCY / 512) / abs( i16CorrectedSpeed);
-				if( ui16ClearCapture > ( (uint16_t)( 1 << 15) - 1)) {
-					ui16Period = 0xFFFF;
-				} else {
-					ui16Period = ui16ClearCapture * 2;
-				}
-#			else
-				ui16Period = ( FCY / 256) / abs( i16CorrectedSpeed);
-#			endif
-
-			PR4 = ui16Period;
+			PR4 = convertSpeedToPeriod( i16CorrectedSpeed);
 			TMR4 = 0;
-
-//	 		// Prevent cycle skipping
-// 			if( TMR4 >= ui16Period) {
-// 				TMR4 = 0;
-// 				stepRight();
-// 			}
 		}
 	}
 }
@@ -555,8 +496,7 @@ void hal_motors_setSpeedRight(
  * \param _i16AngularStepsPerSecond
  * Specifies the angular speed with negative values for turning left and positive values for turning right.
  *
- * The actual speed changes are delegated to #hal_motors_setSpeedLeft() and #hal_motors_setSpeedRight().
- * Any ongoing acceleration of any motor is stopped.
+ * Ongoing acceleration of any motor is stopped.
  * 
  * \remarks
  * - Check #hal_motors_setSpeedLeft() and #hal_motors_setSpeedRight() regarding interrupt safety.
@@ -609,7 +549,7 @@ void hal_motors_setSpeed(
  * 
  * \remarks
  * - The module needs to be initialized.
- * - The priority will escalate to the timer 1 interrupt priority during operation which might lead to starvation.
+ * - The priority will escalate to the timer 1 interrupt priority during operation.
  * - The intended speed of each motor will be constrained to the range [-#HAL_MOTORS_MAX_ABS_SPEED ; #HAL_MOTORS_MAX_ABS_SPEED].
  * - The acceleration of each motor will be constrained to the range [\c 0 ; #HAL_MOTORS_MAX_ABS_SPEED].
  *
@@ -629,17 +569,17 @@ void hal_motors_accelerate(
 	bool blActive = false;
 
 	uint16_t aui16AccelPerEvent[2];
-	aui16AccelPerEvent[LEFT_MOTOR] = _ui16AccelPerEventLeft;
-	aui16AccelPerEvent[RIGHT_MOTOR] = _ui16AccelPerEventRight;
+	aui16AccelPerEvent[HAL_MOTORS_LEFT] = _ui16AccelPerEventLeft;
+	aui16AccelPerEvent[HAL_MOTORS_RIGHT] = _ui16AccelPerEventRight;
 	int16_t ai16FinalSpeed[2];
-	ai16FinalSpeed[LEFT_MOTOR] = _i16FinalSpeedLeft;
-	ai16FinalSpeed[RIGHT_MOTOR] = _i16FinalSpeedRight;
+	ai16FinalSpeed[HAL_MOTORS_LEFT] = _i16FinalSpeedLeft;
+	ai16FinalSpeed[HAL_MOTORS_RIGHT] = _i16FinalSpeedRight;
 
 	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
 
 		// Prevent code duplication
 		for( uint16_t ui16Motor = 0; ui16Motor < 2; ui16Motor++) {
-			const int16_t i16CurrentSpeed = hal_motors_ai16Speed[ui16Motor];
+			const int16_t i16CurrentSpeed = hal_motors_podSettings.ai16Speed[ui16Motor];
 			if( aui16AccelPerEvent[ui16Motor] && i16CurrentSpeed != ai16FinalSpeed[ui16Motor]) {
 				int16_t i16FinalSpeed = ai16FinalSpeed[ui16Motor];
 				if( i16FinalSpeed > HAL_MOTORS_MAX_ABS_SPEED) {
@@ -647,12 +587,12 @@ void hal_motors_accelerate(
 				} else if( i16FinalSpeed < -HAL_MOTORS_MAX_ABS_SPEED) {
 					i16FinalSpeed = -HAL_MOTORS_MAX_ABS_SPEED;
 				}
-				s_ai16FinalSpeed[ui16Motor] = i16FinalSpeed;
+				hal_motors_podSettings.ai16FinalSpeed[ui16Motor] = i16FinalSpeed;
 
 				if( i16CurrentSpeed < i16FinalSpeed) {
-					s_ai16Acceleration[ui16Motor] = min( aui16AccelPerEvent[ui16Motor], HAL_MOTORS_MAX_ABS_SPEED);
+					hal_motors_podSettings.ai16Acceleration[ui16Motor] = min( aui16AccelPerEvent[ui16Motor], HAL_MOTORS_MAX_ABS_SPEED);
 				} else {
-					s_ai16Acceleration[ui16Motor] = -min( aui16AccelPerEvent[ui16Motor], HAL_MOTORS_MAX_ABS_SPEED);
+					hal_motors_podSettings.ai16Acceleration[ui16Motor] = -min( aui16AccelPerEvent[ui16Motor], HAL_MOTORS_MAX_ABS_SPEED);
 				}
 
 				blActive = true;
@@ -663,5 +603,105 @@ void hal_motors_accelerate(
 			hal_rtc_reset( s_hAccelerationEvent);
 			hal_rtc_activate( s_hAccelerationEvent);
 		}
+	}
+}
+
+
+/*!
+ * \brief
+ * Restores a previous backup of the motor settings.
+ * 
+ * \param _lppodSettings
+ * Specifies the backup source.
+ * 
+ * Write detailed description for hal_motors_restoreSettings here.
+ * 
+ * \remarks
+ * - The module needs to be initialized.
+ * - The priority will escalate to either timer 1, timer 4 or timer 5 interrupt priority during operation
+ *   depending on which one is the highest.
+ * - The backup is not checked for correctness.
+ *
+ * \warning
+ * This function may not be preempted by any function which accesses this module.
+ * 
+ * \see
+ * hal_motors_init | hal_motors_backupSettings
+ */
+void hal_motors_restoreSettings(
+	IN const hal_motors_SSettings_t* const _lppodSettings
+	) {
+
+	// Type safe max()
+	const hal_int_EPriority_t aeTimerPriorities[] = {
+		hal_int_getPriority( HAL_INT_SOURCE__TIMER1),
+		hal_int_getPriority( HAL_INT_SOURCE__TIMER4),
+		hal_int_getPriority( HAL_INT_SOURCE__TIMER5)
+	};
+	uint16_t ui16Highest = 0;
+	if( aeTimerPriorities[1] > aeTimerPriorities[0]) {
+		ui16Highest = 1;
+	}
+	if( aeTimerPriorities[2] > aeTimerPriorities[1]) {
+		ui16Highest = 2;
+	}
+
+	HAL_INT_ATOMIC_BLOCK( aeTimerPriorities[ui16Highest]) {
+
+		// The order of the following instructions is crucial (hal_motors_setSpeedXXX() resets the acceleration)
+		hal_motors_setSpeedLeft( _lppodSettings->ai16Speed[HAL_MOTORS_LEFT]);
+		hal_motors_setSpeedRight( _lppodSettings->ai16Speed[HAL_MOTORS_RIGHT]);
+		memcpy( &hal_motors_podSettings, _lppodSettings, sizeof( *_lppodSettings));
+
+		if( _lppodSettings->ai16Acceleration[HAL_MOTORS_LEFT] || _lppodSettings->ai16Acceleration[HAL_MOTORS_RIGHT]) {
+			hal_rtc_reset( s_hAccelerationEvent);
+			hal_rtc_activate( s_hAccelerationEvent);
+		} else {
+			hal_rtc_deactivate( s_hAccelerationEvent);
+		}
+	}
+}
+
+
+/*!
+ * \brief
+ * Creates a backup of the current motor settings.
+ * 
+ * \param _lppodSettings
+ * Specifies the backup destination.
+ * 
+ * A snapshot of the current settings is created which includes all variables of the left and right motor.
+ * 
+ * \remarks
+ * - The module needs to be initialized.
+ * - The priority will escalate to either timer 1, timer 4 or timer 5 interrupt priority during operation
+ *   depending on which one is the highest.
+ *
+ * \warning
+ * This function may not be preempted by any function which accesses this module.
+ * 
+ * \see
+ * hal_motors_init | hal_motors_restoreSettings
+ */
+void hal_motors_backupSettings(
+	OUT hal_motors_SSettings_t* const _lppodSettings
+	) {
+
+	// Type safe max()
+	const hal_int_EPriority_t aeTimerPriorities[] = {
+		hal_int_getPriority( HAL_INT_SOURCE__TIMER1),
+		hal_int_getPriority( HAL_INT_SOURCE__TIMER4),
+		hal_int_getPriority( HAL_INT_SOURCE__TIMER5)
+	};
+	uint16_t ui16Highest = 0;
+	if( aeTimerPriorities[1] > aeTimerPriorities[0]) {
+		ui16Highest = 1;
+	}
+	if( aeTimerPriorities[2] > aeTimerPriorities[1]) {
+		ui16Highest = 2;
+	}
+
+	HAL_INT_ATOMIC_BLOCK( aeTimerPriorities[ui16Highest]) {
+		memcpy( _lppodSettings, &hal_motors_podSettings, sizeof( *_lppodSettings));
 	}
 }
