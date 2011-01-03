@@ -49,6 +49,7 @@
 				OutputWithDebug="true"
 				DetectDependencies="2"
 				Optimizer="0"
+				ProceduralOptimization="false"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -65,7 +66,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Building EEPROM free hex file ..."
-				CommandLine="setlocal enabledelayedexpansion&#x0D;&#x0A;&#x0D;&#x0A;:: Select strip tool manually because delegation does not work&#x0D;&#x0A;(set BFDPath=pic30-strip.exe)&#x0D;&#x0A;for %%G in (!BFDPath!) do (set BFDPath=%%~sdp$PATH:G)&#x0D;&#x0A;&#x0D;&#x0A;:: Extract EEPROM section names&#x0D;&#x0A;(set EEPROMSections= )&#x0D;&#x0A;for /F &quot;tokens=*&quot; %%G in (&apos;!BFDPath!bin\pic30-$(OMF)-objdump.exe -h &quot;$(OutDir)\$(ProjectName).$(OMF)&quot; ^| sed -e &quot;1,5d&quot; -e &quot;$^!N;s#\n# #&quot; -n -e &quot;s#^ [0-9]\+ \(_[0-9a-fA-F]\{16\}\).*EEDATA#-R \1#p&quot;&apos;) do (&#x0D;&#x0A;    (set EEPROMSections=%%G !EEPROMSections!)&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;:: Strip sections &amp; generate hex file&#x0D;&#x0A;!BFDPath!bin\pic30-$(OMF)-strip.exe -o &quot;$(OutDir)\$(ProjectName) no_eeprom.$(OMF)&quot; !EEPROMSections! &quot;$(OutDir)\$(ProjectName).$(OMF)&quot;&#x0D;&#x0A;!BFDPath!bin\pic30-$(OMF)-bin2hex &quot;$(OutDir)\$(ProjectName) no_eeprom.$(OMF)&quot;&#x0D;&#x0A;"
+				CommandLine="setlocal enabledelayedexpansion&#x0D;&#x0A;&#x0D;&#x0A;:: Select strip tool manually because delegation does not work&#x0D;&#x0A;(set BFDPath=pic30-strip.exe)&#x0D;&#x0A;for %%G in (!BFDPath!) do (set BFDPath=%%~sdp$PATH:G)&#x0D;&#x0A;&#x0D;&#x0A;:: Extract EEPROM section names&#x0D;&#x0A;(set EEPROMSections= )&#x0D;&#x0A;for /F &quot;tokens=*&quot; %%G in (&apos;!BFDPath!bin\pic30-$(OMF)-objdump.exe -h &quot;$(OutDir)\$(ProjectName).$(OMF)&quot; ^| sed -e &quot;1,5d&quot; -e &quot;$^!N;s#\n# #&quot; -n -e &quot;s#^ [0-9]\+ \(_[0-9a-fA-F]\{16\}\).*EEDATA#-R \1#p&quot;&apos;) do (set EEPROMSections=%%G !EEPROMSections!)&#x0D;&#x0A;&#x0D;&#x0A;:: Strip sections &amp; generate hex file&#x0D;&#x0A;!BFDPath!bin\pic30-$(OMF)-strip.exe -o &quot;$(OutDir)\$(ProjectName) no_eeprom.$(OMF)&quot; !EEPROMSections! &quot;$(OutDir)\$(ProjectName).$(OMF)&quot;&#x0D;&#x0A;!BFDPath!bin\pic30-$(OMF)-bin2hex &quot;$(OutDir)\$(ProjectName) no_eeprom.$(OMF)&quot;&#x0D;&#x0A;"
 				ExecutionBucket="9"
 			/>
 			<Tool
@@ -116,7 +117,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Building EEPROM free hex file ..."
-				CommandLine="setlocal enabledelayedexpansion&#x0D;&#x0A;&#x0D;&#x0A;:: Select strip tool manually because delegation does not work&#x0D;&#x0A;(set BFDPath=pic30-strip.exe)&#x0D;&#x0A;for %%G in (!BFDPath!) do (set BFDPath=%%~sdp$PATH:G)&#x0D;&#x0A;&#x0D;&#x0A;:: Extract EEPROM section names&#x0D;&#x0A;(set EEPROMSections= )&#x0D;&#x0A;for /F &quot;tokens=*&quot; %%G in (&apos;!BFDPath!bin\pic30-$(OMF)-objdump.exe -h &quot;$(OutDir)\$(ProjectName).$(OMF)&quot; ^| sed -e &quot;1,5d&quot; -e &quot;$^!N;s#\n# #&quot; -n -e &quot;s#^ [0-9]\+ \(_[0-9a-fA-F]\{16\}\).*EEDATA#-R \1#p&quot;&apos;) do (&#x0D;&#x0A;    (set EEPROMSections=%%G !EEPROMSections!)&#x0D;&#x0A;)&#x0D;&#x0A;&#x0D;&#x0A;:: Strip sections &amp; generate hex file&#x0D;&#x0A;!BFDPath!bin\pic30-$(OMF)-strip.exe -o &quot;$(OutDir)\$(ProjectName) no_eeprom.$(OMF)&quot; !EEPROMSections! &quot;$(OutDir)\$(ProjectName).$(OMF)&quot;&#x0D;&#x0A;!BFDPath!bin\pic30-$(OMF)-bin2hex &quot;$(OutDir)\$(ProjectName) no_eeprom.$(OMF)&quot;&#x0D;&#x0A;"
+				CommandLine="setlocal enabledelayedexpansion&#x0D;&#x0A;&#x0D;&#x0A;:: Select strip tool manually because delegation does not work&#x0D;&#x0A;(set BFDPath=pic30-strip.exe)&#x0D;&#x0A;for %%G in (!BFDPath!) do (set BFDPath=%%~sdp$PATH:G)&#x0D;&#x0A;&#x0D;&#x0A;:: Extract EEPROM section names&#x0D;&#x0A;(set EEPROMSections= )&#x0D;&#x0A;for /F &quot;tokens=*&quot; %%G in (&apos;!BFDPath!bin\pic30-$(OMF)-objdump.exe -h &quot;$(OutDir)\$(ProjectName).$(OMF)&quot; ^| sed -e &quot;1,5d&quot; -e &quot;$^!N;s#\n# #&quot; -n -e &quot;s#^ [0-9]\+ \(_[0-9a-fA-F]\{16\}\).*EEDATA#-R \1#p&quot;&apos;) do (set EEPROMSections=%%G !EEPROMSections!)&#x0D;&#x0A;&#x0D;&#x0A;:: Strip sections &amp; generate hex file&#x0D;&#x0A;!BFDPath!bin\pic30-$(OMF)-strip.exe -o &quot;$(OutDir)\$(ProjectName) no_eeprom.$(OMF)&quot; !EEPROMSections! &quot;$(OutDir)\$(ProjectName).$(OMF)&quot;&#x0D;&#x0A;!BFDPath!bin\pic30-$(OMF)-bin2hex &quot;$(OutDir)\$(ProjectName) no_eeprom.$(OMF)&quot;&#x0D;&#x0A;"
 				ExecutionBucket="9"
 			/>
 			<Tool

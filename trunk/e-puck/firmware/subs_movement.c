@@ -2,10 +2,11 @@
 
 #include "hal_motors.h"
 #include "com.h"
-#include "com_types.h"
 #include "sen_line.h"
+#include "conquest_types.h"
 
 #include "subs_movement.h"
+
 
 /*!
  * \brief
@@ -13,12 +14,14 @@
  */
 static bool s_blTurningActive = false;
 
+
 /*!
  * \brief
  * Holds the number of detected lines on the surface.
  * This value helps to compute the number of already performed turnings.
  */
 static uint8_t s_ui8NumberOfDetectedLines = 0;
+
 
 /*!
  * \brief
@@ -29,11 +32,13 @@ static uint8_t s_ui8NumberOfDetectedLines = 0;
  */
 static int8_t s_i8DemandedTurnings = 0;
 
+
 /*!
  * \brief
- * Specifies the type of the last smartphone-message.
+ * Specifies the type of the last smartphone message.
  */
-static com_EMessageType_t s_eCurrentMessageType;
+static uint16_t s_ui16CurrentMessageType;
+
 
 /*!
  * \brief
@@ -44,15 +49,26 @@ static com_EMessageType_t s_eCurrentMessageType;
  */
 volatile int16_t subs_movement_i16CurrentLineSpeed = 0;
 
+
 /*!
  * \brief
  * Holds the current angular-speed of the robot.
  */
 volatile int16_t subs_movement_i16CurrentAngularSpeed = 0;
 
-static bool cbHandleRequestMove( IN const com_SMessage_t* const _lppodMessage);
-static bool cbHandleRequestTurn( IN const com_SMessage_t* const _lppodMessage);
-static bool cbHandleRequestSetSpeed( IN const com_SMessage_t* const _lppodMessage);
+
+static bool cbHandleRequestMove(
+	IN const com_SMessage_t* const _lppodMessage
+	);
+
+static bool cbHandleRequestTurn(
+	IN const com_SMessage_t* const _lppodMessage
+	);
+
+static bool cbHandleRequestSetSpeed(
+	IN const com_SMessage_t* const _lppodMessage
+	);
+
 
 /*!
  * \brief
@@ -67,10 +83,10 @@ static bool cbHandleRequestSetSpeed( IN const com_SMessage_t* const _lppodMessag
 bool subs_movement_run( void) {
 
 	bool blActed = false;
-	com_SMessage_t podOkMessage = { COM_MESSAGE_TYPE__RESPONSE_OK, {0}};
+	com_SMessage_t podOkMessage = { CONQUEST_MESSAGE_TYPE__RESPONSE_OK, {0}};
 
-	switch( s_eCurrentMessageType) {
-		case COM_MESSAGE_TYPE__REQUEST_TURN: {
+	switch( s_ui16CurrentMessageType) {
+		case CONQUEST_MESSAGE_TYPE__REQUEST_TURN: {
 			
 			// Turning not active? -> Start to perform the demanded turnings.
 			if( !s_blTurningActive) {
@@ -85,10 +101,11 @@ bool subs_movement_run( void) {
 				sen_line_rescale( &podSensorData, &podSensorData);
 				
 				// Crossed a line? -> One turning is done.
-				if( ((podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_MOVEMENT__LINE_THRESHOLD) ||
-					(podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_MOVEMENT__LINE_THRESHOLD) ||
-					(podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_MOVEMENT__LINE_THRESHOLD)) &&
-					(abs(hal_motors_getStepsLeft()) >= s_ui8NumberOfDetectedLines * 300)) {
+				if( ( ( podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_MOVEMENT__LINE_THRESHOLD) ||
+					( podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_MOVEMENT__LINE_THRESHOLD) ||
+					( podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_MOVEMENT__LINE_THRESHOLD)) &&
+					( abs( hal_motors_getStepsLeft()) >= s_ui8NumberOfDetectedLines * 300)) {
+
 					s_ui8NumberOfDetectedLines++;
 				}
 
@@ -105,13 +122,13 @@ bool subs_movement_run( void) {
 			blActed = true;			
 			break;
 		}
-		case COM_MESSAGE_TYPE__REQUEST_MOVE: {
+		case CONQUEST_MESSAGE_TYPE__REQUEST_MOVE: {
 			hal_motors_setSpeed( subs_movement_i16CurrentLineSpeed, subs_movement_i16CurrentAngularSpeed);
 			com_send( &podOkMessage);
 			blActed = true;
 			break;
 		}
-		case COM_MESSAGE_TYPE__REQUEST_SET_SPEED: {			
+		case CONQUEST_MESSAGE_TYPE__REQUEST_SET_SPEED: {			
 			com_send( &podOkMessage);
 			blActed = true;
 			break;
@@ -128,7 +145,7 @@ bool subs_movement_run( void) {
  * \brief
  * Handles turn-requests.
  * 
- * \param _podMessage
+ * \param _lppodMessage
  * Specifies the message which has to be analyzed.
  * 
  * \returns
@@ -151,16 +168,12 @@ bool cbHandleRequestTurn(
 
 	bool blHandledMessage = false;
 	
-	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_TURN) {
-		s_eCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_TURN;
-		s_i8DemandedTurnings = (_lppodMessage->aui8Data[0]); // @TODO hier werden werte aus -2 bis 2 erwartet, mit signed integern könnte man sich die bit operationen sparen
+	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_TURN) {
+		s_ui16CurrentMessageType = CONQUEST_MESSAGE_TYPE__REQUEST_TURN;
 
-		// First data-bit == 0? -> positiv integer -> turn right
-		if( ((s_i8DemandedTurnings >> 7) & 0) && (s_i8DemandedTurnings != 0)) {
+		if( (int8_t)_lppodMessage->aui8Data[0] > 0) {
 			subs_movement_i16CurrentAngularSpeed = 250;
-		}
-		// First data-bit == 1? -> negative integer -> turn left
-		else if( (s_i8DemandedTurnings >> 7) & 1) {
+		} else if( (int8_t)_lppodMessage->aui8Data[0] < 0) {
 			subs_movement_i16CurrentAngularSpeed = -250;
 		}	
 		subs_movement_i16CurrentLineSpeed = 0;
@@ -174,7 +187,7 @@ bool cbHandleRequestTurn(
  * \brief
  * Handles move-requests.
  * 
- * \param _podMessage
+ * \param _lppodMessage
  * Specifies the message which has to be analyzed.
  * 
  * \returns
@@ -195,8 +208,8 @@ bool cbHandleRequestMove(
 
 	bool blHandledMessage = false;
 
-	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_MOVE) {
-		s_eCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_MOVE;
+	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_MOVE) {
+		s_ui16CurrentMessageType = CONQUEST_MESSAGE_TYPE__REQUEST_MOVE;
 		blHandledMessage = true;
 	}
 
@@ -207,7 +220,7 @@ bool cbHandleRequestMove(
  * \brief
  * Handles setSpeed-requests.
  * 
- * \param _podMessage
+ * \param _lppodMessage
  * Specifies the message which has to be analyzed.
  * 
  * \returns
@@ -228,13 +241,13 @@ bool cbHandleRequestSetSpeed(
 
 	bool blHandledMessage = false;
 
-	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_SET_SPEED) {
-		s_eCurrentMessageType = COM_MESSAGE_TYPE__REQUEST_SET_SPEED;
+	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_SET_SPEED) {
+		s_ui16CurrentMessageType = CONQUEST_MESSAGE_TYPE__REQUEST_SET_SPEED;
 		subs_movement_i16CurrentLineSpeed = _lppodMessage->aui8Data[0] * 10;
 
 		if( abs(subs_movement_i16CurrentLineSpeed) > 1000) {
 			subs_movement_i16CurrentLineSpeed = 0;
-			com_SMessage_t podRejectSetSpeed = {COM_MESSAGE_TYPE__RESPONSE_REJECTED, {0}};
+			com_SMessage_t podRejectSetSpeed = {CONQUEST_MESSAGE_TYPE__RESPONSE_REJECTED, {0}};
 			com_send( &podRejectSetSpeed);
 		}
 		subs_movement_i16CurrentAngularSpeed = 0;
