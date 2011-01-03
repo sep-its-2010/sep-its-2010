@@ -52,17 +52,17 @@ EType_t calculateRelativeNodeType(
 
 	EType_t eNode = _eNodeType;
 
-	if( s_eDirection != DIRECTION_UP) {
+	if( _eDirection != DIRECTION_UP) {
 
 		// Rotate possible moving directions
 		uint16_t ui16RawDirections = _eNodeType & 0xFF;
-		if( s_eDirection == DIRECTION_RIGHT) {
+		if( _eDirection == DIRECTION_RIGHT) {
 			ui16RawDirections <<= 6;
 			ui16RawDirections |= ui16RawDirections >> 8;
-		} else if( s_eDirection == DIRECTION_DOWN) {
+		} else if( _eDirection == DIRECTION_DOWN) {
 			ui16RawDirections <<= 4;
 			ui16RawDirections |= ui16RawDirections >> 8;
-		} else if( s_eDirection == DIRECTION_LEFT) {
+		} else if( _eDirection == DIRECTION_LEFT) {
 			ui16RawDirections <<= 2;
 			ui16RawDirections |= ui16RawDirections >> 8;
 		}
@@ -128,22 +128,23 @@ bool cbDemoMessageHandler(
 	) {
 
 	bool blAccepted = true;
-	switch( _lppodMessage->eType) {
-		case COM_MESSAGE_TYPE__REQUEST_RESET: {
+	switch( _lppodMessage->ui16Type) {
+		case CONQUEST_MESSAGE_TYPE__REQUEST_RESET: {
 			s_eDirection = DIRECTION_UP;
 			conquest_ui16Speed = INITIAL_SPEED;
 			s_ui16PosX = INITIAL_POS_X;
 			s_ui16PosY = INITIAL_POS_Y;
 			hal_led_switchOff( TYPE__CROSS & 0xFF);
+			hal_motors_setSpeed( 0, 0);
 
 			com_SMessage_t podResponse;
-			podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_OK;
+			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
 			com_send( &podResponse);
 			break;
 		}
-		case COM_MESSAGE_TYPE__REQUEST_STATUS: {
+		case CONQUEST_MESSAGE_TYPE__REQUEST_STATUS: {
 			com_SMessage_t podResponse;
-			podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_STATUS;
+			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_STATUS;
 			uint32_t ui32UpTime = hal_rtc_getSystemUpTime();
 			memcpy( podResponse.aui8Data, &ui32UpTime, sizeof( ui32UpTime));
 			memset( &podResponse.aui8Data[4], 0, 3 + 8);
@@ -153,7 +154,7 @@ bool cbDemoMessageHandler(
 			com_send( &podResponse);
 			break;
 		}
-		case COM_MESSAGE_TYPE__REQUEST_TURN: {
+		case CONQUEST_MESSAGE_TYPE__REQUEST_TURN: {
 			if( _lppodMessage->aui8Data[0]) {
 				int16_t i16NewDir = ( ( ( (int8_t)_lppodMessage->aui8Data[0]) % 4) + 4) % 4;
 				if( s_eDirection == DIRECTION_LEFT) {
@@ -187,11 +188,11 @@ bool cbDemoMessageHandler(
 			hal_led_set( calculateRelativeNodeType( s_aaeMap[s_ui16PosY][s_ui16PosX], s_eDirection) & 0xFF);
 
 			com_SMessage_t podResponse;
-			podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_OK;
+			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
 			com_send( &podResponse);
 			break;
 		}
-		case COM_MESSAGE_TYPE__REQUEST_MOVE: {
+		case CONQUEST_MESSAGE_TYPE__REQUEST_MOVE: {
 			com_SMessage_t podResponse;
 			if( s_aaeMap[s_ui16PosY][s_ui16PosX] & s_eDirection) {
 				if( s_eDirection == DIRECTION_UP) {
@@ -206,39 +207,44 @@ bool cbDemoMessageHandler(
 					s_ui16PosX--;
 				}
 
-				hal_motors_setSpeed( conquest_ui16Speed, 0);
+//				hal_motors_setSpeed( conquest_ui16Speed, 0);
+				hal_motors_accelerate( 200, 200, conquest_ui16Speed, conquest_ui16Speed);
+
 				hal_motors_setSteps( 0);
 				while( hal_motors_getStepsLeft() < FOWARD_STEPS && hal_motors_getStepsRight() < FOWARD_STEPS)
 					;
-				hal_motors_setSpeed( 0, 0);
 
-				podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_HIT_NODE;
+//				hal_motors_setSpeed( 0, 0);
+				hal_motors_accelerate( 200, 200, 0, 0);
+				while( hal_motors_getSpeedLeft() && hal_motors_getSpeedRight())
+					;
+
+				podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE;
 				const EType_t eType = calculateRelativeNodeType( s_aaeMap[s_ui16PosY][s_ui16PosX], s_eDirection);
 				podResponse.aui8Data[0] = eType >> 8;
 				podResponse.aui8Data[1] = false;
 				hal_led_set( eType & 0xFF);
 			} else {
-				podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_REJECTED;
+				podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_REJECTED;
 			}
 			com_send( &podResponse);
 			break;
 		}
-		case COM_MESSAGE_TYPE__REQUEST_SET_SPEED: {
+		case CONQUEST_MESSAGE_TYPE__REQUEST_SET_SPEED: {
 			com_SMessage_t podResponse;
 			if( _lppodMessage->aui8Data[0] <= 100) {
 				conquest_ui16Speed = 10 * _lppodMessage->aui8Data[0];
-				podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_OK;
+				podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
 			} else {
-				podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_REJECTED;
+				podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_REJECTED;
 			}
 			com_send( &podResponse);
 			break;
 		}
-		case COM_MESSAGE_TYPE__REQUEST_SET_LED: {
-			uint16_t ui16 = _lppodMessage->aui8Data[0] | ( _lppodMessage->aui8Data[1] << 8);
-			hal_led_set( ui16);
+		case CONQUEST_MESSAGE_TYPE__REQUEST_SET_LED: {
+			hal_led_set( _lppodMessage->aui8Data[0] | ( _lppodMessage->aui8Data[1] << 8));
 			com_SMessage_t podResponse;
-			podResponse.eType = COM_MESSAGE_TYPE__RESPONSE_OK;
+			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
 			com_send( &podResponse);
 			break;
 		}
@@ -254,7 +260,7 @@ bool cbDemoMessageHandler(
  * \brief
  * Handles status-requests.
  * 
- * \param _podMessage
+ * \param _lppodMessage
  * Specifies the message which has to be analyzed.
  * 
  * \returns
@@ -272,8 +278,8 @@ bool cbHandleRequestStatus(
 
 	bool blHandledMessage = false;
 
-	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_STATUS) {
-		com_SMessage_t podStatusResponse = {COM_MESSAGE_TYPE__RESPONSE_STATUS, {0}};
+	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_STATUS) {
+		com_SMessage_t podStatusResponse = { CONQUEST_MESSAGE_TYPE__RESPONSE_STATUS, { 0 } };
 
 		// record system up-time in little endian format
 		uint32_t ui32UpTime = hal_rtc_getSystemUpTime();
@@ -281,25 +287,19 @@ bool cbHandleRequestStatus(
 		memset( &podStatusResponse.aui8Data[4], 0, 3 + 8);
 
 		// record abyss status
-		sen_line_SData_t podSensorData= {{0}};
+		sen_line_SData_t podSensorData;
 		sen_line_read( &podSensorData);
 		sen_line_rescale( &podSensorData, &podSensorData);
 
-		if( podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD) {
-			podStatusResponse.aui8Data[3 + SEN_LINE_SENSOR__LEFT] = true;
-		}
-		if( podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD) {
-			podStatusResponse.aui8Data[3 + SEN_LINE_SENSOR__MIDDLE] = true;
-		}
-		if( podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD) {
-			podStatusResponse.aui8Data[3 + SEN_LINE_SENSOR__RIGHT] = true;
-		}
+		podStatusResponse.aui8Data[3 + SEN_LINE_SENSOR__LEFT] = podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD;
+		podStatusResponse.aui8Data[3 + SEN_LINE_SENSOR__MIDDLE] = podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD;
+		podStatusResponse.aui8Data[3 + SEN_LINE_SENSOR__RIGHT] = podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD;
 
 		// record collision status
-		sen_prox_SData_t podProxSensorData = {{0}};
+		sen_prox_SData_t podProxSensorData;
 		sen_prox_getCurrent( &podProxSensorData);
 
-		for( uint8_t i = 0; i < sizeof(podProxSensorData.aui8Data); i++) {
+		for( uint8_t i = 0; i < sizeof( podProxSensorData.aui8Data); i++) {
 			if( podProxSensorData.aui8Data[i] > SUBS_COLLISION__PROX_THRESHOLD) {
 				podStatusResponse.aui8Data[7 + i] = true;
 			}
@@ -321,7 +321,7 @@ bool cbHandleRequestStatus(
  * \brief
  * Handles reset-requests.
  * 
- * \param _podMessage
+ * \param _lppodMessage
  * Specifies the message which has to be analyzed.
  * 
  * \returns
@@ -339,14 +339,14 @@ bool cbHandleRequestReset(
 
 	bool blHandledMessage = false;
 
-	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_STATUS) {
+	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_STATUS) {
 		subs_reset();
 		hal_led_set( 0);
+
+		const com_SMessage_t podResponseOk = { CONQUEST_MESSAGE_TYPE__RESPONSE_OK, { 0 } };
+		com_send( &podResponseOk);
 		blHandledMessage = true;
 	}
-
-	com_SMessage_t podResponseOk = { COM_MESSAGE_TYPE__RESPONSE_OK, {0}};
-	com_send( &podResponseOk);
 
 	return blHandledMessage;
 }
@@ -355,7 +355,7 @@ bool cbHandleRequestReset(
  * \brief
  * Handles SetLED-requests.
  * 
- * \param _podMessage
+ * \param _lppodMessage
  * Specifies the message which has to be analyzed.
  * 
  * \returns
@@ -373,11 +373,10 @@ bool cbHandleRequestSetLED(
 
 	bool blHandledMessage = false;
 
-	if( _lppodMessage->eType == COM_MESSAGE_TYPE__REQUEST_SET_LED) {
-		uint16_t ui16LEDsToSet = _lppodMessage->aui8Data[0] | ( _lppodMessage->aui8Data[1] << 8);
-		hal_led_set(ui16LEDsToSet);
+	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_SET_LED) {
+		hal_led_set( _lppodMessage->aui8Data[0] | ( _lppodMessage->aui8Data[1] << 8));
 
-		com_SMessage_t podResponseOkMessage = {COM_MESSAGE_TYPE__RESPONSE_OK, {0}};
+		const com_SMessage_t podResponseOkMessage = { CONQUEST_MESSAGE_TYPE__RESPONSE_OK, { 0 } };
 		com_send( &podResponseOkMessage);
 		blHandledMessage = true;
 	}

@@ -11,27 +11,32 @@
 /*!
  * \brief
  * Control structure for atomic operations.
+ *
+ * \param _priority
+ * Specifies the temporary priority of the CPU during execution of the block.
  * 
  * This control structure allows using \c break, \c continue and \c return to leave the block safely.
- * All operations within the block are guaranteed to be interrupt safe.
+ * All operations within the block are guaranteed to be interrupt safe from interrupts with priorities lower or equal to \c _priority.
  * The previous CPU priority is restored when leaving the block.
  *
  * Usage:
  * \code
- * HAL_INT_ATOMIC_BLOCK() {
+ * HAL_INT_ATOMIC_BLOCK( HAL_INT_PRIORITY__7) {
  *     [instructions];
  * }
  * \endcode
  */
-#define HAL_INT_ATOMIC_BLOCK() \
-	for( uint8_t __attribute__( ( cleanup( _exitAtomicBlock))) _ui8Atomic = _enterAtomicBlock(), _ui8Break = 1; \
-		_ui8Break; \
-		_ui8Break = 0)
+#define HAL_INT_ATOMIC_BLOCK( _priority) \
+	for( int __i __attribute__( ( cleanup( _exitAtomicBlock))) = _enterAtomicBlock( _priority), __iBreak = 1; \
+		__iBreak; \
+		__iBreak = 0)
 
-static inline uint8_t _enterAtomicBlock( void);
+static inline int _enterAtomicBlock(
+	IN const hal_int_EPriority_t _eNewTempPriority
+	);
 
 static inline void _exitAtomicBlock(
-	IN const uint8_t* const _lpui8CPUPriorityBackup
+	IN const int* const _lpiSRBackup
 	);
 
 static inline void hal_int_enable(
@@ -47,6 +52,10 @@ static inline void hal_int_setPriority(
 	IN const hal_int_EPriority_t _ePriority
 	);
 
+static inline hal_int_EPriority_t hal_int_getPriority(
+	IN const hal_int_ESource_t _eSource
+	);
+
 static inline bool hal_int_isFlagSet(
 	IN const hal_int_ESource_t _eSource
 	);
@@ -60,8 +69,8 @@ static inline void hal_int_clearFlag(
  * \brief
  * Leaves an user interrupt safe block.
  * 
- * \param _lpui8CPUPriorityBackup
- * Specifies the CPU priority bits before entering the block.
+ * \param _lpiSRBackup
+ * Specifies a dummy parameter which is needed by the cleanup attribute.
  *
  * The previous CPU priority is recovered.
  * 
@@ -72,10 +81,11 @@ static inline void hal_int_clearFlag(
  * _enterAtomicBlock | HAL_INT_ATOMIC_BLOCK
  */
 void _exitAtomicBlock(
-	IN const uint8_t* const _lpui8CPUPriorityBackup
+	IN const int* const _lpiSRBackup
 	) {
 
-	SR = *_lpui8CPUPriorityBackup;
+//	__asm volatile( "pop SR");
+	SR = *_lpiSRBackup;
 }
 
 
@@ -94,13 +104,17 @@ void _exitAtomicBlock(
  * \see
  * _exitAtomicBlock | HAL_INT_ATOMIC_BLOCK
  */
-uint8_t _enterAtomicBlock( void) {
+int _enterAtomicBlock(
+	IN const hal_int_EPriority_t _eNewTempPriority
+	) {
 
-	const uint8_t ui8CurrentCPUPriority = SR;
+//	__asm volatile( "push SR");
+	int iSR = SR;
+	if( hal_int_getPriority( HAL_INT_SOURCE__CPU) < _eNewTempPriority) {
+		hal_int_setPriority( HAL_INT_SOURCE__CPU, _eNewTempPriority);
+	}
 
-	hal_int_setPriority( HAL_INT_SOURCE__CPU, HAL_INT_PRIORITY__7);
-
-	return ui8CurrentCPUPriority;
+	return iSR;
 }
 
 
@@ -485,9 +499,10 @@ void hal_int_disable(
 	}
 }
 
+
 /*!
  * \brief
- * Changes the priority for the specified interrupt.
+ * Changes the priority of the specified interrupt.
  * 
  * \param _eSource
  * Specifies the interrupt source whose priority is to be changed.
@@ -502,7 +517,7 @@ void hal_int_disable(
  * - This function is interrupt safe.
  * 
  * \see
- * hal_int_enable
+ * hal_int_enable | hal_int_getPriority
  */
 void hal_int_setPriority(
 	IN const hal_int_ESource_t _eSource,
@@ -682,6 +697,207 @@ void hal_int_setPriority(
 	
 		}
 	}
+}
+
+
+/*!
+ * \brief
+ * Gets the priority of the specified interrupt.
+ * 
+ * \param _eSource
+ * Specifies the interrupt source whose priority is to be queried.
+ *
+ * \returns
+ * The priority of the specified interrupt source.
+ * 
+ * \remarks
+ * - Only constant parameters should be used to allow proper inlining.
+ * - This function is interrupt safe.
+ * 
+ * \see
+ * hal_int_setPriority
+ */
+hal_int_EPriority_t hal_int_getPriority(
+	IN const hal_int_ESource_t _eSource
+	) {
+
+	hal_int_EPriority_t ePriority;
+
+	switch( _eSource) {
+		case HAL_INT_SOURCE__ADC_COMPLETE: {
+			ePriority = (hal_int_EPriority_t)IPC2bits.ADIP;
+			break;
+		}
+		case HAL_INT_SOURCE__BROWNOUT: {
+			ePriority = (hal_int_EPriority_t)IPC10bits.LVDIP;
+			break;
+		}
+		case HAL_INT_SOURCE__CAN1: {
+			ePriority = (hal_int_EPriority_t)IPC6bits.C1IP;
+			break;
+		}
+		case HAL_INT_SOURCE__CAN2: {
+			ePriority = (hal_int_EPriority_t)IPC9bits.C2IP;
+			break;
+		}
+		case HAL_INT_SOURCE__CPU: {
+			ePriority = (hal_int_EPriority_t)SRbits.IPL;
+			break;
+		}
+		case HAL_INT_SOURCE__DATA_CONVERTER: {
+			ePriority = (hal_int_EPriority_t)IPC10bits.DCIIP;
+			break;
+		}
+		case HAL_INT_SOURCE__EXTERNAL0: {
+			ePriority = (hal_int_EPriority_t)IPC0bits.INT0IP;
+			break;
+		}
+		case HAL_INT_SOURCE__EXTERNAL1: {
+			ePriority = (hal_int_EPriority_t)IPC4bits.INT1IP;
+			break;
+		}
+		case HAL_INT_SOURCE__EXTERNAL2: {
+			ePriority = (hal_int_EPriority_t)IPC5bits.INT2IP;
+			break;
+		}
+		case HAL_INT_SOURCE__EXTERNAL3: {
+			ePriority = (hal_int_EPriority_t)IPC9bits.INT3IP;
+			break;
+		}
+		case HAL_INT_SOURCE__EXTERNAL4: {
+			ePriority = (hal_int_EPriority_t)IPC9bits.INT4IP;
+			break;
+		}
+		case HAL_INT_SOURCE__I2C_MASTER: {
+			ePriority = (hal_int_EPriority_t)IPC3bits.MI2CIP;
+			break;
+		}
+		case HAL_INT_SOURCE__I2C_SLAVE: {
+			ePriority = (hal_int_EPriority_t)IPC3bits.SI2CIP;
+			break;
+		}
+		case HAL_INT_SOURCE__INPUT_CAPTURE_CHAN1: {
+			ePriority = (hal_int_EPriority_t)IPC0bits.IC1IP;
+			break;
+		}
+		case HAL_INT_SOURCE__INPUT_CAPTURE_CHAN2: {
+			ePriority = (hal_int_EPriority_t)IPC1bits.IC2IP;
+			break;
+		}
+		case HAL_INT_SOURCE__INPUT_CAPTURE_CHAN3: {
+			ePriority = (hal_int_EPriority_t)IPC7bits.IC3IP;
+			break;
+		}
+		case HAL_INT_SOURCE__INPUT_CAPTURE_CHAN4: {
+			ePriority = (hal_int_EPriority_t)IPC7bits.IC4IP;
+			break;
+		}
+		case HAL_INT_SOURCE__INPUT_CAPTURE_CHAN5: {
+			ePriority = (hal_int_EPriority_t)IPC7bits.IC5IP;
+			break;
+		}
+		case HAL_INT_SOURCE__INPUT_CAPTURE_CHAN6: {
+			ePriority = (hal_int_EPriority_t)IPC7bits.IC6IP;
+			break;
+		}
+		case HAL_INT_SOURCE__INPUT_CAPTURE_CHAN7: {
+			ePriority = (hal_int_EPriority_t)IPC4bits.IC7IP;
+			break;
+		}
+		case HAL_INT_SOURCE__INPUT_CAPTURE_CHAN8: {
+			ePriority = (hal_int_EPriority_t)IPC4bits.IC8IP;
+			break;
+		}
+		case HAL_INT_SOURCE__INPUT_CHANGED: {
+			ePriority = (hal_int_EPriority_t)IPC3bits.CNIP;
+			break;
+		}
+		case HAL_INT_SOURCE__MEMORY_WRITE_COMPLETE: {
+			ePriority = (hal_int_EPriority_t)IPC3bits.NVMIP;
+			break;
+		}
+		case HAL_INT_SOURCE__OUTPUT_COMPARE_CHAN1: {
+			ePriority = (hal_int_EPriority_t)IPC0bits.OC1IP;
+			break;
+		}
+		case HAL_INT_SOURCE__OUTPUT_COMPARE_CHAN2: {
+			ePriority = (hal_int_EPriority_t)IPC1bits.OC2IP;
+			break;
+		}
+		case HAL_INT_SOURCE__OUTPUT_COMPARE_CHAN3: {
+			ePriority = (hal_int_EPriority_t)IPC4bits.OC3IP;
+			break;
+		}
+		case HAL_INT_SOURCE__OUTPUT_COMPARE_CHAN4: {
+			ePriority = (hal_int_EPriority_t)IPC5bits.OC4IP;
+			break;
+		}
+		case HAL_INT_SOURCE__OUTPUT_COMPARE_CHAN5: {
+			ePriority = (hal_int_EPriority_t)IPC8bits.OC5IP;
+			break;
+		}
+		case HAL_INT_SOURCE__OUTPUT_COMPARE_CHAN6: {
+			ePriority = (hal_int_EPriority_t)IPC8bits.OC6IP;
+			break;
+		}
+		case HAL_INT_SOURCE__OUTPUT_COMPARE_CHAN7: {
+			ePriority = (hal_int_EPriority_t)IPC8bits.OC7IP;
+			break;
+		}
+		case HAL_INT_SOURCE__OUTPUT_COMPARE_CHAN8: {
+			ePriority = (hal_int_EPriority_t)IPC8bits.OC8IP;
+			break;
+		}
+		case HAL_INT_SOURCE__SPI1: {
+			ePriority = (hal_int_EPriority_t)IPC2bits.SPI1IP;
+			break;
+		}
+		case HAL_INT_SOURCE__SPI2: {
+			ePriority = (hal_int_EPriority_t)IPC6bits.SPI2IP;
+			break;
+		}
+		case HAL_INT_SOURCE__TIMER1: {
+			ePriority = (hal_int_EPriority_t)IPC0bits.T1IP;
+			break;
+		}
+		case HAL_INT_SOURCE__TIMER2: {
+			ePriority = (hal_int_EPriority_t)IPC1bits.T2IP;
+			break;
+		}
+		case HAL_INT_SOURCE__TIMER3: {
+			ePriority = (hal_int_EPriority_t)IPC1bits.T3IP;
+			break;
+		}
+		case HAL_INT_SOURCE__TIMER4: {
+			ePriority = (hal_int_EPriority_t)IPC5bits.T4IP;
+			break;
+		}
+		case HAL_INT_SOURCE__TIMER5: {
+			ePriority = (hal_int_EPriority_t)IPC5bits.T5IP;
+			break;
+		}
+		case HAL_INT_SOURCE__UART1_RECEIVER: {
+			ePriority = (hal_int_EPriority_t)IPC2bits.U1RXIP;
+			break;
+		}
+		case HAL_INT_SOURCE__UART1_TRANSMITTER: {
+			ePriority = (hal_int_EPriority_t)IPC2bits.U1TXIP;
+			break;
+		}
+		case HAL_INT_SOURCE__UART2_RECEIVER: {
+			ePriority = (hal_int_EPriority_t)IPC6bits.U2RXIP;
+			break;
+		}
+		case HAL_INT_SOURCE__UART2_TRANSMITTER: {
+			ePriority = (hal_int_EPriority_t)IPC6bits.U2TXIP;
+			break;
+		}
+		default: {
+			ePriority = HAL_INT_PRIORITY__0;
+		}
+	}
+
+	return ePriority;
 }
 
 

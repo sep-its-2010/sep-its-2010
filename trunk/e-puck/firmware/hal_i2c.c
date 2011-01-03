@@ -4,9 +4,11 @@
 
 #include "hal_i2c.h"
 
+
 enum {
 	I2C_IDLE_MASK = ( 1 << 4) | ( 1 << 3) | ( 1 << 2) | ( 1 << 1) | ( 1 << 0) ///< Specifies the operation mode bits within the control register.
 };
+
 
 static void start( void);
 
@@ -21,6 +23,7 @@ static bool write(
 static uint8_t read(
 	IN const bool _blAcknowledge
 	);
+
 
 /*!
  * \internal

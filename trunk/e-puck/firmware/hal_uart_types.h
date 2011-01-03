@@ -23,4 +23,17 @@ typedef enum {
 } hal_uart_EConfig_t;
 
 
+/*!
+ * \brief
+ * Specifies a callback for received bytes with a framing error.
+ * 
+ * \remarks
+ * If the callback returns \c true the byte is enqueued normally. Otherwise it gets dismissed.
+ * 
+ * \see
+ * hal_uart1_enable
+ */
+typedef bool (*hal_uart_fnErrorHandler_t)( IN const uint8_t);
+
+
 #endif /* hal_uart_types_h__ */

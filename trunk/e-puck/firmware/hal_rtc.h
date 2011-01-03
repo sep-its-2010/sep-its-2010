@@ -11,6 +11,7 @@ enum {
 	HAL_RTC_PRESCALER = 3 ///< Specifies a prescaler of /256 for timer 1.
 };
 
+
 void hal_rtc_init(
 	IN const uint16_t _ui16Period
 	);

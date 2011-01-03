@@ -43,7 +43,7 @@ static subs_SBehaviorPriorityList_t* s_lppodFirstBehavior = NULL;
  */
 void subs_init( void) {
 
-	memset( s_apodBehaviors, 0, sizeof( s_apodBehaviors) / sizeof( *s_apodBehaviors));
+	memset( s_apodBehaviors, 0, sizeof( s_apodBehaviors));
 	s_lppodFirstBehavior = NULL;
 }
 

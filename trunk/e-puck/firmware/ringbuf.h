@@ -39,11 +39,11 @@ static inline bool ringbuf_isLinear(
 	IN const ringbuf_SContext_t* const _lppodContext
 	);
 
-uint8_t ringbuf_get(
+int16_t ringbuf_get(
 	IN const ringbuf_SContext_t* const _lppodContext
 	);
 
-uint8_t ringbuf_getAt(
+int16_t ringbuf_getAt(
 	IN const ringbuf_SContext_t* const _lppodContext,
 	IN const uint16_t _ui16Position
 	);
@@ -55,7 +55,7 @@ uint16_t ringbuf_getRange(
 	IN const uint16_t _ui16Length
 	);
 
-uint8_t ringbuf_pop(
+int16_t ringbuf_pop(
 	INOUT ringbuf_SContext_t* const _lppodContext
 	);
 
@@ -65,7 +65,7 @@ uint16_t ringbuf_popRange(
 	IN const uint16_t _ui16Length
 	);
 
-void ringbuf_push(
+bool ringbuf_push(
 	INOUT ringbuf_SContext_t* const _lppodContext,
 	IN const uint8_t _ui8Value
 	);
@@ -76,7 +76,7 @@ uint16_t ringbuf_pushRange(
 	IN const uint16_t _ui16Elements
 	);
 
-void ringbuf_drop(
+uint16_t ringbuf_drop(
 	INOUT ringbuf_SContext_t* const _lppodContext,
 	IN const uint16_t _ui16Elements
 	);

@@ -7,6 +7,7 @@
 
 #include "hal_motors_types.h"
 
+
 #define HAL_MOTORS_PIN__LEFT_A _LATD0 ///< e-puck left motor driver pin A.
 #define HAL_MOTORS_PIN__LEFT_B _LATD1 ///< e-puck left motor driver pin B.
 #define HAL_MOTORS_PIN__LEFT_C _LATD2 ///< e-puck left motor driver pin C.
@@ -25,16 +26,20 @@
 #define HAL_MOTORS_PIN_DIR__RIGHT_C _TRISD6 ///< e-puck right motor pin C direction.
 #define HAL_MOTORS_PIN_DIR__RIGHT_D _TRISD7 ///< e-puck right motor pin D direction.
 
+
 enum {
 	HAL_MOTORS_LEFT_MASK = ( 1 << 0) | ( 1 << 1) | ( 1 << 2) | ( 1 << 3), ///< Left motor port bit mask.
 	HAL_MOTORS_LEFT_DATA_OFFSET = 0, ///< Port data offset of the right motor.
 	HAL_MOTORS_RIGHT_MASK = ( 1 << 4) | ( 1 << 5) | ( 1 << 6) | ( 1 << 7), ///< Right motor port bit mask.
 	HAL_MOTORS_RIGHT_DATA_OFFSET = 4, ///< Port data offset of the right motor.
 	HAL_MOTORS_MAX_ABS_SPEED = 1000, ///< Maximal absolute step motor speed in steps per second.
-	HAL_MOTORS_TIMER_PRESCALER = 3 ///< Specifies a prescaler of /256 for timer 4 and timer 5. 
+	HAL_MOTORS_TIMER_PRESCALER = 3 ///< Specifies a prescaler of /256 for timer 4 and timer 5.
 };
 
-void hal_motors_init( void);
+
+bool hal_motors_init(
+	IN const uint16_t _ui16AccelInterval
+	);
 
 void hal_motors_setSpeedLeft(
 	IN const int16_t _i16StepsPerSecond
@@ -46,6 +51,20 @@ void hal_motors_setSpeed(
 	IN const int16_t _i16StepsPerSecond,
 	IN const int16_t _i16AngularStepsPerSecond
 	);
+void hal_motors_accelerate(
+	IN const uint16_t _ui16AbsoluteAccelerationLeft,
+	IN const uint16_t _ui16AbsoluteAccelerationRight,
+	IN const int16_t _i16FinalSpeedLeft,
+	IN const int16_t _i16FinalSpeedRight
+	);
+
+void hal_motors_restoreSettings(
+	IN const hal_motors_SSettings_t* const _lppodSettings
+	);
+void hal_motors_backupSettings(
+	OUT hal_motors_SSettings_t* const _lppodSettings
+	);
+
 
 static inline int16_t hal_motors_getSpeedLeft( void);
 static inline int16_t hal_motors_getSpeedRight( void);
@@ -89,9 +108,9 @@ static inline void hal_motors_setSteps(
  */
 int16_t hal_motors_getSpeedLeft( void) {
 
-	extern volatile int16_t hal_motors_i16SpeedLeft;
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	return hal_motors_i16SpeedLeft;
+	return hal_motors_podSettings.ai16Speed[HAL_MOTORS_LEFT];
 }
 
 
@@ -110,9 +129,9 @@ int16_t hal_motors_getSpeedLeft( void) {
  */
 int16_t hal_motors_getSpeedRight( void) {
 
-	extern volatile int16_t hal_motors_i16SpeedRight;
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	return hal_motors_i16SpeedRight;
+	return hal_motors_podSettings.ai16Speed[HAL_MOTORS_RIGHT];
 }
 
 
@@ -138,9 +157,9 @@ void hal_motors_setPhaseLeft(
 	IN const hal_motors_EPhase_t _ePhase
 	) {
 
-	extern volatile hal_motors_EPhase_t hal_motors_ePhaseLeft;
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	hal_motors_ePhaseLeft = _ePhase;
+	hal_motors_podSettings.aePhase[HAL_MOTORS_LEFT] = _ePhase;
 	LATD = ( LATD & ~HAL_MOTORS_LEFT_MASK) | ( _ePhase << HAL_MOTORS_LEFT_DATA_OFFSET);
 }
 
@@ -166,9 +185,9 @@ void hal_motors_setPhaseRight(
 	IN const hal_motors_EPhase_t _ePhase
 	) {
 
-	extern volatile hal_motors_EPhase_t hal_motors_ePhaseRight;
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	hal_motors_ePhaseRight = _ePhase;
+	hal_motors_podSettings.aePhase[HAL_MOTORS_RIGHT] = _ePhase;
 	LATD = ( LATD & ~HAL_MOTORS_RIGHT_MASK) | ( _ePhase << HAL_MOTORS_RIGHT_DATA_OFFSET);
 }
 
@@ -188,9 +207,9 @@ void hal_motors_setPhaseRight(
  */
 hal_motors_EPhase_t hal_motors_getPhaseLeft( void) {
 
-	extern volatile hal_motors_EPhase_t hal_motors_ePhaseLeft;
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	return hal_motors_ePhaseLeft;
+	return hal_motors_podSettings.aePhase[HAL_MOTORS_LEFT];
 }
 
 
@@ -209,9 +228,9 @@ hal_motors_EPhase_t hal_motors_getPhaseLeft( void) {
  */
 hal_motors_EPhase_t hal_motors_getPhaseRight( void) {
 
-	extern volatile hal_motors_EPhase_t hal_motors_ePhaseRight;
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	return hal_motors_ePhaseRight;
+	return hal_motors_podSettings.aePhase[HAL_MOTORS_RIGHT];
 }
 
 
@@ -232,9 +251,9 @@ hal_motors_EPhase_t hal_motors_getPhaseRight( void) {
  */
 uint16_t hal_motors_getStepsLeft( void) {
 
-	extern volatile uint16_t hal_motors_ui16StepsLeft;
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	return hal_motors_ui16StepsLeft;
+	return hal_motors_podSettings.aui16Steps[HAL_MOTORS_LEFT];
 }
 
 
@@ -255,9 +274,9 @@ uint16_t hal_motors_getStepsLeft( void) {
  */
 uint16_t hal_motors_getStepsRight( void) {
 
-	extern volatile uint16_t hal_motors_ui16StepsRight;
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	return hal_motors_ui16StepsRight;
+	return hal_motors_podSettings.aui16Steps[HAL_MOTORS_RIGHT];
 }
 
 
@@ -278,9 +297,9 @@ void hal_motors_setStepsLeft(
 	IN const uint16_t _ui16Steps
 	) {
 
-	extern volatile uint16_t hal_motors_ui16StepsLeft;
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	hal_motors_ui16StepsLeft = _ui16Steps;
+	hal_motors_podSettings.aui16Steps[HAL_MOTORS_LEFT] = _ui16Steps;
 }
 
 
@@ -301,9 +320,9 @@ void hal_motors_setStepsRight(
 	IN const uint16_t _ui16Steps
 	) {
 
-	extern volatile uint16_t hal_motors_ui16StepsRight;
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	hal_motors_ui16StepsRight = _ui16Steps;
+	hal_motors_podSettings.aui16Steps[HAL_MOTORS_RIGHT] = _ui16Steps;
 }
 
 
@@ -324,11 +343,10 @@ void hal_motors_setSteps(
 	IN const uint16_t _ui16Steps
 	) {
 
-	extern volatile uint16_t hal_motors_ui16StepsLeft;
-	extern volatile uint16_t hal_motors_ui16StepsRight;
+	extern hal_motors_SSettings_t hal_motors_podSettings;
 
-	hal_motors_ui16StepsLeft = _ui16Steps;
-	hal_motors_ui16StepsRight = _ui16Steps;
+	hal_motors_podSettings.aui16Steps[HAL_MOTORS_LEFT] = _ui16Steps;
+	hal_motors_podSettings.aui16Steps[HAL_MOTORS_RIGHT] = _ui16Steps;
 }
 
 

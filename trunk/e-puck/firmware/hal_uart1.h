@@ -11,7 +11,8 @@
 
 
 void hal_uart1_enable(
-	IN const bool _blWithTransmitter
+	IN const bool _blWithTransmitter,
+	IN OPT const hal_uart_fnErrorHandler_t _fnOnError
 	);
 
 static inline void hal_uart1_close( void);
@@ -57,9 +58,9 @@ static inline ringbuf_SContext_t* hal_uart1_getTxRingBuffer( void);
 
 static inline ringbuf_SContext_t* hal_uart1_getRxRingBuffer( void);
 
-void hal_uart1_forceTxMove( void);
+void hal_uart1_flushTx( void);
 
-void hal_uart1_forceRxMove( void);
+void hal_uart1_flushRx( void);
 
 
 /*!
@@ -72,7 +73,7 @@ void hal_uart1_forceRxMove( void);
  * Steps to perform a clean shutdown:
  * -# Poll #hal_uart1_isRxIdle() and #hal_uart1_isTxIdle() until both are true.
  * -# Disable UART interrupts with #hal_int_setPriority(). (*)
- * -# Transfer any remaining bytes to the ring buffers with #hal_uart1_forceTxMove() and #hal_uart1_forceRxMove(). (*)
+ * -# Transfer any remaining bytes to the ring buffers with #hal_uart1_flushTx() and #hal_uart1_flushRx(). (*)
  * -# Call #hal_uart1_close().
  * -# Use #hal_uart1_getTxRingBuffer() and #hal_uart1_getRxRingBuffer() to operate on the ring buffers. (*)
  *
@@ -189,9 +190,9 @@ void hal_uart1_configure(
  */
 bool hal_uart1_hasRxData( void) {
 
-	extern ringbuf_SContext_t hal_uart1_podTxBuffer;
+	extern ringbuf_SContext_t hal_uart1_podRxBuffer;
 
-	return U1STAbits.URXDA || !ringbuf_isEmpty( &hal_uart1_podTxBuffer);
+	return U1STAbits.URXDA || !ringbuf_isEmpty( &hal_uart1_podRxBuffer);
 }
 
 
@@ -301,7 +302,7 @@ bool hal_uart1_isRxIdle( void) {
  * - The context must be initialized with #ringbuf_init() before the buffer can be used.
  * 
  * \see
- * hal_uart1_getRxRingBuffer | hal_uart1_forceTxMove
+ * hal_uart1_getRxRingBuffer | hal_uart1_flushTx
  */
 ringbuf_SContext_t* hal_uart1_getTxRingBuffer( void) {
 
@@ -325,7 +326,7 @@ ringbuf_SContext_t* hal_uart1_getTxRingBuffer( void) {
  * - The context must be initialized with #ringbuf_init() before the buffer can be used.
  * 
  * \see
- * hal_uart1_getTxRingBuffer | hal_uart1_forceRxMove
+ * hal_uart1_getTxRingBuffer | hal_uart1_flushRx
  */
 ringbuf_SContext_t* hal_uart1_getRxRingBuffer( void) {
 

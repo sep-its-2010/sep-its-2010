@@ -1,6 +1,7 @@
 #include "hal_motors.h"
 #include "sen_line.h"
 #include "com.h"
+#include "conquest_types.h"
 
 #include "subs_abyss.h"
 
@@ -70,7 +71,7 @@ bool subs_abyss_run( void) {
 				podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD ||
 				podLineSensors.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD) {
 
-				s_podAbyssResponse.eType = COM_MESSAGE_TYPE__RESPONSE_ABYSS;
+				s_podAbyssResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_ABYSS;
 				s_podAbyssResponse.aui8Data[SEN_LINE_SENSOR__LEFT] = podLineSensors.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD;
 				s_podAbyssResponse.aui8Data[SEN_LINE_SENSOR__MIDDLE] = podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD;
 				s_podAbyssResponse.aui8Data[SEN_LINE_SENSOR__RIGHT] = podLineSensors.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD;

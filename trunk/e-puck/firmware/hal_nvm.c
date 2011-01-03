@@ -111,7 +111,7 @@ void executeOperation(
  * any byte within the EEPROM directly.
  * 
  * \remarks
- * - This function is interrupt safe. Care should be taken when writing long data sequences due to interrupt stalling.
+ * - This function is interrupt safe. Care should be taken when writing long data sequences due to starvation.
  * - In case a row is not fully overwritten (e.g. due to misalignment) the unchanged content will backuped and restored.
  * - The PSV window maps on the EEPROM due to the recovery operation mentioned above. The previous PSV settings are restored afterwards.
  * - The NVM mode will be left when the write operation succeeded \c (NVMCONbits.WREN \c = \c false).
@@ -137,7 +137,7 @@ bool hal_nvm_writeEEPROM(
 		( _ui16Length <= EEPROM_SIZE) &&
 		( EEPROM_SIZE >= ui16EEPROMAddr + _ui16Length)) {
 
-		HAL_INT_ATOMIC_BLOCK() {
+		HAL_INT_ATOMIC_BLOCK( HAL_INT_PRIORITY__7) {
 
 			// Backup current PSV & configure for EEPROM access
 			const uint8_t ui8BackupPSVPAG = PSVPAG;
@@ -225,7 +225,7 @@ bool hal_nvm_writeEEPROM(
  * The read operation is based on an EEPROM PSV mapping.
  * 
  * \remarks
- * - This function is interrupt safe.
+ * - This function is interrupt safe. Care should be taken when reading long data sequences due to starvation.
  * - The previous PSV settings are restored after the operation has finished.
  * 
  * \see
@@ -246,7 +246,7 @@ bool hal_nvm_readEEPROM(
 		( _ui16Length <= EEPROM_SIZE) &&
 		( EEPROM_SIZE >= ui16EEPROMAddr + _ui16Length)) {
 
-		HAL_INT_ATOMIC_BLOCK() {
+		HAL_INT_ATOMIC_BLOCK( HAL_INT_PRIORITY__7) {
 			const uint8_t ui8BackupPSVPAG = PSVPAG;
 			const bool blBackupPSVEnable = CORCONbits.PSV;
 			PSVPAG = EEPROM_PSV_ADDR_UPPER;
