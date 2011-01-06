@@ -42,8 +42,6 @@ public class PuckOkHandler extends Handler {
     if (request.getKind().equals(MessageType.RESPONSE_OK)) {
       Puck robot = executor.getRobot();
       synchronized(robot) {
-      ConquestLog.addMessage(this, "Puck --> " + robot.getName()
-          + ": Ok");
       robot.setOkRcvd(true);
       }
       return true;

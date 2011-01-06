@@ -181,7 +181,7 @@ public final class Simulator {
       return node.getNodeType();
     } else {
       throw new IllegalArgumentException(
-          "Asked for type of node at invalid position");
+          "Asked for type of node at invalid position (" + x +"," + y + ")");
     }
   }
   

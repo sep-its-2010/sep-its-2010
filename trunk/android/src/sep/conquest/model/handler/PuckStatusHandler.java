@@ -50,8 +50,6 @@ public class PuckStatusHandler extends Handler {
 	  } else {
 	     Puck robot =executor.getRobot();
 	     synchronized(robot) {
-	     ConquestLog.addMessage(this, "Puck --> "+ robot.getName() + ": Status");
-
 		    /*
 			 * Message looks like: 
 			 * Byte[0-1]: MessageType 

@@ -51,7 +51,6 @@ public class PuckCollisionHandler extends Handler {
 	  } else {
 	    Puck robot = executor.getRobot();
 	    synchronized(robot) {
-      ConquestLog.addMessage(this, "Puck --> "+ robot.getName() + ": Collision");
 
 		  //The epuck stops on hardwarebased command
 		  byte[] bufferMessage = colRes.getMessage();

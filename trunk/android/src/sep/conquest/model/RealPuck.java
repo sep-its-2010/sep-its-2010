@@ -62,7 +62,6 @@ public class RealPuck extends Puck {
           out.write(message);
         }
         expectMessage = true;
-        ConquestLog.addMessage(this, getName() + " --> e-puck");
       } catch (IOException e) {
         FailureRequest req = new FailureRequest(getID(), null,
             FailureType.BLUETOOTHFAILURE);

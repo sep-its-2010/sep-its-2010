@@ -41,9 +41,6 @@ public class PuckRejectHandler extends Handler {
   public boolean handleRequest(IRequest request) {
     if (request.getKind().equals(MessageType.RESPONSE_REJECT)) {
       Puck robot = executor.getRobot();
-      synchronized(robot) {
-      ConquestLog.addMessage(this, "Puck --> "+ robot.getName() + ": Rejected");
-      }
       return true;
     } else {
       return super.handleRequest(request);

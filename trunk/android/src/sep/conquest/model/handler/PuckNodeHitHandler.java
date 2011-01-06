@@ -55,9 +55,6 @@ public class PuckNodeHitHandler extends Handler {
 			RobotStatus statusOfRobot = robot.getRobotStatus()
 					.get(hitNodeReq.getSender());
 			
-	    ConquestLog.addMessage(this, "Puck --> "+ robot.getName() + ": Hit Node");
-
-			
 			// Get the actual position of the robot to add the node in the map
 			int[] bufferPosition = statusOfRobot.getPosition();
 			// Get the orientation of the robot to add the node in the map

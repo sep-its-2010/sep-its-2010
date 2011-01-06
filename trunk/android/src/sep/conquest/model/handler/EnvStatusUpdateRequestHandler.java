@@ -49,7 +49,7 @@ public class EnvStatusUpdateRequestHandler extends Handler {
 							update.getExploredNodes(request.getSender())+1);
 				}
 			}
-			env.notifyObservers();
+			env.notifyObservers(update);
 			return true;
 		}
 	}

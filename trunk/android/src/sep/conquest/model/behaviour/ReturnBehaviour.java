@@ -4,6 +4,8 @@ import java.util.Map;
 
 import sep.conquest.model.Puck;
 import sep.conquest.model.State;
+import sep.conquest.util.ConquestLog;
+import sep.conquest.util.Utility;
 
 /**
  * ReturnBehaviour represents a behaviour for robots that have to return to
@@ -29,14 +31,15 @@ public final class ReturnBehaviour extends Behaviour {
      * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
      */
     public boolean execute(Map<Integer, Integer> map, Puck robot) {
+  
+		if (robot.isMessageExpected())
+			return false;	    	
     	
     	boolean changed = super.execute(map, robot);
     	
     	if (map.isEmpty()) {
     		map.put(LocalLocalizeBehaviour.startPositions.get(robot.getID()), 1);
     		changed = true;
-    	} else{
-    		robot.changeBehaviour(State.EXPLORE);
     	}
     	
         return changed;
