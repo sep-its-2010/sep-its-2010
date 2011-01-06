@@ -46,7 +46,6 @@ public class SimLEDHandler extends Handler {
    */
   @Override
   public boolean handleRequest(IRequest request) {
-
     // Check if Handler is responsible for handling led request messages.
     // In this case, write ok message to output buffer of simulator.
     // Otherwise call next handler in chain or return false, if there is no next
@@ -60,6 +59,8 @@ public class SimLEDHandler extends Handler {
       response[Puck.TYPE_FIRST_BYTE] = (byte) (Puck.RES_OK & 0xFF);
       response[Puck.TYPE_SECOND_BYTE] = (byte) ((Puck.RES_OK >> 8) & 0xFF);
       sim.writeBuffer(sender, response);
+      
+      // Finally remove request message from input buffer.
       sim.clearRequest(sender);
       return true;
     } else {

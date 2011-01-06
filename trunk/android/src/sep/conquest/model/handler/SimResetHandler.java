@@ -66,6 +66,8 @@ public class SimResetHandler extends Handler {
       response[Puck.TYPE_FIRST_BYTE] = (byte) (Puck.RES_OK & 0xFF);
       response[Puck.TYPE_SECOND_BYTE] = (byte) ((Puck.RES_OK >> 8) & 0xFF);
       sim.writeBuffer(sender, response);
+      
+      // Finally remove request from input buffer.
       sim.clearRequest(sender);
       return true;
     } else {

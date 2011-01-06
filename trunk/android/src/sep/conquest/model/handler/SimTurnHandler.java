@@ -79,6 +79,8 @@ public class SimTurnHandler extends Handler {
       
       // Write message to output buffer and clear input buffer.
       sim.writeBuffer(sender, response);
+      
+      // Finally remove request from input buffer.
       sim.clearRequest(sender);
       return true;
     } else {

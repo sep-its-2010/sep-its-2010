@@ -61,7 +61,6 @@ public class SimMoveHandler extends Handler {
 
       // Start movement.
       sim.moveRobot(sender);
-
       return true;
     } else {
       return super.handleRequest(request);

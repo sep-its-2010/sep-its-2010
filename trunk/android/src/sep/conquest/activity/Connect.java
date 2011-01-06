@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import sep.conquest.R;
 import sep.conquest.controller.Controller;
+import sep.conquest.model.Puck;
 import sep.conquest.model.PuckFactory;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -55,12 +56,12 @@ public final class Connect extends Activity {
   private final int REQUEST_ENABLE_BLUETOOTH = 0;
 
   /**
-   * Identifies messages that indicate, that connecting has been successful.
+   * Identifies messages indicating, that connecting has been successful.
    */
   private static final String CONNECTION_SUCCESSFUL = "ConnectionSuccessful";
 
   /**
-   * Identifies messages that indicate, that opening a certain connection has
+   * Identifies messages indicating, that opening a certain connection has
    * failed.
    */
   private static final String CONNECTION_ERROR = "ConnectionError";
@@ -98,11 +99,6 @@ public final class Connect extends Activity {
   private ArrayAdapter<String> robotList;
 
   /**
-   * Starts new search for available Bluetooth devices.
-   */
-  private Button btnSearch;
-
-  /**
    * Displays the discovered devices.
    */
   private ListView lsRobots;
@@ -123,6 +119,7 @@ public final class Connect extends Activity {
    *          Bundle of state information, saved when Activity was executed
    *          before.
    */
+  @Override
   public void onCreate(Bundle savedInstanceState) {
     // Call constructor of super class
     super.onCreate(savedInstanceState);
@@ -147,6 +144,7 @@ public final class Connect extends Activity {
   /**
    * Registers the BroadcastReceiver when Activity comes into foreground.
    */
+  @Override
   public void onResume() {
     super.onResume();
     Controller.getInstance().destroy();
@@ -156,8 +154,15 @@ public final class Connect extends Activity {
   /**
    * Unregisters the BroadcastReceiver when Activity goes to background.
    */
+  @Override
   public void onPause() {
+    bluetoothAdapter.cancelDiscovery();
     unregisterReceiver(bcReceiver);
+    
+    // If Activity is paused during Bluetooth search dismiss dialog.
+    if (pDialog != null) {
+      pDialog.dismiss();
+    }
     super.onPause();
   }
 
@@ -172,21 +177,22 @@ public final class Connect extends Activity {
    * @param data
    *          Intent message containing extra data.
    */
+  @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
     if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
       if (resultCode == RESULT_CANCELED) {
         displayMessage(getString(R.string.ERR_MSG_BLUETOOTH_NOT_ENABLED), false);
       }
     }
   }
-  
+
   /**
    * Sets the menu of the Activity.
    * 
    * @param menu
    *          Reference on menu that has to be set.
    */
+  @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.connect_menu, menu);
@@ -199,12 +205,12 @@ public final class Connect extends Activity {
    * @param item
    *          The MenuItem that has been selected.
    */
+  @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     // Intent message to start other Activities.
     Intent start = new Intent();
 
     switch (item.getItemId()) {
-
     // If "Connect" has been chosen, check if no robot is selected. In this
     // case display a hint message. Otherwise start connecting to robots
     // one by one.
@@ -213,15 +219,15 @@ public final class Connect extends Activity {
     case R.id.mnuStart:
 
       if (selectedRobots.size() > 0) {
-        
-        if (bluetoothAdapter.isEnabled()) {
-        pDialog = ProgressDialog.show(Connect.this,
-            getString(R.string.TXT_CONNECTING),
-            getString(R.string.MSG_CONNECTING), true);
 
-        // Start Thread that opens connections
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(new ConnectionThread(selectedRobots.values()));
+        if (bluetoothAdapter.isEnabled()) {
+          pDialog = ProgressDialog.show(Connect.this,
+              getString(R.string.TXT_CONNECTING),
+              getString(R.string.MSG_CONNECTING), true);
+
+          // Start Thread that opens connections
+          ExecutorService executor = Executors.newSingleThreadExecutor();
+          executor.execute(new ConnectionThread(selectedRobots.values()));
         } else {
           enableBluetooth();
         }
@@ -245,13 +251,13 @@ public final class Connect extends Activity {
       start.putExtra(ImportMode.class.toString(), ImportMode.IMPORT_MAP);
       startActivity(start);
       break;
-      
+
     case R.id.mnuDebug:
-        start.putExtra(MapMode.class.toString(), MapMode.SIMULATION);
-        start.setComponent(new ComponentName(getApplicationContext()
-            .getPackageName(), Map.class.getName()));
-        startActivity(start);
-        break;
+      start.putExtra(MapMode.class.toString(), MapMode.EXPLORATION);
+      start.setComponent(new ComponentName(getApplicationContext()
+          .getPackageName(), Map.class.getName()));
+      startActivity(start);
+      break;
 
     }
     return true;
@@ -261,14 +267,76 @@ public final class Connect extends Activity {
    * Initializes control elements of the activity and sets EventListeners.
    */
   private void initializeControlElements() {
-
     // Get reference on "Search"-Button and set OnClickListener
-    btnSearch = (Button) findViewById(R.id.btnSearch);
-    btnSearch.setOnClickListener(new ConnectOnClickListener());
+    Button btnSearch = (Button) findViewById(R.id.btnSearch);
+    btnSearch.setOnClickListener(new OnClickListener() {
+
+      /**
+       * Called when registered button receives OnClick-Event.
+       * 
+       * @param view
+       *          View that has been clicked.
+       */
+      public void onClick(View v) {
+        int viewId = v.getId();
+
+        switch (viewId) {
+        // If btnSearch has been clicked, check, if Bluetooth is enabled.
+        // If not, start Bluetooth enable activity, otherwise clear all
+        // fields and start searching
+        case R.id.btnSearch:
+          if (!bluetoothAdapter.isEnabled()) {
+            enableBluetooth();
+          } else {
+            bluetoothAdapter.cancelDiscovery();
+            discoveredRobots.clear();
+            robotList.clear();
+            selectedRobots.clear();
+            pDialog = ProgressDialog.show(Connect.this,
+                getString(R.string.TXT_SEARCHING),
+                getString(R.string.MSG_SEARCHING), true);
+            bluetoothAdapter.startDiscovery();
+          }
+        }
+      }
+    });
 
     // Get reference on ListView and set OnItemClickListener
     lsRobots = (ListView) findViewById(R.id.lsRobots);
-    lsRobots.setOnItemClickListener(new ConnectOnItemClickListener());
+    lsRobots.setOnItemClickListener(new OnItemClickListener() {
+
+      /**
+       * Handles clicks on items of ListView containing the discovered robots.
+       * 
+       * If an item is selected, its text color changes and the robot is added
+       * or removed from the set of selected robots.
+       * 
+       * @param parent
+       *          AdapterView containing the list item.
+       * @param view
+       *          List item that has been clicked.
+       * @param position
+       *          Position of the list item within the AdapterView.
+       */
+      public void onItemClick(AdapterView<?> parent, View view, int position,
+          long id) {
+        TextView txtDevice = (TextView) view;
+        String deviceName = txtDevice.getText().toString();
+        Resources res = getResources();
+
+        if (selectedRobots.containsKey(deviceName)) {
+          // Remove device from selected devices and display its list entry in
+          // red.
+          selectedRobots.remove(deviceName);
+          txtDevice.setTextColor(res.getColor(R.color.list_item_not_selected));
+        } else {
+          // Add device to selected devices and display its list entry in
+          // green.
+          selectedRobots.put(deviceName, discoveredRobots.get(deviceName));
+          txtDevice.setTextColor(res.getColor(R.color.list_item_selected));
+        }
+      }
+    });
 
     // Initialize ArrayAdapter holding data for ListView
     robotList = new ArrayAdapter<String>(this, R.layout.list_item);
@@ -279,7 +347,6 @@ public final class Connect extends Activity {
    * the Android system.
    */
   private void initializeBroadcastReceiver() {
-
     // Instantiate BroadcastReceiver
     bcReceiver = new BluetoothBroadcastReceiver();
 
@@ -296,6 +363,7 @@ public final class Connect extends Activity {
    * Bluetooth.
    */
   private void initializeBluetooth() {
+    // Get reference on BluetoothAdapter of the device.
     bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
     // If bluetoothAdapter equals null then smartphone does not support
@@ -304,6 +372,7 @@ public final class Connect extends Activity {
     // Otherwise check, if Bluetooth is enabled.
     if (bluetoothAdapter == null) {
       displayMessage(getString(R.string.ERR_MSG_BLUETOOTH_NOT_SUPPORTED), true);
+      Button btnSearch = (Button) findViewById(R.id.btnSearch);
       btnSearch.setEnabled(false);
     } else if (!bluetoothAdapter.isEnabled()) {
       enableBluetooth();
@@ -325,27 +394,34 @@ public final class Connect extends Activity {
    * 
    * @param message
    *          The message to display.
+   * @param isError
+   *          True if message should be displayed as an error message, false
+   *          otherwise.
    */
   private void displayMessage(final String message, final boolean isError) {
+    // Get new DialogBuilder.
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setMessage(message);
     builder.setCancelable(false);
-    
+
+    // If message is an error message set error icon and error title.
+    // Otherwise set warning icon and warning title.
     if (isError) {
-    	builder.setTitle(getString(R.string.ERR_TITLE_ERROR));
-    	builder.setIcon(R.drawable.err_error);
+      builder.setTitle(getString(R.string.ERR_TITLE_ERROR));
+      builder.setIcon(R.drawable.err_error);
     } else {
-    	builder.setTitle(getString(R.string.ERR_TITLE_WARNING));
-    	builder.setIcon(R.drawable.err_warning);
+      builder.setTitle(getString(R.string.ERR_TITLE_WARNING));
+      builder.setIcon(R.drawable.err_warning);
     }
-    
+
+    // Add button to the dialog.
     builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-      
+
       public void onClick(final DialogInterface dialog, final int which) {
         dialog.dismiss();
-        
       }
     });
+    // Create and show dialog.
     AlertDialog alert = builder.create();
     alert.show();
   }
@@ -363,7 +439,7 @@ public final class Connect extends Activity {
     /**
      * Pattern that Bluetooth names of discovered devices have to match
      */
-    private Pattern ePuckName = Pattern.compile("e-puck_\\d\\d\\d\\d");
+    private final Pattern ePuckName = Pattern.compile("e-puck_\\d\\d\\d\\d");
 
     /**
      * Called when class receives broadcast message.
@@ -405,82 +481,8 @@ public final class Connect extends Activity {
       } else if (CONNECTION_ERROR.equals(action)) {
         pDialog.dismiss();
         String deviceName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
-        displayMessage("Connection to " + deviceName + " not successful esthablished", true);
-      }
-    }
-  }
-
-  /**
-   * Handles clicks on items of ListView.
-   * 
-   * @author Andreas Poxrucker
-   */
-  private final class ConnectOnItemClickListener implements OnItemClickListener {
-
-    /**
-     * Handles clicks on items of ListView containing the discovered robots.
-     * 
-     * If an item is selected, its text color changes and the robot is added or
-     * removed from the set of selected robots.
-     * 
-     * @param parent
-     *          AdapterView containing the list item.
-     * @param view
-     *          List item that has been clicked.
-     * @param position
-     *          Position of the list item within the AdapterView.
-     */
-    public void onItemClick(AdapterView<?> parent, View view, int position,
-        long id) {
-      TextView txtDevice = (TextView) view;
-      String deviceName = txtDevice.getText().toString();
-      Resources res = getResources();
-
-      if (selectedRobots.containsKey(deviceName)) {
-        selectedRobots.remove(deviceName);
-        txtDevice.setTextColor(res.getColor(R.color.list_item_not_selected));
-      } else {
-        selectedRobots.put(deviceName, discoveredRobots.get(deviceName));
-        txtDevice.setTextColor(res.getColor(R.color.list_item_selected));
-      }
-    }
-  }
-
-  /**
-   * Handles click events on control elements of the Activity.
-   * 
-   * @author Andreas Poxrucker
-   * 
-   */
-  private final class ConnectOnClickListener implements OnClickListener {
-
-    /**
-     * Called when registered button receives OnClick-Event.
-     * 
-     * @param view
-     *          View that has been clicked.
-     */
-    public void onClick(View v) {
-      int viewId = v.getId();
-
-      switch (viewId) {
-
-      // If btnSearch has been clicked, check, if Bluetooth is enabled.
-      // If not, start Bluetooth enable activity, otherwise clear all
-      // fields and start searching
-      case R.id.btnSearch:
-        if (!bluetoothAdapter.isEnabled()) {
-          enableBluetooth();
-        } else {
-          bluetoothAdapter.cancelDiscovery();
-          discoveredRobots.clear();
-          robotList.clear();
-          selectedRobots.clear();
-          pDialog = ProgressDialog.show(Connect.this,
-              getString(R.string.TXT_SEARCHING),
-              getString(R.string.MSG_SEARCHING), true);
-          bluetoothAdapter.startDiscovery();
-        }
+        displayMessage("Connection to " + deviceName
+            + " not successful esthablished", true);
       }
     }
   }
@@ -489,11 +491,11 @@ public final class Connect extends Activity {
    * Opens Bluetooth connection for each device that has been passed in the
    * Constructor.
    * 
-   * If all connections are established, it initiates the creation of the 
+   * If all connections are established, it initiates the creation of the
    * RealPuck instances.
    * 
-   * If an error occurs during connecting, all connections that have been
-   * opened so far are closed and Thread returns error message.
+   * If an error occurs during connecting, all connections that have been opened
+   * so far are closed and Thread returns error message.
    * 
    * @author Andreas Poxrucker
    * 
@@ -503,13 +505,13 @@ public final class Connect extends Activity {
     /**
      * Standard UUID used to connect to standard Bluetooth modules.
      */
-    private UUID STD_UUID = UUID
+    private final UUID STD_UUID = UUID
         .fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     /**
      * Devices that should be connected.
      */
-    Collection<BluetoothDevice> devices;
+    private Collection<BluetoothDevice> devices;
 
     /**
      * Constructor.
@@ -539,10 +541,17 @@ public final class Connect extends Activity {
           // Open RFCommSocket with standard UUID.
           BluetoothSocket socket = device
               .createRfcommSocketToServiceRecord(STD_UUID);
+
+          // Try to connect socket.
           socket.connect();
+
+          // Once connected, wait until ok message from e-puck is received.
+          waitForOkMessage(socket);
+
+          // Add socket
           sockets.add(socket);
         } catch (IOException connectException) {
-          
+
           // If IOException occurs during opening RfCommSocket, cancel all
           // connections that have been opened so far and send error message.
           for (BluetoothSocket socket : sockets) {
@@ -558,12 +567,43 @@ public final class Connect extends Activity {
           return;
         }
       }
-
-      // When all sockets are connected properly create RealPuckInstances
-      // and send success message
+      // When all sockets are connected properly create RealPuck instances.
       PuckFactory.createRealPucks(sockets);
-	    intent.setAction(CONNECTION_SUCCESSFUL);
-      sendBroadcast(intent); 
+
+      // Send connection successful message.
+      intent.setAction(CONNECTION_SUCCESSFUL);
+      sendBroadcast(intent);
+    }
+
+    /**
+     * Reads bytes from a connected BluetoothSocket until ok message is
+     * received.
+     * 
+     * @param socket
+     *          An already connected BluetoothSocket.
+     * @throws IOException
+     *           Exception that may occur during reading from input stream.
+     */
+    private void waitForOkMessage(BluetoothSocket socket) throws IOException {
+      // Number of received bytes.
+      int numberOfBytesReceived = 0;
+
+      // Input buffer to read from stream.
+      byte[] buffer = new byte[Puck.MSG_LENGTH];
+
+      // Keep reading until 32 bytes have been read.
+      while (numberOfBytesReceived < Puck.MSG_LENGTH) {
+        numberOfBytesReceived = socket.getInputStream().read(buffer,
+            numberOfBytesReceived, Puck.MSG_LENGTH - numberOfBytesReceived);
+      }
+
+      // Check type code of message (must be ok)
+      short typeCode = (short) ((buffer[Puck.TYPE_SECOND_BYTE] << 8) & 0xFF | 
+          buffer[Puck.TYPE_FIRST_BYTE] & 0xFF);
+      
+      if (typeCode != Puck.RES_OK) {
+        throw new IOException("Illegal type code received.");
+      }
     }
   }
 }

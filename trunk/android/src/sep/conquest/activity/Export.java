@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import sep.conquest.R;
 import sep.conquest.controller.Controller;
-import sep.conquest.model.Environment;
 import sep.conquest.model.GridMap;
 import sep.conquest.model.MapFileHandler;
 import android.app.Activity;
@@ -30,11 +29,6 @@ import android.widget.AdapterView.OnItemClickListener;
  * 
  */
 public class Export extends Activity {
-
-  /**
-   * The EditText element where filename can be entered.
-   */
-  private EditText etxtFilename;
 
   /**
    * Displays previous saved maps from the file system.
@@ -77,26 +71,24 @@ public class Export extends Activity {
        *          View that has been clicked.
        */
       public void onClick(View v) {
+        // Get filename of the text box
+        EditText etxtFilename = (EditText) findViewById(R.id.etxtFilename);
         String filename = etxtFilename.getText().toString();
 
         // Get map from environment
-        Environment env = Controller.getInstance().getEnv();
-        GridMap map = env.getMap();
+        GridMap map = Controller.getInstance().getEnv().getMap();
 
         try {
           if (MapFileHandler.saveMap(map, filename)) {
-            displayMessage(getString(R.string.MSG_SUCCESSFULLY_SAVED), false);
             finish();
           } else {
             displayMessage(getString(R.string.ERR_MSG_NOT_SUCCESSFULLY_SAVED), true);
           }
         } catch (IOException e) {
-          displayMessage("Error", true);
+          displayMessage(getString(R.string.ERR_MSG_NOT_SUCCESSFULLY_SAVED), true);
         }
       }
     });
-
-    etxtFilename = (EditText) findViewById(R.id.etxtFilename);
 
     // Get reference on ListView to display map files from the file system.
     lsMaps = (ListView) findViewById(R.id.lsMaps);
@@ -118,6 +110,7 @@ public class Export extends Activity {
           long id) {
         TextView txt = (TextView) view;
         String filename = txt.getText().toString();
+        EditText etxtFilename = (EditText) findViewById(R.id.etxtFilename);
         etxtFilename.setText(filename);
       }
     });
@@ -133,28 +126,38 @@ public class Export extends Activity {
   }
 
   /**
-   * Displays a message in a dialog box.
+   * Displays a message on top of the Activity.
    * 
    * @param message
    *          The message to display.
    * @param isError
-   *          Indicates, whether message should be displayed as error.
+   *          True if message should be displayed as an error message, false
+   *          otherwise.
    */
-  private void displayMessage(String message, boolean isError) {
+  private void displayMessage(final String message, final boolean isError) {
+    // Get new DialogBuilder.
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setMessage(message);
     builder.setCancelable(false);
-    builder.setNeutralButton(getString(R.string.TXT_OK),
-        new DialogInterface.OnClickListener() {
 
-          /**
-           * Handles click on "ok" button of dialog
-           * Simply closes the dialog.
-           */
-          public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-          }
-        });
+    // If message is an error message set error icon and error title.
+    // Otherwise set warning icon and warning title.
+    if (isError) {
+      builder.setTitle(getString(R.string.ERR_TITLE_ERROR));
+      builder.setIcon(R.drawable.err_error);
+    } else {
+      builder.setTitle(getString(R.string.ERR_TITLE_WARNING));
+      builder.setIcon(R.drawable.err_warning);
+    }
+
+    // Add button to the dialog.
+    builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+
+      public void onClick(final DialogInterface dialog, final int which) {
+        dialog.dismiss();
+      }
+    });
+    // Create and show dialog.
     AlertDialog alert = builder.create();
     alert.show();
   }

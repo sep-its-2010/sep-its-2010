@@ -57,6 +57,7 @@ public class Import extends Activity {
    *          Bundle of state information, saved when Activity was executed
    *          before.
    */
+  @Override
   public void onCreate(Bundle savedInstanceState) {
     // Call constructor of super class
     super.onCreate(savedInstanceState);
@@ -118,6 +119,7 @@ public class Import extends Activity {
    * @param menu
    *          Reference on menu that has to be set.
    */
+  @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.import_menu, menu);
@@ -130,6 +132,7 @@ public class Import extends Activity {
    * @param item
    *          The MenuItem that has been selected.
    */
+  @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == R.id.mnuOpen) {
       if (selectedMap != null) {
@@ -201,27 +204,38 @@ public class Import extends Activity {
   }
 
   /**
-   * Displays a message in a dialog box.
+   * Displays a message on top of the Activity.
    * 
    * @param message
    *          The message to display.
    * @param isError
-   *          Indicates, whether message should be displayed as error.
+   *          True if message should be displayed as an error message, false
+   *          otherwise.
    */
-  private void displayMessage(String message, boolean isError) {
+  private void displayMessage(final String message, final boolean isError) {
+    // Get new DialogBuilder.
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setMessage(message);
     builder.setCancelable(false);
-    builder.setNeutralButton(getString(R.string.TXT_OK),
-        new DialogInterface.OnClickListener() {
 
-          /**
-           * Handles click on "ok" button of dialog Simply closes the dialog.
-           */
-          public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-          }
-        });
+    // If message is an error message set error icon and error title.
+    // Otherwise set warning icon and warning title.
+    if (isError) {
+      builder.setTitle(getString(R.string.ERR_TITLE_ERROR));
+      builder.setIcon(R.drawable.err_error);
+    } else {
+      builder.setTitle(getString(R.string.ERR_TITLE_WARNING));
+      builder.setIcon(R.drawable.err_warning);
+    }
+
+    // Add button to the dialog.
+    builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+
+      public void onClick(final DialogInterface dialog, final int which) {
+        dialog.dismiss();
+      }
+    });
+    // Create and show dialog.
     AlertDialog alert = builder.create();
     alert.show();
   }

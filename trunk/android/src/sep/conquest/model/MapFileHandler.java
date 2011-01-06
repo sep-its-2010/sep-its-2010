@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.os.Environment;
@@ -28,7 +27,7 @@ import android.os.Environment;
  * @author Andreas Poxrucker
  * 
  */
-public class MapFileHandler {
+public final class MapFileHandler {
 
   /**
    * The path where the maps will be saved.
@@ -238,7 +237,6 @@ public class MapFileHandler {
    */
   public static boolean saveMap(GridMap map, String filename)
       throws IOException {
-
     // Check, if parameter are not equal to null.
     if ((map != null) && (filename != null)) {
 
@@ -366,11 +364,7 @@ public class MapFileHandler {
    * @return True, if name of file is valid, false otherwise.
    */
   public static boolean isValidMapFilename(String filename) {
-    // Get matcher for regular expression.
-    Matcher m1 = MAP_FILE_NAME_FORMAT.matcher(filename);
-
-    // True, if m1 matches.
-    return m1.matches();
+    return MAP_FILE_NAME_FORMAT.matcher(filename).matches();
   }
 
   /**
@@ -383,11 +377,7 @@ public class MapFileHandler {
    * @return True, if name of file is valid, false otherwise.
    */
   public static boolean isValidSimFilename(String filename) {
-    // Get matcher for regular expression.
-    Matcher m1 = SIM_FILE_NAME_FORMAT.matcher(filename);
-
-    // True, if m1 matches.
-    return m1.matches();
+    return SIM_FILE_NAME_FORMAT.matcher(filename).matches();
   }
 
   /**

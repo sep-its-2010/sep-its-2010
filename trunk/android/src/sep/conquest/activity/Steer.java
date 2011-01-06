@@ -1,23 +1,26 @@
 package sep.conquest.activity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.UUID;
 
 import sep.conquest.R;
 import sep.conquest.controller.Controller;
 import sep.conquest.model.ConquestUpdate;
 import sep.conquest.model.RobotStatus;
+import sep.conquest.model.State;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -27,7 +30,6 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
@@ -39,6 +41,16 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
  * 
  */
 public class Steer extends Activity implements Observer {
+
+  /**
+   * The "none" entry is currently selected in the robot spinner.
+   */
+  private static final int NO_SELECTION = -1;
+
+  /**
+   * Used to identify update message for the handler.
+   */
+  private static final int UPDATE_MESSAGE = 0;
 
   /**
    * Shows selected control method.
@@ -86,11 +98,6 @@ public class Steer extends Activity implements Observer {
   private SensorEventListener accListener;
 
   /**
-   * Interface between model (Environment) and the Activity.
-   */
-  private Controller controller;
-
-  /**
    * The currently selected control.
    */
   private Control selectedControl;
@@ -98,17 +105,22 @@ public class Steer extends Activity implements Observer {
   /**
    * The currently selected Robot.
    */
-  private UUID selectedRobot;
+  private int selectedRobot;
 
   /**
-   * Mapping of names from spinner to ids of robots.
+   * The ids of the robots..
    */
-  private UUID[] robots;
+  private ArrayList<UUID> robots;
 
   /**
-   * Indicates that drive command has been send to selected robot.
+   * The moving state of the robots.
    */
-  private boolean moving;
+  private ArrayList<Boolean> moving;
+
+  /**
+   * Used to update the View from update-method.
+   */
+  private Handler updateHandler;
 
   /**
    * Called when Activity is initially created.
@@ -121,29 +133,52 @@ public class Steer extends Activity implements Observer {
    *          before.
    */
   public void onCreate(Bundle savedInstanceState) {
-
-    // Call constructor of super class
+    // Call constructor of super class.
     super.onCreate(savedInstanceState);
 
-    // Set layout of Activity
+    // Set layout of Activity.
     setContentView(R.layout.steer_main);
 
-    // Set up SensorManager and acceleration sensor
+    // Set up SensorManager and acceleration sensor.
     initializeSensorControl();
 
-    // Get references on control elements and set EventListener
+    // Get references on control elements and set EventListener.
     initializeControlElements();
 
-    // Get reference on Controller
-    controller = Controller.getInstance();
-
-    // Initially selected control is joystick
+    // Initially selected control is joystick.
     selectedControl = Control.JOYSTICK;
+
+    // Initially there is no robot selected.
+    selectedRobot = NO_SELECTION;
+
+    // Initially there are no robots registered.
+    robots = new ArrayList<UUID>();
+
+    // Consequently there is no moving state.
+    moving = new ArrayList<Boolean>();
+
+    /* Initialize message handler to deal with update messages.
+    updateHandler = new Handler() {
+
+      public void handleMessage(Message msg) {
+        if (msg.what == UPDATE_MESSAGE) {
+          Bundle news = msg.getData();
+          // ArrayAdapter<String> adp = new ArrayAdapter<String>(this,
+          // android.R.layout.simple_spinner_item, names);
+          // adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        }
+      }
+    };*/
   }
 
+  /**
+   * Called when Activity comes back to foreground. Registers Activity at the
+   * Environment and reactivates sensor control (if last selected).
+   */
+  @Override
   public void onResume() {
     super.onResume();
-    controller.getEnv().addObserver(this);
+    Controller.getInstance().getEnv().addObserver(this);
 
     // If sensor control is selected, register sensor listener.
     if (selectedControl == Control.ACC_SENSOR) {
@@ -152,8 +187,13 @@ public class Steer extends Activity implements Observer {
     }
   }
 
+  /**
+   * Called when Activity goes to background. Unregisters Activity at the
+   * Environment and unregisters the SensorEvent Listener.
+   */
+  @Override
   public void onPause() {
-    controller.getEnv().deleteObserver(this);
+    Controller.getInstance().getEnv().deleteObserver(this);
 
     // If there is an active sensor listener (sensor control is enabled),
     // unregister it.
@@ -172,30 +212,51 @@ public class Steer extends Activity implements Observer {
    * @param data
    *          Attached data containing information about changes.
    */
-  public void update(Observable observable, Object data) {
+  public synchronized void update(Observable observable, Object data) {
     // Cast data object.
     ConquestUpdate update = (ConquestUpdate) data;
 
-    // Get RobotStates and the keyset.
+    // Get states of robots from update container.
+    // Container always contains all robots, even those that have entered
+    // error state.
     java.util.Map<UUID, RobotStatus> states = update.getRobotStatus();
-    Set<UUID> ids = states.keySet();
 
-    robots = new UUID[ids.size()];
+    synchronized (states) {
+      // Used to index entries in array lists in the following iteration.
+      int i = 0;
 
-    ArrayAdapter<String> adpRobots = new ArrayAdapter<String>(this,
-        android.R.layout.simple_spinner_item);
-    adpRobots
-        .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+      // Iterate over all RobotStates of the update container and check them.
+      for (UUID id : states.keySet()) {
+        RobotStatus status = states.get(id);
 
-    int i = 0;
-    for (UUID id : ids) {
-      String name = states.get(id).getState().toString();
-      adpRobots.add(name);
-      robots[i] = id;
-      i++;
+        if (!robots.contains(id)) {
+          if (status.getState() != State.ERROR) {
+            // If id is not known and corresponding robot is not in error state,
+            // add new id and moving state.
+            robots.add(id);
+            moving.add(Boolean.valueOf(status.isMoving()));
+          }
+        } else {
+          // If id is known but robot has entered error state, remove id.
+          if (status.getState() == State.ERROR) {
+            robots.remove(i);
+            moving.remove(i);
+
+            // Update selectedRobot index.
+            if (i < selectedRobot) {
+              selectedRobot--;
+            } else if (i == selectedRobot) {
+              selectedRobot = NO_SELECTION;
+            }
+          } else {
+            // If id is known and robot has not entered error state, update
+            // moving state.
+            moving.set(i, Boolean.valueOf(status.isMoving()));
+          }
+        }
+        i++;
+      }
     }
-    adpRobots.add("none");
-    spRobots.setAdapter(adpRobots);
   }
 
   /**
@@ -213,10 +274,11 @@ public class Steer extends Activity implements Observer {
     // Check, if device has at least one acc sensor. If not, sensor control
     // is not possible.
     if (sensList.size() > 0) {
+      // Choose first acceleration sensor if device has several.
       accSensor = sensList.get(0);
-      accListener = new SteerSensorEventListener();
+      accListener = new SensorControl();
     } else {
-      displayMessage("Your device does not have an acceleration sensor.");
+      displayMessage(getString(R.string.ERR_MSG_NO_ACC_SENSOR), true);
       sensMan = null;
     }
   }
@@ -225,45 +287,81 @@ public class Steer extends Activity implements Observer {
    * Initializes control elements of the Activity and sets EventListener.
    */
   private void initializeControlElements() {
-    CheckBox chkActivate = (CheckBox) findViewById(R.id.chkActivate);
-    chkActivate.setOnCheckedChangeListener(new SteerOnCheckedChangeListener());
+    // Set listener for CheckBox that enables/disables manual control.
+    final CheckBox chkActivate = (CheckBox) findViewById(R.id.chkActivate);
+    chkActivate.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-    // Get references on Buttons and set their OnClickListener
-    OnClickListener listener = new SteerOnClickListener();
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        // If a robot is currently selected, set its controlled state and enable
+        // currently selected control.
+        if (selectedRobot != NO_SELECTION) {
+          Controller.getInstance().setControlled(robots.get(selectedRobot),
+              isChecked);
+
+          // Enable/Disable currently selected control.
+          enableSelectedControl(isChecked);
+
+          // Enable/Disable control elements.
+          enableControlElements(isChecked);
+        }
+      }
+    });
+    // Create listener to react to user clicks on control buttons.
+    OnClickListener btnListener = new JoystickControl();
+
+    // Get references on control buttons and set OnClickListener.
     btnUp = (Button) findViewById(R.id.btn_up);
-    btnUp.setOnClickListener(listener);
+    btnUp.setOnClickListener(btnListener);
     btnDown = (Button) findViewById(R.id.btn_down);
-    btnDown.setOnClickListener(listener);
+    btnDown.setOnClickListener(btnListener);
     btnLeft = (Button) findViewById(R.id.btn_left);
-    btnLeft.setOnClickListener(listener);
+    btnLeft.setOnClickListener(btnListener);
     btnRight = (Button) findViewById(R.id.btn_right);
-    btnRight.setOnClickListener(listener);
+    btnRight.setOnClickListener(btnListener);
 
-    // Get reference on robot selection Spinner and set its
+    // Get reference on robot selection Spinner and set its listener.
     spRobots = (Spinner) findViewById(R.id.spRobots);
+
+    // Saves the available robots and is used to display them in the robot
+    // spinner.
+    ArrayAdapter<String> adpRobots = new ArrayAdapter<String>(this,
+        android.R.layout.simple_spinner_item);
+    adpRobots.add(getString(R.string.TXT_NO_SELECTION));
+    adpRobots
+        .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    spRobots.setAdapter(adpRobots);
     spRobots.setOnItemSelectedListener(new OnItemSelectedListener() {
 
       public void onItemSelected(AdapterView<?> parent, View view,
           int position, long id) {
-        TextView item = (TextView) view;
+        // If same item is selected again then there is nothing to do.
+        if (selectedRobot != position) {
+          TextView item = (TextView) view;
 
-        if (item.getText().equals("none")) {
-          selectedRobot = null;
-        } else {
-          selectedRobot = robots[position];
+          // Save position of last selected entry. As the first entry is
+          // "none", save position - 1
+          selectedRobot = position - 1;
+
+          // Uncheck CheckBox every time a new robot is selected.
+          chkActivate.setChecked(false);
+
+          // If item "none" is selected, disable CheckBox.
+          chkActivate.setEnabled(item.getText().equals(
+              getString(R.string.TXT_NO_SELECTION)));
         }
-
       }
 
       public void onNothingSelected(AdapterView<?> parent) {
-        // TODO Auto-generated method stub
-
+        // Method not implemented.
       }
-
     });
 
+    // Get reference on spinner displaying the controls.
+    spControl = (Spinner) findViewById(R.id.spControl);
+
     // Contains the available controls.
-    String[] controls = { "On-Screen-Joystick", "Acceleration sensor" };
+    String[] controls = { getString(R.string.CONTROL_JOYSTICK),
+        getString(R.string.CONTROL_ACC_SENSOR) };
 
     // Saves the available controls and is used to display them in the control
     // spinner.
@@ -271,23 +369,26 @@ public class Steer extends Activity implements Observer {
         android.R.layout.simple_spinner_item, controls);
     adpControl
         .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    spControl = (Spinner) findViewById(R.id.spControl);
     spControl.setAdapter(adpControl);
     spControl.setOnItemSelectedListener(new OnItemSelectedListener() {
 
       public void onItemSelected(AdapterView<?> parent, View view,
           int position, long id) {
-        // The position of the selected item is the ordinal of the corresponding
-        // Control enum.
-        selectedControl = Control.values()[position];
+        switch (position) {
+        case 0:
+          selectedControl = Control.JOYSTICK;
+          break;
+        case 1:
+          selectedControl = Control.ACC_SENSOR;
+          break;
+        }
+        enableSelectedControl(true);
       }
 
       public void onNothingSelected(AdapterView<?> arg0) {
-        // TODO Auto-generated method stub
-
+        // Method not implemented.
       }
     });
-
     // Disable all steer control elements in the beginning.
     enableControlElements(false);
   }
@@ -297,19 +398,54 @@ public class Steer extends Activity implements Observer {
    * 
    * @param message
    *          The message to display.
+   * @param isError
+   *          True if message should be displayed as an error message, false
+   *          otherwise.
    */
-  private void displayMessage(String message) {
-    Toast mtoast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
-    mtoast.setGravity(Gravity.CENTER, 0, 0);
-    mtoast.show();
+  private void displayMessage(final String message, final boolean isError) {
+    // Get new DialogBuilder.
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setMessage(message);
+    builder.setCancelable(false);
+
+    // If message is an error message set error icon and error title.
+    // Otherwise set warning icon and warning title.
+    if (isError) {
+      builder.setTitle(getString(R.string.ERR_TITLE_ERROR));
+      builder.setIcon(R.drawable.err_error);
+    } else {
+      builder.setTitle(getString(R.string.ERR_TITLE_WARNING));
+      builder.setIcon(R.drawable.err_warning);
+    }
+
+    // Add button to the dialog.
+    builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+
+      public void onClick(final DialogInterface dialog, final int which) {
+        dialog.dismiss();
+      }
+    });
+    // Create and show dialog.
+    AlertDialog alert = builder.create();
+    alert.show();
   }
 
+  /**
+   * Enables or disables the control elements used to control a robot.
+   * 
+   * @param enable
+   *          True to enable control elements, false otherwise.
+   */
   private void enableControlElements(boolean enable) {
     btnUp.setEnabled(enable);
     btnDown.setEnabled(enable);
     btnLeft.setEnabled(enable);
     btnRight.setEnabled(enable);
 
+    // If smartphone does not have an acceleration sensor then control selection
+    // spinner is always disabled.
+    // Otherwise, state of control selection spinner depends on state of control
+    // activate check box.
     TextView txtControl = (TextView) findViewById(R.id.txtControl);
     if (sensMan != null) {
       spControl.setEnabled(enable);
@@ -321,15 +457,72 @@ public class Steer extends Activity implements Observer {
   }
 
   /**
+   * Enables or disables the currently selected control.
+   * 
+   * @param isEnabled
+   *          True to enable currently selected control, false otherwise.
+   */
+  private void enableSelectedControl(boolean isEnabled) {
+    // If control should be enabled, determine which type of control is
+    // currently selected and enable/disable it.
+    // Otherwise disable all control means.
+    if (isEnabled) {
+      switch (selectedControl) {
+      case JOYSTICK:
+        // Set Buttons clickable.
+        btnUp.setClickable(true);
+        btnDown.setClickable(true);
+        btnRight.setClickable(true);
+        btnLeft.setClickable(true);
+
+        // Remove SensorEventListener.
+        sensMan.unregisterListener(accListener);
+        break;
+      case ACC_SENSOR:
+        // Set Buttons not clickable.
+        btnUp.setClickable(false);
+        btnDown.setClickable(false);
+        btnRight.setClickable(false);
+        btnLeft.setClickable(false);
+
+        // Register SensorEventListener.
+        sensMan.registerListener(accListener, accSensor,
+            SensorManager.SENSOR_DELAY_NORMAL);
+        break;
+      }
+    } else {
+      // Remove OnClickListener for Buttons.
+      btnUp.setClickable(false);
+      btnDown.setClickable(false);
+      btnRight.setClickable(false);
+      btnLeft.setClickable(false);
+
+      // Remove SensorEventListener.
+      sensMan.unregisterListener(accListener);
+    }
+  }
+
+  /**
    * Listens for changing data of the acceleration sensor. Computes the
-   * orientation of the smartphone and extracts control commands. If manual
-   * control via sensor control is activated, the direction commands are passed
-   * to the Controller.
+   * orientation of the smartphone and extracts control commands.
+   * 
+   * If Listener is active, a valid robot is selected and the robot is not
+   * currently moving then command is passed to the Controller.
    * 
    * @author Andreas Poxrucker
    * 
    */
-  private final class SteerSensorEventListener implements SensorEventListener {
+  private final class SensorControl implements SensorEventListener {
+
+    /**
+     * Minimal value to register commands in x direction.
+     */
+    private static final int THRESHOLD_X = 3;
+
+    /**
+     * Minimal value to register commands in y direction.
+     */
+    private static final int THRESHOLD_Y = 2;
 
     /**
      * Method is not implemented.
@@ -349,63 +542,43 @@ public class Steer extends Activity implements Observer {
      */
     public void onSensorChanged(SensorEvent event) {
       if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-        float x = event.values[0];
-        float y = event.values[1];
-        float hyp = (float) Math.sqrt(x * x + y * y);
-        float acos = (float) Math.acos((float) x / hyp);
+        // If a robot is selected and not moving, pass control command to
+        // Controller.
+        if (selectedRobot != NO_SELECTION && !moving.get(selectedRobot)) {
+          float x = event.values[0];
+          float y = event.values[1];
+          float hyp = (float) Math.sqrt(x * x + y * y);
+          float acos = (float) Math.acos((float) x / hyp);
 
-        if (Math.abs(x) > 3 || Math.abs(y) > 2) {
-          if (acos < Math.PI / 4.0) {
-
-          } else if (Math.PI / 4.0 < acos && acos <= 3.0 * Math.PI / 4.0
-              && y < 0) {
-            // Action
-          } else if (Math.PI / 4.0 < acos && acos <= 3.0 * Math.PI / 4.0
-              && y >= 0) {
-            // Action
-          } else if (acos > 3.0 * Math.PI / 4.0) {
-            // Action
+          if (Math.abs(x) > THRESHOLD_X || Math.abs(y) > THRESHOLD_Y) {
+            if (acos < Math.PI / 4.0) {
+              // Action
+            } else if (Math.PI / 4.0 < acos && acos <= 3.0 * Math.PI / 4.0
+                && y < 0) {
+              // Action
+            } else if (Math.PI / 4.0 < acos && acos <= 3.0 * Math.PI / 4.0
+                && y >= 0) {
+              // Action
+            } else if (acos > 3.0 * Math.PI / 4.0) {
+              // Action
+            } else {
+              // Action
+            }
           }
+          moving.set(selectedRobot, Boolean.TRUE);
         }
       }
     }
   }
 
   /**
-   * Handles CheckChangedEvents of control elements of the Activity.
+   * Handles click events on steer control elements and passes the corresponding
+   * drive command to the Controller.
    * 
    * @author Andreas Poxrucker
    * 
    */
-  private final class SteerOnCheckedChangeListener implements
-      OnCheckedChangeListener {
-
-    /**
-     * Called when registered checkbox receives OnCheckedChanged-Event.
-     * 
-     * @param buttonview
-     *          View whose checked state has changed.
-     * @param isChecked
-     *          True, if buttonView is checked, false otherwise.
-     */
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-      enableControlElements(isChecked);
-
-      if (isChecked) {
-
-      } else {
-
-      }
-    }
-  }
-
-  /**
-   * Handles click events on control elements of the Activity.
-   * 
-   * @author Andreas Poxrucker
-   * 
-   */
-  private final class SteerOnClickListener implements OnClickListener {
+  private final class JoystickControl implements OnClickListener {
 
     /**
      * Called when registered button receives OnClick-Event.
@@ -416,30 +589,30 @@ public class Steer extends Activity implements Observer {
     public void onClick(View v) {
       // If a robot is selected and not moving, pass control command to
       // Controller.
-      if ((selectedRobot != null) && !moving) {
+      if (selectedRobot != NO_SELECTION && !moving.get(selectedRobot)) {
         int id = v.getId();
         switch (id) {
         // Button 'Up'
         case R.id.btn_up:
-          controller.forward(selectedRobot);
+          Controller.getInstance().forward(robots.get(selectedRobot));
           break;
 
         // Button 'Down'
         case R.id.btn_down:
-          controller.turn(selectedRobot);
+          Controller.getInstance().turn(robots.get(selectedRobot));
           break;
 
         // Button 'Left'
         case R.id.btn_left:
-          controller.left(selectedRobot);
+          Controller.getInstance().left(robots.get(selectedRobot));
           break;
 
         // Button 'Right'
         case R.id.btn_right:
-          controller.right(selectedRobot);
+          Controller.getInstance().right(robots.get(selectedRobot));
           break;
         }
-        moving = true;
+        moving.set(selectedRobot, Boolean.TRUE);
       }
     }
   }
