@@ -1,25 +1,55 @@
 #include "common.h"
 
+#include "com.h"
 #include "hal_adc.h"
-#include "sen_prox.h"
+#include "hal_i2c.h"
 #include "hal_led.h"
 #include "hal_motors.h"
-#include "hal_sel.h"
 #include "hal_rtc.h"
-#include "hal_i2c.h"
+#include "hal_sel.h"
 #include "hal_uart1.h"
-#include "com.h"
-
+#include "sen_line.h"
+#include "sen_prox.h"
 #include "subs.h"
-#include "subs_abyss.h"
-#include "subs_calibration.h"
-#include "subs_collision.h"
-#include "subs_line.h"
-#include "subs_movement.h"
-#include "subs_node.h"
 
 #include "conquest.h"
 
+
+/*!
+ * \brief
+ * Specifies the baud rate of the primary UART.
+ * 
+ * The primary UART is used for communicating with the bluetooth module.
+ * Thus, the baud rate needs to match the baud rate of the bluetooth module.
+ * 
+ * \see
+ * UART1_BAUDRATE_DIVISOR
+ */
+#define UART1_BAUDRATE 115200
+
+
+/*!
+ * \brief
+ * Specifies the baud rate divisor of the primary UART.
+ * 
+ * The calculation is based on the formula of the dsPIC30F6014A data sheet.
+ * It requires that \c FCY and \c UART1_BAUDRATE are defined correctly.
+ * 
+ * \see
+ * main | hal_uart1_configure
+ */
+#define UART1_BAUDRATE_DIVISOR (uint16_t)( FCY / ( 16 * UART1_BAUDRATE) - 1)
+
+
+enum {
+	UART1_TX_BUFFER_SIZE = 128, ///< Specifies the amount of transmitter buffer space in bytes.
+	UART1_RX_BUFFER_SIZE = 128, ///< Specifies the amount of receiver buffer space in bytes.
+	ACCELERATION_FREQUENCY = 10, ///< Specifies the acceleration event frequency in Hz.
+	RTC_FREQENCY = 1000, ///< Specifies the real time clock frequency in Hz.
+	SUBS_FREQUENCY = 100, ///< Specifies the subsumption layer frequency in Hz.
+	BLINK_FREQUENCY = 2, ///< Specifies the toggle frequency of the blink event.
+	I2C_DIVISOR = 150 ///< Specifies the baud rate divisor for the hal_i2c module.
+};
 
 
 /*!
@@ -79,37 +109,29 @@ int main( void) {
 	ringbuf_init( hal_uart1_getTxRingBuffer(), s_aui8TxBufferSpace, sizeof( s_aui8TxBufferSpace));
 	hal_uart1_configure( HAL_UART_CONFIG__8N1, UART1_BAUDRATE_DIVISOR);
 	hal_uart1_enable( true, NULL);
-
-	hal_i2c_init( 150, true);
-
-	// Real time clock with 1kHz
-	hal_rtc_init( FCY / 256 / 1000);
-
-	// Acceleration with 10Hz (fRTC / 100)
-	hal_motors_init( 100);
-
 	com_init( NULL);
-	com_register( cbDemoMessageHandler);
 
+	hal_i2c_init( I2C_DIVISOR, true);
+
+	hal_rtc_init( FCY / 256 / RTC_FREQENCY);
+
+	hal_motors_init( RTC_FREQENCY / ACCELERATION_FREQUENCY);
+
+	// Proximity sensors with 1kHz cycles
 	sen_prox_init( 1);
 	sen_prox_enable();
 
+	// Perform a default calibration which does not transform the raw data at all.
+ 	const sen_line_SData_t podDefaultBlackLevel = { { SEN_LINE_NOMINAL_BLACK_LEVEL } };
+ 	const sen_line_SData_t podDefaultWhiteLevel = { { SEN_LINE_NOMINAL_WHITE_LEVEL } };
+ 	sen_line_calibrate( &podDefaultBlackLevel, &podDefaultWhiteLevel);
+
 	subs_init();
-	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
-	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
-// 	subs_register( subs_collision_run, subs_collision_reset, 0xDF);
-// 	subs_register( subs_movement_run, subs_movement_reset, 0xCF);
-//	subs_register( subs_node_run, subs_node_reset, 0xBF);
- 	subs_register( subs_line_run, subs_line_reset, 0xAF);
+	conquest_init();
 	subs_reset();
 
-//	conquest_init();
-
-//	hal_motors_setSpeed( 1000, 0);
-//	hal_motors_setSpeedLeft( 1000);
-
-	hal_rtc_register( cbSubsumptionEvent, 10, true);
-	hal_rtc_register( cbBlinker, 500, true);
+	hal_rtc_register( cbSubsumptionEvent, RTC_FREQENCY / SUBS_FREQUENCY, true);
+	hal_rtc_register( cbBlinker, RTC_FREQENCY / BLINK_FREQUENCY, true);
 
 	for( ;;) {
 		com_processIncoming();

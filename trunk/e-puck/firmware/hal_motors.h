@@ -34,7 +34,7 @@ enum {
 	HAL_MOTORS_RIGHT_DATA_OFFSET = 4, ///< Port data offset of the right motor.
 	HAL_MOTORS_MAX_ABS_SPEED = 1000, ///< Maximal absolute step motor speed in steps per second.
 	HAL_MOTORS_TIMER_PRESCALER = 3, ///< Specifies a prescaler of /256 for timer 4 and timer 5.
-	HAL_MOTORS_FULL_TURN_STEPS = 1300 ///< Specifies the amount of steps required to turn by 360° when the motors drive in opposite directions.
+	HAL_MOTORS_FULL_TURN_STEPS = 1320 ///< Specifies the amount of steps required to turn by 360° when the motors drive in opposite directions.
 };
 
 

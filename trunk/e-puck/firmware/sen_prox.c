@@ -93,7 +93,7 @@ void cbMeasurement(
 
 	switch( s_ePhase) {
 		case PAHSE__AMBIENT: {
-			for( uint16_t ui16 = 0; ui16 < SEN_PROX_SENSORS; ui16++) {
+			for( uint16_t ui16 = 0; ui16 < SEN_PROX_NUM_SENSORS; ui16++) {
 				s_podAmbient.aui8Data[ui16] = hal_adc_read( HAL_ADC_CHANNEL__IR_1 + ui16) >> 4;
 			}
 			SEN_PROX_PIN__PULSE_IR15 = true;

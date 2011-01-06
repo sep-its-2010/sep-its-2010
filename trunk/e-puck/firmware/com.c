@@ -211,12 +211,11 @@ bool com_register(
 
 	if( _fnHandler) {
 		bool blExists = false;
-		uint16_t ui16NextFree = 0;
-		for( uint16_t ui16 = 0; ui16 < COM_MAX_HANDLERS; ui16++) {
+		uint16_t ui16NextFree = COM_MAX_HANDLERS;
+		for( uint16_t ui16 = 0; !blExists && ui16 < COM_MAX_HANDLERS; ui16++) {
 			if( s_afnHandlers[ui16] == _fnHandler) {
 				blExists = true;
-			}
-			if( ui16NextFree == COM_MAX_HANDLERS && !s_afnHandlers[ui16]) {
+			} else if( ui16NextFree == COM_MAX_HANDLERS && !s_afnHandlers[ui16]) {
 				ui16NextFree = ui16;
 			}
 		}

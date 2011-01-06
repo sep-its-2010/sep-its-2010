@@ -4,31 +4,35 @@
 #include "hal_rtc.h"
 #include "hal_motors.h"
 #include "hal_led.h"
+#include "hal_uart1.h"
 #include "com.h"
 #include "sen_line.h"
 #include "sen_prox.h"
-#include "subs_node.h"
-#include "subs_abyss.h"
-#include "subs_collision.h"
+
 #include "subs.h"
-#include "hal_uart1.h"
+#include "subs.h"
+#include "subs_abyss.h"
+#include "subs_calibration.h"
+#include "subs_collision.h"
+#include "subs_initial.h"
+#include "subs_line.h"
+#include "subs_movement.h"
+#include "subs_node.h"
 
 #include "conquest.h"
 
-volatile EType_t conquest_eLastNodeType = TYPE__INVALID;
 
-static const EType_t s_aaeMap[DIM_X][DIM_Y] = {
-	{ TYPE__DOWN_RIGHT, TYPE__UP_T,		TYPE__UP_T,		TYPE__UP_T,		TYPE__DOWN_LEFT },
-	{ TYPE__LEFT_T,		TYPE__CROSS,	TYPE__DOWN_T,	TYPE__CROSS,	TYPE__RIGHT_T },
-	{ TYPE__LEFT_T,		TYPE__RIGHT_T,	TYPE__INVALID,	TYPE__LEFT_T,	TYPE__RIGHT_T },
-	{ TYPE__LEFT_T,		TYPE__CROSS,	TYPE__UP_T,		TYPE__CROSS,	TYPE__RIGHT_T },
-	{ TYPE__UP_RIGHT,	TYPE__DOWN_T,	TYPE__DOWN_T,	TYPE__DOWN_T,	TYPE__UP_LEFT }
+enum {
+	SYS_UP_TIME_STATUS_OFFSET = 0,
+	ABYSS_STATUS_OFFSET = SYS_UP_TIME_STATUS_OFFSET + sizeof( uint32_t),
+	COLLISION_STATUS_OFFSET = ABYSS_STATUS_OFFSET + SEN_LINE_NUM_SENSORS,
+	LAST_NODE_STATUS_OFFSET = COLLISION_STATUS_OFFSET + SEN_PROX_NUM_SENSORS
 };
 
-static EDirection_t s_eDirection = DIRECTION_UP;
-volatile uint16_t conquest_ui16Speed = INITIAL_SPEED;
-static uint16_t s_ui16PosX = INITIAL_POS_X;
-static uint16_t s_ui16PosY = INITIAL_POS_Y;
+volatile conquest_EState_t conquest_eMoveRequest = CONQUEST_STATE__STOP;
+volatile conquest_ENode_t conquest_eLastNodeType = CONQUEST_NODE__INVALID;
+volatile uint16_t conquest_ui16Speed = CONQUEST_INITIAL_SPEED;
+
 
 static bool cbHandleRequestStatus(
 	IN const com_SMessage_t* const _lppodMessage
@@ -39,231 +43,80 @@ static bool cbHandleRequestReset(
 static bool cbHandleRequestSetLED(
 	IN const com_SMessage_t* const _lppodMessage
 	);
-
-
-static EType_t calculateRelativeNodeType( 
-	IN const EType_t _eNodeType,
-	IN const EDirection_t _eDirection
+static bool cbHandleRequestSetSpeed(
+	IN const com_SMessage_t* const _lppodMessage
 	);
-
-
-EType_t calculateRelativeNodeType(
-	IN const EType_t _eNodeType,
-	IN const EDirection_t _eDirection
-	) {
-
-	EType_t eNode = _eNodeType;
-
-	if( _eDirection != DIRECTION_UP) {
-
-		// Rotate possible moving directions
-		uint16_t ui16RawDirections = _eNodeType & 0xFF;
-		if( _eDirection == DIRECTION_RIGHT) {
-			ui16RawDirections <<= 6;
-			ui16RawDirections |= ui16RawDirections >> 8;
-		} else if( _eDirection == DIRECTION_DOWN) {
-			ui16RawDirections <<= 4;
-			ui16RawDirections |= ui16RawDirections >> 8;
-		} else if( _eDirection == DIRECTION_LEFT) {
-			ui16RawDirections <<= 2;
-			ui16RawDirections |= ui16RawDirections >> 8;
-		}
-
-		eNode = conquest_convertDirMaskToNode( ui16RawDirections);
-	}
-
-	return eNode;
-}
-
+static bool cbHandleRequestMove(
+	IN const com_SMessage_t* const _lppodMessage
+	);
+static bool cbHandleRequestTurn(
+	IN const com_SMessage_t* const _lppodMessage
+	);
 
 void conquest_init( void) {
 
 	com_register( cbHandleRequestStatus);
 	com_register( cbHandleRequestReset);
 	com_register( cbHandleRequestSetLED);
+	com_register( cbHandleRequestSetSpeed);
+	com_register( cbHandleRequestTurn);
+	com_register( cbHandleRequestMove);
+
+	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
+//	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
+	subs_register( subs_initial_run, subs_initial_reset, 0xE5);
+// 	subs_register( subs_collision_run, subs_collision_reset, 0xDF);
+ 	subs_register( subs_movement_run, subs_movement_reset, 0xCF);
+	subs_register( subs_node_run, subs_node_reset, 0xBF);
+ 	subs_register( subs_line_run, subs_line_reset, 0xAF);
 }
 
 
-bool cbDemoMessageHandler(
-	IN const com_SMessage_t* _lppodMessage
-	) {
-
-	bool blAccepted = true;
-	switch( _lppodMessage->ui16Type) {
-		case CONQUEST_MESSAGE_TYPE__REQUEST_RESET: {
-			s_eDirection = DIRECTION_UP;
-			conquest_ui16Speed = INITIAL_SPEED;
-			s_ui16PosX = INITIAL_POS_X;
-			s_ui16PosY = INITIAL_POS_Y;
-			hal_led_switchOff( TYPE__CROSS & 0xFF);
-			hal_motors_setSpeed( 0, 0);
-
-			com_SMessage_t podResponse;
-			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
-			com_send( &podResponse);
-			break;
-		}
-		case CONQUEST_MESSAGE_TYPE__REQUEST_STATUS: {
-			com_SMessage_t podResponse;
-			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_STATUS;
-			uint32_t ui32UpTime = hal_rtc_getSystemUpTime();
-			memcpy( podResponse.aui8Data, &ui32UpTime, sizeof( ui32UpTime));
-			memset( &podResponse.aui8Data[4], 0, 3 + 8);
-			const EType_t eType = calculateRelativeNodeType( s_aaeMap[s_ui16PosY][s_ui16PosX], s_eDirection);
-			podResponse.aui8Data[15] = eType >> 8;
-			hal_led_set( eType & 0xFF);
-			com_send( &podResponse);
-			break;
-		}
-		case CONQUEST_MESSAGE_TYPE__REQUEST_TURN: {
-			if( _lppodMessage->aui8Data[0]) {
-				int16_t i16NewDir = ( ( ( (int8_t)_lppodMessage->aui8Data[0]) % 4) + 4) % 4;
-				if( s_eDirection == DIRECTION_LEFT) {
-					i16NewDir += 3;
-				} else if( s_eDirection == DIRECTION_RIGHT) {
-					i16NewDir++;
-				} else if( s_eDirection == DIRECTION_DOWN) {
-					i16NewDir += 2;
-				}
-				i16NewDir %= 4;
-				if( !i16NewDir) {
-					s_eDirection = DIRECTION_UP;
-				} else if( i16NewDir == 1) {
-					s_eDirection = DIRECTION_RIGHT;
-				} else if( i16NewDir == 2) {
-					s_eDirection = DIRECTION_DOWN;
-				// i16NewDir == 3
-				} else {
-					s_eDirection = DIRECTION_LEFT;
-				}
-
-				for( uint16_t ui16 = 0; ui16 < abs( ( (int8_t)_lppodMessage->aui8Data[0]) % 4); ui16++) {
-					hal_motors_setSpeed( 0, (int8_t)_lppodMessage->aui8Data[0] < 0 ? -conquest_ui16Speed : conquest_ui16Speed);
-					hal_motors_setSteps( 0);
-					while( hal_motors_getStepsLeft() < ( HAL_MOTORS_FULL_TURN_STEPS / 4) && 
-						hal_motors_getStepsRight() < ( HAL_MOTORS_FULL_TURN_STEPS / 4))
-						;
-					hal_motors_setSpeed( 0, 0);
-				}
-			}
-
-			hal_led_set( calculateRelativeNodeType( s_aaeMap[s_ui16PosY][s_ui16PosX], s_eDirection) & 0xFF);
-
-			com_SMessage_t podResponse;
-			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
-			com_send( &podResponse);
-			break;
-		}
-		case CONQUEST_MESSAGE_TYPE__REQUEST_MOVE: {
-			com_SMessage_t podResponse;
-			if( s_aaeMap[s_ui16PosY][s_ui16PosX] & s_eDirection) {
-				if( s_eDirection == DIRECTION_UP) {
-					s_ui16PosY--;
-				} else if( s_eDirection == DIRECTION_RIGHT) {
-					s_ui16PosX++;
-				} else if( s_eDirection == DIRECTION_DOWN) {
-					s_ui16PosY++;
-
-				// s_eDirection == DIRECTION_LEFT
-				} else {
-					s_ui16PosX--;
-				}
-
-//				hal_motors_setSpeed( conquest_ui16Speed, 0);
-				hal_motors_accelerate( 200, 200, conquest_ui16Speed, conquest_ui16Speed);
-
-				hal_motors_setSteps( 0);
-				while( hal_motors_getStepsLeft() < FOWARD_STEPS && hal_motors_getStepsRight() < FOWARD_STEPS)
-					;
-
-//				hal_motors_setSpeed( 0, 0);
-				hal_motors_accelerate( 200, 200, 0, 0);
-				while( hal_motors_getSpeedLeft() && hal_motors_getSpeedRight())
-					;
-
-				podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE;
-				const EType_t eType = calculateRelativeNodeType( s_aaeMap[s_ui16PosY][s_ui16PosX], s_eDirection);
-				podResponse.aui8Data[0] = eType >> 8;
-				podResponse.aui8Data[1] = false;
-				hal_led_set( eType & 0xFF);
-			} else {
-				podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_REJECTED;
-			}
-			com_send( &podResponse);
-			break;
-		}
-		case CONQUEST_MESSAGE_TYPE__REQUEST_SET_SPEED: {
-			com_SMessage_t podResponse;
-			if( _lppodMessage->aui8Data[0] <= 100) {
-				conquest_ui16Speed = 10 * _lppodMessage->aui8Data[0];
-				podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
-			} else {
-				podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_REJECTED;
-			}
-			com_send( &podResponse);
-			break;
-		}
-		case CONQUEST_MESSAGE_TYPE__REQUEST_SET_LED: {
-			hal_led_set( _lppodMessage->aui8Data[0] | ( _lppodMessage->aui8Data[1] << 8));
-			com_SMessage_t podResponse;
-			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
-			com_send( &podResponse);
-			break;
-		}
-		default: {
-			blAccepted = false;
-		}
-	}
-
-	return blAccepted;
-}
-
-
-EType_t conquest_convertDirMaskToNode(
+conquest_ENode_t conquest_convertDirMaskToNode(
 	IN const uint16_t _ui16DirectionMask
 	) {
 
-	EType_t eNodeType = TYPE__INVALID;
+	conquest_ENode_t eNodeType;
 
 	switch( _ui16DirectionMask & 0xFF) {
-		case DIRECTION_LEFT | DIRECTION_DOWN | DIRECTION_RIGHT: {
-			eNodeType = TYPE__UP_T;
+		case CONQUEST_DIRECTION__LEFT | CONQUEST_DIRECTION__DOWN | CONQUEST_DIRECTION__RIGHT: {
+			eNodeType = CONQUEST_NODE__UP_T;
 			break;
 		}
-		case DIRECTION_UP | DIRECTION_DOWN | DIRECTION_RIGHT: {
-			eNodeType = TYPE__LEFT_T;
+		case CONQUEST_DIRECTION__UP | CONQUEST_DIRECTION__DOWN | CONQUEST_DIRECTION__RIGHT: {
+			eNodeType = CONQUEST_NODE__LEFT_T;
 			break;
 		}
-		case DIRECTION_UP | DIRECTION_LEFT | DIRECTION_RIGHT: {
-			eNodeType = TYPE__DOWN_T;
+		case CONQUEST_DIRECTION__UP | CONQUEST_DIRECTION__LEFT | CONQUEST_DIRECTION__RIGHT: {
+			eNodeType = CONQUEST_NODE__DOWN_T;
 			break;
 		}
-		case DIRECTION_UP | DIRECTION_LEFT | DIRECTION_DOWN: {
-			eNodeType = TYPE__RIGHT_T;
+		case CONQUEST_DIRECTION__UP | CONQUEST_DIRECTION__LEFT | CONQUEST_DIRECTION__DOWN: {
+			eNodeType = CONQUEST_NODE__RIGHT_T;
 			break;
 		}
-		case DIRECTION_UP | DIRECTION_LEFT: {
-			eNodeType = TYPE__UP_LEFT;
+		case CONQUEST_DIRECTION__UP | CONQUEST_DIRECTION__LEFT: {
+			eNodeType = CONQUEST_NODE__UP_LEFT;
 			break;
 		}
-		case DIRECTION_UP | DIRECTION_RIGHT: {
-			eNodeType = TYPE__UP_RIGHT;
+		case CONQUEST_DIRECTION__UP | CONQUEST_DIRECTION__RIGHT: {
+			eNodeType = CONQUEST_NODE__UP_RIGHT;
 			break;
 		}
-		case DIRECTION_LEFT | DIRECTION_DOWN: {
-			eNodeType = TYPE__DOWN_LEFT;
+		case CONQUEST_DIRECTION__LEFT | CONQUEST_DIRECTION__DOWN: {
+			eNodeType = CONQUEST_NODE__DOWN_LEFT;
 			break;
 		}
-		case DIRECTION_DOWN | DIRECTION_RIGHT: {
-			eNodeType = TYPE__DOWN_RIGHT;
+		case CONQUEST_DIRECTION__DOWN | CONQUEST_DIRECTION__RIGHT: {
+			eNodeType = CONQUEST_NODE__DOWN_RIGHT;
 			break;
 		}
-		case DIRECTION_UP | DIRECTION_LEFT | DIRECTION_DOWN | DIRECTION_RIGHT: {
-			eNodeType = TYPE__CROSS;
+		case CONQUEST_DIRECTION__UP | CONQUEST_DIRECTION__LEFT | CONQUEST_DIRECTION__DOWN | CONQUEST_DIRECTION__RIGHT: {
+			eNodeType = CONQUEST_NODE__CROSS;
 			break;
 		}
 		default: {
-
+			eNodeType = CONQUEST_NODE__INVALID;
 		}
 	}
 
@@ -294,43 +147,46 @@ bool cbHandleRequestStatus(
 	bool blHandledMessage = false;
 
 	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_STATUS) {
-		com_SMessage_t podStatusResponse = { CONQUEST_MESSAGE_TYPE__RESPONSE_STATUS, { 0 } };
+		com_SMessage_t podResponse;
+		podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_STATUS;
 
-		// record system up-time in little endian format
+		// System up-time in little endian format
 		uint32_t ui32UpTime = hal_rtc_getSystemUpTime();
-		memcpy( podStatusResponse.aui8Data, &ui32UpTime, sizeof( ui32UpTime));
-		memset( &podStatusResponse.aui8Data[4], 0, 3 + 8);
+		memcpy( &podResponse.aui8Data[SYS_UP_TIME_STATUS_OFFSET], &ui32UpTime, sizeof( ui32UpTime));
 
-		// record abyss status
-		sen_line_SData_t podSensorData;
-		sen_line_read( &podSensorData);
-		sen_line_rescale( &podSensorData, &podSensorData);
+		// Abyss status
+		sen_line_SData_t podLine;
+		sen_line_read( &podLine);
+		sen_line_rescale( &podLine, &podLine);
+		podResponse.aui8Data[ABYSS_STATUS_OFFSET + SEN_LINE_SENSOR__LEFT] = podLine.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD;
+		podResponse.aui8Data[ABYSS_STATUS_OFFSET + SEN_LINE_SENSOR__MIDDLE] = podLine.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD;
+		podResponse.aui8Data[ABYSS_STATUS_OFFSET + SEN_LINE_SENSOR__RIGHT] = podLine.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD;
 
-		podStatusResponse.aui8Data[3 + SEN_LINE_SENSOR__LEFT] = podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD;
-		podStatusResponse.aui8Data[3 + SEN_LINE_SENSOR__MIDDLE] = podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD;
-		podStatusResponse.aui8Data[3 + SEN_LINE_SENSOR__RIGHT] = podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD;
-
-		// record collision status
+		// Collision status
 		sen_prox_SData_t podProxSensorData;
 		sen_prox_getCurrent( &podProxSensorData);
-
-		for( uint8_t i = 0; i < sizeof( podProxSensorData.aui8Data); i++) {
-			if( podProxSensorData.aui8Data[i] > SUBS_COLLISION__PROX_THRESHOLD) {
-				podStatusResponse.aui8Data[7 + i] = true;
-			}
+		for( uint16_t ui16 = 0; ui16 < SEN_PROX_NUM_SENSORS; ui16++) {
+			podResponse.aui8Data[COLLISION_STATUS_OFFSET + ui16] = podProxSensorData.aui8Data[ui16] > SUBS_COLLISION_THRESHOLD;
 		}
 
-		// record last visited node-type
-		podStatusResponse.aui8Data[15] = subs_node_getCurrentNodeType();
+		// Last visited node-type
+		if( conquest_getLastNode() == CONQUEST_NODE__INVALID) {
+			conquest_setState( CONQUEST_STATE__IDENTIFY_NODE);
 
-		com_send( &podStatusResponse);
-		hal_led_switchOn(1);
+			// Wait for subs_initial to finish
+			while( conquest_getState() == CONQUEST_STATE__IDENTIFY_NODE)
+				;
+		}
+		podResponse.aui8Data[LAST_NODE_STATUS_OFFSET] = conquest_getLastNode() >> 8;
+
+		com_send( &podResponse);
 
 		blHandledMessage = true;
 	}
 
 	return blHandledMessage;
 }
+
 
 /*!
  * \brief
@@ -354,17 +210,23 @@ bool cbHandleRequestReset(
 
 	bool blHandledMessage = false;
 
-	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_STATUS) {
+	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_RESET) {
 		subs_reset();
-		hal_led_set( 0);
+		hal_motors_setSpeed( 0, 0);
+		hal_motors_setSteps( 0);
+		conquest_setLastNode( CONQUEST_NODE__INVALID);
+		conquest_setRequestedLineSpeed( CONQUEST_INITIAL_SPEED);
+		conquest_setState( CONQUEST_STATE__STOP);
 
-		const com_SMessage_t podResponseOk = { CONQUEST_MESSAGE_TYPE__RESPONSE_OK, { 0 } };
-		com_send( &podResponseOk);
+		com_SMessage_t podResponse;
+		podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
+		com_send( &podResponse);
 		blHandledMessage = true;
 	}
 
 	return blHandledMessage;
 }
+
 
 /*!
  * \brief
@@ -377,7 +239,8 @@ bool cbHandleRequestReset(
  * True, if a message has been handled by this function, false otherwise.
  *
  * Computes the type of the message by analyzing the first and second Byte of the message.
- * If this handler is responsible the LEDs which are specified in the first ten bytes of the message-data will be switched on, all other LEDs will be switched off.
+ * If this handler is responsible the LEDs which are specified in the first ten bytes of the message-data will be switched on,
+ * all other LEDs will be switched off.
  * 
  * \remarks
  * Handler-functions have to be registered during the reset function.
@@ -391,8 +254,151 @@ bool cbHandleRequestSetLED(
 	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_SET_LED) {
 		hal_led_set( _lppodMessage->aui8Data[0] | ( _lppodMessage->aui8Data[1] << 8));
 
-		const com_SMessage_t podResponseOkMessage = { CONQUEST_MESSAGE_TYPE__RESPONSE_OK, { 0 } };
-		com_send( &podResponseOkMessage);
+		com_SMessage_t podResponse;
+		podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
+		com_send( &podResponse);
+
+		blHandledMessage = true;
+	}
+
+	return blHandledMessage;
+}
+
+
+/*!
+ * \brief
+ * Handles setSpeed-requests.
+ * 
+ * \param _lppodMessage
+ * Specifies the message which has to be analyzed.
+ * 
+ * \returns
+ * True, if a message has been handled by this function, false otherwise.
+ *
+ * Computes the type of the message by analyzing the first and second Byte of the message.
+ * If this handler is responsible the first 8 bit of the transmitted data represent an Integer which delivers the new line-speed after it is multiplied with 10.
+ * 
+ * \remarks
+ * Handler-functions have to be registered during the reset function.
+ *
+ * \see
+ * cbHandleRequestMove | cbHandleRequestTurn | cbHandleRequestSetLED
+ */
+bool cbHandleRequestSetSpeed(
+	IN const com_SMessage_t* const _lppodMessage
+	) {
+
+	bool blHandledMessage = false;
+
+	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_SET_SPEED) {
+		com_SMessage_t podResponse;
+		if( _lppodMessage->aui8Data[0] <= 100) {
+			conquest_setRequestedLineSpeed( 10 * _lppodMessage->aui8Data[0]);
+			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
+		} else {
+			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_REJECTED;
+		}
+		com_send( &podResponse);
+
+		blHandledMessage = true;
+	}
+
+	return blHandledMessage;
+}
+
+
+/*!
+ * \brief
+ * Handles turn-requests.
+ * 
+ * \param _lppodMessage
+ * Specifies the message which has to be analyzed.
+ * 
+ * \returns
+ * True, if a message has been handled by this function, false otherwise.
+ *
+ * Computes the type of the message by analyzing the first and second Byte of the message.
+ * If this handler is responsible the number of turns is analyzed. Here the first Byte of the transmitted data is a signed Integer.
+ * A positive Integer indicates the number of 90°-turns in clockwise-rotation, negative Integer indicate the number of 90°-turns in counterclockwise-rotation.
+ * 
+ * \remarks
+ * Handler-functions have to be registered during the reset function.
+ * Integers between -2 and 2 are expected.
+ *
+ * \see
+ * cbHandleRequestMove | cbHandleRequestSetSpeed
+ */
+bool cbHandleRequestTurn(
+	IN const com_SMessage_t* const _lppodMessage
+	) {
+
+	bool blHandledMessage = false;
+	
+	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_TURN) {
+		if( conquest_getState() == CONQUEST_STATE__STOP) {
+			if( (int8_t)_lppodMessage->aui8Data[0] > 0) {
+				for( uint16_t ui16 = abs( (int8_t)_lppodMessage->aui8Data[0]); ui16; ui16--) {
+					conquest_setState( CONQUEST_STATE__TURN_RIGHT);
+					while( conquest_getState() != CONQUEST_STATE__STOP)
+						;
+				}
+			} else if( (int8_t)_lppodMessage->aui8Data[0] < 0) {
+				for( uint16_t ui16 = abs( (int8_t)_lppodMessage->aui8Data[0]); ui16; ui16--) {
+					conquest_setState( CONQUEST_STATE__TURN_LEFT);
+					while( conquest_getState() != CONQUEST_STATE__STOP)
+						;
+				}
+			}
+			com_SMessage_t podResponse;
+			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
+			com_send( &podResponse);
+
+		} else {
+			com_SMessage_t podResponse;
+			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_REJECTED;
+			com_send( &podResponse);
+		}
+		blHandledMessage = true;
+	}
+
+	return blHandledMessage;
+}
+
+
+/*!
+ * \brief
+ * Handles move-requests.
+ * 
+ * \param _lppodMessage
+ * Specifies the message which has to be analyzed.
+ * 
+ * \returns
+ * True, if a message has been handled by this function, false otherwise.
+ *
+ * Computes the type of the message by analyzing the first and second Byte of the message.
+ * If this handler is responsible the robot gets the advice to start moving as soon as subs_run is called.
+ * 
+ * \remarks
+ * Handler-functions have to be registered during the reset function.
+ *
+ * \see
+ * cbHandleRequestTurn | cbHandleRequestSetSpeed
+ */
+bool cbHandleRequestMove(
+	IN const com_SMessage_t* const _lppodMessage
+	) {
+
+	bool blHandledMessage = false;
+
+	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_MOVE) {
+		if( conquest_getState() == CONQUEST_STATE__STOP && ( conquest_getLastNode() & CONQUEST_DIRECTION__UP)) {
+			conquest_setState( CONQUEST_STATE__CENTER_AND_MOVE);
+//			hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
+		} else {
+			com_SMessage_t podResponse;
+			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_REJECTED;
+			com_send( &podResponse);
+		}
 		blHandledMessage = true;
 	}
 

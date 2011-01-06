@@ -7,6 +7,7 @@
 #include "hal_nvm.h"
 #include "hal_rtc.h"
 #include "sen_line.h"
+#include "conquest.h"
 
 #include "subs_calibration.h"
 
@@ -125,8 +126,9 @@ void cbInvalidCalibrationBlinker(
  * When no calibration has taken place so far, the calibration values are read from the EEPROM. If these values are invalid, the
  * error visualization event (#cbInvalidCalibrationBlinker()) is activated.
  *
- * When the initial calibration has taken place already and the selector is witched to #SUBS_CALIBRATION_SELECTOR, the measurement
- * routine is entered. This requires that the e-puck is standing on the black level underground with all three line sensors.
+ * When the initial calibration has taken place already, the selector is switched to #SUBS_CALIBRATION_SELECTOR and there is no
+ * move intention (#conquest_getState()), the measurement routine is entered.
+ * This requires that the e-puck is standing on the black level underground with all three line sensors.
  * The line sensors are read and their values are buffered as the new black level. Then the robot drives a specified amount of
  * steps (#SUBS_CALIBRATION_DISTANCE). It is now supposed to stand on the white level underground. Another measurement is taken
  * which is buffered as the new white level. After returning to its point of origin the line sensors are calibrated
@@ -194,7 +196,7 @@ bool subs_calibration_run( void) {
 			break;
 		}
 		case STATE__WAIT: {
-			if( hal_sel_getPosition() == SUBS_CALIBRATION_SELECTOR) {
+			if( hal_sel_getPosition() == SUBS_CALIBRATION_SELECTOR && conquest_getState() == CONQUEST_STATE__STOP) {
 				sen_line_read( &s_podLevels[BLACK_LEVEL]);
 				hal_motors_backupSettings( &s_podSettings);
 				hal_motors_setSpeed( SUBS_CALIBRATION_SPEED, 0);
@@ -229,12 +231,13 @@ bool subs_calibration_run( void) {
  */
 void subs_calibration_reset( void) {
 
-	s_eStatus = STATE__NOT_CALIBRATED;
-	s_ui16ToggleCount = 0;
 	if( s_hBlinkEvent == HAL_RTC_INVALID_HANDLE) {
 		s_hBlinkEvent = hal_rtc_register( cbInvalidCalibrationBlinker, BLINK_INTERVAL, false);
 	} else {
 		hal_rtc_deactivate( s_hBlinkEvent);
 		hal_rtc_reset( s_hBlinkEvent);
 	}
+	s_eStatus = STATE__NOT_CALIBRATED;
+	s_ui16ToggleCount = 0;
+	hal_led_switchOff( BLINK_MASK);
 }

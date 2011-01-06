@@ -47,7 +47,7 @@ static int16_t s_i16DeltaOld = 0;
  * 
  * \remarks
  * - The frame time needs to be constant.
- * - The line speed will never #exceed conquest_getRequestedLineSpeed().
+ * - The line speed will never exceed #conquest_getRequestedLineSpeed().
  *
  * \warning
  * - The line sensors need to be calibrated before (#sen_line_calibrate()).
@@ -58,8 +58,10 @@ static int16_t s_i16DeltaOld = 0;
  */
 bool subs_line_run( void) {	
 
-	uint16_t ui16RequestedLineSpeed = conquest_getRequestedLineSpeed();
-	if( ui16RequestedLineSpeed) {
+	bool blActed = false;
+
+	if( conquest_getState() == CONQUEST_STATE__MOVE_FOWARD ||
+		conquest_getState() == CONQUEST_STATE__CENTER_AND_MOVE) {
 
 		// Get delta left-to-right line sensor
 		sen_line_SData_t podSensorData;
@@ -91,13 +93,17 @@ bool subs_line_run( void) {
 		} else {
 			i16AngularSpeed = (int16_t)( i32PID / 2);
 		}
+
+		uint16_t ui16RequestedLineSpeed = conquest_getState() == CONQUEST_STATE__CENTER_AND_MOVE ? 0 : conquest_getRequestedLineSpeed();
 		if( ui16RequestedLineSpeed + abs( i16AngularSpeed) > HAL_MOTORS_MAX_ABS_SPEED) {
 			ui16RequestedLineSpeed = HAL_MOTORS_MAX_ABS_SPEED - abs( i16AngularSpeed);
 		}
 		hal_motors_setSpeed( ui16RequestedLineSpeed, i16AngularSpeed);
+
+		blActed = true;
 	}
 
-	return ui16RequestedLineSpeed;
+	return blActed;
 }
 
 

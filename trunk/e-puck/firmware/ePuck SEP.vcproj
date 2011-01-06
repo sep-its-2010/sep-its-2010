@@ -213,6 +213,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\subs_initial.c"
+					>
+				</File>
+				<File
 					RelativePath=".\subs_line.c"
 					>
 				</File>
@@ -367,6 +371,10 @@
 				</File>
 				<File
 					RelativePath=".\subs_collision.h"
+					>
+				</File>
+				<File
+					RelativePath=".\subs_initial.h"
 					>
 				</File>
 				<File
