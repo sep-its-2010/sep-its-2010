@@ -39,7 +39,7 @@ hal_motors_SSettings_t hal_motors_podSettings;
  * Holds the handle to the acceleration event.
  * 
  * \remarks
- * The event is registered upon initialization (#hal_motors_init()) will never be unregistered.
+ * The event is registered upon initialization (#hal_motors_init()) and will never be unregistered.
  * 
  * \see
  * hal_motors_accelerate | cbAccalerationEvent
@@ -332,7 +332,7 @@ void cbAccalerationEvent(
  * - \c false: the acceleration event could not be registered (e.g. invalid interval length or no free slot).
  * 
  * Besides port and interrupt management, initialization includes resetting the step counters and setting the motor phases
- * to idle. Each motor timer interrupt priority is initially set to #HAL_INT_PRIORITY__6.
+ * to idle. Each motor timer interrupt priority is initially set to #HAL_INT_PRIORITY__5.
  *
  * \remarks
  * - The real time clock needs to be initialized (#hal_rtc_init()).
@@ -379,12 +379,12 @@ bool hal_motors_init(
 	hal_motors_setPhaseLeft( HAL_MOTORS_PHASE__IDLE);
 	hal_motors_setPhaseRight( HAL_MOTORS_PHASE__IDLE);
 
-	hal_int_setPriority( HAL_INT_SOURCE__TIMER4, HAL_INT_PRIORITY__6);
-	hal_int_setPriority( HAL_INT_SOURCE__TIMER5, HAL_INT_PRIORITY__6);
+	hal_int_setPriority( HAL_INT_SOURCE__TIMER4, HAL_INT_PRIORITY__5);
+	hal_int_setPriority( HAL_INT_SOURCE__TIMER5, HAL_INT_PRIORITY__5);
 	hal_int_enable( HAL_INT_SOURCE__TIMER4);
 	hal_int_enable( HAL_INT_SOURCE__TIMER5);
 
-	return s_hAccelerationEvent == HAL_RTC_INVALID_HANDLE;
+	return s_hAccelerationEvent != HAL_RTC_INVALID_HANDLE;
 }
 
 

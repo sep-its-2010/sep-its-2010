@@ -7,7 +7,7 @@
 
 void hal_adc_init( void);
 
-uint8_t hal_adc_read(
+uint16_t hal_adc_read(
 	IN const hal_adc_EChannel _eChannel
 	);
 

@@ -16,7 +16,7 @@ enum {
 	WHITE_LEVEL = 1, ///< Specifies the local index for the white level calibration values.
 	BLINK_AMOUNT = 6, ///< Specifies the amount of LED blinks when a calibration error occurs.
 	BLINK_MASK = 0xFF, ///< Specifies the LEDs to be toggled when a calibration error occurs.
-	BLINK_INTERVAL = 10 ///< Specifies the blink interval in time units defined by #hal_rtc_init().
+	BLINK_INTERVAL = 100 ///< Specifies the blink interval in time units defined by #hal_rtc_init().
 };
 
 

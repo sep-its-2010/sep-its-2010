@@ -115,7 +115,7 @@ void _U1RXInterrupt( void) {
  * overriding the TRIS and LATCH register bit settings for the corresponding I/O port pins.
  * 
  * The transmission interrupt is set to trigger on an empty hardware buffer with initial priority #HAL_INT_PRIORITY__4.
- * The reception interrupt is set to trigger on a full hardware buffer with initial priority #HAL_INT_PRIORITY__5.
+ * The reception interrupt is set to trigger on a full hardware buffer with initial priority #HAL_INT_PRIORITY__6.
  *
  * The ring buffers must be initialized before with #ringbuf_init().
  * Their context can be retrieved with #hal_uart1_getTxRingBuffer() and #hal_uart1_getRxRingBuffer()
@@ -160,7 +160,7 @@ void hal_uart1_enable(
 	s_fnErrorHandler = _fnOnError;
 
 	hal_int_setPriority( HAL_INT_SOURCE__UART1_TRANSMITTER, HAL_INT_PRIORITY__4);
-	hal_int_setPriority( HAL_INT_SOURCE__UART1_RECEIVER, HAL_INT_PRIORITY__7);
+	hal_int_setPriority( HAL_INT_SOURCE__UART1_RECEIVER, HAL_INT_PRIORITY__6);
 
 	hal_int_enable( HAL_INT_SOURCE__UART1_RECEIVER);
 	if( _blWithTransmitter) {

@@ -15,6 +15,8 @@
 
 #include "conquest.h"
 
+volatile EType_t conquest_eLastNodeType = TYPE__INVALID;
+
 static const EType_t s_aaeMap[DIM_X][DIM_Y] = {
 	{ TYPE__DOWN_RIGHT, TYPE__UP_T,		TYPE__UP_T,		TYPE__UP_T,		TYPE__DOWN_LEFT },
 	{ TYPE__LEFT_T,		TYPE__CROSS,	TYPE__DOWN_T,	TYPE__CROSS,	TYPE__RIGHT_T },
@@ -67,48 +69,7 @@ EType_t calculateRelativeNodeType(
 			ui16RawDirections |= ui16RawDirections >> 8;
 		}
 
-		// Reconstruct node type based on the possible moving directions
-		switch( ui16RawDirections & 0xFF) {
-			case DIRECTION_LEFT | DIRECTION_DOWN | DIRECTION_RIGHT: {
-				eNode = TYPE__UP_T;
-				break;
-			}
-			case DIRECTION_UP | DIRECTION_DOWN | DIRECTION_RIGHT: {
-				eNode = TYPE__LEFT_T;
-				break;
-			}
-			case DIRECTION_UP | DIRECTION_LEFT | DIRECTION_RIGHT: {
-				eNode = TYPE__DOWN_T;
-				break;
-			}
-			case DIRECTION_UP | DIRECTION_LEFT | DIRECTION_DOWN: {
-				eNode = TYPE__RIGHT_T;
-				break;
-			}
-			case DIRECTION_UP | DIRECTION_LEFT: {
-				eNode = TYPE__UP_LEFT;
-				break;
-			}
-			case DIRECTION_UP | DIRECTION_RIGHT: {
-				eNode = TYPE__UP_RIGHT;
-				break;
-			}
-			case DIRECTION_LEFT | DIRECTION_DOWN: {
-				eNode = TYPE__DOWN_LEFT;
-				break;
-			}
-			case DIRECTION_DOWN | DIRECTION_RIGHT: {
-				eNode = TYPE__DOWN_RIGHT;
-				break;
-			}
-			case DIRECTION_UP | DIRECTION_LEFT | DIRECTION_DOWN | DIRECTION_RIGHT: {
-				eNode = TYPE__CROSS;
-				break;
-			}
-			default: {
-				eNode = TYPE__INVALID;
-			}
-		}
+		eNode = conquest_convertDirMaskToNode( ui16RawDirections);
 	}
 
 	return eNode;
@@ -179,7 +140,8 @@ bool cbDemoMessageHandler(
 				for( uint16_t ui16 = 0; ui16 < abs( ( (int8_t)_lppodMessage->aui8Data[0]) % 4); ui16++) {
 					hal_motors_setSpeed( 0, (int8_t)_lppodMessage->aui8Data[0] < 0 ? -conquest_ui16Speed : conquest_ui16Speed);
 					hal_motors_setSteps( 0);
-					while( hal_motors_getStepsLeft() < TURN_STEPS && hal_motors_getStepsRight() < TURN_STEPS)
+					while( hal_motors_getStepsLeft() < ( HAL_MOTORS_FULL_TURN_STEPS / 4) && 
+						hal_motors_getStepsRight() < ( HAL_MOTORS_FULL_TURN_STEPS / 4))
 						;
 					hal_motors_setSpeed( 0, 0);
 				}
@@ -255,6 +217,59 @@ bool cbDemoMessageHandler(
 
 	return blAccepted;
 }
+
+
+EType_t conquest_convertDirMaskToNode(
+	IN const uint16_t _ui16DirectionMask
+	) {
+
+	EType_t eNodeType = TYPE__INVALID;
+
+	switch( _ui16DirectionMask & 0xFF) {
+		case DIRECTION_LEFT | DIRECTION_DOWN | DIRECTION_RIGHT: {
+			eNodeType = TYPE__UP_T;
+			break;
+		}
+		case DIRECTION_UP | DIRECTION_DOWN | DIRECTION_RIGHT: {
+			eNodeType = TYPE__LEFT_T;
+			break;
+		}
+		case DIRECTION_UP | DIRECTION_LEFT | DIRECTION_RIGHT: {
+			eNodeType = TYPE__DOWN_T;
+			break;
+		}
+		case DIRECTION_UP | DIRECTION_LEFT | DIRECTION_DOWN: {
+			eNodeType = TYPE__RIGHT_T;
+			break;
+		}
+		case DIRECTION_UP | DIRECTION_LEFT: {
+			eNodeType = TYPE__UP_LEFT;
+			break;
+		}
+		case DIRECTION_UP | DIRECTION_RIGHT: {
+			eNodeType = TYPE__UP_RIGHT;
+			break;
+		}
+		case DIRECTION_LEFT | DIRECTION_DOWN: {
+			eNodeType = TYPE__DOWN_LEFT;
+			break;
+		}
+		case DIRECTION_DOWN | DIRECTION_RIGHT: {
+			eNodeType = TYPE__DOWN_RIGHT;
+			break;
+		}
+		case DIRECTION_UP | DIRECTION_LEFT | DIRECTION_DOWN | DIRECTION_RIGHT: {
+			eNodeType = TYPE__CROSS;
+			break;
+		}
+		default: {
+
+		}
+	}
+
+	return eNodeType;
+}
+
 
 /*!
  * \brief

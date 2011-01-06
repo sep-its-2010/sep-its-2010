@@ -50,22 +50,21 @@ typedef enum {
 
 typedef enum {
 	TYPE__INVALID		= 0x0900,
-	TYPE__CROSS			= 0x0800 | DIRECTION_UP | DIRECTION_LEFT | DIRECTION_DOWN | DIRECTION_RIGHT,
-	TYPE__UP_T			= 0x0400 | DIRECTION_LEFT | DIRECTION_DOWN | DIRECTION_RIGHT,
-	TYPE__LEFT_T		= 0x0700 | DIRECTION_UP | DIRECTION_DOWN | DIRECTION_RIGHT,
-	TYPE__DOWN_T		= 0x0600 | DIRECTION_UP | DIRECTION_LEFT | DIRECTION_RIGHT,
-	TYPE__RIGHT_T		= 0x0500 | DIRECTION_UP | DIRECTION_LEFT | DIRECTION_DOWN,
-	TYPE__UP_LEFT		= 0x0300 | DIRECTION_UP | DIRECTION_LEFT,
-	TYPE__UP_RIGHT		= 0x0200 | DIRECTION_UP | DIRECTION_RIGHT,
-	TYPE__DOWN_LEFT		= 0x0100 | DIRECTION_LEFT | DIRECTION_DOWN,
-	TYPE__DOWN_RIGHT	= 0x0000 | DIRECTION_DOWN | DIRECTION_RIGHT
+	TYPE__CROSS			= 0x0800 | DIRECTION_UP |	DIRECTION_LEFT | DIRECTION_DOWN | DIRECTION_RIGHT,
+	TYPE__UP_T			= 0x0400 |					DIRECTION_LEFT | DIRECTION_DOWN | DIRECTION_RIGHT,
+	TYPE__LEFT_T		= 0x0700 | DIRECTION_UP |					 DIRECTION_DOWN | DIRECTION_RIGHT,
+	TYPE__DOWN_T		= 0x0600 | DIRECTION_UP |	DIRECTION_LEFT |				  DIRECTION_RIGHT,
+	TYPE__RIGHT_T		= 0x0500 | DIRECTION_UP |	DIRECTION_LEFT | DIRECTION_DOWN,
+	TYPE__UP_LEFT		= 0x0300 | DIRECTION_UP |	DIRECTION_LEFT,
+	TYPE__UP_RIGHT		= 0x0200 | DIRECTION_UP |									  DIRECTION_RIGHT,
+	TYPE__DOWN_LEFT		= 0x0100 |					DIRECTION_LEFT | DIRECTION_DOWN,
+	TYPE__DOWN_RIGHT	= 0x0000 |									 DIRECTION_DOWN | DIRECTION_RIGHT
 } EType_t;
 
 
 enum {
 	DIM_X = 5,
 	DIM_Y = 5,
-	TURN_STEPS = 329,
 	FOWARD_STEPS = 1000,
 	INITIAL_SPEED = 1000,
 	INITIAL_POS_X = 0,
@@ -79,12 +78,20 @@ bool cbDemoMessageHandler(
 
 void conquest_init( void);
 
+EType_t conquest_convertDirMaskToNode(
+	IN const uint16_t _ui16DirectionMask
+	);
+
 static inline uint16_t conquest_getRequestedLineSpeed( void);
 
 static inline void conquest_setRequestedLineSpeed(
 	IN const uint16_t _ui16RequestedSpeed
 	);
 
+static inline EType_t conquest_getLastNode( void);
+static inline void conquest_setLastNode(
+	IN const EType_t _eNodeType
+	);
 
 uint16_t conquest_getRequestedLineSpeed( void) {
 
@@ -103,5 +110,22 @@ void conquest_setRequestedLineSpeed(
 	conquest_ui16Speed = _ui16RequestedSpeed;
 }
 
+
+EType_t conquest_getLastNode( void) {
+
+	extern volatile EType_t conquest_eLastNodeType;
+
+	return conquest_eLastNodeType;
+}
+
+
+void conquest_setLastNode(
+	IN const EType_t _eNodeType
+	) {
+
+	extern volatile EType_t conquest_eLastNodeType;
+
+	conquest_eLastNodeType = _eNodeType;
+}
 
 #endif /* conquest_h__ */
