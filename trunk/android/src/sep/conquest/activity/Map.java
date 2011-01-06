@@ -115,6 +115,7 @@ public class Map extends Activity implements Observer {
     	if (mMode != MapMode.IMPORT) {
     	Controller.getInstance().getEnv().addObserver(this);
     	}
+    	//PuckFactory.getSimulator().start();
     }
     
     public void onPause() {
@@ -185,10 +186,6 @@ public class Map extends Activity implements Observer {
             
         case R.id.mnuStart:
         	PuckFactory.getSimulator().start();
-        	break;
-        	
-        case R.id.mnuStop:
-        	//not implemented yet
         	break;
         	
         case R.id.mnuPause:

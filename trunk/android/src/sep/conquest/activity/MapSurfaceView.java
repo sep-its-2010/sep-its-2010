@@ -694,7 +694,7 @@ public class MapSurfaceView extends SurfaceView
                         break;
                 case 6: paint.setColor(0xffb22222);
                         break;
-                default: return;
+                default: paint.setColor(0xff444444);
             }
             c.drawRect(x, y, x + mScaleValue, y + mScaleValue, p);
         }
