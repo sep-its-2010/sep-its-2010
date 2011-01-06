@@ -50,4 +50,6 @@
 <string name="ERR_MSG_NO_ACC_SENSOR">Your device does not have an acceleration sensor. Manual control is only possible via On-Screen-Joystick.</string>
 <string name="CONTROL_JOYSTICK">On-Screen-Joystick</string>
 <string name="CONTROL_ACC_SENSOR">Acceleration sensor</string>
+<string name="TXT_NO_SELECTION">none</string>
+<string name="ERR_MSG_LOST_CONNECTION">has lost connection to the smartphone.</string>
 </resources>

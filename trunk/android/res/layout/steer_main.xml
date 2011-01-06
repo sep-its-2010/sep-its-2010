@@ -1,39 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="wrap_content" android:layout_height="wrap_content">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:orientation="vertical">
 
-	<TextView android:id="@+id/txtRobot" android:layout_width="wrap_content"
+	<TextView android:id="@+id/txtRobot" android:layout_width="fill_parent"
 		android:text="@string/TXT_E_PUCK" android:layout_height="wrap_content"></TextView>
 
-	<Spinner android:id="@+id/spRobots" android:layout_width="wrap_content"
+	<Spinner android:id="@+id/spRobots" android:layout_width="fill_parent"
 		android:prompt="@string/EPUCK_SELECT" android:layout_height="wrap_content"
 		android:layout_below="@id/txtRobot"></Spinner>
 
 	<CheckBox android:text="@string/CHK_ACTIVATE" android:id="@+id/chkActivate"
-		android:layout_below="@id/spRobots" android:layout_width="wrap_content"
+		android:layout_below="@id/spRobots" android:layout_width="fill_parent"
 		android:layout_height="wrap_content"></CheckBox>
 
-	<TextView android:id="@+id/txtControl" android:layout_width="wrap_content"
-		android:layout_below="@id/chkActivate" android:text="@string/TXT_CONTROL"
-		android:layout_height="wrap_content"></TextView>
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="fill_parent" android:layout_height="wrap_content">
 
-	<Spinner android:id="@+id/spControl" android:layout_width="wrap_content"
-		android:prompt="@string/CONTROL_SELECT" android:layout_height="wrap_content"
-		android:layout_below="@id/txtControl"></Spinner>
+		<TextView android:id="@+id/txtControl" android:layout_width="fill_parent"
+			android:text="@string/TXT_CONTROL" android:layout_height="wrap_content"></TextView>
 
-	<Button android:id="@+id/btn_up" android:text="up"
-		android:layout_below="@id/spControl" android:layout_width="fill_parent"
-		android:layout_height="wrap_content"></Button>
+		<Spinner android:id="@+id/spControl" android:layout_width="fill_parent"
+			android:prompt="@string/CONTROL_SELECT" android:layout_height="wrap_content"
+			android:layout_below="@id/txtControl"></Spinner>
 
-	<Button android:id="@+id/btn_left" android:text="left"
-		android:layout_below="@id/btn_up" android:layout_alignParentLeft="true"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+		<Button android:id="@+id/btn_up" android:text="up"
+			android:layout_below="@id/spControl" android:layout_width="fill_parent"
+			android:layout_height="wrap_content"></Button>
 
-	<Button android:id="@+id/btn_right" android:text="right"
-		android:layout_below="@id/btn_up" android:layout_alignParentRight="true"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+		<Button android:id="@+id/btn_left" android:text="left"
+			android:layout_below="@id/btn_up" android:layout_alignParentLeft="true"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
 
-	<Button android:id="@+id/btn_down" android:text="down"
-		android:layout_below="@id/btn_left" android:layout_width="fill_parent"
-		android:layout_height="wrap_content"></Button>
-</RelativeLayout>
+		<Button android:id="@+id/btn_right" android:text="right"
+			android:layout_below="@id/btn_up" android:layout_alignParentRight="true"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+
+		<Button android:id="@+id/btn_down" android:text="down"
+			android:layout_below="@id/btn_left" android:layout_width="fill_parent"
+			android:layout_height="wrap_content"></Button>
+	</RelativeLayout>
+
+</LinearLayout>

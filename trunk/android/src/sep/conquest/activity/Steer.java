@@ -157,18 +157,15 @@ public class Steer extends Activity implements Observer {
     // Consequently there is no moving state.
     moving = new ArrayList<Boolean>();
 
-    /* Initialize message handler to deal with update messages.
+    // Initialize message handler to deal with update messages.
     updateHandler = new Handler() {
 
       public void handleMessage(Message msg) {
         if (msg.what == UPDATE_MESSAGE) {
-          Bundle news = msg.getData();
-          // ArrayAdapter<String> adp = new ArrayAdapter<String>(this,
-          // android.R.layout.simple_spinner_item, names);
-          // adp.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+               
         }
       }
-    };*/
+    };
   }
 
   /**
