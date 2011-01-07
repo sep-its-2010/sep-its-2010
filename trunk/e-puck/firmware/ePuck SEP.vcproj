@@ -181,6 +181,10 @@
 				Name="Utility"
 				>
 				<File
+					RelativePath=".\fsm.c"
+					>
+				</File>
+				<File
 					RelativePath=".\ringbuf.c"
 					>
 				</File>
@@ -333,6 +337,14 @@
 			<Filter
 				Name="Utility"
 				>
+				<File
+					RelativePath=".\fsm.h"
+					>
+				</File>
+				<File
+					RelativePath=".\fsm_types.h"
+					>
+				</File>
 				<File
 					RelativePath=".\ringbuf.h"
 					>
