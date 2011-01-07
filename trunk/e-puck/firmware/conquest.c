@@ -34,6 +34,9 @@ volatile conquest_ENode_t conquest_eLastNodeType = CONQUEST_NODE__INVALID;
 volatile uint16_t conquest_ui16Speed = CONQUEST_INITIAL_SPEED;
 
 
+static bool cbHandleDefault(
+	IN const com_SMessage_t* const _lppodMessage
+	);
 static bool cbHandleRequestStatus(
 	IN const com_SMessage_t* const _lppodMessage
 	);
@@ -61,9 +64,10 @@ void conquest_init( void) {
 	com_register( cbHandleRequestSetSpeed);
 	com_register( cbHandleRequestTurn);
 	com_register( cbHandleRequestMove);
+	com_setDefault( cbHandleDefault);
 
 	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
-//	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
+	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
 	subs_register( subs_initial_run, subs_initial_reset, 0xE5);
 // 	subs_register( subs_collision_run, subs_collision_reset, 0xDF);
  	subs_register( subs_movement_run, subs_movement_reset, 0xCF);
@@ -121,6 +125,18 @@ conquest_ENode_t conquest_convertDirMaskToNode(
 	}
 
 	return eNodeType;
+}
+
+
+bool cbHandleDefault(
+	IN const com_SMessage_t UNUSED* const _lppodMessage
+	) {
+
+	com_SMessage_t podResponse;
+	podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_REJECTED;
+	com_send( &podResponse);
+
+	return true;
 }
 
 
@@ -393,7 +409,16 @@ bool cbHandleRequestMove(
 	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_MOVE) {
 		if( conquest_getState() == CONQUEST_STATE__STOP && ( conquest_getLastNode() & CONQUEST_DIRECTION__UP)) {
 			conquest_setState( CONQUEST_STATE__CENTER_AND_MOVE);
-//			hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
+
+			while( conquest_getState() != CONQUEST_STATE__STOP && conquest_getState() != CONQUEST_STATE__ABYSS)
+				;
+
+			if( conquest_getState() == CONQUEST_STATE__STOP) {
+				com_SMessage_t podResponse;
+				podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE;
+				podResponse.aui8Data[0] = conquest_getLastNode() >> 8;
+				com_send( &podResponse);
+			}
 		} else {
 			com_SMessage_t podResponse;
 			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_REJECTED;

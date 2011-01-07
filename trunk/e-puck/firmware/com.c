@@ -20,7 +20,7 @@ enum {
 
 /*!
  * \brief
- * Holds the message handler slots.
+ * Holds the message handler slots & the default slot.
  * 
  * \remarks
  * The array is initialized by #com_init().
@@ -28,7 +28,7 @@ enum {
  * \see
  * com_processIncoming | com_register | com_unregister
  */
-static com_fnMessageHandler_t s_afnHandlers[COM_MAX_HANDLERS] = { 0 };
+static com_fnMessageHandler_t s_afnHandlers[COM_MAX_HANDLERS + 1] = { 0 };
 
 
 /*!
@@ -141,7 +141,9 @@ void com_processIncoming( void) {
 				if( ui16BufUsage >= sizeof( podMessage)) {
 					hal_uart1_read( &podMessage, sizeof( podMessage));
 					bool blProcessed = false;
-					for( uint16_t ui16 = 0; !blProcessed && ui16 < COM_MAX_HANDLERS; ui16++) {
+
+					// Custom + one default handler
+					for( uint16_t ui16 = 0; !blProcessed && ui16 < COM_MAX_HANDLERS + 1; ui16++) {
 						if( s_afnHandlers[ui16]) {
 							blProcessed = s_afnHandlers[ui16]( &podMessage);
 						}
@@ -183,9 +185,11 @@ void com_send(
  * \returns
  * - \c true on success
  * - \c false on error (handler already exists or callback list is full).
- * 
+ *
  * The callbacks are called by #com_processIncoming() when a new message is dispatched. One cannot register more than
  * #COM_MAX_HANDLERS callbacks.
+ *
+ * The default handler (catches messages which were not processed by any handler) can be set with #com_setDefault().
  *
  * The following message types may not be used:
  * - \c 0x4302 (#BTM_RESPONSE_MESSAGE)
@@ -226,6 +230,33 @@ bool com_register(
 	}
 
 	return blSuccess;
+}
+
+
+/*!
+ * \brief
+ * Sets ors clears the default message handler.
+ * 
+ * \param _fnDefaultHandler
+ * Specifies an optional handler callback.
+ * 
+ * The default handler catches any message which was not already processed by the any other handler.
+ * 
+ * \remarks
+ * - The communication interface needs to be initialized.
+ * - The return value of the default handler is not relevant.
+ *
+ * \warning
+ * This function may not be preempted by any function from this module but #com_send().
+ * 
+ * \see
+ * com_init | com_register
+ */
+void com_setDefault(
+	IN OPT const com_fnMessageHandler_t _fnDefaultHandler
+	) {
+
+	s_afnHandlers[COM_MAX_HANDLERS] = _fnDefaultHandler;
 }
 
 

@@ -7,7 +7,7 @@
 
 
 enum {
-	COM_MAX_HANDLERS = 16 ///< Specifies the maximal amount of message handler callbacks.
+	COM_MAX_HANDLERS = 16 ///< Specifies the maximal amount of message handler callbacks without the default handler.
 };
 
 
@@ -23,6 +23,10 @@ void com_send(
 
 bool com_register(
 	IN const com_fnMessageHandler_t _fnHandler
+	);
+
+void com_setDefault(
+	IN OPT const com_fnMessageHandler_t _fnDefaultHandler
 	);
 
 void com_unregister(

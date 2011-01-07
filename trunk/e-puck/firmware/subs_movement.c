@@ -60,7 +60,7 @@ bool subs_movement_run( void) {
 		case CONQUEST_STATE__CENTER_AND_MOVE: {
 			if( !s_ui16CenterSteps) {
 				s_ui16CenterSteps++;
-			} else if( s_ui16CenterSteps > 200) {
+			} else if( s_ui16CenterSteps > 20) {
 				s_ui16CenterSteps = 0;
 				conquest_setState( CONQUEST_STATE__MOVE_FOWARD);
 				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
