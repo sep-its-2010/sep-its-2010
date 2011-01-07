@@ -96,88 +96,95 @@ public final class Utility {
       NodeType typeOfNode) {
     switch (typeOfNode) {
     case TOPLEFTEDGE:
-      if (ori == Orientation.RIGHT) {
-        return NodeType.TOPRIGHTEDGE;
-      } else if (ori == Orientation.UP) {
-        return NodeType.TOPLEFTEDGE;
-      } else {
-        throw new IllegalArgumentException("TopLeftEdge can be reached from"
-            + "Right and Up not from: " + ori);
-      }
+    	switch (ori){
+    	case RIGHT:
+    		return NodeType.TOPRIGHTEDGE;
+    	case LEFT:
+    		return NodeType.BOTTOMLEFTEDGE;
+    	case UP:
+    		return NodeType.TOPLEFTEDGE;
+    	case DOWN:
+    		return NodeType.BOTTOMRIGHTEDGE;
+    	}
     case TOPRIGHTEDGE:
-      if (ori == Orientation.UP) {
-        return NodeType.TOPRIGHTEDGE;
-      } else if (ori == Orientation.LEFT) {
-        return NodeType.TOPLEFTEDGE;
-      } else {
-        throw new IllegalArgumentException("TopRightEdge can be reached from"
-            + "Left and Up not from: " + ori);
-      }
+    	switch (ori){
+    	case RIGHT:
+    		return NodeType.BOTTOMRIGHTEDGE;
+    	case LEFT:
+    		return NodeType.TOPLEFTEDGE;
+    	case UP:
+    		return NodeType.TOPRIGHTEDGE;
+    	case DOWN:
+    		return NodeType.BOTTOMLEFTEDGE;
+    	}
     case BOTTOMLEFTEDGE:
-      if (ori == Orientation.RIGHT) {
-        return NodeType.TOPLEFTEDGE;
-      } else if (ori == Orientation.DOWN) {
-        return NodeType.TOPRIGHTEDGE;
-      } else {
-        throw new IllegalArgumentException("BottomLeftEdge can be reached from"
-            + "Right and Down not from: " + ori);
-      }
+    	switch (ori){
+    	case RIGHT:
+    		return NodeType.TOPLEFTEDGE;
+    	case LEFT:
+    		return NodeType.BOTTOMRIGHTEDGE;
+    	case UP:
+    		return NodeType.BOTTOMLEFTEDGE;
+    	case DOWN:
+    		return NodeType.TOPRIGHTEDGE;
+    	}
     case BOTTOMRIGHTEDGE:
-      if (ori == Orientation.LEFT) {
-        return NodeType.TOPRIGHTEDGE;
-      } else if (ori == Orientation.DOWN) {
-        return NodeType.TOPLEFTEDGE;
-      } else {
-        throw new IllegalArgumentException(
-            "BottomRightEdge can be reached from" + "Left and Down not from: "
-                + ori);
-      }
+    	switch (ori){
+    	case RIGHT:
+    		return NodeType.BOTTOMLEFTEDGE;
+    	case LEFT:
+    		return NodeType.TOPRIGHTEDGE;
+    	case UP:
+    		return NodeType.BOTTOMRIGHTEDGE;
+    	case DOWN:
+    		return NodeType.TOPLEFTEDGE;
+    	}
     case BOTTOMT:
-      if (ori == Orientation.LEFT) {
-        return NodeType.RIGHTT;
-      } else if (ori == Orientation.DOWN) {
-        return NodeType.TOPT;
-      } else if (ori == Orientation.RIGHT) {
-        return NodeType.LEFTT;
-      } else {
-        throw new IllegalArgumentException("BOTTOMT can be reached from"
-            + "Left and Down and Right not from: " + ori);
-      }
-    case CROSS:
-      return NodeType.CROSS;
+    	switch (ori){
+    	case RIGHT:
+    		return NodeType.LEFTT;
+    	case LEFT:
+    		return NodeType.RIGHTT;
+    	case UP:
+    		return NodeType.BOTTOMT;
+    	case DOWN:
+    		return NodeType.TOPT;
+    	}
     case LEFTT:
-      if (ori == Orientation.RIGHT) {
-        return NodeType.TOPT;
-      } else if (ori == Orientation.DOWN) {
-        return NodeType.RIGHTT;
-      } else if (ori == Orientation.UP) {
-        return NodeType.LEFTT;
-      } else {
-        throw new IllegalArgumentException("LEFTT can be reached from"
-            + "Up and Down and Right not from: " + ori);
-      }
+    	switch (ori){
+    	case RIGHT:
+    		return NodeType.TOPT;
+    	case LEFT:
+    		return NodeType.BOTTOMT;
+    	case UP:
+    		return NodeType.LEFTT;
+    	case DOWN:
+    		return NodeType.RIGHTT;
+    	}
     case RIGHTT:
-      if (ori == Orientation.LEFT) {
-        return NodeType.TOPT;
-      } else if (ori == Orientation.DOWN) {
-        return NodeType.LEFTT;
-      } else if (ori == Orientation.UP) {
-        return NodeType.RIGHTT;
-      } else {
-        throw new IllegalArgumentException("RIGHTT can be reached from"
-            + "Left and Down and Up not from: " + ori);
-      }
+    	switch (ori){
+    	case RIGHT:
+    		return NodeType.BOTTOMT;
+    	case LEFT:
+    		return NodeType.TOPT;
+    	case UP:
+    		return NodeType.RIGHTT;
+    	case DOWN:
+    		return NodeType.LEFTT;
+    	}
     case TOPT:
-      if (ori == Orientation.LEFT) {
-        return NodeType.LEFTT;
-      } else if (ori == Orientation.UP) {
-        return NodeType.TOPT;
-      } else if (ori == Orientation.RIGHT) {
-        return NodeType.RIGHTT;
-      } else {
-        throw new IllegalArgumentException("TOPT can be reached from"
-            + "Left and Up and Right not from: " + ori);
-      }
+    	switch (ori){
+    	case RIGHT:
+    		return NodeType.RIGHTT;
+    	case LEFT:
+    		return NodeType.LEFTT;
+    	case UP:
+    		return NodeType.TOPT;
+    	case DOWN:
+    		return NodeType.BOTTOMT;
+    	}
+    case CROSS:
+        return NodeType.CROSS;
     default:
       throw new IllegalArgumentException("Failure: " + typeOfNode + " , " + ori);
     }
