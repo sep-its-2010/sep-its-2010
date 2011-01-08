@@ -36,9 +36,11 @@ static EState_t s_eState = STATE__ABYSS_SCAN;
  * Subsumption layer for abyss detection and prevention.
  * 
  * \returns
- * - \c true: abyss detected
+ * - \c true: abyss detected or prevention active
  * - \c false: layer inactive
- * 
+ *
+ * This layer only triggers in #CONQUEST_STATE__MOVE_FOWARD and remains active until it has finished.
+ *
  * In case an abyss is detected on any calibrated line sensor (#SUBS_ABYSS_THRESHOLD) the e-puck reverts a specified amount of
  * steps (#SUBS_ABYSS_REGRESSION) but at least as long as the line sensors still detect an abyss.
  * Afterwards this layer enters a blocking state (#CONQUEST_STATE__ABYSS).
@@ -57,24 +59,27 @@ bool subs_abyss_run( void) {
 
 	switch( s_eState) {
 		case STATE__ABYSS_SCAN: {
-			sen_line_SData_t podLineSensors;
-			sen_line_read( &podLineSensors);
-			sen_line_rescale( &podLineSensors, &podLineSensors);
+			if( conquest_getState() == CONQUEST_STATE__MOVE_FOWARD) {
+				sen_line_SData_t podLineSensors;
+				sen_line_read( &podLineSensors);
+				sen_line_rescale( &podLineSensors, &podLineSensors);
 
-			// Drive backwards when an abyss is detected on any line sensor
-			if( podLineSensors.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD ||
-				podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD ||
-				podLineSensors.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD) {
+				// Drive backwards when an abyss is detected on any line sensor
+				if( podLineSensors.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD ||
+					podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD ||
+					podLineSensors.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD) {
 
-// 				s_podAbyssResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_ABYSS;
-// 				s_podAbyssResponse.aui8Data[SEN_LINE_SENSOR__LEFT] = podLineSensors.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD;
-// 				s_podAbyssResponse.aui8Data[SEN_LINE_SENSOR__MIDDLE] = podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD;
-// 				s_podAbyssResponse.aui8Data[SEN_LINE_SENSOR__RIGHT] = podLineSensors.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD;
+					// TODO: forward info
+// 					s_podAbyssResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_ABYSS;
+// 					s_podAbyssResponse.aui8Data[SEN_LINE_SENSOR__LEFT] = podLineSensors.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD;
+// 					s_podAbyssResponse.aui8Data[SEN_LINE_SENSOR__MIDDLE] = podLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD;
+// 					s_podAbyssResponse.aui8Data[SEN_LINE_SENSOR__RIGHT] = podLineSensors.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD;
 
-				hal_motors_setSteps( 0);
-				hal_motors_setSpeed( -SUBS_ABYSS_REGRESSION_SPEED, 0);
-				s_eState = STATE__ABYSS_PREVENTION;
-				blActed = true;
+					hal_motors_setSteps( 0);
+					hal_motors_setSpeed( -conquest_getRequestedLineSpeed(), 0);
+					s_eState = STATE__ABYSS_PREVENTION;
+					blActed = true;
+				}
 			}
 			break;
 		}

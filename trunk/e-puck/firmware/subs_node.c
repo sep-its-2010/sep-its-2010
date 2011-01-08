@@ -36,6 +36,8 @@ static uint16_t s_ui16AvgRight = 0;
  * 
  * \returns
  * True if a node has been detected, false otherwise.
+ *
+ * This layer only triggers in #CONQUEST_STATE__MOVE_FOWARD and remains active until it has finished.
  * 
  * Checks the ground-sensors for data. If the robot is currently moving and more than one sensor delivers several times
  * critical values the robot is supposed to be above a node and computes the nodes shape.
@@ -63,7 +65,7 @@ bool subs_node_run( void) {
 			hal_motors_setSpeed( 0, 0);
 			conquest_setState( CONQUEST_STATE__HIT_NODE);
 		}
-	} else {
+	} else if( conquest_getState() == CONQUEST_STATE__MOVE_FOWARD) {
 		sen_line_SData_t s_podSensorData;
 		sen_line_read( &s_podSensorData);
 		sen_line_rescale( &s_podSensorData, &s_podSensorData);

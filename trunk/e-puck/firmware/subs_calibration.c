@@ -121,13 +121,13 @@ void cbInvalidCalibrationBlinker(
  * 
  * \returns
  * - \c true: calibration active
- * - \c false: calibration inactive
+ * - \c false: calibration inactive or data read from EEPROM
  * 
  * When no calibration has taken place so far, the calibration values are read from the EEPROM. If these values are invalid, the
  * error visualization event (#cbInvalidCalibrationBlinker()) is activated.
  *
- * When the initial calibration has taken place already, the selector is switched to #SUBS_CALIBRATION_SELECTOR and there is no
- * move intention (#conquest_getState()), the measurement routine is entered.
+ * When the initial calibration has taken place already, the selector is switched to #SUBS_CALIBRATION_SELECTOR and the robot is
+ * in its initial state (#CONQUEST_STATE__START), the measurement routine is entered.
  * This requires that the e-puck is standing on the black level underground with all three line sensors.
  * The line sensors are read and their values are buffered as the new black level. Then the robot drives a specified amount of
  * steps (#SUBS_CALIBRATION_DISTANCE). It is now supposed to stand on the white level underground. Another measurement is taken
@@ -164,7 +164,7 @@ bool subs_calibration_run( void) {
 				hal_motors_getStepsRight() >= SUBS_CALIBRATION_DISTANCE) {
 
 				sen_line_read( &s_podLevels[WHITE_LEVEL]);
-				hal_motors_setSpeed( -SUBS_CALIBRATION_SPEED, 0);
+				hal_motors_setSpeed( -conquest_getRequestedLineSpeed(), 0);
 				hal_motors_setSteps( 0);
 				s_eStatus = STATE__RETURN;
 			}
@@ -175,6 +175,7 @@ bool subs_calibration_run( void) {
 			if( hal_motors_getStepsLeft() >= SUBS_CALIBRATION_DISTANCE &&
 				hal_motors_getStepsRight() >= SUBS_CALIBRATION_DISTANCE) {
 
+				hal_motors_setSpeed( 0, 0);
 				if( !sen_line_calibrate( &s_podLevels[BLACK_LEVEL], &s_podLevels[WHITE_LEVEL])) {
 					hal_rtc_activate( s_hBlinkEvent);
 				} else {
@@ -195,10 +196,10 @@ bool subs_calibration_run( void) {
 			break;
 		}
 		case STATE__WAIT: {
-			if( hal_sel_getPosition() == SUBS_CALIBRATION_SELECTOR) {
+			if( hal_sel_getPosition() == SUBS_CALIBRATION_SELECTOR && conquest_getState() == CONQUEST_STATE__START) {
 				conquest_setState( CONQUEST_STATE__CALIBRATION);
 				sen_line_read( &s_podLevels[BLACK_LEVEL]);
-				hal_motors_setSpeed( SUBS_CALIBRATION_SPEED, 0);
+				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
 				hal_motors_setSteps( 0);
 				s_eStatus = STATE__WHITE_LEVEL;
 				blActed = true;

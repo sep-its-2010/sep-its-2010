@@ -9,14 +9,21 @@ static bool s_blActive = false;
 
 /*!
  * \brief
- * Executes movement-commands sent by the smartphone.
- * 
- * \returns
- * True if a movement-command is going to be performed, false otherwise.
+ * Subsumption layer for basic move instructions.
  *
- * Checks if the bluetooth-message-queue contains a message for moving or turning.
- * If there is one the robot starts to perform the demanded movement and sends an acknowledgment to the smartphone and deletes this message.
+ * \returns
+ * - \c true: adjusted motor speed
+ * - \c false: no action taken
+ *
+ * The layer handles #CONQUEST_STATE__TURN_RIGHT, #CONQUEST_STATE__TURN_LEFT and #CONQUEST_STATE__MOVE_FOWARD states.
+ *
+ * \remarks
+ * The layer needs to be reset after #CONQUEST_STATE__MOVE_FOWARD is left before a new move forward instruction can be handled.
+ *
+ * \see
+ * subs_movement_reset
  */
+
 bool subs_movement_run( void) {
 
 	bool blActed = false;
@@ -76,10 +83,12 @@ bool subs_movement_run( void) {
 
 /*!
  * \brief
- * Resets all movement data.
- * 
- * Registers all handler of this subsumption-layer for the Chain-of-Responsibility pattern.
+ * Resets the subsumption movement layer.
+ *
+ * \see
+ * subs_movement_run
  */
+
 void subs_movement_reset( void) {
 
 	s_blActive = false;

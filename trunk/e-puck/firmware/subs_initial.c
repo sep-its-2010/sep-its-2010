@@ -114,8 +114,10 @@ void cbDetectionErrorBlinker(
  * \returns
  * - \c true: detection active
  * - \c false: detection inactive
+ *
+ * This layer only triggers in #CONQUEST_STATE__INITIAL and remains active until it has finished.
  * 
- * Detects the node type the e-puck is currently standing on.
+ * Detects the node type the e-puck is currently standing.
  * If the detection fails, the error visualization event (#cbDetectionErrorBlinker()) is activated.
  *
  * First, the e-puck turns 360 degrees and performs an edge detection on the middle line sensor values. These values are then analyzed
@@ -139,23 +141,26 @@ bool subs_initial_run( void) {
 	static uint16_t s_ui16TurnSteps = 0;
 	static uint16_t s_aui16Edges[MAX_EDGES];
 
-	bool blActed = true;
+	bool blActed = false;
 
 	switch( s_eState) {
 		case STATE__WAIT: {
-			hal_motors_setSpeed( 0, conquest_getRequestedLineSpeed());
-			hal_motors_setSteps( 0);
+			if( conquest_getState() == CONQUEST_STATE__INITIAL) {
+				hal_motors_setSpeed( 0, conquest_getRequestedLineSpeed());
+				hal_motors_setSteps( 0);
 
-			sen_line_SData_t podData;
-			sen_line_read( &podData);
-			sen_line_rescale( &podData, &podData);
+				sen_line_SData_t podData;
+				sen_line_read( &podData);
+				sen_line_rescale( &podData, &podData);
 
-			// Check whether the e-puck is currently right above a line with its sensors
-			s_blInPeak = podData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_INITIAL_PEAK_BORDER;
-			s_blInPeakOnStart = s_blInPeak;
-			s_ui16NumEdges = 0;
+				// Check whether the e-puck is currently right above a line with its sensors
+				s_blInPeak = podData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_INITIAL_PEAK_BORDER;
+				s_blInPeakOnStart = s_blInPeak;
+				s_ui16NumEdges = 0;
 
-			s_eState = STATE__SCAN;
+				s_eState = STATE__SCAN;
+				blActed = true;
+			}
 			break;
 		}
 		case STATE__SCAN: {
@@ -179,6 +184,7 @@ bool subs_initial_run( void) {
 					s_aui16Edges[s_ui16NumEdges++] = ui16Steps;
 				}
 			}
+			blActed = true;
 			break;
 		}
 		case STATE__ANALYZE: {
@@ -267,6 +273,7 @@ bool subs_initial_run( void) {
 // 					conquest_setState( CONQUEST_STATE__STOP);
 // 					s_eState = STATE__WAIT;
 // 				}
+				blActed = true;
 			}
 			break;
 		}
@@ -276,10 +283,11 @@ bool subs_initial_run( void) {
 				s_eState = STATE__WAIT;
 				hal_motors_setSpeed( 0, 0);
 			}
+			blActed = true;
 			break;
 		}
 		default: {
-			blActed = false;
+
 		}
 	}
 

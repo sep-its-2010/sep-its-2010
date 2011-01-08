@@ -31,6 +31,44 @@ enum {
 };
 
 
+static bool cbHandleDefault(
+	IN const com_SMessage_t* const _lppodMessage
+	);
+static bool cbHandleRequestStatus(
+	IN const com_SMessage_t* const _lppodMessage
+	);
+static bool cbHandleRequestReset(
+	IN const com_SMessage_t* const _lppodMessage
+	);
+static bool cbHandleRequestSetLED(
+	IN const com_SMessage_t* const _lppodMessage
+	);
+static bool cbHandleRequestSetSpeed(
+	IN const com_SMessage_t* const _lppodMessage
+	);
+static bool cbHandleRequestMove(
+	IN const com_SMessage_t* const _lppodMessage
+	);
+static bool cbHandleRequestTurn(
+	IN const com_SMessage_t* const _lppodMessage
+	);
+
+static void cbSyncRequestStatus( void);
+static void cbSyncRequestReset( void);
+static void cbSyncRequestSetLED( void);
+static void cbSyncRequestSetSpeed( void);
+static void cbSyncRequestMove( void);
+static void cbSyncRequestTurn( void);
+
+static void cbHeartbeat(
+	IN const hal_rtc_handle_t UNUSED _hEvent
+	);
+
+static void cbSubsumption( void);
+
+static void cbStateMoveExit( void);
+
+
 /*!
  * \brief
  * Holds the current subsumption state.
@@ -77,44 +115,6 @@ volatile conquest_ENode_t conquest_eLastNodeType = CONQUEST_NODE__INVALID;
 volatile uint16_t conquest_ui16Speed = CONQUEST_INITIAL_SPEED;
 
 
-static bool cbHandleDefault(
-	IN const com_SMessage_t* const _lppodMessage
-	);
-static bool cbHandleRequestStatus(
-	IN const com_SMessage_t* const _lppodMessage
-	);
-static bool cbHandleRequestReset(
-	IN const com_SMessage_t* const _lppodMessage
-	);
-static bool cbHandleRequestSetLED(
-	IN const com_SMessage_t* const _lppodMessage
-	);
-static bool cbHandleRequestSetSpeed(
-	IN const com_SMessage_t* const _lppodMessage
-	);
-static bool cbHandleRequestMove(
-	IN const com_SMessage_t* const _lppodMessage
-	);
-static bool cbHandleRequestTurn(
-	IN const com_SMessage_t* const _lppodMessage
-	);
-
-static void cbMoveEntry( void);
-static void cbMoveExit( void);
-
-static void cbSyncRequestStatus( void);
-static void cbSyncRequestReset( void);
-static void cbSyncRequestSetLED( void);
-static void cbSyncRequestSetSpeed( void);
-static void cbSyncRequestMove( void);
-static void cbSyncRequestTurn( void);
-
-
-static void cbHeartbeat(
-	IN const hal_rtc_handle_t UNUSED _hEvent
-	);
-
-
 /*!
  * \brief
  * Default message handler callback.
@@ -143,6 +143,7 @@ bool cbHandleDefault(
 
 	com_SMessage_t podResponse;
 	podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_REJECTED;
+	memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
 		com_send( &podResponse);
 	}
@@ -211,7 +212,7 @@ bool cbHandleRequestStatus(
  * - \c true: message accepted and forwarded.
  * - \c false: message did not match the pattern (wrong type or wrong state).
  * 
- * A reset request is accepted if the message FSM is not busy (#CONQUEST_MESSSAGE_STATE__NONE).
+ * A reset request is always accepted.
  *
  * The message is then copied and #CONQUEST_MESSSAGE_STATE__RESET is entered.
  *
@@ -231,14 +232,11 @@ bool cbHandleRequestReset(
 
 	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_RESET) {
 		HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
-			if( fsm_getState( &s_podMessageFSM) == CONQUEST_MESSSAGE_STATE__NONE) {
+			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__RESET);
 
-				fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__RESET);
+			memcpy( &s_podMessage, _lppodMessage, sizeof( *_lppodMessage));
 
-				memcpy( &s_podMessage, _lppodMessage, sizeof( *_lppodMessage));
-
-				blHandledMessage = true;
-			}
+			blHandledMessage = true;
 		}
 	}
 
@@ -462,6 +460,7 @@ void cbSyncRequestStatus( void) {
 	} else if( conquest_getState() == CONQUEST_STATE__STOP || conquest_getState() == CONQUEST_STATE__ABYSS) {
 		com_SMessage_t podResponse;
 		podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_STATUS;
+		memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 
 		// System up-time in little endian format
 		uint32_t ui32UpTime = hal_rtc_getSystemUpTime();
@@ -509,6 +508,7 @@ void cbSyncRequestReset( void) {
 
 	com_SMessage_t podResponse;
 	podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
+	memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 	com_send( &podResponse);
 
 	// conquest_reset() implies the FSM reset
@@ -528,10 +528,11 @@ void cbSyncRequestReset( void) {
  */
 void cbSyncRequestSetLED( void) {
 
-	hal_led_set( s_podMessage.aui8Data[0] | ( s_podMessage.aui8Data[1] << 8));
+	hal_led_switchOn( s_podMessage.aui8Data[0] | ( s_podMessage.aui8Data[1] << 8));
 
 	com_SMessage_t podResponse;
 	podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
+	memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 	com_send( &podResponse);
 
 	fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
@@ -554,6 +555,7 @@ void cbSyncRequestSetSpeed( void) {
 
 	com_SMessage_t podResponse;
 	podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
+	memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 	com_send( &podResponse);
 
 	fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
@@ -585,6 +587,7 @@ void cbSyncRequestMove( void) {
 
 				com_SMessage_t podResponse;
 				podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE;
+				memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 				podResponse.aui8Data[0] = conquest_getLastNode() >> 8;
 				com_send( &podResponse);
 				fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
@@ -596,23 +599,26 @@ void cbSyncRequestMove( void) {
 		case CONQUEST_STATE__COLLISION: {
 			com_SMessage_t podResponse;
 			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_COLLISION;
+			memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 			com_send( &podResponse);
-			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
 			conquest_setState( CONQUEST_STATE__STOP);
+			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
 			break;
 		}
 		case CONQUEST_STATE__ABYSS: {
 			com_SMessage_t podResponse;
 			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_ABYSS;
+			memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 			com_send( &podResponse);
-			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
 //			conquest_setState( CONQUEST_STATE__STOP);
+			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
 			break;
 		}
 		case CONQUEST_STATE__HIT_NODE: {
 			// TODO: Fix HACK
 // 			com_SMessage_t podResponse;
 // 			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE;
+//			memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 // 			podResponse.aui8Data[0] = 0xFA;
 // 			com_send( &podResponse);
 // 
@@ -654,50 +660,12 @@ void cbSyncRequestTurn( void) {
 		} else {
 			com_SMessage_t podResponse;
 			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
+			memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 			com_send( &podResponse);
 
 			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
 		}
 	}
-}
-
-
-/*!
- * \brief
- * Wrapper function for the entry action callback of #CONQUEST_STATE__MOVE_FOWARD.
- * 
- * \see
- * cbMoveExit
- */
-void cbMoveEntry( void) {
-
- 	subs_register( subs_line_run, subs_line_reset, 0xAF);
-	subs_register( subs_node_run, subs_node_reset, 0xBF);
- 	subs_register( subs_movement_run, subs_movement_reset, 0xCF);
- 	subs_register( subs_collision_run, subs_collision_reset, 0xDF);
-	subs_register( subs_abyss_run, subs_abyss_reset, 0xEF);
-	subs_line_reset();
-	subs_node_reset();
-	subs_movement_reset();
-	subs_collision_reset();
-	subs_abyss_reset();
-}
-
-
-/*!
- * \brief
- * Wrapper function for the exit action callback of #CONQUEST_STATE__MOVE_FOWARD.
- * 
- * \see
- * cbMoveEntry
- */
-void cbMoveExit( void) {
-
-	subs_unregister( subs_line_run);
-	subs_unregister( subs_node_run);
-	subs_unregister( subs_movement_run);
-	subs_unregister( subs_collision_run);
-	subs_unregister( subs_abyss_run);
 }
 
 
@@ -724,6 +692,40 @@ void cbHeartbeat(
 
 /*!
  * \brief
+ * Wrapper function for #subs_run().
+ *
+ * Casting the subs_run function pointer to one returning void was quick & dirty but not standard conform.
+ * 
+ * \see
+ * s_podSubsumptionFSM
+ */
+void cbSubsumption( void) {
+
+	subs_run();
+}
+
+
+/*!
+ * \brief
+ * Exit action callback for #CONQUEST_STATE__MOVE_FOWARD.
+ * 
+ * The move state uses subsumption layers which have an internal state.
+ * These states need to be reset when the move state is left to prevent behavior corruption.
+ * 
+ * \see
+ * s_podSubsumptionFSM
+ */
+void cbStateMoveExit( void) {
+
+	subs_node_reset();
+	subs_line_reset();
+	subs_abyss_reset();
+	subs_movement_reset();
+}
+
+
+/*!
+ * \brief
  * Initializes the conquest logic and management.
  * 
  * Configures the subsumption and the message FSM, registers the message handler callbacks and links the heartbeat event.
@@ -739,23 +741,25 @@ void cbHeartbeat(
 void conquest_init( void) {
 
 	subs_init();
+	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
+	subs_register( subs_initial_run,     subs_initial_reset,     0xF5);
+	subs_register( subs_abyss_run,       subs_abyss_reset,       0xEF);
+ 	subs_register( subs_collision_run,   subs_collision_reset,   0xDF);
+ 	subs_register( subs_movement_run,    subs_movement_reset,    0xBF);
+ 	subs_register( subs_node_run,        subs_node_reset,        0xAF);
+ 	subs_register( subs_line_run,        subs_line_reset,        0x9F);
 
 	fsm_init( &s_podSubsumptionFSM);
-
-	// Quick & dirty (tm): return types do not matter when they are int compatible
-	// -> cast valid even thou the spec says the result is undefined; any GCC version earlier than v4.2.0 can cope with that
-	// see http://efreedom.com/Question/1-559581/Casting-Function-Pointer-Another-Type
-	// A wrapper function would cost one opcode (3 bytes) as it would simply branch to the wrapped function
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__START,       subs_calibration_reset, (fsm_fnAction_t)subs_calibration_run, NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__CALIBRATION, NULL,                   (fsm_fnAction_t)subs_calibration_run, NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__INITIAL,     subs_initial_reset,     (fsm_fnAction_t)subs_initial_run,     NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__STOP,        NULL,                   NULL,                                 NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__MOVE_FOWARD, cbMoveEntry,            (fsm_fnAction_t)subs_run,             cbMoveExit);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__TURN_LEFT,   subs_movement_reset,    (fsm_fnAction_t)subs_movement_run,    NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__TURN_RIGHT,  subs_movement_reset,    (fsm_fnAction_t)subs_movement_run,    NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__HIT_NODE,    NULL,                   NULL,                                 NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__COLLISION,   NULL,                   NULL,                                 NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__ABYSS,       NULL,                   NULL,                                 NULL);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__START,       NULL, cbSubsumption, NULL);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__CALIBRATION, NULL, cbSubsumption, NULL);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__INITIAL,     NULL, cbSubsumption, subs_initial_reset);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__STOP,        NULL, NULL,          NULL);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__MOVE_FOWARD, NULL, cbSubsumption, cbStateMoveExit);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__TURN_LEFT,   NULL, cbSubsumption, subs_movement_reset);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__TURN_RIGHT,  NULL, cbSubsumption, subs_movement_reset);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__HIT_NODE,    NULL, NULL,          NULL);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__COLLISION,   NULL, NULL,          NULL);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__ABYSS,       NULL, NULL,          NULL);
 
 	fsm_init( &s_podMessageFSM);
 	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE,       NULL, NULL,                  NULL);
@@ -795,13 +799,7 @@ void conquest_init( void) {
  */
 void conquest_reset( void) {
 
-	subs_abyss_reset();
-	subs_calibration_reset();
-	subs_collision_reset();
-	subs_initial_reset();
-	subs_line_reset();
-	subs_movement_reset();
-	subs_node_reset();
+	subs_reset();
 
 	fsm_switch( &s_podSubsumptionFSM, CONQUEST_STATE__START);
 	fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
