@@ -6,7 +6,6 @@
 
 static bool s_blActive = false;
 
-static uint16_t s_ui16CenterSteps = 0;
 
 /*!
  * \brief
@@ -22,24 +21,9 @@ bool subs_movement_run( void) {
 
 	bool blActed = false;
 
-	switch( conquest_getState()) {
-		case CONQUEST_STATE__TURN_RIGHT: {
-			if( s_blActive) {
-				if( hal_motors_getStepsLeft() >= HAL_MOTORS_FULL_TURN_STEPS / 4 &&
-					hal_motors_getStepsRight() >= HAL_MOTORS_FULL_TURN_STEPS / 4) {
-
-					hal_motors_setSpeed( 0, 0);
-					conquest_setState( CONQUEST_STATE__STOP);
-					s_blActive = false;
-				}
-			} else {
-				hal_motors_setSteps( 0);
-				hal_motors_setSpeed( 0, conquest_getRequestedLineSpeed());
-				s_blActive = true;
-			}
-			blActed = true;
-			break;
-		}
+	const conquest_EState_t eState = conquest_getState();
+	switch( eState) {
+		case CONQUEST_STATE__TURN_RIGHT:
 		case CONQUEST_STATE__TURN_LEFT: {
 			if( s_blActive) {
 				if( hal_motors_getStepsLeft() >= HAL_MOTORS_FULL_TURN_STEPS / 4 &&
@@ -47,25 +31,37 @@ bool subs_movement_run( void) {
 
 					hal_motors_setSpeed( 0, 0);
 					conquest_setState( CONQUEST_STATE__STOP);
+
+					// Turn current node
+					uint16_t ui16RawDirections = conquest_getLastNode() & 0xFF;
+					if( eState == CONQUEST_STATE__TURN_RIGHT) {
+						ui16RawDirections <<= 6;
+						ui16RawDirections |= ui16RawDirections >> 8;
+					} else {
+						ui16RawDirections <<= 2;
+						ui16RawDirections |= ui16RawDirections >> 8;
+					}
+
+					conquest_setLastNode( conquest_convertDirMaskToNode( ui16RawDirections & 0xFF));
 					s_blActive = false;
 				}
 			} else {
 				hal_motors_setSteps( 0);
-				hal_motors_setSpeed( 0, -conquest_getRequestedLineSpeed());
+				if( eState == CONQUEST_STATE__TURN_RIGHT) {
+					hal_motors_setSpeed( 0, conquest_getRequestedLineSpeed());
+				} else {
+					hal_motors_setSpeed( 0, -conquest_getRequestedLineSpeed());
+				}
 				s_blActive = true;
 			}
 			blActed = true;
 			break;
 		}
-		case CONQUEST_STATE__CENTER_AND_MOVE: {
-			if( !s_ui16CenterSteps) {
-				s_ui16CenterSteps++;
-			} else if( s_ui16CenterSteps > 20) {
-				s_ui16CenterSteps = 0;
-				conquest_setState( CONQUEST_STATE__MOVE_FOWARD);
+		case CONQUEST_STATE__MOVE_FOWARD: {
+			if( !s_blActive) {
 				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
-			} else {
-				s_ui16CenterSteps++;
+				s_blActive = true;
+				blActed = true;
 			}
 			break;
 		}

@@ -3,21 +3,31 @@
 
 #include "common.h"
 
-#include "com.h"
 #include "hal_motors.h"
 
 #include "conquest_types.h"
 
 
 enum {
-	CONQUEST_INITIAL_SPEED = 1000
+	CONQUEST_INITIAL_SPEED = 1000, ///< Specifies the initial speed returned by #conquest_getRequestedLineSpeed().
+	CONQUEST_HEARTBEAT_INTERVAL = 10 ///< Specifies the update rate of the logic in RTC time units. \see hal_rtc_init
 };
 
 
 void conquest_init( void);
+void conquest_reset( void);
 
-conquest_ENode_t conquest_convertDirMaskToNode(
-	IN const uint16_t _ui16DirectionMask
+void conquest_cbConnection(
+	IN const bool _blConnected
+	);
+
+conquest_EState_t conquest_getState( void);
+void conquest_setState(
+	IN const conquest_EState_t _eState
+	);
+
+static inline conquest_ENode_t conquest_convertDirMaskToNode(
+	IN const uint8_t _ui8DirectionMask
 	);
 
 static inline uint16_t conquest_getRequestedLineSpeed( void);
@@ -30,11 +40,86 @@ static inline void conquest_setLastNode(
 	IN const conquest_ENode_t _eNodeType
 	);
 
-static inline conquest_EState_t conquest_getState( void);
-static inline void conquest_setState(
-	IN const conquest_EState_t _eMove
-	);
+/*!
+ * \brief
+ * Generates the node type from a direction bit mask.
+ * 
+ * \param _ui8DirectionMask
+ * Specifies the node as direction bit mask based on #conquest_EDirection_t.
+ * 
+ * \returns
+ * The fully qualified node type.
+ *
+ * \remarks
+ * This function is fully independent.
+ */
+conquest_ENode_t conquest_convertDirMaskToNode(
+	IN const uint8_t _ui8DirectionMask
+	) {
 
+	conquest_ENode_t eNodeType;
+
+	switch( _ui8DirectionMask) {
+		case CONQUEST_DIRECTION__LEFT | CONQUEST_DIRECTION__DOWN | CONQUEST_DIRECTION__RIGHT: {
+			eNodeType = CONQUEST_NODE__UP_T;
+			break;
+		}
+		case CONQUEST_DIRECTION__UP | CONQUEST_DIRECTION__DOWN | CONQUEST_DIRECTION__RIGHT: {
+			eNodeType = CONQUEST_NODE__LEFT_T;
+			break;
+		}
+		case CONQUEST_DIRECTION__UP | CONQUEST_DIRECTION__LEFT | CONQUEST_DIRECTION__RIGHT: {
+			eNodeType = CONQUEST_NODE__DOWN_T;
+			break;
+		}
+		case CONQUEST_DIRECTION__UP | CONQUEST_DIRECTION__LEFT | CONQUEST_DIRECTION__DOWN: {
+			eNodeType = CONQUEST_NODE__RIGHT_T;
+			break;
+		}
+		case CONQUEST_DIRECTION__UP | CONQUEST_DIRECTION__LEFT: {
+			eNodeType = CONQUEST_NODE__UP_LEFT;
+			break;
+		}
+		case CONQUEST_DIRECTION__UP | CONQUEST_DIRECTION__RIGHT: {
+			eNodeType = CONQUEST_NODE__UP_RIGHT;
+			break;
+		}
+		case CONQUEST_DIRECTION__LEFT | CONQUEST_DIRECTION__DOWN: {
+			eNodeType = CONQUEST_NODE__DOWN_LEFT;
+			break;
+		}
+		case CONQUEST_DIRECTION__DOWN | CONQUEST_DIRECTION__RIGHT: {
+			eNodeType = CONQUEST_NODE__DOWN_RIGHT;
+			break;
+		}
+		case CONQUEST_DIRECTION__UP | CONQUEST_DIRECTION__LEFT | CONQUEST_DIRECTION__DOWN | CONQUEST_DIRECTION__RIGHT: {
+			eNodeType = CONQUEST_NODE__CROSS;
+			break;
+		}
+		default: {
+			eNodeType = CONQUEST_NODE__INVALID;
+		}
+	}
+
+	return eNodeType;
+}
+
+
+/*!
+ * \brief
+ * Returns the requested motor line speed in steps per seconds.
+ * 
+ * \returns
+ * A value ranging from \c 0 to #HAL_MOTORS_MAX_ABS_SPEED.
+ * 
+ * The initial value is defined by #CONQUEST_INITIAL_SPEED.
+ * 
+ * \remarks
+ * - This function is interrupt safe.
+ * 
+ * \see
+ * conquest_setRequestedLineSpeed
+ */
 uint16_t conquest_getRequestedLineSpeed( void) {
 
 	extern volatile uint16_t conquest_ui16Speed;
@@ -43,6 +128,20 @@ uint16_t conquest_getRequestedLineSpeed( void) {
 }
 
 
+/*!
+ * \brief
+ * Sets the desired absolute motor line speed.
+ * 
+ * \param _ui16RequestedSpeed
+ * A value ranging from \c 0 to #HAL_MOTORS_MAX_ABS_SPEED.
+ * 
+ * \remarks
+ * - The new speed will be constrained to the range [ \c 0 ; \c #HAL_MOTORS_MAX_ABS_SPEED ].
+ * - This function is interrupt safe.
+ * 
+ * \see
+ * conquest_getRequestedLineSpeed
+ */
 void conquest_setRequestedLineSpeed(
 	IN const uint16_t _ui16RequestedSpeed
 	) {
@@ -53,6 +152,21 @@ void conquest_setRequestedLineSpeed(
 }
 
 
+/*!
+ * \brief
+ * Gets the type of the last visited node.
+ * 
+ * \returns
+ * The last node type.
+ * 
+ * The initial node type is #CONQUEST_NODE__INVALID.
+ * 
+ * \remarks
+ * This function is interrupt safe.
+ * 
+ * \see
+ * conquest_setLastNode
+ */
 conquest_ENode_t conquest_getLastNode( void) {
 
 	extern volatile conquest_ENode_t conquest_eLastNodeType;
@@ -61,6 +175,21 @@ conquest_ENode_t conquest_getLastNode( void) {
 }
 
 
+/*!
+ * \brief
+ * Sets the type of the last visited node.
+ * 
+ * \param _eNodeType
+ * Specifies the new last visited node type.
+ * 
+ * This function must be called whenever the e-puck position or orientation changes.
+ * 
+ * \remarks
+ * This function is interrupt safe.
+ * 
+ * \see
+ * conquest_setLastNode
+ */
 void conquest_setLastNode(
 	IN const conquest_ENode_t _eNodeType
 	) {
@@ -68,23 +197,6 @@ void conquest_setLastNode(
 	extern volatile conquest_ENode_t conquest_eLastNodeType;
 
 	conquest_eLastNodeType = _eNodeType;
-}
-
-
-conquest_EState_t conquest_getState( void) {
-
-	extern volatile conquest_EState_t conquest_eMoveRequest;
-
-	return conquest_eMoveRequest;
-}
-
-void conquest_setState(
-	IN const conquest_EState_t _eState
-	) {
-
-	extern volatile conquest_EState_t conquest_eMoveRequest;
-
-	conquest_eMoveRequest = _eState;
 }
 
 #endif /* conquest_h__ */

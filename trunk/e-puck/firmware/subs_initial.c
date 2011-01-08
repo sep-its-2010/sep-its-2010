@@ -8,8 +8,6 @@
 
 #include "subs_initial.h"
 
-#include "hal_uart1.h"
-
 
 enum {
 	MIN_EDGES = 4, ///< Specifies the minimal amount of required peak edges. 
@@ -117,8 +115,8 @@ void cbDetectionErrorBlinker(
  * - \c true: detection active
  * - \c false: detection inactive
  * 
- * When the current node is unknown and the robot is not moving, the initial node detection triggers. If the detection fails, the
- * error visualization event (#cbDetectionErrorBlinker()) is activated.
+ * Detects the node type the e-puck is currently standing on.
+ * If the detection fails, the error visualization event (#cbDetectionErrorBlinker()) is activated.
  *
  * First, the e-puck turns 360 degrees and performs an edge detection on the middle line sensor values. These values are then analyzed
  * for peaks (values below #SUBS_INITIAL_PEAK_BORDER) which represent the node grid lines. The actual node type is generated from
@@ -145,23 +143,19 @@ bool subs_initial_run( void) {
 
 	switch( s_eState) {
 		case STATE__WAIT: {
-			if( conquest_getState() == CONQUEST_STATE__IDENTIFY_NODE) {
-				hal_motors_setSpeed( 0, conquest_getRequestedLineSpeed());
-				hal_motors_setSteps( 0);
+			hal_motors_setSpeed( 0, conquest_getRequestedLineSpeed());
+			hal_motors_setSteps( 0);
 
-				sen_line_SData_t podData;
-				sen_line_read( &podData);
-				sen_line_rescale( &podData, &podData);
+			sen_line_SData_t podData;
+			sen_line_read( &podData);
+			sen_line_rescale( &podData, &podData);
 
-				// Check whether the e-puck is currently right above a line with its sensors
-				s_blInPeak = podData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_INITIAL_PEAK_BORDER;
-				s_blInPeakOnStart = s_blInPeak;
-				s_ui16NumEdges = 0;
+			// Check whether the e-puck is currently right above a line with its sensors
+			s_blInPeak = podData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_INITIAL_PEAK_BORDER;
+			s_blInPeakOnStart = s_blInPeak;
+			s_ui16NumEdges = 0;
 
-				s_eState = STATE__SCAN;
-			} else {
-				blActed = false;
-			}
+			s_eState = STATE__SCAN;
 			break;
 		}
 		case STATE__SCAN: {
@@ -192,6 +186,7 @@ bool subs_initial_run( void) {
 			// Missing falling/rising edge or not enough edges at all?
 			if( s_ui16NumEdges & 0x1 || s_ui16NumEdges < MIN_EDGES || s_ui16NumEdges > MAX_EDGES) {
 				s_eState = STATE__WAIT;
+				conquest_setLastNode( CONQUEST_NODE__INVALID);
 				conquest_setState( CONQUEST_STATE__STOP);
 				hal_motors_setSpeed( 0, 0);
 				hal_rtc_activate( s_hBlinkEvent);
@@ -259,19 +254,19 @@ bool subs_initial_run( void) {
 					}
 				}
 
-				conquest_setLastNode( conquest_convertDirMaskToNode( ui16DirectionMask));
+				conquest_setLastNode( conquest_convertDirMaskToNode( ui16DirectionMask & 0xFF));
 
-				// Turn the robot to face a grid direction (if the deviation is big enough)
-				if( abs( i16Deviation) > 0) {//SUBS_INITIAL_DIRECTION_THRESHOLD) {
-					s_ui16TurnSteps = abs( i16Deviation);
-					hal_motors_setSteps( 0);
-					hal_motors_setSpeed( 0, i16Deviation < 0 ? -200 : 200);
-
+// 				// Turn the robot to face a grid direction (if the deviation is big enough)
+// 				if( abs( i16Deviation) > 0) {//SUBS_INITIAL_DIRECTION_THRESHOLD) {
+ 					s_ui16TurnSteps = 0; //abs( i16Deviation);
+// 					hal_motors_setSteps( 0);
+// 					hal_motors_setSpeed( 0, i16Deviation < 0 ? -200 : 200);
+//
 					s_eState = STATE__TURN;
-				} else {
-					conquest_setState( CONQUEST_STATE__STOP);
-					s_eState = STATE__WAIT;
-				}
+// 				} else {
+// 					conquest_setState( CONQUEST_STATE__STOP);
+// 					s_eState = STATE__WAIT;
+// 				}
 			}
 			break;
 		}

@@ -31,14 +31,24 @@ typedef enum {
 } conquest_EMessageType_t;
 
 
+/*!
+ * \brief
+ * Specifies the node edges as bit mask.
+ */
 typedef enum {
-	CONQUEST_DIRECTION__UP = 1,
-	CONQUEST_DIRECTION__RIGHT = 4,
-	CONQUEST_DIRECTION__DOWN = 16,
-	CONQUEST_DIRECTION__LEFT = 64
+	CONQUEST_DIRECTION__UP = 1, ///< Node edge in face direction.
+	CONQUEST_DIRECTION__RIGHT = 4, ///< Node edge to the right of the face direction.
+	CONQUEST_DIRECTION__DOWN = 16, ///< Node edge in opposite to the face direction.
+	CONQUEST_DIRECTION__LEFT = 64 ///< Node edge to the left of the face direction.
 } conquest_EDirection_t;
 
 
+/*!
+ * \brief
+ * Specifies all available node types.
+ *
+ * The high byte represents the node type index. The low byte represents the direction mask (#conquest_EDirection_t).
+ */
 typedef enum {
 	CONQUEST_NODE__INVALID    = 0x0900,
 	CONQUEST_NODE__CROSS      = 0x0800 | CONQUEST_DIRECTION__UP | CONQUEST_DIRECTION__LEFT | CONQUEST_DIRECTION__DOWN | CONQUEST_DIRECTION__RIGHT,
@@ -53,15 +63,47 @@ typedef enum {
 } conquest_ENode_t;
 
 
+/*!
+ * \brief
+ * Specifies the states of the subsumption FSM.
+ * 
+ * Each subsumption layer can map to any number of subsumption states.
+ * 
+ * \see
+ * conquest_getState | conquest_setState
+ */
 typedef enum {
+	CONQUEST_STATE__START = 0,
+	CONQUEST_STATE__CALIBRATION,
+	CONQUEST_STATE__INITIAL,
 	CONQUEST_STATE__STOP,
-	CONQUEST_STATE__CENTER_AND_MOVE,
 	CONQUEST_STATE__MOVE_FOWARD,
 	CONQUEST_STATE__TURN_LEFT,
 	CONQUEST_STATE__TURN_RIGHT,
-	CONQUEST_STATE__IDENTIFY_NODE,
-	CONQUEST_STATE__ABYSS
+	CONQUEST_STATE__HIT_NODE,
+	CONQUEST_STATE__COLLISION,
+	CONQUEST_STATE__ABYSS,
 } conquest_EState_t;
+
+
+/*!
+ * \brief
+ * Specifies the states of the message FSM.
+ * 
+ * Each message handler has its own synchronization state.
+ * 
+ * \see
+ * conquest_init
+ */
+typedef enum {
+	CONQUEST_MESSSAGE_STATE__NONE, ///< Ready to handle a message.
+	CONQUEST_MESSSAGE_STATE__RESET, ///< Processing a reset request.
+	CONQUEST_MESSSAGE_STATE__GET_STATUS, ///< Processing a status request.
+	CONQUEST_MESSSAGE_STATE__TURN, ///< Processing a turn request.
+	CONQUEST_MESSSAGE_STATE__MOVE, ///< Processing a move request.
+	CONQUEST_MESSSAGE_STATE__SET_SPEED, ///< Processing a speed change request.
+	CONQUEST_MESSSAGE_STATE__SET_LED ///< Processing a LED change request.
+} conquest_EMesssageState_t;
 
 
 #endif // conquest_types_h__

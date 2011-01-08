@@ -10,7 +10,6 @@
 #include "hal_uart1.h"
 #include "sen_line.h"
 #include "sen_prox.h"
-#include "subs.h"
 
 #include "conquest.h"
 
@@ -72,18 +71,6 @@ static uint8_t s_aui8RxBufferSpace[UART1_RX_BUFFER_SIZE];
 static uint8_t s_aui8TxBufferSpace[UART1_TX_BUFFER_SIZE];
 
 
-
-void cbSubsumptionEvent(
-	IN const hal_rtc_handle_t _hEvent
-	);
-void cbSubsumptionEvent(
-	IN const hal_rtc_handle_t UNUSED _hEvent
-	) {
-
-	subs_run();
-}
-
-
 void cbBlinker(
 	IN const hal_rtc_handle_t _hEvent
 	);
@@ -109,7 +96,7 @@ int main( void) {
 	ringbuf_init( hal_uart1_getTxRingBuffer(), s_aui8TxBufferSpace, sizeof( s_aui8TxBufferSpace));
 	hal_uart1_configure( HAL_UART_CONFIG__8N1, UART1_BAUDRATE_DIVISOR);
 	hal_uart1_enable( true, NULL);
-	com_init( NULL);
+	com_init( conquest_cbConnection);
 
 	hal_i2c_init( I2C_DIVISOR, true);
 
@@ -126,12 +113,9 @@ int main( void) {
  	const sen_line_SData_t podDefaultWhiteLevel = { { SEN_LINE_NOMINAL_WHITE_LEVEL } };
  	sen_line_calibrate( &podDefaultBlackLevel, &podDefaultWhiteLevel);
 
-	subs_init();
-	conquest_init();
-	subs_reset();
-
-	hal_rtc_register( cbSubsumptionEvent, RTC_FREQENCY / SUBS_FREQUENCY, true);
 	hal_rtc_register( cbBlinker, RTC_FREQENCY / BLINK_FREQUENCY, true);
+
+	conquest_init();
 
 	for( ;;) {
 		com_processIncoming();

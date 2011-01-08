@@ -1,5 +1,4 @@
 #include "hal_motors.h"
-#include "com.h"
 #include "sen_line.h"
 #include "conquest.h"
 
@@ -45,16 +44,26 @@ static uint16_t s_ui16AvgRight = 0;
  */
 bool subs_node_run( void) {
 
+	// TODO: Fix HACK
+	// This is just a bullshit solution which detects a white dot in the middle of a node.
+	// Another HACK in cbSyncRequestMove (conquest.c) will then analyze the node through subs_initial
+	// What should be done here:
+	// - detect node with line sensors
+	// - identify node
+	// - update internal node type with conquest_setLastNode( ...)
+	// - center e-puck on the middle of the node
+	// - call conquest_setState( CONQUEST_STATE__HIT_NODE);
+	// - DO NOT send any messages; cbSyncRequestMove (conquest.c) does this
+
 	bool blActed = false;
 
 	if( s_blDetectionActive) {
 		blActed = true;
 		if( hal_motors_getStepsLeft() >= 250 && hal_motors_getStepsRight() >= 250) {
-			conquest_setState( CONQUEST_STATE__IDENTIFY_NODE);
 			hal_motors_setSpeed( 0, 0);
-			s_blDetectionActive = false;
+			conquest_setState( CONQUEST_STATE__HIT_NODE);
 		}
-	} else if( conquest_getState() == CONQUEST_STATE__MOVE_FOWARD) {
+	} else {
 		sen_line_SData_t s_podSensorData;
 		sen_line_read( &s_podSensorData);
 		sen_line_rescale( &s_podSensorData, &s_podSensorData);

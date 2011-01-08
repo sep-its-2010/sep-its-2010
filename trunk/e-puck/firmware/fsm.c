@@ -69,9 +69,11 @@ bool fsm_configureState(
 	bool blSuccess = false;
 
 	if( _ui16State < FSM_NUM_STATES) {
-		_lppodContext->apodStates[_ui16State].fnOnExit = _fnOnEnter;
+		_lppodContext->apodStates[_ui16State].fnOnEnter = _fnOnEnter;
 		_lppodContext->apodStates[_ui16State].fnOnUpdate = _fnOnUpdate;
-		_lppodContext->apodStates[_ui16State].fnOnEnter = _fnOnExit;
+		_lppodContext->apodStates[_ui16State].fnOnExit = _fnOnExit;
+
+		blSuccess = true;
 	}
 
 	return blSuccess;
@@ -121,6 +123,8 @@ bool fsm_switch(
 		if( fnEnter) {
 			fnEnter();
 		}
+
+		blSuccess = true;
 	}
 
 	return blSuccess;

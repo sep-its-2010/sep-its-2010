@@ -145,7 +145,6 @@ void cbInvalidCalibrationBlinker(
 bool subs_calibration_run( void) {
 
 	static sen_line_SData_t s_podLevels[2];
-	static hal_motors_SSettings_t s_podSettings;
 
 	bool blActed = false;
 
@@ -183,8 +182,8 @@ bool subs_calibration_run( void) {
 					_init_prog_address( addrCalibrationValues, s_podCalibrationLevels);
 					hal_nvm_writeEEPROM( addrCalibrationValues, s_podLevels, sizeof( s_podLevels));
 				}
-				hal_motors_restoreSettings( &s_podSettings);
 				s_eStatus = STATE__CALIBRATED;
+				conquest_setState( CONQUEST_STATE__START);
 			}
 			blActed = true;
 			break;
@@ -196,9 +195,9 @@ bool subs_calibration_run( void) {
 			break;
 		}
 		case STATE__WAIT: {
-			if( hal_sel_getPosition() == SUBS_CALIBRATION_SELECTOR && conquest_getState() == CONQUEST_STATE__STOP) {
+			if( hal_sel_getPosition() == SUBS_CALIBRATION_SELECTOR) {
+				conquest_setState( CONQUEST_STATE__CALIBRATION);
 				sen_line_read( &s_podLevels[BLACK_LEVEL]);
-				hal_motors_backupSettings( &s_podSettings);
 				hal_motors_setSpeed( SUBS_CALIBRATION_SPEED, 0);
 				hal_motors_setSteps( 0);
 				s_eStatus = STATE__WHITE_LEVEL;
