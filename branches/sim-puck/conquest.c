@@ -19,6 +19,8 @@
 
 #include "fsm.h"
 
+#include "conquest_sim.h"
+
 #include "conquest.h"
 
 
@@ -575,51 +577,34 @@ void cbSyncRequestSetSpeed( void) {
  */
 void cbSyncRequestMove( void) {
 
-	// TODO: fix this hack; forces the node detection through subs_initial
-	static bool s_blHACKforceDetect = false;
-
 	switch( conquest_getState()) {
 		case CONQUEST_STATE__STOP: {
-			if( s_blHACKforceDetect) {
-				s_blHACKforceDetect = false;
-
-				com_SMessage_t podResponse;
-				podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE;
-				podResponse.aui8Data[0] = conquest_getLastNode() >> 8;
-				com_send( &podResponse);
-				fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
-			} else {
-				conquest_setState( CONQUEST_STATE__MOVE_FOWARD);
-			}
+			conquest_setState( CONQUEST_STATE__MOVE_FOWARD);
 			break;
 		}
 		case CONQUEST_STATE__COLLISION: {
 			com_SMessage_t podResponse;
 			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_COLLISION;
 			com_send( &podResponse);
-			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
 			conquest_setState( CONQUEST_STATE__STOP);
+			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
 			break;
 		}
 		case CONQUEST_STATE__ABYSS: {
 			com_SMessage_t podResponse;
 			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_ABYSS;
 			com_send( &podResponse);
-			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
 //			conquest_setState( CONQUEST_STATE__STOP);
+			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
 			break;
 		}
 		case CONQUEST_STATE__HIT_NODE: {
-			// TODO: Fix HACK
-// 			com_SMessage_t podResponse;
-// 			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE;
-// 			podResponse.aui8Data[0] = 0xFA;
-// 			com_send( &podResponse);
-// 
-// 			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
-// 			conquest_setState( CONQUEST_STATE__STOP);
-			s_blHACKforceDetect = true;
-			conquest_setState( CONQUEST_STATE__INITIAL);
+ 			com_SMessage_t podResponse;
+ 			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE;
+ 			podResponse.aui8Data[0] = conquest_getLastNode() >> 8;
+ 			com_send( &podResponse);
+			conquest_setState( CONQUEST_STATE__STOP);
+ 			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
 			break;
 		}
 		default: {
@@ -810,6 +795,8 @@ void conquest_reset( void) {
 
 	hal_motors_setSpeed( 0, 0);
 	hal_led_set( 0);
+
+	conquest_sim_reset();
 }
 
 

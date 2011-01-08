@@ -138,6 +138,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\conquest_sim.c"
+				>
+			</File>
+			<File
 				RelativePath=".\main.c"
 				>
 				<FileConfiguration
@@ -256,6 +260,10 @@
 			</File>
 			<File
 				RelativePath=".\conquest.h"
+				>
+			</File>
+			<File
+				RelativePath=".\conquest_sim.h"
 				>
 			</File>
 			<File

@@ -1,5 +1,6 @@
 #include "hal_motors.h"
 #include "conquest.h"
+#include "conquest_sim.h"
 
 #include "subs_movement.h"
 
@@ -9,13 +10,19 @@ static bool s_blActive = false;
 
 /*!
  * \brief
- * Executes movement-commands sent by the smartphone.
- * 
- * \returns
- * True if a movement-command is going to be performed, false otherwise.
+ * Subsumption layer for basic move instructions.
  *
- * Checks if the bluetooth-message-queue contains a message for moving or turning.
- * If there is one the robot starts to perform the demanded movement and sends an acknowledgment to the smartphone and deletes this message.
+ * \returns
+ * - \c true: the motor speed was changed
+ * - \c false: no action taken
+ *
+ * The movement is simulator based.
+ *
+ * \remarks
+ * The layer needs to be reset after #CONQUEST_STATE__MOVE_FOWARD is left before a new move forward instruction can be handled.
+ *
+ * \see
+ * subs_movement_reset
  */
 bool subs_movement_run( void) {
 
@@ -32,17 +39,7 @@ bool subs_movement_run( void) {
 					hal_motors_setSpeed( 0, 0);
 					conquest_setState( CONQUEST_STATE__STOP);
 
-					// Turn current node
-					uint16_t ui16RawDirections = conquest_getLastNode() & 0xFF;
-					if( eState == CONQUEST_STATE__TURN_RIGHT) {
-						ui16RawDirections <<= 6;
-						ui16RawDirections |= ui16RawDirections >> 8;
-					} else {
-						ui16RawDirections <<= 2;
-						ui16RawDirections |= ui16RawDirections >> 8;
-					}
-
-					conquest_setLastNode( conquest_convertDirMaskToNode( ui16RawDirections & 0xFF));
+					conquest_setLastNode( eState == CONQUEST_STATE__TURN_LEFT ? conquest_sim_turnLeft() : conquest_sim_turnRight());
 					s_blActive = false;
 				}
 			} else {
@@ -54,7 +51,6 @@ bool subs_movement_run( void) {
 				}
 				s_blActive = true;
 			}
-			blActed = true;
 			break;
 		}
 		case CONQUEST_STATE__MOVE_FOWARD: {
@@ -76,9 +72,10 @@ bool subs_movement_run( void) {
 
 /*!
  * \brief
- * Resets all movement data.
- * 
- * Registers all handler of this subsumption-layer for the Chain-of-Responsibility pattern.
+ * Resets the subsumption movement layer.
+ *
+ * \see
+ * subs_movement_run
  */
 void subs_movement_reset( void) {
 
