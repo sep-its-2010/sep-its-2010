@@ -531,7 +531,7 @@ void cbSyncRequestReset( void) {
  */
 void cbSyncRequestSetLED( void) {
 
-	hal_led_switchOn( s_podMessage.aui8Data[0] | ( s_podMessage.aui8Data[1] << 8));
+	hal_led_set( s_podMessage.aui8Data[0] | ( s_podMessage.aui8Data[1] << 8));
 
 	com_SMessage_t podResponse;
 	podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
