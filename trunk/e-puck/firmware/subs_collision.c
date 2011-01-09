@@ -25,6 +25,8 @@ bool subs_collision_run( void) {
 
 	bool blActed = false;
 
+/*
+
 	if( conquest_getState() == CONQUEST_STATE__MOVE_FOWARD) {
 		sen_prox_SData_t podProxSensorData;
 		sen_line_SData_t podLineSensorData;
@@ -33,7 +35,7 @@ bool subs_collision_run( void) {
 		// TODO: forward info
 		// Check all IR-sensors for collision
 		for( uint16_t ui16 = 0; ui16 < SEN_PROX_NUM_SENSORS; ui16++) {
-			if( podProxSensorData.aui8Data[ui16] > SUBS_COLLISION_THRESHOLD) {
+			if( podProxSensorData.aui8Data[ui16] > CONQUEST_COLLISION_THRESHOLD) {
 //				s_podCollisionResponse.aui8Data[ui16] = true;
 				blActed = true;
 			}
@@ -96,6 +98,8 @@ bool subs_collision_run( void) {
 			}		
 		}
 	}
+
+*/
 
 	return blActed;
 }

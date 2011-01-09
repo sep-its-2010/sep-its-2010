@@ -1,7 +1,6 @@
 #include <stdlib.h>
 
 #include "hal_motors.h"
-#include "sen_line.h"
 #include "conquest.h"
 
 #include "subs_line.h"
@@ -65,10 +64,8 @@ bool subs_line_run( void) {
 	if( conquest_getState() == CONQUEST_STATE__MOVE_FOWARD) {
 
 		// Get delta left-to-right line sensor
-		sen_line_SData_t podSensorData;
-		sen_line_read( &podSensorData);
-		sen_line_rescale( &podSensorData, &podSensorData);
-		const int16_t i16DeltaNew = podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] - podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT];
+		const int16_t i16DeltaNew = conquest_getSensorImage()->podCalibratedLineSensors.aui16Data[SEN_LINE_SENSOR__LEFT] - 
+			conquest_getSensorImage()->podCalibratedLineSensors.aui16Data[SEN_LINE_SENSOR__RIGHT];
 		
 		// Constrain integration part
 		s_i16DeltaSum += s_i16DeltaOld;

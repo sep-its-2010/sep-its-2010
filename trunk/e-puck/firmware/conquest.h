@@ -9,6 +9,8 @@
 
 
 enum {
+	CONQUEST_COLLISION_THRESHOLD = 64, ///< Specifies the proximity sensor threshold above which a collision is detected.
+	CONQUEST_ABYSS_THRESHOLD = 210, ///< Specifies the line sensor threshold below which an abyss is detected.
 	CONQUEST_INITIAL_SPEED = 1000, ///< Specifies the initial speed returned by #conquest_getRequestedLineSpeed().
 	CONQUEST_HEARTBEAT_INTERVAL = 10 ///< Specifies the update rate of the logic in RTC time units. \see hal_rtc_init
 };
@@ -26,6 +28,7 @@ void conquest_setState(
 	IN const conquest_EState_t _eState
 	);
 
+
 static inline conquest_ENode_t conquest_convertDirMaskToNode(
 	IN const uint8_t _ui8DirectionMask
 	);
@@ -39,6 +42,9 @@ static inline conquest_ENode_t conquest_getLastNode( void);
 static inline void conquest_setLastNode(
 	IN const conquest_ENode_t _eNodeType
 	);
+
+static inline const conquest_SSensorImage_t* conquest_getSensorImage( void);
+
 
 /*!
  * \brief
@@ -197,6 +203,29 @@ void conquest_setLastNode(
 	extern volatile conquest_ENode_t conquest_eLastNodeType;
 
 	conquest_eLastNodeType = _eNodeType;
+}
+
+
+/*!
+ * \brief
+ * Gets the current sensor image.
+ * 
+ * \returns
+ * The sensor image of the current heartbeat cycle.
+ * 
+ * The sensor image ensures that all logic levels get the same sensor values within a common update call.
+ * 
+ * \remarks
+ * This function is interrupt safe.
+ * 
+ * \see
+ * cbHeartbeat
+ */
+const conquest_SSensorImage_t* conquest_getSensorImage( void) {
+
+	extern conquest_SSensorImage_t conquest_podSensorImage;
+
+	return &conquest_podSensorImage;
 }
 
 #endif /* conquest_h__ */

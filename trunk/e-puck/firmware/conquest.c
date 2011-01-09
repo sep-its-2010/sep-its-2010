@@ -117,6 +117,18 @@ volatile uint16_t conquest_ui16Speed = CONQUEST_INITIAL_SPEED;
 
 /*!
  * \brief
+ * Holds current sensor data.
+ *
+ * The data is updated every cycle by #cbHeartbeat().
+ *
+ * \see
+ * conquest_getSensorImage
+ */
+conquest_SSensorImage_t conquest_podSensorImage;
+
+
+/*!
+ * \brief
  * Default message handler callback.
  * 
  * \param _lppodMessage
@@ -467,19 +479,10 @@ void cbSyncRequestStatus( void) {
 		memcpy( &podResponse.aui8Data[SYS_UP_TIME_STATUS_OFFSET], &ui32UpTime, sizeof( ui32UpTime));
 
 		// Abyss status
-		sen_line_SData_t podLine;
-		sen_line_read( &podLine);
-		sen_line_rescale( &podLine, &podLine);
-		podResponse.aui8Data[ABYSS_STATUS_OFFSET + SEN_LINE_SENSOR__LEFT] = podLine.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_ABYSS_THRESHOLD;
-		podResponse.aui8Data[ABYSS_STATUS_OFFSET + SEN_LINE_SENSOR__MIDDLE] = podLine.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_ABYSS_THRESHOLD;
-		podResponse.aui8Data[ABYSS_STATUS_OFFSET + SEN_LINE_SENSOR__RIGHT] = podLine.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_ABYSS_THRESHOLD;
+		memcpy( &podResponse.aui8Data[ABYSS_STATUS_OFFSET], conquest_podSensorImage.ablAbyssMask, SEN_LINE_NUM_SENSORS);
 
 		// Collision status
-		sen_prox_SData_t podProxSensorData;
-		sen_prox_getCurrent( &podProxSensorData);
-		for( uint16_t ui16 = 0; ui16 < SEN_PROX_NUM_SENSORS; ui16++) {
-			podResponse.aui8Data[COLLISION_STATUS_OFFSET + ui16] = podProxSensorData.aui8Data[ui16] > SUBS_COLLISION_THRESHOLD;
-		}
+		memcpy( &podResponse.aui8Data[COLLISION_STATUS_OFFSET], conquest_podSensorImage.ablCollisionMask, SEN_PROX_NUM_SENSORS);
 
 		podResponse.aui8Data[LAST_NODE_STATUS_OFFSET] = conquest_getLastNode() >> 8;
 
@@ -600,6 +603,9 @@ void cbSyncRequestMove( void) {
 			com_SMessage_t podResponse;
 			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_COLLISION;
 			memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
+
+			// TODO: forward info from subs_collision
+//			memcpy( podResponse.aui8Data, conquest_podSensorImage.ablCollisionMask, SEN_LINE_NUM_SENSORS);
 			com_send( &podResponse);
 			conquest_setState( CONQUEST_STATE__STOP);
 			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
@@ -609,6 +615,9 @@ void cbSyncRequestMove( void) {
 			com_SMessage_t podResponse;
 			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_ABYSS;
 			memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
+
+			// TODO: forward info from subs_abyss
+//			memcpy( podResponse.aui8Data, conquest_podSensorImage.ablAbyssMask, SEN_LINE_NUM_SENSORS);
 			com_send( &podResponse);
 //			conquest_setState( CONQUEST_STATE__STOP);
 			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
@@ -676,14 +685,28 @@ void cbSyncRequestTurn( void) {
  * \param _hEvent
  * Specifies the unique event handle.
  * 
- * The heartbeat updates the subsumption and the message FSM.
+ * The heartbeat updates the sensor image as well as the subsumption and the message FSM.
+ *
+ * \remarks
+ * This function must be called periodically to ensure a proper behavior.
  * 
  * \see
- * hal_rtc_register
+ * hal_rtc_register | conquest_getSensorImage
  */
 void cbHeartbeat(
 	IN const hal_rtc_handle_t UNUSED _hEvent
 	) {
+
+	sen_line_read( &conquest_podSensorImage.podRawLineSensors);
+	sen_line_rescale( &conquest_podSensorImage.podRawLineSensors, &conquest_podSensorImage.podCalibratedLineSensors);
+	for( uint16_t ui16 = 0; ui16 < SEN_LINE_NUM_SENSORS; ui16++) {
+		conquest_podSensorImage.ablAbyssMask[ui16] = conquest_podSensorImage.podCalibratedLineSensors.aui16Data[ui16] < CONQUEST_ABYSS_THRESHOLD;
+	}
+
+	sen_prox_getCurrent( &conquest_podSensorImage.podRawProximitySensors);
+	for( uint16_t ui16 = 0; ui16 < SEN_PROX_NUM_SENSORS; ui16++) {
+		conquest_podSensorImage.ablCollisionMask[ui16] = conquest_podSensorImage.podRawProximitySensors.aui8Data[ui16] < CONQUEST_COLLISION_THRESHOLD;
+	}
 
 	fsm_update( &s_podSubsumptionFSM);
 	fsm_update( &s_podMessageFSM);

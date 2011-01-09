@@ -1,3 +1,4 @@
+#include <string.h>
 #include <p30f6014A.h>
 #include <libpic30.h>
 
@@ -163,7 +164,7 @@ bool subs_calibration_run( void) {
 			if( hal_motors_getStepsLeft() >= SUBS_CALIBRATION_DISTANCE &&
 				hal_motors_getStepsRight() >= SUBS_CALIBRATION_DISTANCE) {
 
-				sen_line_read( &s_podLevels[WHITE_LEVEL]);
+				memcpy( &s_podLevels[WHITE_LEVEL], &conquest_getSensorImage()->podRawLineSensors, sizeof( *s_podLevels));
 				hal_motors_setSpeed( -conquest_getRequestedLineSpeed(), 0);
 				hal_motors_setSteps( 0);
 				s_eStatus = STATE__RETURN;
@@ -198,7 +199,7 @@ bool subs_calibration_run( void) {
 		case STATE__WAIT: {
 			if( hal_sel_getPosition() == SUBS_CALIBRATION_SELECTOR && conquest_getState() == CONQUEST_STATE__START) {
 				conquest_setState( CONQUEST_STATE__CALIBRATION);
-				sen_line_read( &s_podLevels[BLACK_LEVEL]);
+				memcpy( &s_podLevels[BLACK_LEVEL], &conquest_getSensorImage()->podRawLineSensors, sizeof( *s_podLevels));
 				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
 				hal_motors_setSteps( 0);
 				s_eStatus = STATE__WHITE_LEVEL;

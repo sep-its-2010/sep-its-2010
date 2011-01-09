@@ -1,5 +1,4 @@
 #include "hal_motors.h"
-#include "sen_line.h"
 #include "conquest.h"
 
 #include "subs_node.h"
@@ -66,10 +65,7 @@ bool subs_node_run( void) {
 			conquest_setState( CONQUEST_STATE__HIT_NODE);
 		}
 	} else if( conquest_getState() == CONQUEST_STATE__MOVE_FOWARD) {
-		sen_line_SData_t s_podSensorData;
-		sen_line_read( &s_podSensorData);
-		sen_line_rescale( &s_podSensorData, &s_podSensorData);
-		if( s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] > 350) {
+		if( conquest_getSensorImage()->podCalibratedLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] > 350) {
 			s_blDetectionActive = true;
 			blActed = true;
 			hal_motors_setSteps( 0);
