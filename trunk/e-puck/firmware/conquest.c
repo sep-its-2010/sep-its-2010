@@ -600,25 +600,13 @@ void cbSyncRequestMove( void) {
 			break;
 		}
 		case CONQUEST_STATE__COLLISION: {
-			com_SMessage_t podResponse;
-			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_COLLISION;
-			memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
-
-			// TODO: forward info from subs_collision
-//			memcpy( podResponse.aui8Data, conquest_podSensorImage.ablCollisionMask, SEN_LINE_NUM_SENSORS);
-			com_send( &podResponse);
+			com_send( subs_collision_getResponse());
 			conquest_setState( CONQUEST_STATE__STOP);
 			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
 			break;
 		}
 		case CONQUEST_STATE__ABYSS: {
-			com_SMessage_t podResponse;
-			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_ABYSS;
-			memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
-
-			// TODO: forward info from subs_abyss
-//			memcpy( podResponse.aui8Data, conquest_podSensorImage.ablAbyssMask, SEN_LINE_NUM_SENSORS);
-			com_send( &podResponse);
+			com_send( subs_abyss_getResponse());
 //			conquest_setState( CONQUEST_STATE__STOP);
 			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
 			break;

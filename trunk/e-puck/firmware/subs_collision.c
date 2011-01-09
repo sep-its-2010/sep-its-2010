@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "conquest.h"
 #include "hal_motors.h"
 #include "sen_line.h"
@@ -5,8 +7,20 @@
 
 #include "subs_collision.h"
 
+
 static bool s_blPreventionActive = false;
 static uint8_t s_ui8DetectionCounter = 0;
+
+
+/*!
+ * \brief
+ * Holds the current collision response message.
+ * 
+ * \see
+ * subs_collision_getResponse
+ */
+com_SMessage_t subs_collision_podResponse;
+
 
 /*!
  * \brief
@@ -32,16 +46,17 @@ bool subs_collision_run( void) {
 		sen_line_SData_t podLineSensorData;
 		sen_prox_getCurrent( &podProxSensorData);
 
-		// TODO: forward info
 		// Check all IR-sensors for collision
 		for( uint16_t ui16 = 0; ui16 < SEN_PROX_NUM_SENSORS; ui16++) {
 			if( podProxSensorData.aui8Data[ui16] > CONQUEST_COLLISION_THRESHOLD) {
-//				s_podCollisionResponse.aui8Data[ui16] = true;
 				blActed = true;
 			}
 		}
 
 		if( blActed) {
+			subs_abyss_podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_COLLISION;
+			memcpy( subs_abyss_podResponse.aui8Data, lpblAbyss, SEN_PROX_NUM_SENSORS);
+			memset( &subs_abyss_podResponse.aui8Data[SEN_PROX_NUM_SENSORS], 0xFF, sizeof( subs_abyss_podResponse.aui8Data) - SEN_PROX_NUM_SENSORS);
 			hal_motors_setSteps( 0);
 			hal_motors_setSpeed( 0, 0);
 		}
@@ -106,9 +121,10 @@ bool subs_collision_run( void) {
 
 /*!
  * \brief
- * Reset all collision-data to default values.
+ * Resets the collision layer.
  * 
- * Deletes all values of the IR-sensors concerning the last collision.
+ * \see
+ * subs_collision_run
  */
 void subs_collision_reset( void) {
 

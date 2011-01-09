@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "hal_motors.h"
 #include "conquest.h"
 
@@ -32,6 +34,16 @@ static EState_t s_eState = STATE__ABYSS_SCAN;
 
 /*!
  * \brief
+ * Holds the current abyss response message.
+ * 
+ * \see
+ * subs_collision_getResponse
+ */
+com_SMessage_t subs_abyss_podResponse;
+
+
+/*!
+ * \brief
  * Subsumption layer for abyss detection and prevention.
  * 
  * \returns
@@ -40,8 +52,8 @@ static EState_t s_eState = STATE__ABYSS_SCAN;
  *
  * This layer only triggers in #CONQUEST_STATE__MOVE_FOWARD and remains active until it has finished.
  *
- * In case an abyss is detected on any calibrated line sensor (#SUBS_ABYSS_THRESHOLD) the e-puck reverts a specified amount of
- * steps (#SUBS_ABYSS_REGRESSION) but at least as long as the line sensors still detect an abyss.
+ * In case an abyss is detected on any calibrated line sensor (#SUBS_ABYSS_THRESHOLD) the abyss mask is saved and the e-puck
+ * reverts a specified amount of steps (#SUBS_ABYSS_REGRESSION) but at least as long as the line sensors still detect an abyss.
  * Afterwards this layer enters a blocking state (#CONQUEST_STATE__ABYSS).
  * 
  * \remarks
@@ -51,6 +63,9 @@ static EState_t s_eState = STATE__ABYSS_SCAN;
  * - The line sensors need to be calibrated before (#sen_line_calibarte()).
  * - The motors abstraction layer needs to be initialized (#hal_motors_init()).
  * - The communication layer needs to be initialized (#com_init()).
+ *
+ * \see
+ * subs_abyss_reset | subs_abyss_getResponse
  */
 bool subs_abyss_run( void) {
 
@@ -65,6 +80,9 @@ bool subs_abyss_run( void) {
 				if( lpblAbyss[SEN_LINE_SENSOR__LEFT] || lpblAbyss[SEN_LINE_SENSOR__MIDDLE] || lpblAbyss[SEN_LINE_SENSOR__RIGHT]) {
 					hal_motors_setSteps( 0);
 					hal_motors_setSpeed( -conquest_getRequestedLineSpeed(), 0);
+					subs_abyss_podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_ABYSS;
+					memcpy( subs_abyss_podResponse.aui8Data, lpblAbyss, SEN_LINE_NUM_SENSORS);
+					memset( &subs_abyss_podResponse.aui8Data[SEN_LINE_NUM_SENSORS], 0xFF, sizeof( subs_abyss_podResponse.aui8Data) - SEN_LINE_NUM_SENSORS);
 					s_eState = STATE__ABYSS_PREVENTION;
 					blActed = true;
 				}
@@ -101,9 +119,6 @@ bool subs_abyss_run( void) {
 /*!
  * \brief
  * Resets the abyss layer.
- * 
- * \remarks
- * This function needs to be called to recover from the blocking state after the abyss prevention.
  * 
  * \see
  * subs_abyss_run
