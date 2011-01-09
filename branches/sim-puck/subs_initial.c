@@ -18,10 +18,16 @@
  */
 bool subs_initial_run( void) {
 
-	conquest_setState( conquest_sim_getCurrentNode());
-	conquest_setState( CONQUEST_STATE__STOP);
+	bool blActed = false;
 
-	return true;
+	if( conquest_getState() == CONQUEST_STATE__INITIAL) {
+		conquest_setLastNode( conquest_sim_getCurrentNode());
+		conquest_setState( CONQUEST_STATE__STOP);
+
+		blActed = true;
+	}
+
+	return blActed;
 }
 
 

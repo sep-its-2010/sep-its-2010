@@ -1,6 +1,11 @@
 #ifndef conquest_types_h__
 #define conquest_types_h__
 
+#include "common.h"
+
+#include "sen_line_types.h"
+#include "sen_prox_types.h"
+
 
 /*!
  * \brief
@@ -104,6 +109,25 @@ typedef enum {
 	CONQUEST_MESSSAGE_STATE__SET_SPEED, ///< Processing a speed change request.
 	CONQUEST_MESSSAGE_STATE__SET_LED ///< Processing a LED change request.
 } conquest_EMesssageState_t;
+
+
+/*!
+ * \brief
+ * Specifies the heartbeat sensor image.
+ *
+ * This image is filled by #cbHeartbeat().
+ * 
+ * \see
+ * conquest_getSensorImage
+ */
+typedef struct {
+	sen_line_SData_t podRawLineSensors; ///< Holds the raw line sensor values.
+	sen_line_SData_t podCalibratedLineSensors; ///< Holds the calibrated line sensor values.
+	sen_prox_SData_t podRawProximitySensors; ///< Holds the raw IR proximity sensor values.
+	bool ablCollisionMask[SEN_PROX_NUM_SENSORS]; ///< Holds a collision boolean for each IR proximity sensor.
+	bool ablAbyssMask[SEN_LINE_NUM_SENSORS]; ///< Holds an abyss boolean for each line sensor.
+	uint8_t : 8;
+} conquest_SSensorImage_t;
 
 
 #endif // conquest_types_h__

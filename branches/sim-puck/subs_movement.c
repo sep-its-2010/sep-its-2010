@@ -13,7 +13,7 @@ static bool s_blActive = false;
  * Subsumption layer for basic move instructions.
  *
  * \returns
- * - \c true: the motor speed was changed
+ * - \c true: adjusted motor speed
  * - \c false: no action taken
  *
  * The movement is simulator based.
@@ -51,6 +51,7 @@ bool subs_movement_run( void) {
 				}
 				s_blActive = true;
 			}
+			blActed = true;
 			break;
 		}
 		case CONQUEST_STATE__MOVE_FOWARD: {
