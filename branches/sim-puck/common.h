@@ -5,10 +5,22 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+
 #ifndef FCY
 #	warning "FCY (instruction cyle frequency) not defined; defaulting to 7.3728 MHz!"
 #	define FCY 7372800
 #endif
+
+// stdlib.h might define a min macro in newer versions; replace it with a function
+#ifdef min
+#	undef min
+#endif
+
+// stdlib.h might define a max macro in newer versions; replace it with a function
+#ifdef max
+#	undef
+#endif
+
 
 /*!
  * \brief
