@@ -14,7 +14,7 @@
  * cbMeasurement | s_ePhase
  */
 typedef enum {
-	PAHSE__AMBIENT, ///< Ambient measurement of all 8 IR sensors.
+	PHASE__AMBIENT, ///< Ambient measurement of all 8 IR sensors.
 	PHASE__IR15, ///< Measurement of IR sensor 1 and 5.
 	PHASE__IR26, ///< Measurement of IR sensor 2 and 6.
 	PHASE__IR37, ///< Measurement of IR sensor 3 and 7.
@@ -71,7 +71,7 @@ static sen_prox_SData_t s_podCurrent;
  * 
  * This event performs a cycle based measurement of the IR proximity sensors.
  * There are 5 cycles which all save their collected values:
- * - #PAHSE__AMBIENT measures the ambient light of all 8 IR sensors.
+ * - #PHASE__AMBIENT measures the ambient light of all 8 IR sensors.
  * - #PHASE__IR15 measures the IR sensors 1 and 5 with their associated pulse lights switched on.
  * - #PHASE__IR26 measures the IR sensors 2 and 6 with their associated pulse lights switched on.
  * - #PHASE__IR37 measures the IR sensors 3 and 7 with their associated pulse lights switched on.
@@ -92,7 +92,7 @@ void cbMeasurement(
 	static sen_prox_SData_t s_podAmbient;
 
 	switch( s_ePhase) {
-		case PAHSE__AMBIENT: {
+		case PHASE__AMBIENT: {
 			for( uint16_t ui16 = 0; ui16 < SEN_PROX_NUM_SENSORS; ui16++) {
 				s_podAmbient.aui8Data[ui16] = hal_adc_read( HAL_ADC_CHANNEL__IR_1 + ui16) >> 4;
 			}
@@ -136,7 +136,7 @@ void cbMeasurement(
 			s_podCurrent.aui8Data[3] = ui8IR4 < s_podAmbient.aui8Data[3] ? s_podAmbient.aui8Data[3] - ui8IR4 : 0;
 			s_podCurrent.aui8Data[7] = ui8IR8 < s_podAmbient.aui8Data[7] ? s_podAmbient.aui8Data[7] - ui8IR8 : 0;
 			SEN_PROX_PIN__PULSE_IR48 = false;
-			s_ePhase = PAHSE__AMBIENT;
+			s_ePhase = PHASE__AMBIENT;
 			break;
 		}
 		default: {
@@ -144,7 +144,7 @@ void cbMeasurement(
 			SEN_PROX_PIN__PULSE_IR26 = false;
 			SEN_PROX_PIN__PULSE_IR37 = false;
 			SEN_PROX_PIN__PULSE_IR48 = false;
-			s_ePhase = PAHSE__AMBIENT;
+			s_ePhase = PHASE__AMBIENT;
 			hal_rtc_deactivate( _hEvent);
 		}
 	}
@@ -192,7 +192,7 @@ bool sen_prox_init(
 
 	memset( &s_podCurrent, 0xFF, sizeof( s_podCurrent));
 
-	s_ePhase = PAHSE__AMBIENT;
+	s_ePhase = PHASE__AMBIENT;
 	if( s_hMeasurementEvent == HAL_RTC_INVALID_HANDLE) {
 		s_hMeasurementEvent = hal_rtc_register( cbMeasurement, _ui16CycleInterval, true);
 	} else {
@@ -225,7 +225,7 @@ bool sen_prox_init(
  */
 bool sen_prox_enable( void) {
 
-	s_ePhase = PAHSE__AMBIENT;
+	s_ePhase = PHASE__AMBIENT;
 	hal_rtc_reset( s_hMeasurementEvent);
 	return hal_rtc_activate( s_hMeasurementEvent);
 }

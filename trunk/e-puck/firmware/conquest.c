@@ -569,7 +569,7 @@ void cbSyncRequestSetSpeed( void) {
  * \brief
  * Synchronized move request handler.
  * 
- * Initiates a move when the subsumption state is in #CONQUEST_STATE__STOP by switching to #CONQUEST_STATE__MOVE_FOWARD.
+ * Initiates a move when the subsumption state is in #CONQUEST_STATE__STOP by switching to #CONQUEST_STATE__MOVE_FORWARD.
  * When reaching either #CONQUEST_STATE__COLLISION, #CONQUEST_STATE__ABYSS or #CONQUEST_STATE__HIT_NODE one of the following
  * response messages is sent respectively: #CONQUEST_MESSAGE_TYPE__RESPONSE_COLLISION, #CONQUEST_MESSAGE_TYPE__RESPONSE_ABYSS or
  * #CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE.
@@ -580,25 +580,7 @@ void cbSyncRequestSetSpeed( void) {
  */
 void cbSyncRequestMove( void) {
 
-	// TODO: fix this hack; forces the node detection through subs_initial
-	static bool s_blHACKforceDetect = false;
-
 	switch( conquest_getState()) {
-		case CONQUEST_STATE__STOP: {
-			if( s_blHACKforceDetect) {
-				s_blHACKforceDetect = false;
-
-				com_SMessage_t podResponse;
-				podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE;
-				memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
-				podResponse.aui8Data[0] = conquest_getLastNode() >> 8;
-				com_send( &podResponse);
-				fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
-			} else {
-				conquest_setState( CONQUEST_STATE__MOVE_FOWARD);
-			}
-			break;
-		}
 		case CONQUEST_STATE__COLLISION: {
 			com_send( subs_collision_getResponse());
 			conquest_setState( CONQUEST_STATE__STOP);
@@ -612,17 +594,14 @@ void cbSyncRequestMove( void) {
 			break;
 		}
 		case CONQUEST_STATE__HIT_NODE: {
-			// TODO: Fix HACK
-// 			com_SMessage_t podResponse;
-// 			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE;
-//			memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
-// 			podResponse.aui8Data[0] = 0xFA;
-// 			com_send( &podResponse);
-// 
-// 			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
-// 			conquest_setState( CONQUEST_STATE__STOP);
-			s_blHACKforceDetect = true;
-			conquest_setState( CONQUEST_STATE__INITIAL);
+			com_SMessage_t podResponse;
+			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE;
+			memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
+			podResponse.aui8Data[0] = conquest_getLastNode() >> 8;
+			com_send( &podResponse);
+
+			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
+			conquest_setState( CONQUEST_STATE__STOP);
 			break;
 		}
 		default: {
@@ -718,7 +697,7 @@ void cbSubsumption( void) {
 
 /*!
  * \brief
- * Exit action callback for #CONQUEST_STATE__MOVE_FOWARD.
+ * Exit action callback for #CONQUEST_STATE__MOVE_FORWARD.
  * 
  * The move state uses subsumption layers which have an internal state.
  * These states need to be reset when the move state is left to prevent behavior corruption.
@@ -765,7 +744,7 @@ void conquest_init( void) {
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__CALIBRATION, NULL, cbSubsumption, NULL);
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__INITIAL,     NULL, cbSubsumption, subs_initial_reset);
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__STOP,        NULL, NULL,          NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__MOVE_FOWARD, NULL, cbSubsumption, cbStateMoveExit);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__MOVE_FORWARD, NULL, cbSubsumption, cbStateMoveExit);
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__TURN_LEFT,   NULL, cbSubsumption, subs_movement_reset);
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__TURN_RIGHT,  NULL, cbSubsumption, subs_movement_reset);
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__HIT_NODE,    NULL, NULL,          NULL);
