@@ -38,9 +38,9 @@ static int16_t s_i16DeltaOld = 0;
  * 
  * \returns
  * - \c true: adjusted motor speed
- * - \c false: not in #CONQUEST_STATE__MOVE_FOWARD
+ * - \c false: not in #CONQUEST_STATE__MOVE_FORWARD
  *
- * This layer only triggers in #CONQUEST_STATE__MOVE_FOWARD.
+ * This layer only triggers in #CONQUEST_STATE__MOVE_FORWARD.
  * 
  * Uses the difference of the calibrated left and right line sensors as input to a PID feedback controller.
  * The controller is fix point based and can be configured through #SUBS_LINE_P_FIXPOINT_FACTOR, #SUBS_LINE_I_FIXPOINT_FACTOR and
@@ -61,7 +61,7 @@ bool subs_line_run( void) {
 
 	bool blActed = false;
 
-	if( conquest_getState() == CONQUEST_STATE__MOVE_FOWARD) {
+	if( conquest_getState() == CONQUEST_STATE__MOVE_FORWARD) {
 
 		// Get delta left-to-right line sensor
 		const int16_t i16DeltaNew = conquest_getSensorImage()->podCalibratedLineSensors.aui16Data[SEN_LINE_SENSOR__LEFT] - 

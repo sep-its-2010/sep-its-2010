@@ -19,7 +19,7 @@ static bool s_blActive = false;
  * The movement is simulator based.
  *
  * \remarks
- * The layer needs to be reset after #CONQUEST_STATE__MOVE_FOWARD is left before a new move forward instruction can be handled.
+ * The layer needs to be reset after #CONQUEST_STATE__MOVE_FORWARD is left before a new move forward instruction can be handled.
  *
  * \see
  * subs_movement_reset
@@ -54,7 +54,7 @@ bool subs_movement_run( void) {
 			blActed = true;
 			break;
 		}
-		case CONQUEST_STATE__MOVE_FOWARD: {
+		case CONQUEST_STATE__MOVE_FORWARD: {
 			if( !s_blActive) {
 				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
 				s_blActive = true;

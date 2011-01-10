@@ -50,7 +50,7 @@ com_SMessage_t subs_abyss_podResponse;
  * - \c true: abyss detected or prevention active
  * - \c false: layer inactive
  *
- * This layer only triggers in #CONQUEST_STATE__MOVE_FOWARD and remains active until it has finished.
+ * This layer only triggers in #CONQUEST_STATE__MOVE_FORWARD and remains active until it has finished.
  *
  * In case an abyss is detected on any calibrated line sensor (#SUBS_ABYSS_THRESHOLD) the abyss mask is saved and the e-puck
  * reverts a specified amount of steps (#SUBS_ABYSS_REGRESSION) but at least as long as the line sensors still detect an abyss.
@@ -73,7 +73,7 @@ bool subs_abyss_run( void) {
 
 	switch( s_eState) {
 		case STATE__ABYSS_SCAN: {
-			if( conquest_getState() == CONQUEST_STATE__MOVE_FOWARD) {
+			if( conquest_getState() == CONQUEST_STATE__MOVE_FORWARD) {
 
 				// Drive backwards when an abyss is detected on any line sensor
 				const bool* const lpblAbyss = conquest_getSensorImage()->ablAbyssMask;

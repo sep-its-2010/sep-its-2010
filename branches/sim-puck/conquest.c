@@ -178,9 +178,9 @@ bool cbHandleDefault(
  * - \c false: message did not match the pattern (wrong type or wrong state).
  * 
  * A status request is accepted if the subsumption state is either #CONQUEST_STATE__START, #CONQUEST_STATE__STOP or
- * #CONQUEST_STATE__ABYSS and the message FSM is not busy (#CONQUEST_MESSSAGE_STATE__NONE).
+ * #CONQUEST_STATE__ABYSS and the message FSM is not busy (#CONQUEST_MESSAGE_STATE__NONE).
  *
- * The message is then copied and #CONQUEST_MESSSAGE_STATE__GET_STATUS is entered.
+ * The message is then copied and #CONQUEST_MESSAGE_STATE__GET_STATUS is entered.
  *
  * The handler is synchronized to #cbHeartbeat().
  * 
@@ -199,10 +199,10 @@ bool cbHandleRequestStatus(
 	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_STATUS) {
 		HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
 			const conquest_EState_t eState = conquest_getState();
-			if( fsm_getState( &s_podMessageFSM) == CONQUEST_MESSSAGE_STATE__NONE &&
+			if( fsm_getState( &s_podMessageFSM) == CONQUEST_MESSAGE_STATE__NONE &&
 				( eState == CONQUEST_STATE__START || eState == CONQUEST_STATE__STOP || eState == CONQUEST_STATE__ABYSS)) {
 
-				fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__GET_STATUS);
+				fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__GET_STATUS);
 
 				memcpy( &s_podMessage, _lppodMessage, sizeof( *_lppodMessage));
 
@@ -228,7 +228,7 @@ bool cbHandleRequestStatus(
  * 
  * A reset request is always accepted.
  *
- * The message is then copied and #CONQUEST_MESSSAGE_STATE__RESET is entered.
+ * The message is then copied and #CONQUEST_MESSAGE_STATE__RESET is entered.
  *
  * The handler is synchronized to #cbHeartbeat().
  * 
@@ -246,7 +246,7 @@ bool cbHandleRequestReset(
 
 	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_RESET) {
 		HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
-			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__RESET);
+			fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__RESET);
 
 			memcpy( &s_podMessage, _lppodMessage, sizeof( *_lppodMessage));
 
@@ -270,9 +270,9 @@ bool cbHandleRequestReset(
  * - \c false: message did not match the pattern (wrong type or wrong state).
  * 
  * A LED change request is accepted if the subsumption state is either #CONQUEST_STATE__START, #CONQUEST_STATE__STOP or
- * #CONQUEST_STATE__ABYSS and the message FSM is not busy (#CONQUEST_MESSSAGE_STATE__NONE).
+ * #CONQUEST_STATE__ABYSS and the message FSM is not busy (#CONQUEST_MESSAGE_STATE__NONE).
  *
- * The message is then copied and #CONQUEST_MESSSAGE_STATE__SET_LED is entered.
+ * The message is then copied and #CONQUEST_MESSAGE_STATE__SET_LED is entered.
  *
  * The handler is synchronized to #cbHeartbeat().
  * 
@@ -291,10 +291,10 @@ bool cbHandleRequestSetLED(
 	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_SET_LED) {
 		HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
 			const conquest_EState_t eState = conquest_getState();
-			if( fsm_getState( &s_podMessageFSM) == CONQUEST_MESSSAGE_STATE__NONE &&
+			if( fsm_getState( &s_podMessageFSM) == CONQUEST_MESSAGE_STATE__NONE &&
 				( eState == CONQUEST_STATE__START || eState == CONQUEST_STATE__STOP || eState == CONQUEST_STATE__ABYSS)) {
 
-				fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__SET_LED);
+				fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__SET_LED);
 
 				memcpy( &s_podMessage, _lppodMessage, sizeof( *_lppodMessage));
 
@@ -319,9 +319,9 @@ bool cbHandleRequestSetLED(
  * - \c false: message did not match the pattern (wrong type or wrong state).
  * 
  * A speed change request is accepted if the subsumption state is either #CONQUEST_STATE__START, #CONQUEST_STATE__STOP or
- * #CONQUEST_STATE__ABYSS and the message FSM is not busy (#CONQUEST_MESSSAGE_STATE__NONE).
+ * #CONQUEST_STATE__ABYSS and the message FSM is not busy (#CONQUEST_MESSAGE_STATE__NONE).
  *
- * The message is then copied and #CONQUEST_MESSSAGE_STATE__SET_SPEED is entered.
+ * The message is then copied and #CONQUEST_MESSAGE_STATE__SET_SPEED is entered.
  *
  * The handler is synchronized to #cbHeartbeat().
  * 
@@ -340,10 +340,10 @@ bool cbHandleRequestSetSpeed(
 	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_SET_SPEED) {
 		HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
 			const conquest_EState_t eState = conquest_getState();
-			if( fsm_getState( &s_podMessageFSM) == CONQUEST_MESSSAGE_STATE__NONE &&
+			if( fsm_getState( &s_podMessageFSM) == CONQUEST_MESSAGE_STATE__NONE &&
 				( eState == CONQUEST_STATE__START || eState == CONQUEST_STATE__STOP || eState == CONQUEST_STATE__ABYSS)) {
 
-				fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__SET_SPEED);
+				fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__SET_SPEED);
 
 				memcpy( &s_podMessage, _lppodMessage, sizeof( *_lppodMessage));
 
@@ -368,9 +368,9 @@ bool cbHandleRequestSetSpeed(
  * - \c false: message did not match the pattern (wrong type or wrong state).
  * 
  * A move request is accepted if the subsumption state is #CONQUEST_STATE__STOP
- * and the message FSM is not busy (#CONQUEST_MESSSAGE_STATE__NONE).
+ * and the message FSM is not busy (#CONQUEST_MESSAGE_STATE__NONE).
  *
- * The message is then copied and #CONQUEST_MESSSAGE_STATE__MOVE is entered.
+ * The message is then copied and #CONQUEST_MESSAGE_STATE__MOVE is entered.
  *
  * The handler is synchronized to #cbHeartbeat().
  * 
@@ -388,11 +388,11 @@ bool cbHandleRequestMove(
 
 	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_MOVE) {
 		HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
-			if( fsm_getState( &s_podMessageFSM) == CONQUEST_MESSSAGE_STATE__NONE &&
+			if( fsm_getState( &s_podMessageFSM) == CONQUEST_MESSAGE_STATE__NONE &&
 				conquest_getState() == CONQUEST_STATE__STOP &&
 				( conquest_getLastNode() & CONQUEST_DIRECTION__UP)) {
 
-				fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__MOVE);
+				fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__MOVE);
 
 				memcpy( &s_podMessage, _lppodMessage, sizeof( *_lppodMessage));
 
@@ -417,9 +417,9 @@ bool cbHandleRequestMove(
  * - \c false: message did not match the pattern (wrong type or wrong state).
  * 
  * A turn request is accepted if the subsumption state is #CONQUEST_STATE__STOP
- * and the message FSM is not busy (#CONQUEST_MESSSAGE_STATE__NONE).
+ * and the message FSM is not busy (#CONQUEST_MESSAGE_STATE__NONE).
  *
- * The message is then copied and #CONQUEST_MESSSAGE_STATE__TURN is entered.
+ * The message is then copied and #CONQUEST_MESSAGE_STATE__TURN is entered.
  *
  * The handler is synchronized to #cbHeartbeat().
  * 
@@ -437,10 +437,10 @@ bool cbHandleRequestTurn(
 	
 	if( _lppodMessage->ui16Type == CONQUEST_MESSAGE_TYPE__REQUEST_TURN) {
 		HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
-			if( fsm_getState( &s_podMessageFSM) == CONQUEST_MESSSAGE_STATE__NONE &&
+			if( fsm_getState( &s_podMessageFSM) == CONQUEST_MESSAGE_STATE__NONE &&
 				conquest_getState() == CONQUEST_STATE__STOP) {
 
-				fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__TURN);
+				fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__TURN);
 
 				memcpy( &s_podMessage, _lppodMessage, sizeof( *_lppodMessage));
 
@@ -462,7 +462,7 @@ bool cbHandleRequestTurn(
  *
  * When in #CONQUEST_STATE__STOP or #CONQUEST_STATE__ABYSS, a status response message is created (#CONQUEST_MESSAGE_TYPE__RESPONSE_STATUS) and sent.
  * This message includes a timestamp in [ms], abyss detection bits and collision detection bits for each sensor and the last node type.
- * Finally, the message FSM switches to #CONQUEST_MESSSAGE_STATE__NONE.
+ * Finally, the message FSM switches to #CONQUEST_MESSAGE_STATE__NONE.
  * 
  * \see
  * cbHandleRequestStatus
@@ -490,7 +490,7 @@ void cbSyncRequestStatus( void) {
 
 		com_send( &podResponse);
 
-		fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
+		fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE);
 	}
 }
 
@@ -502,7 +502,7 @@ void cbSyncRequestStatus( void) {
  * Resets the whole conquest logic and sends an acknowledgment (#CONQUEST_MESSAGE_TYPE__RESPONSE_OK).
  *
  * \remarks
- * The message FSM is switched to #CONQUEST_MESSSAGE_STATE__NONE by #conquest_reset().
+ * The message FSM is switched to #CONQUEST_MESSAGE_STATE__NONE by #conquest_reset().
  * 
  * \see
  * cbHandleRequestReset | conquest_reset
@@ -517,7 +517,7 @@ void cbSyncRequestReset( void) {
 	com_send( &podResponse);
 
 	// conquest_reset() implies the FSM reset
-//	fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
+//	fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE);
 }
 
 
@@ -526,7 +526,7 @@ void cbSyncRequestReset( void) {
  * Synchronized LED change request handler.
  * 
  * Enforces the requested LEDs and sends an acknowledgment (#CONQUEST_MESSAGE_TYPE__RESPONSE_OK).
- * Finally, the message FSM switches to #CONQUEST_MESSSAGE_STATE__NONE.
+ * Finally, the message FSM switches to #CONQUEST_MESSAGE_STATE__NONE.
  * 
  * \see
  * cbHandleRequestSetLED | hal_led_set
@@ -540,7 +540,7 @@ void cbSyncRequestSetLED( void) {
 	memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 	com_send( &podResponse);
 
-	fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
+	fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE);
 }
 
 
@@ -549,7 +549,7 @@ void cbSyncRequestSetLED( void) {
  * Synchronized speed change request handler.
  * 
  * Sets the new motor line speed and sends an acknowledgment (#CONQUEST_MESSAGE_TYPE__RESPONSE_OK).
- * Finally, the message FSM switches to #CONQUEST_MESSSAGE_STATE__NONE.
+ * Finally, the message FSM switches to #CONQUEST_MESSAGE_STATE__NONE.
  * 
  * \see
  * cbHandleRequestSetSpeed | conquest_setRequestedLineSpeed | conquest_getRequestedLineSpeed
@@ -563,7 +563,7 @@ void cbSyncRequestSetSpeed( void) {
 	memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 	com_send( &podResponse);
 
-	fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
+	fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE);
 }
 
 
@@ -571,11 +571,11 @@ void cbSyncRequestSetSpeed( void) {
  * \brief
  * Synchronized move request handler.
  * 
- * Initiates a move when the subsumption state is in #CONQUEST_STATE__STOP by switching to #CONQUEST_STATE__MOVE_FOWARD.
+ * Initiates a move when the subsumption state is in #CONQUEST_STATE__STOP by switching to #CONQUEST_STATE__MOVE_FORWARD.
  * When reaching either #CONQUEST_STATE__COLLISION, #CONQUEST_STATE__ABYSS or #CONQUEST_STATE__HIT_NODE one of the following
  * response messages is sent respectively: #CONQUEST_MESSAGE_TYPE__RESPONSE_COLLISION, #CONQUEST_MESSAGE_TYPE__RESPONSE_ABYSS or
  * #CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE.
- * Finally, the message FSM switches to #CONQUEST_MESSSAGE_STATE__NONE.
+ * Finally, the message FSM switches to #CONQUEST_MESSAGE_STATE__NONE.
  * 
  * \see
  * cbHandleRequestMove
@@ -584,19 +584,19 @@ void cbSyncRequestMove( void) {
 
 	switch( conquest_getState()) {
 		case CONQUEST_STATE__STOP: {
-			conquest_setState( CONQUEST_STATE__MOVE_FOWARD);
+			conquest_setState( CONQUEST_STATE__MOVE_FORWARD);
 			break;
 		}
 		case CONQUEST_STATE__COLLISION: {
 			com_send( subs_collision_getResponse());
 			conquest_setState( CONQUEST_STATE__STOP);
-			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
+			fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE);
 			break;
 		}
 		case CONQUEST_STATE__ABYSS: {
 			com_send( subs_abyss_getResponse());
 //			conquest_setState( CONQUEST_STATE__STOP);
-			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
+			fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE);
 			break;
 		}
 		case CONQUEST_STATE__HIT_NODE: {
@@ -606,7 +606,7 @@ void cbSyncRequestMove( void) {
  			podResponse.aui8Data[0] = conquest_getLastNode() >> 8;
  			com_send( &podResponse);
 			conquest_setState( CONQUEST_STATE__STOP);
- 			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
+ 			fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE);
 			break;
 		}
 		default: {
@@ -624,7 +624,7 @@ void cbSyncRequestMove( void) {
  * #CONQUEST_STATE__TURN_LEFT when the requested turn count is either positive or negative.
  * The subsumption layer is required to switch back to #CONQUEST_STATE__STOP when the turn finished.
  * The turn count is reduced by one and as soon as it reaches zero, an acknowledgment (#CONQUEST_MESSAGE_TYPE__RESPONSE_OK) is sent.
- * Finally, the message FSM switches to #CONQUEST_MESSSAGE_STATE__NONE.
+ * Finally, the message FSM switches to #CONQUEST_MESSAGE_STATE__NONE.
  * 
  * \see
  * cbHandleRequestTurn
@@ -644,7 +644,7 @@ void cbSyncRequestTurn( void) {
 			memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 			com_send( &podResponse);
 
-			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
+			fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE);
 		}
 	}
 }
@@ -702,7 +702,7 @@ void cbSubsumption( void) {
 
 /*!
  * \brief
- * Exit action callback for #CONQUEST_STATE__MOVE_FOWARD.
+ * Exit action callback for #CONQUEST_STATE__MOVE_FORWARD.
  * 
  * The move state uses subsumption layers which have an internal state.
  * These states need to be reset when the move state is left to prevent behavior corruption.
@@ -749,7 +749,7 @@ void conquest_init( void) {
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__CALIBRATION, NULL, cbSubsumption, NULL);
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__INITIAL,     NULL, cbSubsumption, subs_initial_reset);
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__STOP,        NULL, NULL,          NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__MOVE_FOWARD, NULL, cbSubsumption, cbStateMoveExit);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__MOVE_FORWARD, NULL, cbSubsumption, cbStateMoveExit);
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__TURN_LEFT,   NULL, cbSubsumption, subs_movement_reset);
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__TURN_RIGHT,  NULL, cbSubsumption, subs_movement_reset);
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__HIT_NODE,    NULL, NULL,          NULL);
@@ -757,13 +757,13 @@ void conquest_init( void) {
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__ABYSS,       NULL, NULL,          NULL);
 
 	fsm_init( &s_podMessageFSM);
-	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE,       NULL, NULL,                  NULL);
-	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__GET_STATUS, NULL, cbSyncRequestStatus,   NULL);
-	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__RESET,      NULL, cbSyncRequestReset,    NULL);
-	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__SET_LED,    NULL, cbSyncRequestSetLED,   NULL);
-	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__SET_SPEED,  NULL, cbSyncRequestSetSpeed, NULL);
-	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__MOVE,       NULL, cbSyncRequestMove,     NULL);
-	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__TURN,       NULL, cbSyncRequestTurn,     NULL);
+	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE,       NULL, NULL,                  NULL);
+	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__GET_STATUS, NULL, cbSyncRequestStatus,   NULL);
+	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__RESET,      NULL, cbSyncRequestReset,    NULL);
+	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__SET_LED,    NULL, cbSyncRequestSetLED,   NULL);
+	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__SET_SPEED,  NULL, cbSyncRequestSetSpeed, NULL);
+	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__MOVE,       NULL, cbSyncRequestMove,     NULL);
+	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__TURN,       NULL, cbSyncRequestTurn,     NULL);
 
 	com_setDefault( cbHandleDefault);
 	com_register( cbHandleRequestStatus);
@@ -797,7 +797,7 @@ void conquest_reset( void) {
 	subs_reset();
 
 	fsm_switch( &s_podSubsumptionFSM, CONQUEST_STATE__START);
-	fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__NONE);
+	fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE);
 	conquest_setLastNode( CONQUEST_NODE__INVALID);
 	conquest_setRequestedLineSpeed( CONQUEST_INITIAL_SPEED);
 
@@ -832,7 +832,7 @@ void conquest_cbConnection(
 
 	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
 		if( _blConnected) {
-			fsm_switch( &s_podMessageFSM, CONQUEST_MESSSAGE_STATE__RESET);
+			fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__RESET);
 		} else {
 			conquest_reset();
 		}
