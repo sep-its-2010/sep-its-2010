@@ -18,7 +18,7 @@
 
 // stdlib.h might define a max macro in newer versions; replace it with a function
 #ifdef max
-#	undef
+#	undef max
 #endif
 
 

@@ -189,9 +189,13 @@ hal_rtc_handle_t hal_rtc_register(
  */
 uint32_t hal_rtc_getSystemUpTime( void) {
 
+	uint32_t ui32Return;
+
 	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
-		return s_ui32SystemUpTime;
+		ui32Return = s_ui32SystemUpTime;
 	}
+
+	return ui32Return;
 }
 
 
