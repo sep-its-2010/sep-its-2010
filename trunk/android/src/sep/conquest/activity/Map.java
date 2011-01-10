@@ -2,6 +2,7 @@ package sep.conquest.activity;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -12,7 +13,6 @@ import java.util.UUID;
 import sep.conquest.R;
 import sep.conquest.controller.Controller;
 import sep.conquest.model.ConquestUpdate;
-import sep.conquest.model.Environment;
 import sep.conquest.model.GridMap;
 import sep.conquest.model.MapFileHandler;
 import sep.conquest.model.MapNode;
@@ -24,6 +24,8 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,6 +45,8 @@ import android.widget.Spinner;
  */
 public class Map extends Activity implements Observer {
 	
+	private static final int UPDATE_MESSAGE = 0;
+	
 	private Spinner mRobotSelect;
 	
 	private ArrayAdapter < String > mRobotAdapter;
@@ -50,6 +54,13 @@ public class Map extends Activity implements Observer {
 	private LinkedList < EpuckPosition > mPositions;
 	
 	private MapMode mMode;
+	
+	private LinkedList<String> mIds;
+	
+	/**
+	 * Used to update the View from update-method.
+	 */
+	private Handler updateHandler;
 
     /**
      * Is implemented by Activity and is called when the map class is accessed.
@@ -68,6 +79,7 @@ public class Map extends Activity implements Observer {
         setContentView(R.layout.map_main);
 
         mPositions = new LinkedList < EpuckPosition >();
+        mIds = new LinkedList<String>();
         
         mRobotSelect = (Spinner) findViewById(R.id.epuck_selector);
         final MapSurfaceView map = (MapSurfaceView) findViewById(R.id.map_view);
@@ -227,6 +239,20 @@ public class Map extends Activity implements Observer {
     private void setSpinner() {
     	MapSurfaceView map = (MapSurfaceView) findViewById(R.id.map_view);
     	map.setSpinner(mRobotSelect);
+        
+    	// Initialize message handler to deal with update messages.
+        Handler updateHandler = new Handler() {
+
+          public void handleMessage(final Message msg) {
+            if (msg.what == UPDATE_MESSAGE) {
+              mRobotAdapter.clear();
+
+              for (final String names : mIds) {
+                mRobotAdapter.add(names);
+              }
+            }
+          }
+        };
     }
 
 	public void update(Observable obs, Object data) {
@@ -236,6 +262,7 @@ public class Map extends Activity implements Observer {
 		
 		Set<UUID> id = cu.getRobotStatus().keySet();
 		mPositions.clear();
+		mIds.clear();
 		//mRobotAdapter.clear();
 		//mRobotAdapter.add("none");
 		for (UUID key : id) {
@@ -243,12 +270,17 @@ public class Map extends Activity implements Observer {
 			String name = cu.getRobotName(key);
 			Orientation ori = cu.getRobotStatus().get(key).getOrientation();
 			mPositions.add(new EpuckPosition(position[0], position[1], name, ori));
+			mIds.add(name);
 			//mRobotAdapter.add(name);
 		}
 		
 		draw.setMode(mMode);
 		draw.setMap(cu.getMapList(), cu.getBorders());
 		draw.setRobotPosition(mPositions);
+			
+		if (updateHandler != null) {
+			updateHandler.obtainMessage(UPDATE_MESSAGE).sendToTarget();
+		}
 		}
 	}
 	
