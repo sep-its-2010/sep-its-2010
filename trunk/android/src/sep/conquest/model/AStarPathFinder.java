@@ -162,8 +162,8 @@ public class AStarPathFinder implements IPathFinder {
 	private GraphNode[] getNeighbors(GridMap map, AStarNode currentNode) {
 
 		GraphNode[] neighbours = new GraphNode[4];
-
-		neighbours[Orientation.RIGHT.ordinal()] = map.getNode(currentNode
+		GraphNode tmp = (GraphNode) currentNode.getNode();
+		/*neighbours[Orientation.RIGHT.ordinal()] = map.getNode(currentNode
 				.getNode().getXValue() + 1, currentNode.getNode().getYValue());
 		neighbours[Orientation.LEFT.ordinal()] = map.getNode(currentNode
 				.getNode().getXValue() - 1, currentNode.getNode().getYValue());
@@ -171,8 +171,12 @@ public class AStarPathFinder implements IPathFinder {
 				.getXValue(), currentNode.getNode().getYValue() + 1);
 		neighbours[Orientation.DOWN.ordinal()] = map.getNode(currentNode
 				.getNode().getXValue(), currentNode.getNode().getYValue() - 1);
-
-		return neighbours;
+		*/
+		neighbours[0] = tmp.getNeighbours()[3];
+		neighbours[1] = tmp.getNeighbours()[0];
+		neighbours[2] = tmp.getNeighbours()[2];
+		neighbours[3] = tmp.getNeighbours()[1];
+		return  neighbours;
 	}
 
 	/**
