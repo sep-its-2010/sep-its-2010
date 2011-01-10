@@ -52,7 +52,7 @@ static uint16_t s_ui16AvgRight = 0;
 
 	if( conquest_getState() == CONQUEST_STATE__MOVE_FORWARD) {
 
-		//node detection-measurement
+		// Node detection measurement
 		const uint16_t* const lpui16SenLine = conquest_getSensorImage()->podCalibratedLineSensors.aui16Data;
   		if( ( lpui16SenLine[SEN_LINE_SENSOR__RIGHT] < SUBS_NODE_LINE_THRESHOLD ||
   			lpui16SenLine[SEN_LINE_SENSOR__LEFT] < SUBS_NODE_LINE_THRESHOLD) &&
@@ -123,6 +123,7 @@ static uint16_t s_ui16AvgRight = 0;
 			conquest_setState( CONQUEST_STATE__HIT_NODE);
 
  			s_blDetectionActive = false;
+			blActed = true;
  		} else if( s_blDetectionActive) {
  			blActed = true;
  		}

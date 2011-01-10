@@ -101,13 +101,13 @@ typedef enum {
  * conquest_init
  */
 typedef enum {
-	CONQUEST_MESSSAGE_STATE__NONE, ///< Ready to handle a message.
-	CONQUEST_MESSSAGE_STATE__RESET, ///< Processing a reset request.
-	CONQUEST_MESSSAGE_STATE__GET_STATUS, ///< Processing a status request.
-	CONQUEST_MESSSAGE_STATE__TURN, ///< Processing a turn request.
-	CONQUEST_MESSSAGE_STATE__MOVE, ///< Processing a move request.
-	CONQUEST_MESSSAGE_STATE__SET_SPEED, ///< Processing a speed change request.
-	CONQUEST_MESSSAGE_STATE__SET_LED ///< Processing a LED change request.
+	CONQUEST_MESSAGE_STATE__NONE, ///< Ready to handle a message.
+	CONQUEST_MESSAGE_STATE__RESET, ///< Processing a reset request.
+	CONQUEST_MESSAGE_STATE__GET_STATUS, ///< Processing a status request.
+	CONQUEST_MESSAGE_STATE__TURN, ///< Processing a turn request.
+	CONQUEST_MESSAGE_STATE__MOVE, ///< Processing a move request.
+	CONQUEST_MESSAGE_STATE__SET_SPEED, ///< Processing a speed change request.
+	CONQUEST_MESSAGE_STATE__SET_LED ///< Processing a LED change request.
 } conquest_EMesssageState_t;
 
 
