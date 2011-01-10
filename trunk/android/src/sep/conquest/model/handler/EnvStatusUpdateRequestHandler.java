@@ -40,13 +40,24 @@ public class EnvStatusUpdateRequestHandler extends Handler {
 			Environment env = Environment.getInstance();
 			RobotStatus status = ((StatusUpdateRequest) request).getStatus();
 			ConquestUpdate update = env.getStatus();
-			update.setRobotStatus(request.getSender(), status);			
+			RobotStatus oldStatus = update.getRobotStatus(request.getSender());
+			int[] oldPos = new int[2];
+			if (oldStatus != null)
+				oldPos = oldStatus.getPosition().clone();
+			update.setRobotStatus(request.getSender(), status.clone());	
+			
+			// check if a node was passed (if it's not the first attempt)
 			if (status.getNodeType() != null) {
-				if (env.getMap().addNode(status.getPosition()[0],
-						status.getPosition()[1], status.getNodeType())) {
-					
-					update.setExploredNodes(request.getSender(), 
-							update.getExploredNodes(request.getSender())+1);
+
+				// check if robot has moved				
+				if (!(status.getPosition()[0] == oldPos[0] &&
+					status.getPosition()[1] == oldPos[1])) {				
+					if (env.getMap().addNode(status.getPosition()[0],
+							status.getPosition()[1], status.getNodeType())) {
+						
+						update.setExploredNodes(request.getSender(), 
+								update.getExploredNodes(request.getSender())+1);
+					}
 				}
 			}
 			env.notifyObservers(update);
