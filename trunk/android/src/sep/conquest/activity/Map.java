@@ -127,6 +127,7 @@ public class Map extends Activity implements Observer {
     	if (mMode != MapMode.IMPORT) {
     	Controller.getInstance().getEnv().addObserver(this);
     	}
+    	//automatischer start
     	//PuckFactory.getSimulator().start();
     }
     
@@ -241,12 +242,13 @@ public class Map extends Activity implements Observer {
     	map.setSpinner(mRobotSelect);
         
     	// Initialize message handler to deal with update messages.
-        Handler updateHandler = new Handler() {
+        updateHandler = new Handler() {
 
           public void handleMessage(final Message msg) {
             if (msg.what == UPDATE_MESSAGE) {
               mRobotAdapter.clear();
 
+              mRobotAdapter.add("none");
               for (final String names : mIds) {
                 mRobotAdapter.add(names);
               }
