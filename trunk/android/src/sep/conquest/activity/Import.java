@@ -109,6 +109,10 @@ public class Import extends Activity {
         }
       }
     });
+    // Display path of the directory.
+    TextView txtDirectory = (TextView) findViewById(R.id.txtDirectory);
+    txtDirectory.setText(MapFileHandler.getDirectoryPath());
+    
     // Display the files found in the application directory.
     displayFiles();
   }
