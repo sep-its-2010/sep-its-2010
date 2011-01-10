@@ -351,8 +351,9 @@ public abstract class Puck implements IComClient, IRobot {
     controlled = enabled;
     request[0] = (byte) (REQ_SETLED & 0xff);
     request[1] = (byte) ((REQ_SETLED >> 8) & 0xff);
-    request[2] = (byte) 10;
-
+    request[2] = (byte) 0x10;
+    request[3] = 0;
+    
     writeSocket(request);
   }
 
