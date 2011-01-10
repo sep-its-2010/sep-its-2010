@@ -34,6 +34,11 @@ public enum State {
 	RETURN,
 	
 	/**
+	 * Robot has finished exploration.
+	 */
+	FINISH,
+	
+	/**
 	 * Error occurred in one of the other states.
 	 */
 	ERROR

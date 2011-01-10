@@ -59,4 +59,8 @@ public enum SpeedLevel {
 	public int getSpeed() {
 		return speed;
 	}
+	
+	public static int getNumberOfSpeedLevels() {
+	  return SpeedLevel.values().length;
+	}
 }
