@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import sep.conquest.R;
@@ -40,17 +41,17 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
  * @author Andreas Poxrucker
  * 
  */
-public class Steer extends Activity implements Observer {
-
-  /**
-   * The "none" entry is currently selected in the robot spinner.
-   */
-  private static final int NO_SELECTION = -1;
+public final class Steer extends Activity implements Observer {
 
   /**
    * Used to identify update message for the handler.
    */
   private static final int UPDATE_MESSAGE = 0;
+
+  /**
+   * No robot is selected.
+   */
+  private static final int NO_SELECTION = -1;
 
   /**
    * Shows selected control method.
@@ -61,6 +62,11 @@ public class Steer extends Activity implements Observer {
    * Shows selected robot to control.
    */
   private Spinner spRobots;
+
+  /**
+   * Used to display robot names.
+   */
+  private ArrayAdapter<String> adpRobots;
 
   /**
    * Used to get 'up' commands.
@@ -115,7 +121,12 @@ public class Steer extends Activity implements Observer {
   /**
    * The moving state of the robots.
    */
-  private ArrayList<Boolean> moving;
+  private java.util.Map<UUID, Boolean> moving;
+
+  /**
+   * The names of the robots.
+   */
+  private java.util.Map<UUID, String> names;
 
   /**
    * Used to update the View from update-method.
@@ -148,21 +159,28 @@ public class Steer extends Activity implements Observer {
     // Initially selected control is joystick.
     selectedControl = Control.JOYSTICK;
 
-    // Initially there is no robot selected.
+    // And no robot is selcted.
     selectedRobot = NO_SELECTION;
 
     // Initially there are no robots registered.
     robots = new ArrayList<UUID>();
 
     // Consequently there is no moving state.
-    moving = new ArrayList<Boolean>();
+    moving = new TreeMap<UUID, Boolean>();
+
+    // And no names.
+    names = new TreeMap<UUID, String>();
 
     // Initialize message handler to deal with update messages.
     updateHandler = new Handler() {
 
       public void handleMessage(Message msg) {
         if (msg.what == UPDATE_MESSAGE) {
-               
+          adpRobots.clear();
+
+          for (UUID id : robots) {
+            adpRobots.add(names.get(id));
+          }
         }
       }
     };
@@ -219,9 +237,6 @@ public class Steer extends Activity implements Observer {
     java.util.Map<UUID, RobotStatus> states = update.getRobotStatus();
 
     synchronized (states) {
-      // Used to index entries in array lists in the following iteration.
-      int i = 0;
-
       // Iterate over all RobotStates of the update container and check them.
       for (UUID id : states.keySet()) {
         RobotStatus status = states.get(id);
@@ -231,28 +246,24 @@ public class Steer extends Activity implements Observer {
             // If id is not known and corresponding robot is not in error state,
             // add new id and moving state.
             robots.add(id);
-            moving.add(Boolean.valueOf(status.isMoving()));
+            moving.put(id, Boolean.valueOf(status.isMoving()));
+            names.put(id, update.getRobotName(id));
           }
         } else {
           // If id is known but robot has entered error state, remove id.
           if (status.getState() == State.ERROR) {
-            robots.remove(i);
-            moving.remove(i);
-
-            // Update selectedRobot index.
-            if (i < selectedRobot) {
-              selectedRobot--;
-            } else if (i == selectedRobot) {
-              selectedRobot = NO_SELECTION;
-            }
+            robots.remove(id);
+            moving.remove(id);
+            names.remove(id);
+            selectedRobot = 0;
           } else {
             // If id is known and robot has not entered error state, update
             // moving state.
-            moving.set(i, Boolean.valueOf(status.isMoving()));
+            moving.put(id, Boolean.valueOf(status.isMoving()));
           }
         }
-        i++;
       }
+      updateHandler.obtainMessage(UPDATE_MESSAGE).sendToTarget();
     }
   }
 
@@ -321,9 +332,8 @@ public class Steer extends Activity implements Observer {
 
     // Saves the available robots and is used to display them in the robot
     // spinner.
-    ArrayAdapter<String> adpRobots = new ArrayAdapter<String>(this,
+    adpRobots = new ArrayAdapter<String>(this,
         android.R.layout.simple_spinner_item);
-    adpRobots.add(getString(R.string.TXT_NO_SELECTION));
     adpRobots
         .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     spRobots.setAdapter(adpRobots);
@@ -333,23 +343,20 @@ public class Steer extends Activity implements Observer {
           int position, long id) {
         // If same item is selected again then there is nothing to do.
         if (selectedRobot != position) {
-          TextView item = (TextView) view;
-
           // Save position of last selected entry. As the first entry is
           // "none", save position - 1
-          selectedRobot = position - 1;
+          selectedRobot = position;
 
           // Uncheck CheckBox every time a new robot is selected.
           chkActivate.setChecked(false);
 
           // If item "none" is selected, disable CheckBox.
-          chkActivate.setEnabled(item.getText().equals(
-              getString(R.string.TXT_NO_SELECTION)));
+          chkActivate.setEnabled(true);
         }
       }
 
       public void onNothingSelected(AdapterView<?> parent) {
-        // Method not implemented.
+        selectedRobot = NO_SELECTION;
       }
     });
 
@@ -383,7 +390,7 @@ public class Steer extends Activity implements Observer {
       }
 
       public void onNothingSelected(AdapterView<?> arg0) {
-        // Method not implemented.
+        selectedControl = Control.JOYSTICK;
       }
     });
     // Disable all steer control elements in the beginning.
@@ -541,7 +548,7 @@ public class Steer extends Activity implements Observer {
       if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
         // If a robot is selected and not moving, pass control command to
         // Controller.
-        if (selectedRobot != NO_SELECTION && !moving.get(selectedRobot)) {
+        if ((selectedRobot != NO_SELECTION) && !moving.get(robots.get(selectedRobot))) {
           float x = event.values[0];
           float y = event.values[1];
           float hyp = (float) Math.sqrt(x * x + y * y);
@@ -562,7 +569,7 @@ public class Steer extends Activity implements Observer {
               // Action
             }
           }
-          moving.set(selectedRobot, Boolean.TRUE);
+          moving.put(robots.get(selectedRobot), Boolean.TRUE);
         }
       }
     }
@@ -586,12 +593,13 @@ public class Steer extends Activity implements Observer {
     public void onClick(View v) {
       // If a robot is selected and not moving, pass control command to
       // Controller.
-      if (selectedRobot != NO_SELECTION && !moving.get(selectedRobot)) {
+      if ((selectedRobot != NO_SELECTION) && !moving.get(robots.get(selectedRobot))) {
         int id = v.getId();
         switch (id) {
         // Button 'Up'
         case R.id.btn_up:
           Controller.getInstance().forward(robots.get(selectedRobot));
+          moving.put(robots.get(selectedRobot), Boolean.TRUE);
           break;
 
         // Button 'Down'
@@ -609,7 +617,6 @@ public class Steer extends Activity implements Observer {
           Controller.getInstance().right(robots.get(selectedRobot));
           break;
         }
-        moving.set(selectedRobot, Boolean.TRUE);
       }
     }
   }

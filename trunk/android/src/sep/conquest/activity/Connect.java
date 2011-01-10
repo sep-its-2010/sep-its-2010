@@ -158,7 +158,7 @@ public final class Connect extends Activity {
   public void onPause() {
     bluetoothAdapter.cancelDiscovery();
     unregisterReceiver(bcReceiver);
-    
+
     // If Activity is paused during Bluetooth search dismiss dialog.
     if (pDialog != null) {
       pDialog.dismiss();
@@ -591,16 +591,18 @@ public final class Connect extends Activity {
       // Input buffer to read from stream.
       byte[] buffer = new byte[Puck.MSG_LENGTH];
 
-      // Keep reading until 32 bytes have been read.
-      while (numberOfBytesReceived < Puck.MSG_LENGTH) {
-        numberOfBytesReceived = socket.getInputStream().read(buffer,
-            numberOfBytesReceived, Puck.MSG_LENGTH - numberOfBytesReceived);
+      synchronized (socket) {
+        // Keep reading until 32 bytes have been read.
+        while (numberOfBytesReceived < Puck.MSG_LENGTH) {
+          numberOfBytesReceived += socket.getInputStream().read(buffer,
+              numberOfBytesReceived, Puck.MSG_LENGTH - numberOfBytesReceived);
+        }
       }
 
       // Check type code of message (must be ok)
-      short typeCode = (short) ((buffer[Puck.TYPE_SECOND_BYTE] << 8) & 0xFF | 
-          buffer[Puck.TYPE_FIRST_BYTE] & 0xFF);
-      
+      short typeCode = (short) (((buffer[Puck.TYPE_SECOND_BYTE] & 0xFF) << 8)
+          | buffer[Puck.TYPE_FIRST_BYTE] & 0xFF);
+
       if (typeCode != Puck.RES_OK) {
         throw new IOException("Illegal type code received.");
       }
