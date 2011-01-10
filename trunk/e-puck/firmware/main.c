@@ -51,26 +51,6 @@ enum {
 };
 
 
-/*!
- * \brief
- * Holds the receiver ring buffer storage.
- * 
- * \see
- * s_aui8TxBufferSpace
- */
-static uint8_t s_aui8RxBufferSpace[UART1_RX_BUFFER_SIZE];
-
-
-/*!
- * \brief
- * Holds the transmitter ring buffer storage.
- * 
- * \see
- * s_aui8RxBufferSpace
- */
-static uint8_t s_aui8TxBufferSpace[UART1_TX_BUFFER_SIZE];
-
-
 void cbBlinker(
 	IN const hal_rtc_handle_t _hEvent
 	);
@@ -92,7 +72,9 @@ int main( void) {
 	hal_adc_init();
 
 	// Configuring the primary UART for the bluetooth module
+	static uint8_t s_aui8RxBufferSpace[UART1_RX_BUFFER_SIZE];
 	ringbuf_init( hal_uart1_getRxRingBuffer(), s_aui8RxBufferSpace, sizeof( s_aui8RxBufferSpace));
+	static uint8_t s_aui8TxBufferSpace[UART1_TX_BUFFER_SIZE];
 	ringbuf_init( hal_uart1_getTxRingBuffer(), s_aui8TxBufferSpace, sizeof( s_aui8TxBufferSpace));
 	hal_uart1_configure( HAL_UART_CONFIG__8N1, UART1_BAUDRATE_DIVISOR);
 	hal_uart1_enable( true, NULL);
