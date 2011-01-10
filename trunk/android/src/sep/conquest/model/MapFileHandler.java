@@ -37,16 +37,26 @@ public final class MapFileHandler {
       + "/Android/data/sep.conquest/files/");
 
   /**
+   * The file ending of a map file.
+   */
+  private static final String MAP_ENDING = ".sep";
+  
+  /**
+   * The file ending of a sim file.
+   */
+  private static final String SIM_ENDING = ".sim";
+  
+  /**
    * Describes valid file names with file ending .sep.
    */
   private static final Pattern MAP_FILE_NAME_FORMAT = Pattern
-      .compile("\\p{Alnum}+\\w*\\.sep");
+      .compile("\\p{Alnum}+\\w*\\" + MAP_ENDING);
 
   /**
    * Describes valid file names with file ending .sim.
    */
   private static final Pattern SIM_FILE_NAME_FORMAT = Pattern
-      .compile("\\p{Alnum}+\\w*\\.sim");
+      .compile("\\p{Alnum}+\\w*\\" + SIM_ENDING);
 
   /**
    * Opens a file containing the number of participating Pucks, a serialized
@@ -80,7 +90,7 @@ public final class MapFileHandler {
       // will take part in an exploration.
       String headline = bReader.readLine();
       int number;
-      
+
       try {
         number = Integer.parseInt(headline);
       } catch (NumberFormatException ex) {
@@ -115,7 +125,7 @@ public final class MapFileHandler {
         } else {
           int x;
           int y;
-          
+
           try {
             x = Integer.parseInt(tokens[0]);
             y = Integer.parseInt(tokens[1]);
@@ -130,19 +140,21 @@ public final class MapFileHandler {
           // The value of the fourth token (0-3) indicates the orientation of
           // robot.
           if (tokens.length == 4) {
-            int index;;
-            
+            int index;
+            ;
+
             try {
               index = Integer.parseInt(tokens[3]);
             } catch (NumberFormatException ex) {
               throw new IOException("Illegal file format");
             }
-            
+
             // If orientation is invalid, throw Exception.
             if ((index > 3) || (index < 0)) {
-              throw new IOException("Configuration contains illegal orientation");
+              throw new IOException(
+                  "Configuration contains illegal orientation");
             }
-            
+
             Orientation ori = Orientation.values()[index];
             int[] pos = { x, y };
             positions[posRead] = pos;
@@ -158,7 +170,7 @@ public final class MapFileHandler {
       // Close readers and return reconstructed map.
       bReader.close();
       fReader.close();
-      
+
       // If map contains frontier nodes then map is invalid.
       if (map.getFrontierList().size() != 0) {
         throw new IOException("File contains an invalid map");
@@ -240,6 +252,10 @@ public final class MapFileHandler {
     // Check, if parameter are not equal to null.
     if ((map != null) && (filename != null)) {
 
+      // If 
+      if (!filename.endsWith(MAP_ENDING)) {
+        filename = filename.concat(MAP_ENDING);
+      }
       // Check, if filename is valid and if external media can be written.
       if (isValidMapFilename(filename) && isWriteable()) {
 
@@ -274,6 +290,16 @@ public final class MapFileHandler {
       // Thrown, when either map or filename equals null.
       throw new IllegalArgumentException("Map and filename must not equal null");
     }
+  }
+
+  /**
+   * Returns the path of the directory where maps and sim configurations are
+   * saved and open from.
+   * 
+   * @return String containing the path of the directory.
+   */
+  public static String getDirectoryPath() {
+    return DIR.getAbsolutePath();
   }
 
   /**
