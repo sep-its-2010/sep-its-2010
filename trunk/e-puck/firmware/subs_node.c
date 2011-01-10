@@ -1,5 +1,8 @@
 #include "hal_motors.h"
 #include "conquest.h"
+#include "sen_line.h"
+#include "hal_led.h"
+#include "com.h"
 
 #include "subs_node.h"
 
@@ -43,7 +46,7 @@ static uint16_t s_ui16AvgRight = 0;
  * After that a message with the shape of the node is created and sent to the Smartphone via BlueTooth.
  * The robot will stop with its center above the node.
  */
-bool subs_node_run( void) {
+//bool subs_node_run( void) {
 
 	// TODO: Fix HACK
 	// This is just a bullshit solution which detects a white dot in the middle of a node.
@@ -56,111 +59,109 @@ bool subs_node_run( void) {
 	// - call conquest_setState( CONQUEST_STATE__HIT_NODE);
 	// - DO NOT send any messages; cbSyncRequestMove (conquest.c) does this
 
+//	bool blActed = false;
+
+//	if( s_blDetectionActive) {
+//		blActed = true;
+//		if( hal_motors_getStepsLeft() >= 250 && hal_motors_getStepsRight() >= 250) {
+//			hal_motors_setSpeed( 0, 0);
+//			conquest_setState( CONQUEST_STATE__HIT_NODE);
+//		}
+//	} else if( conquest_getState() == CONQUEST_STATE__MOVE_FOWARD) {
+//		if( conquest_getSensorImage()->podCalibratedLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] > 350) {
+//			s_blDetectionActive = true;
+//			blActed = true;
+//			hal_motors_setSteps( 0);
+//		}
+//	}
+
+//	return blActed;
+//}
+
+ bool subs_node_run( void) {
 	bool blActed = false;
 
-	if( s_blDetectionActive) {
-		blActed = true;
-		if( hal_motors_getStepsLeft() >= 250 && hal_motors_getStepsRight() >= 250) {
-			hal_motors_setSpeed( 0, 0);
-			conquest_setState( CONQUEST_STATE__HIT_NODE);
-		}
-	} else if( conquest_getState() == CONQUEST_STATE__MOVE_FOWARD) {
-		if( conquest_getSensorImage()->podCalibratedLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] > 350) {
-			s_blDetectionActive = true;
-			blActed = true;
-			hal_motors_setSteps( 0);
-		}
+	if( conquest_getState() == CONQUEST_STATE__MOVE_FOWARD) {
+		const uint16_t* const lpui16SenLine = conquest_getSensorImage()->podCalibratedLineSensors.aui16Data;
+
+ 
+ 	//node detection-measurement
+  	if( ( lpui16SenLine[SEN_LINE_SENSOR__RIGHT] < SUBS_NODE_LINE_THRESHOLD ||
+  		lpui16SenLine[SEN_LINE_SENSOR__LEFT] < SUBS_NODE_LINE_THRESHOLD) &&
+ 		!s_blDetectionActive) {
+ 
+ 		s_ui16AvgLeft += lpui16SenLine[SEN_LINE_SENSOR__LEFT];
+ 		s_ui16AvgRight += lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
+ 		s_ui8NodeDetectionCounter++;
+ 	} else if( lpui16SenLine[SEN_LINE_SENSOR__RIGHT] > SUBS_NODE_LINE_THRESHOLD &&
+  		lpui16SenLine[SEN_LINE_SENSOR__LEFT] > SUBS_NODE_LINE_THRESHOLD &&
+ 		!s_blDetectionActive) {		
+ 
+ 		s_ui16AvgLeft = 0;
+ 		s_ui16AvgRight = 0;
+ 		s_ui8NodeDetectionCounter = 0;
+ 	}
+ 	
+ 	//robot is above a node -> enable node-detection-state
+ 	if( s_ui8NodeDetectionCounter >= SUBS_NODE_REQUIRED_MEASUREMENTS && !s_blDetectionActive) {
+ 		hal_motors_setSteps( 0);
+ 		s_blDetectionActive = true;
+ 		blActed = true;		
+ 
+ 	//Exit detection-state when still active & driven far enough; send previously analyzed node-type.
+ 	} else if( s_blDetectionActive &&
+ 		hal_motors_getStepsLeft() >= SUBS_NODE_MOVE_ABOVE_CENTER && 
+ 		hal_motors_getStepsRight() >= SUBS_NODE_MOVE_ABOVE_CENTER) {
+ 		
+ 		s_ui16AvgLeft = s_ui16AvgLeft / s_ui8NodeDetectionCounter;
+ 		s_ui16AvgRight = s_ui16AvgRight / s_ui8NodeDetectionCounter;
+ 
+ 		//analyze the shape of the node		
+ 		if( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD &&
+ 			s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD &&
+ 			lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE_LINE_THRESHOLD) {
+ 
+ 			conquest_setLastNode( CONQUEST_NODE__CROSS);
+ 			hal_led_set( HAL_LED_PIN_BV__0 | HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
+ 		} else if( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD &&
+ 			s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD) {
+ 
+ 			conquest_setLastNode( CONQUEST_NODE__UP_T);
+ 			hal_led_set( HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
+ 		} else if( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD &&
+ 			lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE_LINE_THRESHOLD) {
+ 
+ 			conquest_setLastNode( CONQUEST_NODE__RIGHT_T);
+ 			hal_led_set( HAL_LED_PIN_BV__0 | HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
+ 		} else if( s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD &&
+ 			lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE_LINE_THRESHOLD) {
+ 
+ 			conquest_setLastNode( CONQUEST_NODE__LEFT_T);
+ 			hal_led_set( HAL_LED_PIN_BV__0 | HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4);
+ 		} else if( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD) {
+ 			conquest_setLastNode( CONQUEST_NODE__DOWN_LEFT);
+ 			hal_led_set( HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
+ 		} else if( s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD) {
+ 			conquest_setLastNode( CONQUEST_NODE__DOWN_RIGHT);
+ 			hal_led_set( HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4);
+ 		}
+ 		
+ 		hal_motors_setSpeed( 0, 0);
+ 		hal_motors_setSteps( 0);
+ 		s_ui16AvgLeft = 0;
+ 		s_ui16AvgRight = 0;
+ 		s_ui8NodeDetectionCounter = 0;
+		
+		conquest_setState( CONQUEST_STATE__HIT_NODE);
+
+ 		s_blDetectionActive = false;
+ 	} else if( s_blDetectionActive) {
+ 		blActed = true;
+ 	}
 	}
-
-	return blActed;
-}
-
-// bool subs_node_run( void) {
-// 
-// 	bool blActed = false;
-// 	sen_line_SData_t s_podSensorData = {{0}};
-// 	sen_line_read( &s_podSensorData);
-// 	sen_line_rescale( &s_podSensorData, &s_podSensorData);
-// 
-// 	// node detection-measurement
-//  	if( ( s_podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_NODE_LINE_THRESHOLD ||
-//  		s_podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_NODE_LINE_THRESHOLD) &&
-// 		!s_blDetectionActive) {
-// 
-// 		s_ui16AvgLeft += s_podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT];
-// 		s_ui16AvgRight += s_podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT];
-// 		s_ui8NodeDetectionCounter++;
-// 	} else if( s_podSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] > SUBS_NODE_LINE_THRESHOLD &&
-//  		s_podSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] > SUBS_NODE_LINE_THRESHOLD &&
-// 		!s_blDetectionActive) {		
-// 
-// 		s_ui16AvgLeft = 0;
-// 		s_ui16AvgRight = 0;
-// 		s_ui8NodeDetectionCounter = 0;
-// 	}
-// 	
-// 	// robot is above a node -> enable node-detection-state
-// 	if( s_ui8NodeDetectionCounter >= SUBS_NODE_REQUIRED_MEASUREMENTS && !s_blDetectionActive) {
-// 		hal_motors_setSteps( 0);
-// 		s_blDetectionActive = true;
-// 		blActed = true;		
-// 
-// 	// Exit detection-state when still active & driven far enough; send previously analyzed node-type.
-// 	} else if( s_blDetectionActive &&
-// 		hal_motors_getStepsLeft() >= SUBS_NODE_MOVE_ABOVE_CENTER && 
-// 		hal_motors_getStepsRight() >= SUBS_NODE_MOVE_ABOVE_CENTER) {
-// 		
-// 		s_ui16AvgLeft = s_ui16AvgLeft / s_ui8NodeDetectionCounter;
-// 		s_ui16AvgRight = s_ui16AvgRight / s_ui8NodeDetectionCounter;
-// 
-// 		// analyze the shape of the node		
-// 		if( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD &&
-// 			s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD &&
-// 			s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE_LINE_THRESHOLD) {
-// 
-// 			conquest_setLastNode( CONQUEST_NODE__CROSS);
-// 			hal_led_set( HAL_LED_PIN_BV__0 | HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
-// 		} else if( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD &&
-// 			s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD) {
-// 
-// 			conquest_setLastNode( CONQUEST_NODE__UP_T);
-// 			hal_led_set( HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
-// 		} else if( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD &&
-// 			s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE_LINE_THRESHOLD) {
-// 
-// 			conquest_setLastNode( CONQUEST_NODE__RIGHT_T);
-// 			hal_led_set( HAL_LED_PIN_BV__0 | HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
-// 		} else if( s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD &&
-// 			s_podSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE_LINE_THRESHOLD) {
-// 
-// 			conquest_setLastNode( CONQUEST_NODE__LEFT_T);
-// 			hal_led_set( HAL_LED_PIN_BV__0 | HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4);
-// 		} else if( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD) {
-// 			conquest_setLastNode( CONQUEST_NODE__DOWN_LEFT);
-// 			hal_led_set( HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
-// 		} else if( s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD) {
-// 			conquest_setLastNode( CONQUEST_NODE__DOWN_RIGHT);
-// 			hal_led_set( HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4);
-// 		}
-// 		
-// 		hal_motors_setSpeed( 0, 0);
-// 		hal_motors_setSteps( 0);
-// 		s_ui16AvgLeft = 0;
-// 		s_ui16AvgRight = 0;
-// 		s_ui8NodeDetectionCounter = 0;
-// 
-// 		com_SMessage_t podHitNodeMessage;
-// 		podHitNodeMessage.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_HIT_NODE;
-// 		podHitNodeMessage.aui8Data[0] = conquest_getLastNode();
-// 		com_send( &podHitNodeMessage);
-// 
-// 		s_blDetectionActive = false;
-// 	} else if( s_blDetectionActive) {
-// 		blActed = true;
-// 	}
-// 
-// 	return blActed;
-// }
+ 
+ 	return blActed;
+ }
 
 /*!
  * \brief
