@@ -1,10 +1,13 @@
 package sep.conquest.model.handler;
 
+import java.util.UUID;
+
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
 import sep.conquest.model.Puck;
+import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.MessageType;
-import sep.conquest.util.ConquestLog;
+import sep.conquest.model.requests.StatusUpdateRequest;
 
 /**
  * Handles REJECT messages coming from the Bluetooth Adapter.
@@ -41,6 +44,16 @@ public class PuckRejectHandler extends Handler {
   public boolean handleRequest(IRequest request) {
     if (request.getKind().equals(MessageType.RESPONSE_REJECT)) {
       Puck robot = executor.getRobot();
+      RobotStatus state = robot.getRobotStatus().get(robot.getID());
+      
+      synchronized (state) {
+        state.setMoving(false);
+
+        // Announce changes via broadcast.
+        StatusUpdateRequest statusUpdateReq = new StatusUpdateRequest(robot
+            .getID(), new UUID[0], state);
+        robot.broadcast(statusUpdateReq);
+      }
       return true;
     } else {
       return super.handleRequest(request);

@@ -50,28 +50,14 @@ public class FailureRequestHandler extends Handler {
 			FailureRequest failReq = (FailureRequest) request;
 			UUID sender = failReq.getSender();
 			
-			if (failReq.getFailureType() == FailureType.BLUETOOTHFAILURE) {
+	    FailureType failure = failReq.getFailureType();
+			if (failure == FailureType.BLUETOOTHFAILURE || failure == FailureType.INVALIDPITCH) {
 			  Puck robot = executor.getRobot();
 			  synchronized(robot) {
 			    RobotStatus status = robot.getRobotStatus().get(sender);
 			    status.setState(State.ERROR);
 			  }
 			}
-			
-			/*if (failReq.getFailureType() == FailureType.ABYSS) {
-				message = "An Abyss was discovered..Uahhhh! "
-						+ failReq.getSender();
-				throw new IllegalStateException(message);
-			} else if (failReq.getFailureType() == FailureType.INVALIDPITCH) {
-				message = "The pitch is invalid! " + failReq.getSender();
-				throw new IllegalStateException(message);
-			} else if (failReq.getFailureType() == FailureType.BLUETOOTHFAILURE) {
-				message = "I've lost my Bluetooth-Connection to my little E-Puck! "
-						+ failReq.getSender();
-				throw new IllegalStateException(message);
-			} else if (failReq.getFailureType() == FailureType.NODEOBSTRUCTION) {
-				message = "Cannot reach the node! " + failReq.getSender();
-			}*/
 			return true;
 		}
   }

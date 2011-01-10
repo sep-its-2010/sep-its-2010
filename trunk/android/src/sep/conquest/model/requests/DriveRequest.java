@@ -37,12 +37,13 @@ public class DriveRequest extends Request {
         	break;
         case LEFT:
         	driveCommand = -1;
+        	break;
         case RIGHT:
         	driveCommand = 1;
+        	break;
         default:
         	driveCommand = 0;
-        }
-        
+        }  
     }
 
     /* (non-Javadoc)

@@ -5,7 +5,6 @@ import java.util.UUID;
 import sep.conquest.model.IComClient;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.Puck;
-import sep.conquest.util.ConquestLog;
 
 /**
  * The PuckRequest class represents message objects that are sent by robots to
@@ -42,8 +41,7 @@ public class PuckRequest implements IRequest {
    */
   public PuckRequest(byte[] message, IComClient sender) {
     this.message = message.clone();
-    short messageType;
-    messageType = (short) (((message[1] & 0xFF) << 8) | message[0] & 0xFF);
+    short messageType = (short) (((message[Puck.TYPE_SECOND_BYTE] & 0xFF) << 8) | message[Puck.TYPE_FIRST_BYTE] & 0xFF);
 
     switch (messageType) {
     case Puck.RES_OK:
@@ -83,25 +81,28 @@ public class PuckRequest implements IRequest {
   /**
    * Returns the byte-array of the robot-message.
    * 
-   * @return The InputStream.
+   * @return Byte containing the received message.
    */
   public byte[] getMessage() {
     return message;
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * Returns the receiver of the request.
    * 
-   * @see sep.conquest.model.IRequest#getReceiver()
+   * Always returns an empty array as message is always dedicated to a certain
+   * receiver.
+   * 
+   * @return Empty array.
    */
   public UUID[] getReceiver() {
     return new UUID[0];
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * Returns the sender of the message.
    * 
-   * @see sep.conquest.model.IRequest#getSender()
+   * @return The sender of the message.
    */
   public UUID getSender() {
     return sender;

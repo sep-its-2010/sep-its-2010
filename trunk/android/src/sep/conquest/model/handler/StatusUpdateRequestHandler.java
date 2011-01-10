@@ -43,14 +43,18 @@ public class StatusUpdateRequestHandler extends Handler {
 		if (!(request.getKind() == MessageType.STATUS_UPDATE)) {
 			return super.handleRequest(request);
 		} else {
-			//Check if the Thread comes from same robot as the sender
+			// Check if the request comes from same robot as the sender
 			if(!(request.getSender() == executor.getRobot().getID())){
 				StatusUpdateRequest statusReq = (StatusUpdateRequest) request;
-				// Side effect in method RobotStatus.setRobotStatus?! Check this!
+				
+				// Get old robot status.
 				RobotStatus oldStatus = executor.getRobot().getRobotStatus().get(
 						statusReq.getSender());
-				// The status which is sent with the message
+				
+				// The status which is sent with the message.
 				RobotStatus newBufferRobotStatus = statusReq.getStatus();
+				
+				// Set new status values.
 				oldStatus.setRobotStatus(newBufferRobotStatus);
 				
 				// in case of a new node => add it to the map
@@ -63,7 +67,4 @@ public class StatusUpdateRequestHandler extends Handler {
 				return false;				
 		}
 	}
-
 }
-
-

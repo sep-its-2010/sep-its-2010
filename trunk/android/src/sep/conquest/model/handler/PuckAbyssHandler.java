@@ -43,11 +43,7 @@ public class PuckAbyssHandler extends Handler {
 		if (!(request.getKind() == MessageType.RESPONSE_ABYSS)) {
 			return super.handleRequest(request);
 		} else {
-			/*
-			 * The epuck stops on hardwarebased commands and sends a message
-			 * to its brothers.
-			 */
-			
+			// Create new FailureRequest and send it to the other pucks.
 			FailureType failType = FailureType.ABYSS;
 			FailureRequest failReq = new FailureRequest(request.getSender(),
 					request.getReceiver(), failType);
@@ -58,5 +54,4 @@ public class PuckAbyssHandler extends Handler {
 			return true;
 		}
 	}
-
 }

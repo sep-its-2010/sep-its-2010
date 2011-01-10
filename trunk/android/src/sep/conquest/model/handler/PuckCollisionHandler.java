@@ -1,6 +1,8 @@
 package sep.conquest.model.handler;
 
 
+import java.util.UUID;
+
 import sep.conquest.model.ComManager;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
@@ -10,7 +12,6 @@ import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.CollisionRequest;
 import sep.conquest.model.requests.MessageType;
 import sep.conquest.model.requests.PuckRequest;
-import sep.conquest.util.ConquestLog;
 
 /**
  * Handles PuckCollison messages coming from the Bluetooth Adapter.
@@ -52,18 +53,20 @@ public class PuckCollisionHandler extends Handler {
 	    Puck robot = executor.getRobot();
 	    synchronized(robot) {
 
-		  //The epuck stops on hardwarebased command
+		  // Get collision array out of e-puck message.
 		  byte[] bufferMessage = colRes.getMessage();
 		  boolean[] colArray = new boolean[8];
 		  for(int i = 0 ; i < 8; i++){
 			  if (bufferMessage[i] != 0)
 				  colArray[i] = true;
 		  }
-		  CollisionRequest req = new CollisionRequest(robot.getID(), null, colArray);
+		  
+		  // Create new collision message.
+		  CollisionRequest req = new CollisionRequest(robot.getID(), new UUID[0], colArray);
 		  ComManager comMan = ComManager.getInstance();
 		  comMan.broadcast(req);
 		  
-		  // set position to the last node
+		  // Set new orientation (turned 180 degree).
 		  RobotStatus status = robot.getRobotStatus().get(robot.getID());
 		  status.setOrientation(Orientation.turn(status.getOrientation()));
 	    }

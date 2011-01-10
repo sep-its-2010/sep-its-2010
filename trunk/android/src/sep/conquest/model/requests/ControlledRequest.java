@@ -2,8 +2,6 @@ package sep.conquest.model.requests;
 
 import java.util.UUID;
 
-
-
 /**
  * The ControlledRequest represents message objects that are sent by 
  * IComClient clients. It will be sent if a user wants to control a specific

@@ -43,12 +43,11 @@ public class CollisionRequestHandler extends Handler {
 		  return super.handleRequest(request);
 	  } else {
 		  CollisionRequest colReq = (CollisionRequest) request;
-		  //Gets the RobotStatus of the sender and actualizes the collisionArray
+		  
+		  // Refresh the collision sensor array.
 		  lThread.getRobot().getRobotStatus().get(colReq.getSender())
 					.setSensorCollisionArray(colReq.getSensor());
-		  return true;
-		  
-	  }
-    
+		  return true;  
+	  }  
   }
 }

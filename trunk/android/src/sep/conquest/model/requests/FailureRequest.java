@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import sep.conquest.model.FailureType;
 
-
 /**
  * The FailureRequest represents message objects that are sent by 
  * IComClient clients. It will be sent from a participant if an error is
