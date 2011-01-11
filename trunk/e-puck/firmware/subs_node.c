@@ -62,11 +62,11 @@ static uint16_t s_ui16AvgRight = 0;
  			s_ui16AvgLeft += lpui16SenLine[SEN_LINE_SENSOR__LEFT];
  			s_ui16AvgRight += lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
  			s_ui8NodeDetectionCounter++;
-			blActed = true;
 
 			hal_motors_setSteps( 0);
 			hal_motors_setSpeed(conquest_getRequestedLineSpeed(), 0);
  			s_blDetectionActive = true;
+			blActed = true;
  		}
 	 	
  		//robot is above a node -> enable node-detection-state
@@ -124,8 +124,8 @@ static uint16_t s_ui16AvgRight = 0;
 		
 		} else if( s_blDetectionActive) {
 			
-			if ( lpui16SenLine[SEN_LINE_SENSOR__RIGHT] < SUBS_NODE_LINE_THRESHOLD ||
-				lpui16SenLine[SEN_LINE_SENSOR__LEFT] < SUBS_NODE_LINE_THRESHOLD) {
+			if ( lpui16SenLine[SEN_LINE_SENSOR__RIGHT] < SUBS_NODE_LINE_THRESHOLD_PLUS ||
+				lpui16SenLine[SEN_LINE_SENSOR__LEFT] < SUBS_NODE_LINE_THRESHOLD_PLUS) {
 
 				s_ui16AvgLeft += lpui16SenLine[SEN_LINE_SENSOR__LEFT];
 				s_ui16AvgRight += lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
