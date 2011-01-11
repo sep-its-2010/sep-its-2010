@@ -430,8 +430,13 @@ void hal_motors_setSpeedLeft(
 			hal_int_clearFlag( HAL_INT_SOURCE__TIMER5);
 			hal_motors_setPhaseLeft( HAL_MOTORS_PHASE__IDLE);
 		} else {
-			PR5 = convertSpeedToPeriod( i16CorrectedSpeed);
-			TMR5 = 0;
+			const uint16_t ui16Period = convertSpeedToPeriod( i16CorrectedSpeed);
+			const uint16_t ui16Counter = TMR5;
+			PR5 = ui16Period;
+			if( ui16Counter >= ui16Period) {
+				TMR5 = 0;
+				stepRight();
+			}
 		}
 	}
 }
@@ -479,8 +484,13 @@ void hal_motors_setSpeedRight(
 			hal_int_clearFlag( HAL_INT_SOURCE__TIMER4);
 			hal_motors_setPhaseRight( HAL_MOTORS_PHASE__IDLE);
 		} else {
-			PR4 = convertSpeedToPeriod( i16CorrectedSpeed);
-			TMR4 = 0;
+			const uint16_t ui16Period = convertSpeedToPeriod( i16CorrectedSpeed);
+			const uint16_t ui16Counter = TMR4;
+			PR4 = ui16Period;
+			if( ui16Counter >= ui16Period) {
+				TMR4 = 0;
+				stepRight();
+			}
 		}
 	}
 }
