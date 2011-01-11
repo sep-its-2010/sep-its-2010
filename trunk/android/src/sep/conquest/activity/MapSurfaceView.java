@@ -3,6 +3,9 @@ package sep.conquest.activity;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import sep.conquest.model.GridMap;
 import sep.conquest.model.MapNode;
@@ -38,7 +41,7 @@ public class MapSurfaceView extends SurfaceView
      * This is the start value for drawn objects at the beginning of an
      * exploration. It is used by the attribute scaleValue.
      */
-    private static final int DRAW_SIZE = 80;
+    private static final int DRAW_SIZE = 40;
 
     /**
      * This rectangle is static and always on the same size as the actual drawn
@@ -129,6 +132,8 @@ public class MapSurfaceView extends SurfaceView
      * Saves the current map mode.
      */
     private MapMode mMode;
+    
+    private ExecutorService exec = Executors.newSingleThreadExecutor();
 
     /**
      * The constructor resgisters the interface SurfaceHolder.Callback on the
@@ -183,21 +188,20 @@ public class MapSurfaceView extends SurfaceView
      * @param holder Holds the display surface and is able to control it.
      */
     public final void surfaceDestroyed(final SurfaceHolder holder) {
-        boolean retry = true;
-        mThread.setPaused(true);
+    	boolean retry = true;
+    	mThread.setPaused(true);
+    	
+    	while(retry) {
+    	try {
+			mThread.join();
+			retry = false;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+    	}
         
-        mMap = new LinkedList();
-        mPositions = new LinkedList();
-        
-        while (retry) {
-            try {
-                mThread.join();
-                retry = false;
-            } catch (InterruptedException e) {
-                return;
-            }
-        }
-
     }
 
     /**
@@ -326,6 +330,11 @@ public class MapSurfaceView extends SurfaceView
             //Lock the canvas to do draw operations on it.
             Canvas c = getHolder().lockCanvas();
 
+            //for safety reasons
+            if (c == null) {
+            	return;
+            }
+            
             //Set current size of canvas
             int displayX = c.getWidth();
             int displayY = c.getHeight();
@@ -477,7 +486,7 @@ public class MapSurfaceView extends SurfaceView
         private void drawSecondLayer(final Canvas c, final int offsetX,
                                      final int offsetY) {
 			// Draw the second layer: Robots
-			synchronized (mPositions) {
+        	synchronized(mPositions) {
 				Iterator<EpuckPosition> posIt = mPositions.iterator();
 				EpuckPosition epp;
 				while (posIt.hasNext()) {
@@ -498,7 +507,7 @@ public class MapSurfaceView extends SurfaceView
 					}
 					paint.setStrokeWidth(0f);
 				}
-			}
+        	}
 		}
 
         /**

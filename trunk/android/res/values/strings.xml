@@ -39,8 +39,8 @@
 <string name="TXT_OK">Ok</string>
 <string name="MSG_SUCCESSFULLY_SAVED">Map successfully saved.</string>
 <string name="ERR_MSG_NOT_SUCCESSFULLY_SAVED">Error: Could not save map to file system.</string>
-<string name="TXT_NUMBER_NODES">Number of explored nodes</string>
-<string name="TXT_FRONTIER_NODES">Number of frontier nodes</string>
+<string name="TXT_NUMBER_NODES">explored nodes</string>
+<string name="TXT_FRONTIER_NODES">frontier nodes</string>
 <string name="MNU_STOP">Stop</string>
 <string name="MNU_PAUSE">Pause</string>
 <string name="MNU_STEP">Step</string>
@@ -52,4 +52,6 @@
 <string name="CONTROL_ACC_SENSOR">Acceleration sensor</string>
 <string name="TXT_NO_SELECTION">none</string>
 <string name="ERR_MSG_LOST_CONNECTION">has lost connection to the smartphone.</string>
+<string name="TXT_NODES">nodes</string>
+<string name="TXT_MULTIPLE_NODES">multiple crossed nodes</string>
 </resources>

@@ -37,8 +37,8 @@
 <string name="TXT_OK">Ok</string>
 <string name="MSG_SUCCESSFULLY_SAVED">Karte erfolgreich gespeichert.</string>
 <string name="ERR_MSG_NOT_SUCCESSFULLY_SAVED">Fehler: Datei kann nicht gespeichert werden.</string>
-<string name="TXT_NUMBER_NODES">Anzhal erkundeter Knoten</string>
-<string name="TXT_FRONTIER_NODES">Anzhal angrenzender Knoten</string>
+<string name="TXT_NUMBER_NODES">erkundete Knoten</string>
+<string name="TXT_FRONTIER_NODES">angrenzende Knoten</string>
 <string name="MNU_STOP">Stop</string>
 <string name="MNU_PAUSE">Pause</string>
 <string name="MNU_STEP">Step</string>
@@ -51,4 +51,6 @@
 <string name="TXT_NO_SELECTION">none</string>
 <string name="ERR_MSG_LOST_CONNECTION">Verbindung zu Smartphone verloren.</string>
 <string name="app_name">e-puck Conquest - Ultimate Exploration Experience</string>
+<string name="TXT_NODES">Knoten</string>
+<string name="TXT_MULTIPLE_NODES">mehrfach überfahrene Knoten</string>
 </resources>
