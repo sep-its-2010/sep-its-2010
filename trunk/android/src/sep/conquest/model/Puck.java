@@ -78,11 +78,7 @@ public abstract class Puck implements IComClient, IRobot {
    * Represents the byte-Code for the messageType REQUEST_MOVE
    */
   public static final short REQ_MOVE = (short) 0x04FF;
-  /**
-   * Indicates whether an OK-message was received.
-   */
-  private boolean okRcvd = false;
-
+ 
   /**
    * Represents the byte-Code for the messageType REQUEST_RESET
    */
@@ -107,6 +103,11 @@ public abstract class Puck implements IComClient, IRobot {
    * Represents the byte-Code for the messageType REQUEST_TURN
    */
   public static final short REQ_TURN = (short) 0x03FF;
+  
+  /**
+   * Indicates whether an OK-message was received.
+   */
+  private boolean okRcvd = false;
 
   /**
    * Global unique id.
@@ -158,7 +159,6 @@ public abstract class Puck implements IComClient, IRobot {
    *          The name of the robot.
    */
   public Puck(UUID id, String robotName) {
-
     // Set ID.
     this.id = id;
 
@@ -230,12 +230,15 @@ public abstract class Puck implements IComClient, IRobot {
    * @param state
    */
   public void changeBehaviour(State state) {
+    // Get current robot state.
     RobotStatus status = getRobotStatus().get(id);
+    
+    // If there is a real state transition, change state and behaviour and
+    // announce changes via broadcast.
     if (state != status.getState()) {
       status.setState(state);
       logicThread.changeBehaviour(state);
-      StatusUpdateRequest req = new StatusUpdateRequest(id, null, status);
-      broadcast(req);
+      broadcast(new StatusUpdateRequest(id, new UUID[0], status));
     }
   }
 
@@ -250,12 +253,12 @@ public abstract class Puck implements IComClient, IRobot {
 
   /**
    * Translates a direction-command in a specific drive-call of the concrete
-   * puck.
+   * Puck.
    * 
-   * @param direction
+   * @param command The command to sent to the Puck.
    */
-  public void driveCommand(int turns) {
-    switch (turns) {
+  public void driveCommand(int command) {
+    switch (command) {
     case 0:
       this.forward();
       break;
@@ -273,15 +276,20 @@ public abstract class Puck implements IComClient, IRobot {
     }
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * Returns the unique id of the robot.
    * 
-   * @see sep.conquest.model.IComClient#getID()
+   * @return The id of the robot.
    */
   public UUID getID() {
     return this.id;
   }
 
+  /**
+   * Return the name of the robot.
+   * 
+   * @return The name of the robot.
+   */
   public String getName() {
     return name;
   }
@@ -302,76 +310,89 @@ public abstract class Puck implements IComClient, IRobot {
   public abstract byte[] readSocket();
 
   // TODO Add reset, status and set_led to irobot interface!
+  /**
+   * Sends forward command to Puck.
+   */
   public void forward() {
-    byte[] request = new byte[32];
-    request[0] = (byte) (REQ_MOVE & 0xff);
-    request[1] = (byte) ((REQ_MOVE >> 8) & 0xff);
-
-    writeSocket(request);
-  }
-
-  public void left() {
-    byte[] request = new byte[32];
-    request[0] = (byte) (REQ_TURN & 0xff);
-    request[1] = (byte) ((REQ_TURN >> 8) & 0xff);
-    request[2] = (byte) -1;
-
-    writeSocket(request);
-  }
-
-  public void right() {
-    byte[] request = new byte[32];
-    request[0] = (byte) (REQ_TURN & 0xff);
-    request[1] = (byte) ((REQ_TURN >> 8) & 0xff);
-    request[2] = (byte) 1;
-
-    writeSocket(request);
-  }
-
-  public void setSpeed(SpeedLevel level) {
-    byte[] request = new byte[32];
-    request[0] = (byte) (REQ_SETSPEED & 0xff);
-    request[1] = (byte) ((REQ_SETSPEED >> 8) & 0xff);
-    request[2] = (byte) level.getSpeed();
-
-    writeSocket(request);
-  }
-
-  public void turn() {
-    byte[] request = new byte[32];
-    request[0] = (byte) (REQ_TURN & 0xff);
-    request[1] = (byte) ((REQ_TURN >> 8) & 0xff);
-    request[2] = (byte) 2;
-
-    writeSocket(request);
-  }
-
-  public void setControlled(boolean enabled) {
-    byte[] request = new byte[32];
-    controlled = enabled;
-    request[0] = (byte) (REQ_SETLED & 0xff);
-    request[1] = (byte) ((REQ_SETLED >> 8) & 0xff);
-    request[2] = (byte) 0x10;
-    request[3] = 0;
-    
+    byte[] request = new byte[MSG_LENGTH];
+    request[TYPE_FIRST_BYTE] = (byte) (REQ_MOVE & 0xff);
+    request[TYPE_SECOND_BYTE] = (byte) ((REQ_MOVE >> 8) & 0xff);
     writeSocket(request);
   }
 
   /**
-   * 
+   * Sends left command to Puck.
    */
-  public void requestStatus() {
-    byte[] request = new byte[32];
-    request[0] = (byte) (REQ_STATUS & 0xff);
-    request[1] = (byte) ((REQ_STATUS >> 8) & 0xff);
-
+  public void left() {
+    byte[] request = new byte[MSG_LENGTH];
+    request[TYPE_FIRST_BYTE] = (byte) (REQ_TURN & 0xff);
+    request[TYPE_SECOND_BYTE] = (byte) ((REQ_TURN >> 8) & 0xff);
+    request[2] = (byte) -1;
     writeSocket(request);
   }
 
-  /*
-   * (non-Javadoc)
+  /**
+   * Sends right command to Puck.
+   */
+  public void right() {
+    byte[] request = new byte[MSG_LENGTH];
+    request[TYPE_FIRST_BYTE] = (byte) (REQ_TURN & 0xff);
+    request[TYPE_SECOND_BYTE] = (byte) ((REQ_TURN >> 8) & 0xff);
+    request[2] = (byte) 1;
+    writeSocket(request);
+  }
+
+  /**
+   * Sends speed setting request to Puck.
+   */
+  public void setSpeed(SpeedLevel level) {
+    byte[] request = new byte[MSG_LENGTH];
+    request[TYPE_FIRST_BYTE] = (byte) (REQ_SETSPEED & 0xff);
+    request[TYPE_SECOND_BYTE] = (byte) ((REQ_SETSPEED >> 8) & 0xff);
+    request[2] = (byte) level.getSpeed();
+    writeSocket(request);
+  }
+
+  /**
+   * Sends turn request to Puck.
+   */
+  public void turn() {
+    byte[] request = new byte[MSG_LENGTH];
+    request[TYPE_FIRST_BYTE] = (byte) (REQ_TURN & 0xff);
+    request[TYPE_SECOND_BYTE] = (byte) ((REQ_TURN >> 8) & 0xff);
+    request[2] = (byte) 2;
+    writeSocket(request);
+  }
+
+  /**
+   * Enables/Disables manual control of Puck.
    * 
-   * @see sep.conquest.model.IRobot#isControlled()
+   * @param enable True to activate manual control, false otherwise.
+   */
+  public void setControlled(boolean enable) {
+    byte[] request = new byte[MSG_LENGTH];
+    controlled = enable;
+    request[0] = (byte) (REQ_SETLED & 0xff);
+    request[1] = (byte) ((REQ_SETLED >> 8) & 0xff);
+    request[2] = (byte) 0x10;
+    request[3] = 0;
+    writeSocket(request);
+  }
+
+  /**
+   * Sends status request message to Puck.
+   */
+  public void requestStatus() {
+    byte[] request = new byte[MSG_LENGTH];
+    request[TYPE_FIRST_BYTE] = (byte) (REQ_STATUS & 0xff);
+    request[TYPE_SECOND_BYTE] = (byte) ((REQ_STATUS >> 8) & 0xff);
+    writeSocket(request);
+  }
+
+  /**
+   * Returns whether Puck is currently under manual control.
+   * 
+   * @return True, if Puck is controlled, false otherwise.
    */
   public boolean isControlled() {
     return controlled;
@@ -387,9 +408,9 @@ public abstract class Puck implements IComClient, IRobot {
   }
 
 	/**
-	 * Indicates whether an ok-message was received.
+	 * Indicates whether an ok-message has been received.
 	 * 
-	 * @return
+	 * @return True, if ok message has been received, false otherwise.
 	 */
 	public boolean isOkRcvd() {
 		return okRcvd;

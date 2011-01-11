@@ -69,7 +69,7 @@ public class Import extends Activity {
     lsMaps = (ListView) findViewById(R.id.lsMaps);
     lsMaps.setOnItemClickListener(new OnItemClickListener() {
 
-      private int lastSelected;
+      private int lastSelected = -1;
 
       /**
        * Handles clicks on items of ListView containing the available maps.
@@ -102,9 +102,12 @@ public class Import extends Activity {
         } else {
           selectedMap = txtMap.getText().toString();
           txtMap.setTextColor(res.getColor(R.color.list_item_selected));
-          TextView txtLastSelected = (TextView) parent.getChildAt(lastSelected);
-          txtLastSelected.setTextColor(res
-              .getColor(R.color.list_item_not_selected));
+          if (lastSelected != -1) {
+            TextView txtLastSelected = (TextView) parent
+                .getChildAt(lastSelected);
+            txtLastSelected.setTextColor(res
+                .getColor(R.color.list_item_not_selected));
+          }
           lastSelected = position;
         }
       }
@@ -112,7 +115,7 @@ public class Import extends Activity {
     // Display path of the directory.
     TextView txtDirectory = (TextView) findViewById(R.id.txtDirectory);
     txtDirectory.setText(MapFileHandler.getDirectoryPath());
-    
+
     // Display the files found in the application directory.
     displayFiles();
   }
@@ -175,8 +178,8 @@ public class Import extends Activity {
   /**
    * Displays all files found in the application directory.
    * 
-   * If Import was launched to open Simulator configuration, only .sim
-   * files are displayed.
+   * If Import was launched to open Simulator configuration, only .sim files are
+   * displayed.
    * 
    * If Import was launched to view a map, only .sep files are displayed.
    */
@@ -187,7 +190,7 @@ public class Import extends Activity {
 
     // Saves the file names returned by the MapFileHandler class.
     String[] files = null;
-    
+
     switch (mode) {
     case IMPORT_MAP:
       // Get all the map files (.sep).

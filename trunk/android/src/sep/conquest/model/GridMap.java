@@ -108,10 +108,11 @@ public class GridMap {
     GraphNode existingNode = this.getNode(x, y);
     // If the Node already exists in the structure, existingNode is not null
     if (existingNode != null) {
+      boolean returnValue = existingNode.getNodeType() == NodeType.FRONTIERNODE;
       // updates the state of the existing node
       this.changeState(x, y, status);
       this.setNeighbours(existingNode);
-      return false;
+      return returnValue;
     } else {
       // creates a new node
       GraphNode newNode = new GraphNode(x, y, status);

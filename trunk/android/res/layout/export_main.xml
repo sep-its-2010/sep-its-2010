@@ -7,7 +7,7 @@
 
 	<Button android:id="@+id/btnSave" android:text="Save"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"></Button>
+		android:layout_alignParentBottom="true" android:textSize="16sp"></Button>
 
 	<EditText android:id="@+id/etxtFilename" android:maxLines="1"
 		android:inputType="textNoSuggestions" android:layout_width="fill_parent"

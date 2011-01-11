@@ -8,24 +8,19 @@ package sep.conquest.model;
  *
  */
 public enum FailureType {
-	//SpielFeld ungueltig (Abgrund)
-	//SpielFeld ungueltig (Knoten falsch)
-	//Bluetoothausfall
-	//KLeine mögliche Kollisionsverwaltung
-	//Keine Möglichkeit den nächsten Knoten anzufahren
 	
 	/**
-	 * Abyss
+	 * Abyss detected.
 	 */
 	ABYSS,
 	
 	/**
-	 * Invalid playing field
+	 * Invalid playing field.
 	 */
 	INVALIDPITCH,
 	
 	/**
-	 * If the bluetooth breaks down
+	 * Bluetooth breaks down.
 	 */
 	BLUETOOTHFAILURE,
 	
@@ -33,5 +28,4 @@ public enum FailureType {
 	 * If a node cannot be visited, because it's obstructed
 	 */
 	NODEOBSTRUCTION;
-
 }

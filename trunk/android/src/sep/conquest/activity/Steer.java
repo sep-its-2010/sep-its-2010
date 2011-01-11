@@ -181,6 +181,9 @@ public final class Steer extends Activity implements Observer {
           for (UUID id : robots) {
             adpRobots.add(names.get(id));
           }
+          // Enable CheckBox if at least one robot is available.
+          CheckBox chkActivate = (CheckBox) findViewById(R.id.chkActivate);
+          chkActivate.setEnabled(!(robots.size() == 0));
         }
       }
     };
@@ -548,7 +551,8 @@ public final class Steer extends Activity implements Observer {
       if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
         // If a robot is selected and not moving, pass control command to
         // Controller.
-        if ((selectedRobot != NO_SELECTION) && !moving.get(robots.get(selectedRobot))) {
+        if ((selectedRobot != NO_SELECTION)
+            && !moving.get(robots.get(selectedRobot))) {
           float x = event.values[0];
           float y = event.values[1];
           float hyp = (float) Math.sqrt(x * x + y * y);
@@ -593,7 +597,8 @@ public final class Steer extends Activity implements Observer {
     public void onClick(View v) {
       // If a robot is selected and not moving, pass control command to
       // Controller.
-      if ((selectedRobot != NO_SELECTION) && !moving.get(robots.get(selectedRobot))) {
+      if ((selectedRobot != NO_SELECTION)
+          && !moving.get(robots.get(selectedRobot))) {
         int id = v.getId();
         switch (id) {
         // Button 'Up'

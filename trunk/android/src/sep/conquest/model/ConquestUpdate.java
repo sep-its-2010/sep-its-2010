@@ -30,7 +30,7 @@ public class ConquestUpdate implements Cloneable {
    * The names of the robots.
    */
   private Map<UUID, String> robotNames = new TreeMap<UUID, String>();
-  
+
   /**
    * The number of explored nodes by every robot.
    */
@@ -59,6 +59,7 @@ public class ConquestUpdate implements Cloneable {
     for (UUID key : robots.keySet()) {
       Puck robot = (Puck) comMan.getClient(key);
       robotNames.put(key, robot.getName());
+      exploredNodes.put(key, 0);
     }
   }
 
@@ -147,25 +148,28 @@ public class ConquestUpdate implements Cloneable {
   public int[] getBorders() {
     return borders;
   }
-  
+
   /**
    * Returns the number of explored frontier-nodes by a specified robot.
    * 
-   * @param id The robot id.
+   * @param id
+   *          The robot id.
    * @return The number of nodes.
    */
   public int getExploredNodes(UUID id) {
-	  return exploredNodes.get(id);
+    return exploredNodes.get(id);
   }
-  
+
   /**
    * Sets the number of explored nodes of a specified robot.
    * 
-   * @param id The id of the robot.
-   * @param nodes The number of nodes.
+   * @param id
+   *          The id of the robot.
+   * @param nodes
+   *          The number of nodes.
    */
   public void setExploredNodes(UUID id, int nodes) {
-	  exploredNodes.put(id, nodes);
+    exploredNodes.put(id, nodes);
   }
 
   /*
@@ -175,16 +179,35 @@ public class ConquestUpdate implements Cloneable {
    */
   @Override
   public ConquestUpdate clone() {
-    Map<UUID, RobotStatus> copyMap = new TreeMap<UUID, RobotStatus>();
-    Set<UUID> keys = robots.keySet();
-    for (UUID key : keys) {
-      copyMap.put(key, robots.get(key).clone());
+    synchronized (this) {
+      Map<UUID, RobotStatus> copyMap = new TreeMap<UUID, RobotStatus>();
+      LinkedList<MapNode> copyList = new LinkedList<MapNode>();
+      ConquestUpdate update;
+
+      // Deep copy mapList.
+      synchronized (mapList) {
+        for (MapNode node : mapList) {
+          copyList.add(node);
+        }
+      }
+
+      // Deep copy status of each robot
+      synchronized (robots) {
+        Set<UUID> keys = robots.keySet();
+        
+        for (UUID key : keys) {
+          copyMap.put(key, robots.get(key).clone());
+        }
+
+        // Create new ConquestUpdate.
+        update = new ConquestUpdate(copyList, borders, copyMap);
+        
+        // Copy number of explored nodes for each robot.
+        for (UUID id : keys) {
+          update.setExploredNodes(id, exploredNodes.get(id));
+        }
+      }
+      return update;
     }
-    
-    LinkedList<MapNode> copyList = new LinkedList<MapNode>();
-    for (MapNode node : mapList) {
-      copyList.add(node);
-    }
-    return new ConquestUpdate(copyList, borders, copyMap);
   }
 }

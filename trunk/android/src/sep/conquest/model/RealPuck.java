@@ -63,7 +63,7 @@ public class RealPuck extends Puck {
         }
         expectMessage = true;
       } catch (IOException e) {
-        FailureRequest req = new FailureRequest(getID(), null,
+        FailureRequest req = new FailureRequest(getID(), new UUID[0],
             FailureType.BLUETOOTHFAILURE);
         ComManager comMan = ComManager.getInstance();
         comMan.broadcast(req);
@@ -94,11 +94,11 @@ public class RealPuck extends Puck {
       } catch (IOException e) {
         // If an exception occurs while reading from the input stream, create
         // a FailureRequest and send it to all other participants.
-        FailureRequest req = new FailureRequest(getID(), null,
+        FailureRequest req = new FailureRequest(getID(), new UUID[0],
             FailureType.BLUETOOTHFAILURE);
         ComManager comMan = ComManager.getInstance();
         comMan.broadcast(req);
-        ConquestLog.addMessage(this, "Can't read message to socket!");
+        ConquestLog.addMessage(this, "Can't read message from socket!");
       }
 
       StringBuilder strb = new StringBuilder();

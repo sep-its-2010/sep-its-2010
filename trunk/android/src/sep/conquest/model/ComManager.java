@@ -21,7 +21,7 @@ public class ComManager implements IComMan {
 	/**
 	 * The ComManager instance to realize the singleton pattern.
 	 */
-	private static final ComManager INSTANCE = new ComManager();
+	private static ComManager INSTANCE = new ComManager();
 
 	/**
 	 * The list of registered IComClient participants who can communicate via
@@ -45,14 +45,9 @@ public class ComManager implements IComMan {
 	public static ComManager getInstance() {
 		return INSTANCE;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sep.conquest.model.IComMan#removeClient(java.lang.String)
-	 */
-	public void removeClient(String ID) {
-		clients.remove(ID);
+	
+	public static void reset() {
+	  INSTANCE = new ComManager();
 	}
 
 	/*
@@ -61,7 +56,7 @@ public class ComManager implements IComMan {
 	 * @see sep.conquest.model.IComMan#broadcast(sep.conquest.model.IComClient,
 	 * sep.conquest.model.IRequest)
 	 */
-	public void broadcast(IRequest request) {
+	public synchronized void broadcast(IRequest request) {
 		Iterator<UUID> it = clients.keySet().iterator();
 
 		while (it.hasNext()) {
@@ -112,5 +107,4 @@ public class ComManager implements IComMan {
 	public IComClient getClient(UUID id) {
 		return clients.get(id);
 	}
-
 }

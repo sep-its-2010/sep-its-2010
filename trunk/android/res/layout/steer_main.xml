@@ -4,7 +4,8 @@
 	android:orientation="vertical">
 
 	<TextView android:id="@+id/txtRobot" android:layout_width="fill_parent"
-		android:text="@string/TXT_E_PUCK" android:layout_height="wrap_content"></TextView>
+		android:text="@string/TXT_E_PUCK" android:layout_height="wrap_content"
+		android:textSize="16sp"></TextView>
 
 	<Spinner android:id="@+id/spRobots" android:layout_width="fill_parent"
 		android:prompt="@string/EPUCK_SELECT" android:layout_height="wrap_content"
@@ -18,7 +19,8 @@
 		android:layout_width="fill_parent" android:layout_height="wrap_content">
 
 		<TextView android:id="@+id/txtControl" android:layout_width="fill_parent"
-			android:text="@string/TXT_CONTROL" android:layout_height="wrap_content"></TextView>
+			android:text="@string/TXT_CONTROL" android:layout_height="wrap_content"
+			android:textSize="16sp"></TextView>
 
 		<Spinner android:id="@+id/spControl" android:layout_width="fill_parent"
 			android:prompt="@string/CONTROL_SELECT" android:layout_height="wrap_content"
@@ -40,5 +42,4 @@
 			android:layout_below="@id/btn_left" android:layout_width="fill_parent"
 			android:layout_height="wrap_content"></Button>
 	</RelativeLayout>
-
 </LinearLayout>

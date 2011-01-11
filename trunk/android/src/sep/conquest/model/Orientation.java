@@ -44,13 +44,28 @@ public enum Orientation {
    */
   UNKNOWN(4);
 
+  /**
+   * Represents UP command.
+   */
   private static final int C_UP = 0;
+  
+  /**
+   * Represents LEFT command.
+   */
   private static final int C_LEFT = -1;
+  
+  /**
+   * Represents right command.
+   */
   private static final int C_RIGHT = 1;
+  
+  /**
+   * Represents down command.
+   */
   private static final int C_DOWN = 2;
 
   /**
-   * The orientation level.
+   * The number associated with each orientation.
    */
   private int orientation;
 

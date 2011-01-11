@@ -211,12 +211,13 @@ public class LogicThread implements Runnable {
    * @see java.lang.Runnable#run()
    */
   public void run() {
-    State currentState = getRobot().getRobotStatus().get(
-        getRobot().getID()).getState();
+    State currentState = getRobot().getRobotStatus().get(getRobot().getID())
+        .getState();
 
-    while (run && (currentState != State.ERROR)) {
+    while (run && (currentState != State.ERROR)
+        && (currentState != State.FINISH)) {
       boolean changed = false;
-      
+
       // handle bluetooth messages
       IRequest request = getBTMessage();
       if (request != null) {
@@ -250,5 +251,4 @@ public class LogicThread implements Runnable {
   public void destroy() {
     run = false;
   }
-
 }

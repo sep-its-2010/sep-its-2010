@@ -15,69 +15,66 @@ import android.widget.TextView;
 
 public class Statistics extends Activity implements Observer {
 
-	private static final int UPDATE_MESSAGE = 0;
+  private static final int UPDATE_MESSAGE = 0;
 
-	private TextView explored;
-	private TextView frontier;
+  private TextView explored;
+  private TextView frontier;
 
-	private Handler updateHandler;
+  private Handler updateHandler;
 
-	private String[] name;
-	private int[] exploredNumber;
+  private String[] name;
+  private int[] exploredNumber;
 
-	private int total;
+  private int total;
 
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.statistics_main);
+    setContentView(R.layout.statistics_main);
 
-		explored = (TextView) findViewById(R.id.nodeNumberValues);
-		frontier = (TextView) findViewById(R.id.frontierNumberValues);
+    explored = (TextView) findViewById(R.id.nodeNumberValues);
+    frontier = (TextView) findViewById(R.id.frontierNumberValues);
 
-		updateHandler = new Handler() {
-			public void handleMessage(android.os.Message msg) {
-				if (msg.what == UPDATE_MESSAGE) {
-					explored.setText("");
-					for (int i = 0; i < name.length; i++) {
+    updateHandler = new Handler() {
+      public void handleMessage(android.os.Message msg) {
+        if (msg.what == UPDATE_MESSAGE) {
+          explored.setText("");
+          for (int i = 0; i < name.length; i++) {
 
-						explored.append(name[i] + ": " + exploredNumber[i]
-								+ " nodes \n");
+            explored.append(name[i] + ": " + exploredNumber[i] + " nodes \n");
+          }
+          explored.append("\nTotal: " + total + " nodes");
+        }
+      }
 
-					}
-					explored.append("\nTotal: " + total + " nodes");
-				}
-			}
-		};
-	}
+    };
+  }
 
-	public void onResume() {
-		super.onResume();
-		Controller.getInstance().getEnv().addObserver(this);
+  public void onResume() {
+    super.onResume();
+    Controller.getInstance().getEnv().addObserver(this);
 
-	}
+  }
 
-	public void onPause() {
-		super.onPause();
-		Controller.getInstance().getEnv().deleteObserver(this);
-	}
+  public void onPause() {
+    super.onPause();
+    Controller.getInstance().getEnv().deleteObserver(this);
+  }
 
-	public void update(Observable obs, Object data) {
-		synchronized (data) {
-			ConquestUpdate cu = (ConquestUpdate) data;
-			Set<UUID> id = cu.getRobotStatus().keySet();
-			name = new String[id.size()];
-			exploredNumber = new int[id.size()];
-			int i = 0;
-			total = 0;
-			for (UUID key : id) {
-				exploredNumber[i] = cu.getExploredNodes(key);
-				name[i] = cu.getRobotName(key);
-				total += exploredNumber[i];
-				i++;
-			}
-			updateHandler.obtainMessage(UPDATE_MESSAGE).sendToTarget();
-		}
+  public synchronized void update(Observable obs, Object data) {
+    ConquestUpdate cu = (ConquestUpdate) data;
+    Set<UUID> id = cu.getRobotStatus().keySet();
+    name = new String[id.size()];
 
-	}
+    exploredNumber = new int[id.size()];
+    int i = 0;
+    total = 0;
+    for (UUID key : id) {
+      exploredNumber[i] = cu.getExploredNodes(key);
+      name[i] = cu.getRobotName(key);
+      total += exploredNumber[i];
+      i++;
+    }
+    updateHandler.obtainMessage(UPDATE_MESSAGE).sendToTarget();
+  }
 }

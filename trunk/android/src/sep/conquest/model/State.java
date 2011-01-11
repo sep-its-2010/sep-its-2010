@@ -39,6 +39,11 @@ public enum State {
 	FINISH,
 	
 	/**
+	 * Robot can not reach node.
+	 */
+	BLOCKED,
+	
+	/**
 	 * Error occurred in one of the other states.
 	 */
 	ERROR
