@@ -95,7 +95,7 @@ int main( void) {
  	const sen_line_SData_t podDefaultWhiteLevel = { { SEN_LINE_NOMINAL_WHITE_LEVEL } };
  	sen_line_calibrate( &podDefaultBlackLevel, &podDefaultWhiteLevel);
 
-	hal_rtc_register( cbBlinker, RTC_FREQENCY / BLINK_FREQUENCY, true);
+//	hal_rtc_register( cbBlinker, RTC_FREQENCY / BLINK_FREQUENCY, true);
 
 	conquest_init();
 

@@ -54,62 +54,59 @@ static uint16_t s_ui16AvgRight = 0;
 
 		// Node detection measurement
 		const uint16_t* const lpui16SenLine = conquest_getSensorImage()->podCalibratedLineSensors.aui16Data;
-  		if( ( lpui16SenLine[SEN_LINE_SENSOR__RIGHT] < SUBS_NODE_LINE_THRESHOLD ||
+		if( !s_blDetectionActive &&
+			(lpui16SenLine[SEN_LINE_SENSOR__RIGHT] < SUBS_NODE_LINE_THRESHOLD ||
   			lpui16SenLine[SEN_LINE_SENSOR__LEFT] < SUBS_NODE_LINE_THRESHOLD) &&
- 			!s_blDetectionActive) {
-	 
+			lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] > SUBS_NODE_SURFACE_THRESHOLD) {
+
  			s_ui16AvgLeft += lpui16SenLine[SEN_LINE_SENSOR__LEFT];
  			s_ui16AvgRight += lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
  			s_ui8NodeDetectionCounter++;
- 		} else if( lpui16SenLine[SEN_LINE_SENSOR__RIGHT] > SUBS_NODE_LINE_THRESHOLD &&
-  			lpui16SenLine[SEN_LINE_SENSOR__LEFT] > SUBS_NODE_LINE_THRESHOLD &&
- 			!s_blDetectionActive) {		
-	 
- 			s_ui16AvgLeft = 0;
- 			s_ui16AvgRight = 0;
- 			s_ui8NodeDetectionCounter = 0;
+			blActed = true;
+
+			hal_motors_setSteps( 0);
+			hal_motors_setSpeed(conquest_getRequestedLineSpeed(), 0);
+ 			s_blDetectionActive = true;
  		}
 	 	
  		//robot is above a node -> enable node-detection-state
- 		if( s_ui8NodeDetectionCounter >= SUBS_NODE_REQUIRED_MEASUREMENTS && !s_blDetectionActive) {
- 			hal_motors_setSteps( 0);
- 			s_blDetectionActive = true;
- 			blActed = true;		
-	 
- 		//Exit detection-state when still active & driven far enough; send previously analyzed node-type.
- 		} else if( s_blDetectionActive &&
+ 		if( s_blDetectionActive &&
  			hal_motors_getStepsLeft() >= SUBS_NODE_MOVE_ABOVE_CENTER && 
  			hal_motors_getStepsRight() >= SUBS_NODE_MOVE_ABOVE_CENTER) {
 	 		
  			s_ui16AvgLeft = s_ui16AvgLeft / s_ui8NodeDetectionCounter;
  			s_ui16AvgRight = s_ui16AvgRight / s_ui8NodeDetectionCounter;
+
+			bool blFrontLineDetected = ( lpui16SenLine[SEN_LINE_SENSOR__LEFT] < SUBS_NODE_LINE_THRESHOLD) ||
+				( lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE_LINE_THRESHOLD) ||
+				( lpui16SenLine[SEN_LINE_SENSOR__RIGHT] < SUBS_NODE_LINE_THRESHOLD);
 	 
  			//analyze the shape of the node		
- 			if( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD &&
- 				s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD &&
- 				lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE_LINE_THRESHOLD) {
+ 			if( ( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD_PLUS) &&
+ 				( s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD_PLUS) &&
+ 				blFrontLineDetected) {
 	 
  				conquest_setLastNode( CONQUEST_NODE__CROSS);
  				hal_led_set( HAL_LED_PIN_BV__0 | HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
- 			} else if( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD &&
- 				s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD) {
+ 			} else if( ( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD_PLUS) &&
+ 				( s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD_PLUS)) {
 	 
  				conquest_setLastNode( CONQUEST_NODE__UP_T);
  				hal_led_set( HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
- 			} else if( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD &&
- 				lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE_LINE_THRESHOLD) {
+ 			} else if( ( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD_PLUS) &&
+ 				blFrontLineDetected) {
 	 
  				conquest_setLastNode( CONQUEST_NODE__RIGHT_T);
  				hal_led_set( HAL_LED_PIN_BV__0 | HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
- 			} else if( s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD &&
- 				lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE_LINE_THRESHOLD) {
+ 			} else if( ( s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD_PLUS) &&
+ 				blFrontLineDetected) {
 	 
  				conquest_setLastNode( CONQUEST_NODE__LEFT_T);
  				hal_led_set( HAL_LED_PIN_BV__0 | HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4);
- 			} else if( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD) {
+ 			} else if( s_ui16AvgLeft < SUBS_NODE_LINE_THRESHOLD_PLUS) {
  				conquest_setLastNode( CONQUEST_NODE__DOWN_LEFT);
  				hal_led_set( HAL_LED_PIN_BV__4 | HAL_LED_PIN_BV__6);
- 			} else if( s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD) {
+ 			} else if( s_ui16AvgRight < SUBS_NODE_LINE_THRESHOLD_PLUS) {
  				conquest_setLastNode( CONQUEST_NODE__DOWN_RIGHT);
  				hal_led_set( HAL_LED_PIN_BV__2 | HAL_LED_PIN_BV__4);
  			}
@@ -124,9 +121,22 @@ static uint16_t s_ui16AvgRight = 0;
 
  			s_blDetectionActive = false;
 			blActed = true;
- 		} else if( s_blDetectionActive) {
- 			blActed = true;
- 		}
+		
+		} else if( s_blDetectionActive) {
+			
+			if ( lpui16SenLine[SEN_LINE_SENSOR__RIGHT] < SUBS_NODE_LINE_THRESHOLD ||
+				lpui16SenLine[SEN_LINE_SENSOR__LEFT] < SUBS_NODE_LINE_THRESHOLD) {
+
+				s_ui16AvgLeft += lpui16SenLine[SEN_LINE_SENSOR__LEFT];
+				s_ui16AvgRight += lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
+				s_ui8NodeDetectionCounter++;
+			}
+
+			if (lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] > SUBS_NODE_SURFACE_THRESHOLD) {
+				blActed = true;
+			}
+
+		} 
 	}
  
  	return blActed;
@@ -145,3 +155,4 @@ void subs_node_reset( void) {
 	s_ui16AvgLeft = 0;
 	s_ui16AvgRight = 0;
 }
+

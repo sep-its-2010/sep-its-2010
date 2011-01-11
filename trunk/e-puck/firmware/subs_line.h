@@ -6,12 +6,12 @@
 
 enum {
 	SUBS_LINE_MAX_DELAY_CYCLES = 64, ///< Specifies the maximal PID dead time buffer depth in cycles.
-	SUBS_LINE_DELAY_CYCLES = 15, ///< Specifies the actual delay in cycles.
-	SUBS_LINE_MAX_ABS_INTEGRATION = 200, ///< Specifies the upper bound of the absolute value of the PID integration part.
+	SUBS_LINE_DELAY_CYCLES = 0, ///< Specifies the actual delay in cycles.
+	SUBS_LINE_MAX_ABS_INTEGRATION = 15000, ///< Specifies the upper bound of the absolute value of the PID integration part.
 	SUBS_LINE_PID_FIXPOINT_OFFSET = 1 << 8, ///< Specifies the fix point divider.
-	SUBS_LINE_P_FIXPOINT_FACTOR = (int16_t)( 0.2f * SUBS_LINE_PID_FIXPOINT_OFFSET), ///< Specifies the fix point factor of the PID proportional part.
-	SUBS_LINE_I_FIXPOINT_FACTOR = (int16_t)( 0.0f * SUBS_LINE_PID_FIXPOINT_OFFSET), ///< Specifies the fix point factor of the PID integration part.
-	SUBS_LINE_D_FIXPOINT_FACTOR = (int16_t)( 0.4f * SUBS_LINE_PID_FIXPOINT_OFFSET) ///< Specifies the fix point factor of the PID differentiation part.
+	SUBS_LINE_P_FIXPOINT_FACTOR = (int16_t)( 1.5f * SUBS_LINE_PID_FIXPOINT_OFFSET), ///< Specifies the fix point factor of the PID proportional part.
+	SUBS_LINE_I_FIXPOINT_FACTOR = (int16_t)( 0.1f * SUBS_LINE_PID_FIXPOINT_OFFSET), ///< Specifies the fix point factor of the PID integration part.
+	SUBS_LINE_D_FIXPOINT_FACTOR = (int16_t)( 0.6f * SUBS_LINE_PID_FIXPOINT_OFFSET) ///< Specifies the fix point factor of the PID differentiation part.
 };
 
 
