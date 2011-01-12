@@ -16,6 +16,8 @@ static bool s_blActive = false;
  * - \c false: no action taken
  *
  * The layer handles #CONQUEST_STATE__TURN_RIGHT, #CONQUEST_STATE__TURN_LEFT and #CONQUEST_STATE__MOVE_FORWARD states.
+ * When a turn is finished the line centering (#CONQUEST_STATE__CENTER_LINE) state is entered if there is a line in front of the e-puck.
+ * If there is no line #CONQUEST_STATE__STOP is entered.
  *
  * \remarks
  * The layer needs to be reset after #CONQUEST_STATE__MOVE_FORWARD is left before a new move forward instruction can be handled.
@@ -37,7 +39,6 @@ bool subs_movement_run( void) {
 					hal_motors_getStepsRight() >= HAL_MOTORS_FULL_TURN_STEPS / 4) {
 
 					hal_motors_setSpeed( 0, 0);
-					conquest_setState( CONQUEST_STATE__STOP);
 
 					// Turn current node
 					uint16_t ui16RawDirections = conquest_getLastNode() & 0xFF;
@@ -49,6 +50,7 @@ bool subs_movement_run( void) {
 						ui16RawDirections |= ui16RawDirections >> 8;
 					}
 
+					conquest_setState( ui16RawDirections & CONQUEST_DIRECTION__UP ? CONQUEST_STATE__CENTER_LINE : CONQUEST_STATE__STOP);
 					conquest_setLastNode( conquest_convertDirMaskToNode( ui16RawDirections & 0xFF));
 					s_blActive = false;
 				}

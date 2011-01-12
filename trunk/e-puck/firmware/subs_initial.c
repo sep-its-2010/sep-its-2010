@@ -1,9 +1,6 @@
-#include <stdlib.h>
-
 #include "hal_motors.h"
 #include "hal_rtc.h"
 #include "hal_led.h"
-#include "sen_line.h"
 #include "conquest.h"
 
 #include "subs_initial.h"
@@ -29,8 +26,7 @@ enum {
 typedef enum {
 	STATE__WAIT, ///< Entry state of the FSM. Wait for a node detection request.
 	STATE__SCAN, ///< Node scan state. Turn 380 degrees and scan for peak edges.
-	STATE__ANALYZE, ///< Analyze peaks and generated node type.
-	STATE__TURN, ///< Perform grid direction calibration.
+	STATE__ANALYZE ///< Analyze peaks and generated node type.
 } EState_t;
 
 
@@ -122,8 +118,8 @@ void cbDetectionErrorBlinker(
  *
  * First, the e-puck turns 360 degrees and performs an edge detection on the middle line sensor values. These values are then analyzed
  * for peaks (values below #SUBS_INITIAL_PEAK_BORDER) which represent the node grid lines. The actual node type is generated from
- * those peaks. If the robot direction does not face any grid direction (#SUBS_INITIAL_DIRECTION_THRESHOLD) its direction is
- * centered to the closest grid direction.
+ * those peaks. If the robot direction faces any grid direction (#SUBS_INITIAL_DIRECTION_THRESHOLD) its direction is
+ * centered .
  * 
  * \remarks
  * - #subs_line_reset() should be called to initialize the layer.
@@ -138,7 +134,6 @@ bool subs_initial_run( void) {
 	static bool s_blInPeak = false;
 	static bool s_blInPeakOnStart = false;
 	static uint16_t s_ui16NumEdges = 0;
-	static uint16_t s_ui16TurnSteps = 0;
 	static uint16_t s_aui16Edges[MAX_EDGES];
 
 	bool blActed = false;
@@ -149,12 +144,8 @@ bool subs_initial_run( void) {
 				hal_motors_setSpeed( 0, conquest_getRequestedLineSpeed());
 				hal_motors_setSteps( 0);
 
-				sen_line_SData_t podData;
-				sen_line_read( &podData);
-				sen_line_rescale( &podData, &podData);
-
 				// Check whether the e-puck is currently right above a line with its sensors
-				s_blInPeak = podData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_INITIAL_PEAK_BORDER;
+				s_blInPeak = conquest_getSensorImage()->podCalibratedLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_INITIAL_PEAK_BORDER;
 				s_blInPeakOnStart = s_blInPeak;
 				s_ui16NumEdges = 0;
 
@@ -166,18 +157,14 @@ bool subs_initial_run( void) {
 		case STATE__SCAN: {
 			const uint16_t ui16Steps = hal_motors_getStepsRight();
 
-			sen_line_SData_t podData;
-			sen_line_read( &podData);
-			sen_line_rescale( &podData, &podData);
-
 			// 360 degree turn complete?
 			if( ui16Steps >= HAL_MOTORS_FULL_TURN_STEPS) {
 				s_eState = STATE__ANALYZE;
 				hal_motors_setSpeed( 0, 0);
 
 			// Edge detected?
-			} else if( ( s_blInPeak && podData.aui16Data[SEN_LINE_SENSOR__MIDDLE] > SUBS_INITIAL_PEAK_BORDER) ||
-				( !s_blInPeak && podData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_INITIAL_PEAK_BORDER)) {
+			} else if( ( s_blInPeak && conquest_getSensorImage()->podCalibratedLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] > SUBS_INITIAL_PEAK_BORDER) ||
+				( !s_blInPeak && conquest_getSensorImage()->podCalibratedLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_INITIAL_PEAK_BORDER)) {
 
 				if( s_ui16NumEdges < MAX_EDGES) {
 					s_blInPeak = !s_blInPeak;
@@ -260,30 +247,11 @@ bool subs_initial_run( void) {
 					}
 				}
 
+				conquest_setState( ui16DirectionMask & CONQUEST_DIRECTION__UP ? CONQUEST_STATE__CENTER_LINE : CONQUEST_STATE__STOP);
 				conquest_setLastNode( conquest_convertDirMaskToNode( ui16DirectionMask & 0xFF));
-
-// 				// Turn the robot to face a grid direction (if the deviation is big enough)
-// 				if( abs( i16Deviation) > 0) {//SUBS_INITIAL_DIRECTION_THRESHOLD) {
- 					s_ui16TurnSteps = 0; //abs( i16Deviation);
-// 					hal_motors_setSteps( 0);
-// 					hal_motors_setSpeed( 0, i16Deviation < 0 ? -200 : 200);
-//
-					s_eState = STATE__TURN;
-// 				} else {
-// 					conquest_setState( CONQUEST_STATE__STOP);
-// 					s_eState = STATE__WAIT;
-// 				}
+				s_eState = STATE__WAIT;
 				blActed = true;
 			}
-			break;
-		}
-		case STATE__TURN: {
-			if( hal_motors_getStepsRight() >= s_ui16TurnSteps) {
-				conquest_setState( CONQUEST_STATE__STOP);
-				s_eState = STATE__WAIT;
-				hal_motors_setSpeed( 0, 0);
-			}
-			blActed = true;
 			break;
 		}
 		default: {

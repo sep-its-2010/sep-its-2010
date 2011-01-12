@@ -85,6 +85,7 @@ typedef enum {
 	CONQUEST_STATE__MOVE_FORWARD,
 	CONQUEST_STATE__TURN_LEFT,
 	CONQUEST_STATE__TURN_RIGHT,
+	CONQUEST_STATE__CENTER_LINE,
 	CONQUEST_STATE__HIT_NODE,
 	CONQUEST_STATE__COLLISION,
 	CONQUEST_STATE__ABYSS,
@@ -108,7 +109,7 @@ typedef enum {
 	CONQUEST_MESSAGE_STATE__MOVE, ///< Processing a move request.
 	CONQUEST_MESSAGE_STATE__SET_SPEED, ///< Processing a speed change request.
 	CONQUEST_MESSAGE_STATE__SET_LED ///< Processing a LED change request.
-} conquest_EMesssageState_t;
+} conquest_EMessageState_t;
 
 
 /*!

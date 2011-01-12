@@ -467,9 +467,10 @@ bool cbHandleRequestTurn(
  */
 void cbSyncRequestStatus( void) {
 
-	if( conquest_getState() == CONQUEST_STATE__START) {
+	const conquest_EState_t eState = conquest_getState();
+	if( eState == CONQUEST_STATE__START) {
 		conquest_setState( CONQUEST_STATE__INITIAL);
-	} else if( conquest_getState() == CONQUEST_STATE__STOP || conquest_getState() == CONQUEST_STATE__ABYSS) {
+	} else if( eState == CONQUEST_STATE__STOP || eState == CONQUEST_STATE__ABYSS) {
 		com_SMessage_t podResponse;
 		podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_STATUS;
 		memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
@@ -737,23 +738,24 @@ void conquest_init( void) {
 	subs_init();
 	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
 	subs_register( subs_initial_run,     subs_initial_reset,     0xF5);
-	subs_register( subs_abyss_run,       subs_abyss_reset,       0xEF);
+//	subs_register( subs_abyss_run,       subs_abyss_reset,       0xEF);
  	subs_register( subs_collision_run,   subs_collision_reset,   0xDF);
  	subs_register( subs_movement_run,    subs_movement_reset,    0xBF);
  	subs_register( subs_node_run,        subs_node_reset,        0xAF);
  	subs_register( subs_line_run,        subs_line_reset,        0x9F);
 
 	fsm_init( &s_podSubsumptionFSM);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__START,       NULL, cbSubsumption, NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__CALIBRATION, NULL, cbSubsumption, NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__INITIAL,     NULL, cbSubsumption, subs_initial_reset);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__STOP,        NULL, NULL,          NULL);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__START,        NULL, cbSubsumption, NULL);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__CALIBRATION,  NULL, cbSubsumption, NULL);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__INITIAL,      NULL, cbSubsumption, subs_initial_reset);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__STOP,         NULL, NULL,          NULL);
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__MOVE_FORWARD, NULL, cbSubsumption, cbStateMoveExit);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__TURN_LEFT,   NULL, cbSubsumption, subs_movement_reset);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__TURN_RIGHT,  NULL, cbSubsumption, subs_movement_reset);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__HIT_NODE,    NULL, NULL,          NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__COLLISION,   NULL, NULL,          NULL);
-	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__ABYSS,       NULL, NULL,          NULL);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__TURN_LEFT,    NULL, cbSubsumption, cbStateMoveExit);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__TURN_RIGHT,   NULL, cbSubsumption, cbStateMoveExit);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__CENTER_LINE,  NULL, cbSubsumption, cbStateMoveExit);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__HIT_NODE,     NULL, NULL,          NULL);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__COLLISION,    NULL, NULL,          NULL);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__ABYSS,        NULL, NULL,          NULL);
 
 	fsm_init( &s_podMessageFSM);
 	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE,       NULL, NULL,                  NULL);
