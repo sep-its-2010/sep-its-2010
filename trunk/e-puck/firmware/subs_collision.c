@@ -39,26 +39,25 @@ bool subs_collision_run( void) {
 
 	bool blActed = false;
 
-/*
-
-	if( conquest_getState() == CONQUEST_STATE__MOVE_FOWARD) {
-		sen_prox_SData_t podProxSensorData;
+	if( conquest_getState() == CONQUEST_STATE__MOVE_FORWARD) {
 		sen_line_SData_t podLineSensorData;
-		sen_prox_getCurrent( &podProxSensorData);
 
 		// Check all IR-sensors for collision
+		const bool* const lpblCollision = conquest_getSensorImage()->ablCollisionMask;
+		
 		for( uint16_t ui16 = 0; ui16 < SEN_PROX_NUM_SENSORS; ui16++) {
-			if( podProxSensorData.aui8Data[ui16] > CONQUEST_COLLISION_THRESHOLD) {
+			if( lpblCollision[ui16]) {				
 				blActed = true;
 			}
 		}
 
 		if( blActed) {
-			subs_abyss_podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_COLLISION;
-			memcpy( subs_abyss_podResponse.aui8Data, lpblAbyss, SEN_PROX_NUM_SENSORS);
-			memset( &subs_abyss_podResponse.aui8Data[SEN_PROX_NUM_SENSORS], 0xFF, sizeof( subs_abyss_podResponse.aui8Data) - SEN_PROX_NUM_SENSORS);
-			hal_motors_setSteps( 0);
+			subs_collision_podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_COLLISION;
+			memcpy( subs_collision_podResponse.aui8Data, lpblCollision, SEN_PROX_NUM_SENSORS);
+			memset( &subs_collision_podResponse.aui8Data[SEN_PROX_NUM_SENSORS], 0xFF, sizeof( subs_collision_podResponse.aui8Data) - SEN_PROX_NUM_SENSORS);
 			hal_motors_setSpeed( 0, 0);
+			hal_motors_setSteps( 0);
+			conquest_setState( CONQUEST_STATE__COLLISION);
 		}
 
 		// Prevention not active? -> enable prevention and start turning.
@@ -100,7 +99,7 @@ bool subs_collision_run( void) {
 
 				// Several line-detections in a row, left and/or right ground-sensor detects a white surface?
 				// -> Move in straight direction and reset collision-prevention-state.
-				if( s_ui8DetectionCounter >= SUBS_COLLISION_MEASUREMENTS &&
+				if( s_ui8DetectionCounter >= SUBS_COLLISION_LINE_MEASUREMENTS &&
 					( podLineSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] > SUBS_COLLISION_SURFACE_THRESHOLD ||
 					podLineSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] > SUBS_COLLISION_SURFACE_THRESHOLD)) {
 
@@ -113,8 +112,6 @@ bool subs_collision_run( void) {
 			}		
 		}
 	}
-
-*/
 
 	return blActed;
 }
