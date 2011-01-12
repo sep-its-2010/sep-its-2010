@@ -85,31 +85,41 @@ public class Import extends Activity {
        */
       public void onItemClick(AdapterView<?> parent, View view, int position,
           long id) {
-        // The TexView that has been selected.
-        TextView txtMap = (TextView) view;
-        Resources res = getResources();
+    	  
+    	  TextView item = (TextView) view;
+    	  selectedMap = item.getText().toString();
+    	  
+    	  
+    	        if (selectedMap != null) {
+    	          // Determine, whether Activity has been started to display a map or
+    	          // if it has been started to open a configuration for the simulator.
+    	          ImportMode mode = (ImportMode) getIntent().getSerializableExtra(
+    	              ImportMode.class.toString());
 
-        // Update name of selected map and change the text color of the
-        // corresponding TextView.
-        if (lastSelected == position) {
-          if (selectedMap == null) {
-            selectedMap = txtMap.getText().toString();
-            txtMap.setTextColor(res.getColor(R.color.list_item_selected));
-          } else {
-            selectedMap = null;
-            txtMap.setTextColor(res.getColor(R.color.list_item_not_selected));
-          }
-        } else {
-          selectedMap = txtMap.getText().toString();
-          txtMap.setTextColor(res.getColor(R.color.list_item_selected));
-          if (lastSelected != -1) {
-            TextView txtLastSelected = (TextView) parent
-                .getChildAt(lastSelected);
-            txtLastSelected.setTextColor(res
-                .getColor(R.color.list_item_not_selected));
-          }
-          lastSelected = position;
-        }
+    	          // Intent message to start other Activities.
+    	          Intent start = new Intent();
+    	          start.putExtra(EXTRA_FILE_PATH, selectedMap);
+
+    	          switch (mode) {
+    	          case SIMULATION_MAP:
+    	            // If Import was launched to open a simulator configuration, set
+    	            // result code and finish Activity.
+    	            setResult(RESULT_OK, start);
+    	            finish();
+    	            break;
+    	          case IMPORT_MAP:
+    	            // If Import was launched to view a map, start Map Activity.
+    	            start.setComponent(new ComponentName(getApplicationContext()
+    	                .getPackageName(), Map.class.getName()));
+    	            start.putExtra(MapMode.class.toString(), MapMode.IMPORT);
+    	            startActivity(start);
+    	            break;
+    	          }
+    	        } else {
+    	          // If no map was selected, display note message.
+    	          displayMessage(getString(R.string.MSG_NO_MAP_SELECTED), false);
+    	        }
+    	      
       }
     });
     // Display path of the directory.

@@ -187,22 +187,21 @@ public class MapSurfaceView extends SurfaceView
      *
      * @param holder Holds the display surface and is able to control it.
      */
-    public final void surfaceDestroyed(final SurfaceHolder holder) {
-    	boolean retry = true;
-    	mThread.setPaused(true);
-    	
-    	while(retry) {
-    	try {
-			mThread.join();
-			retry = false;
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
+	public final void surfaceDestroyed(final SurfaceHolder holder) {
+		boolean retry = true;
+		mThread.setPaused(true);
+
+		while (retry) {
+			try {
+				mThread.join();
+				retry = false;
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
 		}
-    	}
-        
-    }
+	}
 
     /**
      * Is implemented by the interface View.OnTouchListener and is called by

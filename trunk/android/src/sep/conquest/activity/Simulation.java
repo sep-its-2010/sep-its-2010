@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 /**
  * Allows user to open a map from the file system and specify the number of
@@ -73,6 +74,8 @@ public class Simulation extends Activity {
 	private Spinner numberOfRobots;
 	
 	private ArrayAdapter<String> numberAdapter;
+	
+	private TextView filename;
 
 	/**
 	 * Called when the Activity is initially created.
@@ -86,6 +89,8 @@ public class Simulation extends Activity {
 	public final void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.simulation_main);
+		
+		filename = (TextView) findViewById(R.id.filename);
 		
 		positions = new LinkedList<EpuckPosition>();
 		map = new GridMap();
@@ -224,6 +229,8 @@ public class Simulation extends Activity {
 				numberOfRobots.setSelection(0);
 				drawPreview(map.getMapAsList(), map.getMapBorders());
 				mFirstRun = true;
+				
+				filename.setText("" + mapName);
 			}
 		}
 	}

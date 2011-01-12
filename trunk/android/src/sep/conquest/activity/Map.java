@@ -34,6 +34,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 
 /**
@@ -61,6 +62,7 @@ public class Map extends Activity implements Observer {
 	 * Used to update the View from update-method.
 	 */
 	private Handler updateHandler;
+	
 
     /**
      * Is implemented by Activity and is called when the map class is accessed.
@@ -117,6 +119,7 @@ public class Map extends Activity implements Observer {
         	loadMap();
         } else if (mMode == MapMode.EXPLORATION) {
         	setSpinner();
+        	
         } else {
         	mRobotSelect.setEnabled(false);
         }
@@ -227,7 +230,6 @@ public class Map extends Activity implements Observer {
 			displayMessage(getString(R.string.ERR_MSG_INVALID_FILE), true);
 			return;
 		}
-		
     }
     
     private void drawMap(List<MapNode> map, int[] borders) {

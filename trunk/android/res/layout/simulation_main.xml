@@ -13,9 +13,16 @@
 	<TextView android:id="@+id/txtPreview" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:text="@string/TXT_PREVIEW"
 		android:layout_below="@id/spNumber" />
+		
+		        <TextView 
+        android:id="@+id/filename"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtPreview"
+        />
 
 	<sep.conquest.activity.MapSurfaceView android:id="@+id/im_preview"
-	   android:layout_below="@id/txtPreview" android:layout_width="fill_parent" 
+	   android:layout_below="@id/filename" android:layout_width="fill_parent" 
 	   android:layout_height="wrap_content"/>
 	   
 </RelativeLayout>
