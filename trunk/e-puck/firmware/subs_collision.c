@@ -56,7 +56,6 @@ bool subs_collision_run( void) {
 			memset( &subs_collision_podResponse.aui8Data[SEN_PROX_NUM_SENSORS], 0xFF, sizeof( subs_collision_podResponse.aui8Data) - SEN_PROX_NUM_SENSORS);
 			hal_motors_setSpeed( 0, 0);
 			hal_motors_setSteps( 0);
-			conquest_setState( CONQUEST_STATE__COLLISION);
 		}
 
 		// Prevention not active? -> enable prevention and start turning.
@@ -107,6 +106,7 @@ bool subs_collision_run( void) {
 					s_blPreventionActive = false;
 					hal_motors_setSteps( 0);
 					hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
+					conquest_setState( CONQUEST_STATE__COLLISION);
 				}
 				blActed = true;
 			}		
