@@ -40,8 +40,7 @@ bool subs_collision_run( void) {
 	bool blActed = false;
 
 	if( conquest_getState() == CONQUEST_STATE__MOVE_FORWARD) {
-		sen_line_SData_t podLineSensorData;
-
+	
 		// Check all IR-sensors for collision
 		const bool* const lpblCollision = conquest_getSensorImage()->ablCollisionMask;
 		
@@ -85,6 +84,7 @@ bool subs_collision_run( void) {
 			if( hal_motors_getStepsLeft() >= HAL_MOTORS_FULL_TURN_STEPS / 2 &&
 				hal_motors_getStepsRight() >= HAL_MOTORS_FULL_TURN_STEPS / 2) {
 
+				sen_line_SData_t podLineSensorData;
 				sen_line_read( &podLineSensorData);
 				sen_line_rescale( &podLineSensorData, &podLineSensorData);
 				
