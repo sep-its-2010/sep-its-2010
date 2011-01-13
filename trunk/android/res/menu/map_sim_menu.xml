@@ -7,10 +7,7 @@
           android:title="@string/MNU_START" />
     <item android:id="@+id/mnuPause"
           android:icon="@drawable/mnu_pause"
-          android:title="@string/MNU_PAUSE" />
-    <item android:id="@+id/mnuStep"
-          android:icon="@drawable/mnu_step"
-          android:title="@string/MNU_STEP" />                  
+          android:title="@string/MNU_PAUSE" />                  
     <item android:id="@+id/mnuStatistics"
           android:icon="@drawable/mnu_statistics"
           android:title="@string/MNU_STATISTICS" /> 

@@ -130,7 +130,7 @@ public class Map extends Activity implements Observer {
     	Controller.getInstance().getEnv().addObserver(this);
     	}
     	//automatischer start
-    	//PuckFactory.getSimulator().start();
+    	PuckFactory.getSimulator().start();
     }
     
     public void onPause() {
@@ -200,10 +200,6 @@ public class Map extends Activity implements Observer {
         	
         case R.id.mnuPause:
         	PuckFactory.getSimulator().pause();
-        	break;
-        	
-        case R.id.mnuStep:
-        	PuckFactory.getSimulator().step();
         	break;
 
         default:
