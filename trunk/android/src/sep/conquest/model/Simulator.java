@@ -12,10 +12,10 @@ import sep.conquest.model.handler.HandlerFactory;
 import sep.conquest.util.Utility;
 
 /**
- * The Simulator class represents a virtual socket for a virtual robot within the
- * e-puck-conquest application.
- * It is used to simulate response messages from real e-pucks. 
- * Therefore an internal representation of the e-pucks and a map is used.
+ * The Simulator class represents a virtual socket for a virtual robot within
+ * the e-puck-conquest application. It is used to simulate response messages
+ * from real e-pucks. Therefore an internal representation of the e-pucks and a
+ * map is used.
  * 
  * @author Andreas Poxrucker
  * 
@@ -181,15 +181,17 @@ public final class Simulator {
       return node.getNodeType();
     } else {
       throw new IllegalArgumentException(
-          "Asked for type of node at invalid position (" + x +"," + y + ")");
+          "Asked for type of node at invalid position (" + x + "," + y + ")");
     }
   }
-  
+
   /**
    * Returns whether map contains node at passed position.
    * 
-   * @param x The x coordinate of the position.
-   * @param y The y coordinate of the position.
+   * @param x
+   *          The x coordinate of the position.
+   * @param y
+   *          The y coordinate of the position.
    * @return True, if map contains node, false otherwise.
    */
   public boolean containsNode(int x, int y) {
@@ -306,7 +308,7 @@ public final class Simulator {
       if ((pos[0] % 3 == 0) && (pos[1] % 3 == 0)) {
         // Message that is written on the output buffer
         byte[] response = new byte[Puck.MSG_LENGTH];
-        
+
         // Write message type "collision" to first two bytes.
         response[Puck.TYPE_FIRST_BYTE] = (byte) (Puck.RES_COLLISION & 0xFF);
         response[Puck.TYPE_SECOND_BYTE] = (byte) ((Puck.RES_COLLISION >> 8) & 0xFF);
@@ -446,15 +448,15 @@ public final class Simulator {
    *         message, or of length 32 if there is a message.
    */
   public byte[] readBuffer(UUID id) {
-	  synchronized(robots) {
-	    if (robots.containsKey(id)) {
-	      byte[] msg = robots.get(id).readBuffer();
-	      return msg;
-	    } else {
-	      throw new IllegalArgumentException(
-	          "Unknown id asked to read output buffer");
-	    }
-	  }
+    synchronized (robots) {
+      if (robots.containsKey(id)) {
+        byte[] msg = robots.get(id).readBuffer();
+        return msg;
+      } else {
+        throw new IllegalArgumentException(
+            "Unknown id asked to read output buffer");
+      }
+    }
   }
 
   /**
@@ -468,21 +470,22 @@ public final class Simulator {
    *          The message to write on the output buffer.
    */
   public void writeBuffer(UUID id, byte[] msg) {
-	  synchronized(robots) {
-		  // Check, if there is an output buffer for id and if length of message
-		  // equals 32 byte. It not, throw exception.
-		  if (robots.containsKey(id)) {
-		      if (msg.length == 32) {
-		        robots.get(id).writeBuffer(msg);
-		      } else {
-		        throw new IllegalArgumentException("Message length is not equal to 32");
-		      }
-		    } else {
-		      throw new IllegalArgumentException(
-		          "Unknown id asked to write output buffer");
-		    }
-			  
-		  }
+    synchronized (robots) {
+      // Check, if there is an output buffer for id and if length of message
+      // equals 32 byte. It not, throw exception.
+      if (robots.containsKey(id)) {
+        if (msg.length == 32) {
+          robots.get(id).writeBuffer(msg);
+        } else {
+          throw new IllegalArgumentException(
+              "Message length is not equal to 32");
+        }
+      } else {
+        throw new IllegalArgumentException(
+            "Unknown id asked to write output buffer");
+      }
+
+    }
   }
 
   /**
@@ -506,7 +509,9 @@ public final class Simulator {
    * Stops the execution of the simulator.
    */
   public void stop() {
-    timer.cancel();
+    if (timer != null) {
+      timer.cancel();
+    }
 
     // Next start action will cause simulator reset.
     stopped = true;
@@ -516,7 +521,9 @@ public final class Simulator {
    * Pauses the execution of the simulator.
    */
   public void pause() {
-    timer.cancel();
+    if (timer != null) {
+      timer.cancel();
+    }
 
     // Next start action will not cause simulator reset.
     stopped = false;

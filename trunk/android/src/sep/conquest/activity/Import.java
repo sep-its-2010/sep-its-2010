@@ -7,11 +7,7 @@ import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -69,8 +65,6 @@ public class Import extends Activity {
     lsMaps = (ListView) findViewById(R.id.lsMaps);
     lsMaps.setOnItemClickListener(new OnItemClickListener() {
 
-      private int lastSelected = -1;
-
       /**
        * Handles clicks on items of ListView containing the available maps.
        * 
@@ -88,7 +82,6 @@ public class Import extends Activity {
     	  
     	  TextView item = (TextView) view;
     	  selectedMap = item.getText().toString();
-    	  
     	  
     	        if (selectedMap != null) {
     	          // Determine, whether Activity has been started to display a map or
@@ -129,62 +122,7 @@ public class Import extends Activity {
     // Display the files found in the application directory.
     displayFiles();
   }
-
-  /**
-   * Sets the menu of the Activity.
-   * 
-   * @param menu
-   *          Reference on menu that has to be set.
-   */
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    MenuInflater inflater = getMenuInflater();
-    inflater.inflate(R.menu.import_menu, menu);
-    return true;
-  }
-
-  /**
-   * Handles selections of the menu of the Activity.
-   * 
-   * @param item
-   *          The MenuItem that has been selected.
-   */
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == R.id.mnuOpen) {
-      if (selectedMap != null) {
-        // Determine, whether Activity has been started to display a map or
-        // if it has been started to open a configuration for the simulator.
-        ImportMode mode = (ImportMode) getIntent().getSerializableExtra(
-            ImportMode.class.toString());
-
-        // Intent message to start other Activities.
-        Intent start = new Intent();
-        start.putExtra(EXTRA_FILE_PATH, selectedMap);
-
-        switch (mode) {
-        case SIMULATION_MAP:
-          // If Import was launched to open a simulator configuration, set
-          // result code and finish Activity.
-          setResult(RESULT_OK, start);
-          finish();
-          break;
-        case IMPORT_MAP:
-          // If Import was launched to view a map, start Map Activity.
-          start.setComponent(new ComponentName(getApplicationContext()
-              .getPackageName(), Map.class.getName()));
-          start.putExtra(MapMode.class.toString(), MapMode.IMPORT);
-          startActivity(start);
-          break;
-        }
-      } else {
-        // If no map was selected, display note message.
-        displayMessage(getString(R.string.MSG_NO_MAP_SELECTED), false);
-      }
-    }
-    return true;
-  }
-
+  
   /**
    * Displays all files found in the application directory.
    * 

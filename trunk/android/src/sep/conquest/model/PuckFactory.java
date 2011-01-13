@@ -129,13 +129,12 @@ public class PuckFactory {
         LocalLocalizeBehaviour.startPositions.put(newId, Utility.makeKey(positions[i][0], positions[i][1]));
         LocalLocalizeBehaviour.startOrientations.put(newId, ori[i]);
       }
-      Simulator sim = new Simulator(map, posMap, oriMap);
-      simulator = sim;
+      simulator = new Simulator(map, posMap, oriMap);
 
       int i = 0;
       Puck first = null;
       for (UUID id : ids) {
-        Puck newPuck = new VirtualPuck(id, sim, ROBOT_NAME + i);
+        Puck newPuck = new VirtualPuck(id, simulator, ROBOT_NAME + i);
         if (first == null) {
         	first = newPuck;
         }
