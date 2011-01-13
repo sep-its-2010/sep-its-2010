@@ -173,6 +173,104 @@
 				ist unter \url{http://www.etc.ugal.ro/cchiculita/software/picbootloader.htm} zu finden. \\
 				Fahren Sie mit Kapitel \ref{programmstart_ablauf} fort.
 \section{Benutzeroberfl\"ache des Smartphones}
+	\subsection{Activity Connect}
+		\paragraph*{Kurzbeschreibung:}
+		Die Activity Connect \"offnet sich direkt nach dem Start der Anwendung. \\	
+		Sie ermöglicht die Suche nach verbindungsbereiten e-puck Robotern und die Herstellung der Bluetooth-Verbindungen.
+		Über das Men\"u der Activity können außerdem die Activities \textit{Simulation} und \textit{Import} gestartet werden.
+
+		\paragraph*{Menübeschreibung:}
+		\begin{itemize}
+			\item Start: Über den Men\"ueintrag \textbf{Start} kann der Erkundungsvorgang gestartet werden. Dazu muss jedoch mindestens ein e-puck
+			verf\"ugbar und in der Liste der gefundenen Roboter als Teilnehmer ausgew\"ahlt worden sein.
+			\item Simulation: Durch Auswahl des Men\"ueintrags \textbf{Simulation} gelangt man zur Activity \textit{Simulation}. Diese erm\"oglicht
+			die simulierte Ausf\"uhrung einer Erkundung auf dem Smartphone.
+			\item Import: Der Men\"ueintrag \textbf{Import} startet die Activity \textit{Import}. Mit dieser k\"onnen auf dem Smartphone gespeicherte
+			Karten betrachtet werden.
+		\end{itemize}
+
+		\paragraph*{Funktionsbeschreibung:}
+		Um zu einem oder mehreren e-puck Robotern eine Bluetooth-Verbindung aufzubauen und die Erkundung zu starten, f\"uhren Sie folgende Schritte
+		durch:
+		\begin{enumerate}
+			\item \textbf{Klick auf den Button Suche:} Durch den Klick auf den Button \textbf{Suche} wird die Suche nach verbindungsbereiten e-puck
+			Robotern gestartet. Diese dauert ca. 12s. Die Oberfl\"ache der Activity ist in dieser Zeit gesperrt.
+			\item \textbf{Auswahl der teilnehmenden e-puck Roboter:} Nachdem die Suche beendet worden ist, werden die gefundenen e-pucks in einer
+			Liste dargestellt. Durch Klick auf die Bluetooth-Namen der Roboter k\"onnen diese für die Teilnahme an der Erkundung ausgew\"ahlt bzw.
+			ausgeschlossen werden. Die Namen teilnehmender Roboter werden in gr\"uner Schrift dargestellt, nicht teilnehmende in roter Schrift.
+			\item \textbf{Herstellung der Bluetooth-Verbindungen und Start der Erkundung:} Nach Auswahl der teilnehmenden e-pucks aus der Liste der
+			gefundenen Roboter kann der Verbindungsvorgang durch Auswahl des Men\"ueintrags \textbf{Start} gestartet werden. \\ 
+			Es muss mindestens ein e-puck Roboter ausgew\"ahlt sein. Während des Verbindungsvorgangs ist die Oberfl\"ache der Activity gesperrt.
+			Tritt w\"ahrend der Verbindungsherstellung ein Fehler auf, wird der Verbindungsvorgang abgebrochen und eine entsprechende Fehlermeldung
+			ausgegeben. \\
+			Wurden alle Verbindungen erfolgreich aufgebaut wird die Activity \textit{Map“} automatisch gestartet.
+		\end{enumerate}
+		
+	\subsection{Activtiy Import}
+		\paragraph*{Kurzbeschreibung:}
+		Die Activity \textit{Import} erm\"oglicht das Betrachten von Karten, die auf dem externen Speicher des Smartphones gespeichert sind.
+		\textit{Import} kann über das Men\"u der Activity \textit{Connect} durch Klick auf den Eintrag \textbf{Import} gestartet werden. Nach Start
+		der Anwendung werden automatisch alle gefundenen Karten aufgelistet. 
+
+		\paragraph*{Funktionsbeschreibung:}
+		Um eine Karte aus dem Dateisystem zu \"offnen und anzuzeigen, muss das Smartphone über ein externes Speichermedium verfügen. Dieses muss
+		lesbar sein und das Verzeichnis /mnt/sdcard/Android/data/sep.conquest/ enthalten. Zum Öffnen m\"ussen folgende Schritte durchgef\"uhrt
+		werden:
+		\begin{enumerate}
+ 			\item \textbf{Auswahl der zu \"offnenden Karte:} Nach Start der Activity werden automatisch die Dateinamen aller gefundenen Karten
+ 			aufgelistet. Durch Klick auf die Eintr\"age der Liste kann eine der Karten ausgewählt und geöffnet werden. Die Karte wird anschließend in
+ 			der Activity \textit{Map} angezeigt. \\
+ 		\end{enumerate}
+ 	
+ 	\subsection{Activity Export}
+ 		\paragraph*{Kurzbeschreibung:}
+ 		Die Activtiy \textit{Export} ermöglicht das Abspeichern der während einer Erkundung bereits erforschten Karte. Das Smartphone muss dazu über
+ 		ein beschreibbares externes Speichermedium verfügen. Die Karten werden im Verzeichnis /mnt/sdcard/Android/data/sep.conquest/files
+ 		gespeichert. \\
+ 		Die Activity \textit{Export} kann von der Activtiy \textit{Map} durch das Menü gestartet werden. Sie ist jedoch nur im Exploration Modus
+ 		verfügbar. Abgespeicherte Karten können mit der Activity \textit{Import} wieder geöffnet werden.
+ 		
+ 		\paragraph*{Funktionsbeschreibung:}
+ 		Um eine teilweise oder vollständig erkundete Karte zu speichern, führen Sie folgende Schritte durch:
+ 		\begin{enumerate}
+ 			\item \textbf{Eintrag eines gültigen Dateinamens in das Textfeld:} Bevor die Karte gespeichert werden kann, muss in das Textfeld ein
+ 			gültiger Dateiname eingetragen werden. Durch Klick auf das Textfeld kann dieser eingetragen werden. \\ 
+ 			Der Dateiname muss mit einem Buchstaben oder einer Ziffer beginnen, gefolgt von einer beliebigen Anzahl von Buchstaben, Ziffern oder
+ 			Unterstrichen. Die Dateiendung \textbf{.sep} kann, muss aber nicht miteingetragen werden.
+ 			\item \textbf{Auswahl eines güligen Dateinames aus der Dateiliste:} Über dem Textfeld werden bereits abgespeicherte Kartendateien in
+ 			einer Liste angezeigt. Durch Klick auf einen Eintrag wird der Dateiname in das Textfeld kopiert und kann nach Wunsch bearbeitet werden.
+ 			\item \textbf{Speichern der Karte:} Nachdem ein gültiger Dateiname eingegeben wurde, kann die Karte durch Betätigen des Buttons
+ 			\textbf{Speichern} abgespeichert werden. Wurde der Speichervorgang erfolgreich abgeschlossen, wird die Activity \textit{Export} beendet
+ 			und die Anwendung kehrt zur Activtiy \textit{Map} zurück. Andernfalls wird eine Fehlermeldung ausgegeben.
+ 		\end{enumerate}
+ 	
+ 	\subsection{Activity Steer}
+ 		\paragraph*{Kurzbeschreibung:}
+ 		Mit Hilfe der Activity \textit{Steer} kann ein an der Erkundung teilnehmender e-puck ausgewählt und manuell über das
+ 		Spielfeld gesteuert werden. Der Roboter bewegt sich dabei wie bei der automatischen Erkundung stets entlang der Linien und von Knoten zu
+ 		Knoten. Kommandos werden nur auf Knoten entgegengenommen. Die Steuerung erfolgt wahlweise mit einem On-Screen-Joystick oder mit den
+ 		Beschleunigungssensoren des Smartphones (nur falls im Smartphone integriert. Es kann nur ein e-puck zur gleichen Zeit gesteuert werden.
+ 		
+ 		\paragraph*{Funktionsbeschreibung:}
+ 		Um eine e-puck manuell zu steuern, führen Sie folgende Schritte durch:
+ 		\begin{enumerate}
+ 			\item \textbf{Auswahl des zu steuernden e-pucks:} Mit Hilfe des DropDown-Menüs kann der gewünschte e-puck ausgewählt werden. Es werden
+ 			nur solche Roboter angezeigt, die bereits lokalisiert sind und sich nicht in einem Fehlerzustand befinden. Nach dem Öffnen der Activity
+ 			ist standardmäßig der in der Activity \textit{Map} ausgewählte e-puck selektiert. 
+ 			\item \textbf{Aktivierung der manuellen Steuerung:} Durch Anhaken der CheckBox "manuelle Steuerung aktivieren" kann die manuelle 
+ 			Steuerung des ausgewählten Roboters aktiviert werden. Durch einen erneuten Klick auf die CheckBox wird die manuelle Steuerung deaktiviert
+ 			und der Roboter fährt selbstständig mit der Erkundung fort.
+ 			\item \textbf{Auswahl der Steuerungsart:} Mit Hilfe des unteren DropDown-Menüs kann zu verwendende Steuerungsart ausgewählt werden. Zur
+ 			Auswahl stehen die Steuerung über einen On-Screen-Joystick in Form von vier Pfeilbuttons oder die Steuerung mit dem im Smartphone
+ 			integrierten Beschleunigungssensor. Ist kein Beschleunigungssensor vorhanden, wird das DropDown-Steuerelement ausgegraut dargestellt und
+ 			der Roboter kann nur mit Hilfe des Joysticks gesteuert werden.
+ 			\item \textbf{Steuerung mit dem On-Screen-Joystick:} Durch die vier Richtungsbuttons kann der e-puck über das Spielfeld gesteuert werden.
+ 			Mit Pfeil aufwärts fährt der e-puck am nächsten Knoten vorwärts. Pfeil links und rechts bewirken eine 90 Grad Links- bzw. Rechtsdrehung
+ 			am nächsten Knoten, Pfeil abwärts eine Drehung um 180 Grad.
+ 			\item \textbf{Steuerung mit dem Beschleunigungssensor:}
+ 			Durch das Neigen des Smartphones nach vorne fährt der e-puck am nächsten Knoten vorwärts. Neigungen nach links und rechts bewirken eine
+ 			90 Grad Links- bzw. Rechtsdrehung am nächsten Knoten. Das Kippen des Smartphones nach hinten bewirkt eine Drehung um 180 Grad.
+ 		\end{enumerate}
 
 
 \section{Programmablauf - Verschiedene Modi}
