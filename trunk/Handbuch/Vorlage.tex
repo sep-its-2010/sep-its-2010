@@ -42,61 +42,59 @@
 	\tableofcontents	
 	\newpage
 \section{Einleitung}
+	\subsection{Einf\"uhrung}
 		Dieses Projekt richtet sich \"uberwiegend an Forschungsgruppen, Studenten sowie der e-puck Community. Grundlegende Kenntnisse der Programmiersprachen 
 		Java und C sowie ein sicherer Umgang mit Compilern werden f\"ur die Verwendung der Software vorausgesetzt. Auch ein geeigneter Umgang mit sensibler 
 		Hardware und ein grundlegendes Verst\"andnis f\"ur eingebettete Systeme sind notwendig. Bevor Sie das System zum ersten Mal in Betrieb 
 		nehmen, sollten Sie sich  die gesamte Anleitung sorgf\"altig durchlesen, um eine Besch\"adigung der Hardware zu vermeiden. Hierbei m\"ochten wir vor allem auf
 		Kapitel \ref{e_puck_bedienung} verweisen, um sich mit dem e-puck Roboter und dessen Bedienung vertraut zu machen. Alle in diesem Handbuch  
 		aufgef\"uhrten Programme	sind im Internet zur freien Verf\"ugung gestellt.\\ 
-		Das Entwicklerteam \"ubernimmt keinerlei Haftung f\"ur auftretende Probleme oder Sch\"aden.
-\section{Systemanforderungen}
+		Das Entwicklerteam \"ubernimmt keinerlei Haftung f\"ur auftretende Probleme oder Sch\"aden. \\ 
+	\subsection{Leistungsmerkmale des Systems}
 		\begin{itemize}
-		\item{\bf  Smartphone mit Android Betriebssystem} \\
+			\item{Das System unterstützt bis zu sechs e-puck Roboter} \\		
+				Es k\"onnen bis zu sechs e-puck Roboter gleichzeitig effizient ein unbekanntes Gebiet erkunden.
+			\item{Zwei verschiedene Steuerungsarten} \\
+				Das System unterst\"utzt einerseits die Steuerung eines e-puck Roboters durch eine Touch-Steuerung sowie eine Kippsteuerung.
+			\item{Kollisionsvermeidung} \\
+				Die e-puck Roboter vermeiden Kollisionen mit anderen Teilnehmern.
+			\item{Statistikanzeige}
+				Durch den Statistik-Dialog und Visualisierungen kann nachvollzogen werden, wie effizient die Roboter erkundet haben.
+		\end{itemize}		
+\section{Systemanforderungen}
+		\subsection{Smartphone mit Android Betriebssystem} 
 				Ein bluetoothf\"ahiges Smartphone mit einem Android Betriebssystem ab Version 2.1 und installiertem CyanogenMod ab Version 6.0.1, integrierten 
 				Beschleunigungssensoren sowie ein Touch-Display sind erforderlich um das System zu verwenden. Ein Tutorial f\"ur die Installation des Android 
 				Betriebssystems inkl. CyanogenMod ist nicht Teil dieses Handbuchs, bitte wenden Sie sich im Problemfall an die Android-Community unter 
 				www.android.com
-		\item{\bf  e-puck Roboter ab Hardware Rev. 2} \\
+		\subsection{e-puck Roboter ab Hardware Rev. 2} 
 				Mindestens ein e-puck Roboter mit Erweiterungsmodul f\"ur Bodensensoren ist zur Erkundung und zum vollst\"andigen Betrieb notwendig.
-		\item{\bf  Computer} \\
+		\subsection{Computer} 
 				Ein Computer mit Bluetoothadapter zum Flashen der e-puck Roboter.
-		\item{\bf  MPLAB ICD 2 oder 3} \\
+		\subsection{MPLAB ICD 2 oder 3} 
 				Zum Ersetzen des Bootloaders auf dem e-puck Roboter wird MPLAB ICD 2 oder 3 inkl. eines Adapterkabels f\"ur den e-puck Roboter ben\"otigt.
-		\end{itemize}
 \section{Betriebsbedingungen} 
-		\begin{itemize}
-		\item{\bf Ausreichende Stromversorgung} \\
+		\subsection{Ausreichende Stromversorgung} 
 				Um ein sicheres Ausf\"uren des Gesamtsystems zu gew\"ahrleisten, m\"ussen die Akkus der e-puck Roboter immer vor Inbetriebnahme vollst\"andig
 				aufgeladen sein. Ist dies nicht der Fall kann es zu unerwarteten Fehlern kommen und das System zum Absturz bringen!
-		\item{\bf  Geeignete Bedingungen f\"ur Funknetzwerke} \\
+		\subsection{ Geeignete Bedingungen f\"ur Funknetzwerke} 
 				Verwenden Sie die Hardware nicht in der N\"ahe von starken Strahlungsquellen. Dies kann die Bluetoothkommunikation der e-puck Roboter erheblich st\"oren 				und unvorhergesene Fehler erzeugen.
-		\item{\bf  Gr\"o\ss e des zu erkundenen Terrains} \\
+		\subsection{ Gr\"o\ss e des zu erkundenen Terrains} 
 				Das Projekt ist darauf ausgelegt ein Feld mit bis zu 500 Knoten zu erkunden. Ist das zu erkundende Spielfeld gr\"o\ss er, reichen die Akku's der e-puck Roboter
 				nicht aus, um die Erkundung vollst\"andig durchzuf\"uhren.
-		\item{\bf  Spielfeldbedinungen} \\
+		\subsection{ Spielfeldbedinungen} 
 				Das Spielfeld besteht ausschlie\ss lich aus gleichgro\ss en quadratischen Feldern, die rasterf\"ormig und zusammenh\"angend angeordnet sind. Ein Feld 
 				muss mindestens so gro\ss \ sein, dass ein im Zentrum stehender e-puck Roboter vollst\"andig in das Innere des Feldes passt. Die Erkundung mit den e-puck 
 				Robotern ben\"otigt ausreichend reflektierende und innerhalb der Spezifikation liegenden Linien, sowie eine durchgehend gute Beleuchtung des Spielfeldes 
 				von oben. Der Untergrund muss eben sein und darf keine rutschige oder teppich\"ahnliche Oberfl\"ache aufweisen, da sich sonst die e-puck Roboter nicht 
 				problemlos bewegen k\"onnen. Die e-puck Roboter d\"urfen w\"ahrend der Erkundung nicht ber\"uhrt, verschoben oder vom Spielfeld gehoben werden. Das 
 				Spielfeld darf w\"ahrend der Erkundung nicht ver\"andert werden und keine ung\"ultigen Passagen beinhalten. 
-		\item{\bf  Umgebungsbedinungen} \\
+		\subsection{ Umgebungsbedinungen} 
 				Es d\"urfen nicht mehr als sechs e-puck Roboter und ein Smartphone zur selben Zeit verwendet werden und die Startpositionen der jeweiligen e-puck Roboter
 				sind vor Beginn der Erkundung fest zu w\"ahlen.
-		\item{\bf  Weitere Betriebsbedinungen des Smartphones und der e-puck Roboter} \\
+		\subsection{ Weitere Betriebsbedinungen des Smartphones und der e-puck Roboter} 
 				Die weiteren Betriebsbedinungen des Smartphones und der e-puck Roboter k\"onnen den jeweiligen Benutzerhandb\"uchern der Hardware entnommen 
 				werden.
-		\end{itemize}
-\section{Leistungsmerkmale}
-	Das System erf\"ullt einige Leistungsmerkmale, die das Projekt auszeichnen:
-	\begin{itemize}
-		\item{Effiziente Wegfindung} \\
-			Die Wegfindung der e-puck Roboter wird durch Verwendung des A*-Algorithmus berechnet
-		\item{Zwei verschiedene Steuerungsarten} \\
-			Das System unterst\"utzt einerseits die Steuerung eines e-puck Roboters durch eine Touch-Steuerung sowie eine Kippsteuerung die durch das Auslesen
-			von Beschleunigungssensoren realisiert wird
-	\end{itemize}		
-
 \section{Bedienung des e-puck Roboters}
 	\label{e_puck_bedienung}
 
