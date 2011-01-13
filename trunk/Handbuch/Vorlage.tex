@@ -36,7 +36,7 @@
 }
 \author{Andreas Wilhelm, Andreas Poxrucker, Martin Freund,\\ Max Binder, Florian B\"urchner, Florian Lorenz} 
 \begin{document}
-\date{10. Januar 2011}
+\date{14. Januar 2011}
 	\maketitle
 	\newpage
 	\tableofcontents	
@@ -55,31 +55,31 @@
 				Ein bluetoothf\"ahiges Smartphone mit einem Android Betriebssystem ab Version 2.1 und installiertem CyanogenMod ab Version 6.0.1, integrierten 
 				Beschleunigungssensoren sowie ein Touch-Display sind erforderlich um das System zu verwenden. Ein Tutorial f\"ur die Installation des Android 
 				Betriebssystems inkl. CyanogenMod ist nicht Teil dieses Handbuchs, bitte wenden Sie sich im Problemfall an die Android-Community unter 
-				www.android.com .
+				www.android.com
 		\item{\bf  e-puck Roboter ab Hardware Rev. 2} \\
-				e-puck Roboter mit Erweiterungsmodul f\"ur Bodensensoren sind zur Erkundung und zum vollst\"andigen Betrieb notwendig.
+				Mindestens ein e-puck Roboter mit Erweiterungsmodul f\"ur Bodensensoren ist zur Erkundung und zum vollst\"andigen Betrieb notwendig.
 		\item{\bf  Computer} \\
 				Ein Computer mit Bluetoothadapter zum Flashen der e-puck Roboter.
 		\item{\bf  MPLAB ICD 2 oder 3} \\
-				Zum Ersetzen des Bootloaders auf dem e-puck Roboter braucht man MPLAB ICD 2 oder 3 inkl. eines Adapterkabels f\"ur den e-puck Roboter.
+				Zum Ersetzen des Bootloaders auf dem e-puck Roboter wird MPLAB ICD 2 oder 3 inkl. eines Adapterkabels f\"ur den e-puck Roboter ben\"otigt.
 		\end{itemize}
 \section{Betriebsbedingungen} 
 		\begin{itemize}
 		\item{\bf Ausreichende Stromversorgung} \\
-				Um ein sicheres Ausf\"uren des Gesamtsystems zu gew\"ahrleisten m\"ussen die Akkus der e-puck Roboter immer vor Inbetriebnahme vollst\"andig
-				aufgeladen sein. Ist dies nicht der Fall kann es zu unerwarteten Fehlern kommen und das System zum Abst\"urzen bringen!
+				Um ein sicheres Ausf\"uren des Gesamtsystems zu gew\"ahrleisten, m\"ussen die Akkus der e-puck Roboter immer vor Inbetriebnahme vollst\"andig
+				aufgeladen sein. Ist dies nicht der Fall kann es zu unerwarteten Fehlern kommen und das System zum Absturz bringen!
 		\item{\bf  Geeignete Bedingungen f\"ur Funknetzwerke} \\
 				Verwenden Sie die Hardware nicht in der N\"ahe von starken Strahlungsquellen. Dies kann die Bluetoothkommunikation der e-puck Roboter erheblich st\"oren 				und unvorhergesene Fehler erzeugen.
 		\item{\bf  Gr\"o\ss e des zu erkundenen Terrains} \\
 				Das Projekt ist darauf ausgelegt ein Feld mit bis zu 500 Knoten zu erkunden. Ist das zu erkundende Spielfeld gr\"o\ss er, reichen die Akku's der e-puck Roboter
-				nicht aus die Erkundung vollst\"andig durchzuf\"uhren.
+				nicht aus, um die Erkundung vollst\"andig durchzuf\"uhren.
 		\item{\bf  Spielfeldbedinungen} \\
 				Das Spielfeld besteht ausschlie\ss lich aus gleichgro\ss en quadratischen Feldern, die rasterf\"ormig und zusammenh\"angend angeordnet sind. Ein Feld 
-				muss mindestens so gro\ss sein, dass ein im Zentrum stehender e-puck Roboter vollst\"andig in das Innere des Feldes passt. Die Erkundung mit den e-puck 
+				muss mindestens so gro\ss \ sein, dass ein im Zentrum stehender e-puck Roboter vollst\"andig in das Innere des Feldes passt. Die Erkundung mit den e-puck 
 				Robotern ben\"otigt ausreichend reflektierende und innerhalb der Spezifikation liegenden Linien, sowie eine durchgehend gute Beleuchtung des Spielfeldes 
 				von oben. Der Untergrund muss eben sein und darf keine rutschige oder teppich\"ahnliche Oberfl\"ache aufweisen, da sich sonst die e-puck Roboter nicht 
 				problemlos bewegen k\"onnen. Die e-puck Roboter d\"urfen w\"ahrend der Erkundung nicht ber\"uhrt, verschoben oder vom Spielfeld gehoben werden. Das 
-				Spielfeld darf w\"ahrend der Erkundung nicht ver\"andert werden und keine ung\"ultigen Passagen aufweisen. 
+				Spielfeld darf w\"ahrend der Erkundung nicht ver\"andert werden und keine ung\"ultigen Passagen beinhalten. 
 		\item{\bf  Umgebungsbedinungen} \\
 				Es d\"urfen nicht mehr als sechs e-puck Roboter und ein Smartphone zur selben Zeit verwendet werden und die Startpositionen der jeweiligen e-puck Roboter
 				sind vor Beginn der Erkundung fest zu w\"ahlen.
@@ -87,6 +87,16 @@
 				Die weiteren Betriebsbedinungen des Smartphones und der e-puck Roboter k\"onnen den jeweiligen Benutzerhandb\"uchern der Hardware entnommen 
 				werden.
 		\end{itemize}
+\section{Leistungsmerkmale}
+	Das System erf\"ullt einige Leistungsmerkmale, die das Projekt auszeichnen:
+	\begin{itemize}
+		\item{Effiziente Wegfindung} \\
+			Die Wegfindung der e-puck Roboter wird durch Verwendung des A*-Algorithmus berechnet
+		\item{Zwei verschiedene Steuerungsarten} \\
+			Das System unterst\"utzt einerseits die Steuerung eines e-puck Roboters durch eine Touch-Steuerung sowie eine Kippsteuerung die durch das Auslesen
+			von Beschleunigungssensoren realisiert wird
+	\end{itemize}		
+
 \section{Bedienung des e-puck Roboters}
 	\label{e_puck_bedienung}
 
@@ -185,7 +195,15 @@
 	\subsection{Exploration Modus -- Reale Erkundung mit Robotern}
 	\label{subsec:reale_erkundung}
 		Stellen Sie die e-puck Roboter auf den vordefinierten Startpositionen auf einen Knoten und vergewissern Sie sich, dass der Selector \textbf{nicht} auf die Position 			0	eingestellt ist. Schalten Sie die Roboter nun mithilfe des Power-Switch (Kapitel \ref{e_puck_bedienung}) ein. Nach korrektem Einschalten leuchtet nun die 
-		\textit{On/Off-LED}. Dr\"ucken Sie anschlie\ss end den \textit{Suchen}-Button um die Bluetooth-Suche nach verf\"ugbaren Robotern zu starten. Nach 								erfolgreicher	Suche werden alle verf\"ugbaren Roboter angezeigt. Sie k\"onnen per Touch alle e-pucks ausw\"ahlen die an der Erkundung teilnehmen sollen. Ist 					ein Roboter ausgew\"ahlt wird er durch \"Anderung der Schriftfarbe hervorgehoben. Nachdem Ihre Auswahl abgeschlossen ist, bet\"atigen Sie \textit{Men\"u} 					und dr\"ucken  \textit{Start} um die Erkundung zu starten. Sie k\"onnen am Handy den Fortschritt der Erkdunung beobachten.
+		\textit{POWER-LED}. Dr\"ucken Sie anschlie\ss end den \textit{Suchen}-Button, um die Bluetooth-Suche nach verf\"ugbaren Robotern zu starten. Nach 								erfolgreicher	Suche werden alle verf\"ugbaren Roboter angezeigt. Sie k\"onnen per Touch alle e-pucks ausw\"ahlen die an der Erkundung teilnehmen sollen. Ist 					ein Roboter ausgew\"ahlt wird er durch \"Anderung der Schriftfarbe hervorgehoben. Nachdem Ihre Auswahl abgeschlossen ist, bet\"atigen Sie \textit{Men\"u} 					und dr\"ucken  \textit{Start} um die Erkundung zu starten. Sie k\"onnen am Handy den Fortschritt der Erkundung beobachten. Sie k\"onnen w\"ahrend der
+		Erkundung auch einen der e-puck Roboter selbst via Handy steuern. Beachten Sie, dass zur selben Zeit nur ein Roboter gesteuert werden kann. Dieser kann nur
+		auf den  Linien fahren und beim Erreichen eines neuen Knotens bleibt er stehen und erwartet das n\"achste Fahrkommando . Zum Wechseln in den manuellen 
+		Steuerungmodus dr\"ucken Sie \textit{Men\"u} und \textit{Steuerung}. Nun \"offnet sich der Steuerungsdialog. Hier k\"onnen Sie mittels Drop-Down-Men\"u 
+		ausw\"ahlen, welcher Roboter gesteuert werden soll und welche Steuerungsart aktiv ist. Durch Dr\"ucken des \textit{Zur\"uck}-Buttons wird der Roboter wieder
+		freigegeben und der Benutzer wechselt in den Exploration Modus zur\"uck. W\"ahrend ein Roboter gesteuert wird, l\"auft die Erkundung der anderen e-pucks
+		weiter. Nach erfolgreicher Erkundung fahren die e-puck Roboter wieder auf ihre Ausgangspositionen zur\"uck und k\"onnen weiterhin gesteuert werden. Die
+		Bluetooth-Verbindung wird getrennt, sobald die Applikation beendet wird oder der Benutzer durch Bet\"atigen des \textit{Zur\"uck}-Buttons auf den 
+		Ausgangsdialog wechselt.
 	\subsection{Import/Export Modus}
 		\begin{itemize}
 			\item{Export:	Wenn Sie im Exploration Modus eine Karte erfolgreich und vollst\"andig erkundet haben, k\"onnen Sie mithilfe der  \textit{Export}-Funktion die 
@@ -208,6 +226,12 @@
 			\item{e-puck Roboter auf Startpositionen platzieren und einschalten}
 			\item{\textit{Suchen} : W\"ahlen Sie die Roboter aus, die erkunden sollen}			
 			\item{\textit{Men\"u \frq \frq \ Start}}
+			\item{Zum Steuern eines e-puck Roboters}
+			\begin{itemize}
+				\item{\textit{Men\"u \frq \frq \ Steuerung}}
+				\item{W\"ahlen Sie den zu steuernden Roboter mittels Drop-Down aus}
+				\item{W\"ahlen Sie die Steuerungsart mittels Drop-Down aus}
+			\end{itemize}
 		\end{itemize}
 	\subsection{Import/Export}
 		\begin{itemize}
