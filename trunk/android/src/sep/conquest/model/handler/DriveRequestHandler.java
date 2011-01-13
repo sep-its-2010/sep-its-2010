@@ -4,7 +4,9 @@ import java.util.UUID;
 
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.Orientation;
 import sep.conquest.model.Puck;
+import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.DriveRequest;
 import sep.conquest.model.requests.MessageType;
 import sep.conquest.model.requests.StatusUpdateRequest;
@@ -49,9 +51,12 @@ public class DriveRequestHandler extends Handler {
       Puck robot = executor.getRobot();
 
       // Pass drive command to robot.
+      RobotStatus state = robot.getRobotStatus().get(robot.getID());
+      Orientation ori = state.getOrientation();
+      ori = Orientation.getTurnedOrientation(driveReq.getCommand(), ori);
       robot.driveCommand(driveReq.getCommand());
 
-      // Announce 
+      // Announce changes via broadcast.
       robot.getRobotStatus().get(robot.getID()).setMoving(true);
       StatusUpdateRequest statusUpdateReq = new StatusUpdateRequest(robot
           .getID(), new UUID[0], robot.getRobotStatus().get(robot.getID()));

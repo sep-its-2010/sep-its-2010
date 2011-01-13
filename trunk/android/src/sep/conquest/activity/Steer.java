@@ -178,12 +178,17 @@ public final class Steer extends Activity implements Observer {
         if (msg.what == UPDATE_MESSAGE) {
           adpRobots.clear();
 
-          for (UUID id : robots) {
-            adpRobots.add(names.get(id));
-          }
-          // Enable CheckBox if at least one robot is available.
           CheckBox chkActivate = (CheckBox) findViewById(R.id.chkActivate);
-          chkActivate.setEnabled(!(robots.size() == 0));
+
+          if (robots.size() == 0) {
+            selectedRobot = NO_SELECTION;
+            chkActivate.setEnabled(false);
+          } else {
+            for (UUID id : robots) {
+              adpRobots.add(names.get(id));
+            }
+            chkActivate.setEnabled(true);
+          }
         }
       }
     };
@@ -221,6 +226,14 @@ public final class Steer extends Activity implements Observer {
     super.onPause();
   }
 
+  @Override
+  public void onDestroy() {
+    if (selectedRobot != NO_SELECTION) {
+      Controller.getInstance().setControlled(robots.get(selectedRobot), false);
+    }
+    super.onDestroy();
+  }
+
   /**
    * Called by an observed object when its state has changed to notify the
    * Activity.
@@ -245,7 +258,7 @@ public final class Steer extends Activity implements Observer {
         RobotStatus status = states.get(id);
 
         if (!robots.contains(id)) {
-          if (status.getState() != State.ERROR) {
+          if (status.getState() == State.EXPLORE) {
             // If id is not known and corresponding robot is not in error state,
             // add new id and moving state.
             robots.add(id);

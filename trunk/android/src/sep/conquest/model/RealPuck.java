@@ -100,12 +100,6 @@ public class RealPuck extends Puck {
         comMan.broadcast(req);
         ConquestLog.addMessage(this, "Can't read message from socket!");
       }
-
-      StringBuilder strb = new StringBuilder();
-      for (int i = 0; i < numberOfBytesRead; i++) {
-        strb.append(btMessage[i + btMessageLen] + " ");
-      }
-      ConquestLog.addMessage(this, strb.toString());
       
       // If more then one byte has been read, increase number of read bytes.
       if (numberOfBytesRead > 0) {
@@ -130,11 +124,11 @@ public class RealPuck extends Puck {
    */
   @Override
   public void destroy() {
+    super.destroy();
     try {
       mybtSocket.close();
     } catch (IOException e) {
       throw new IllegalStateException("Error! Couldn't destroy BT-Socket");
     }
-    super.destroy();
   }
 }

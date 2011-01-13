@@ -214,18 +214,8 @@ public class LogicThread implements Runnable {
     State currentState = getRobot().getRobotStatus().get(getRobot().getID())
         .getState();
 
-    while (run && (currentState != State.ERROR)
-        && (currentState != State.FINISH)) {
+    while (run && (currentState != State.ERROR)) {
       boolean changed = false;
-
-      // handle bluetooth messages
-      IRequest request = getBTMessage();
-      if (request != null) {
-        ConquestLog.addMessage(this, robot.getName() + " :"
-            + request.getKind().name());
-        btHandler.handleRequest(request);
-        changed = true;
-      }
 
       // handle broadcast messages
       if (!bcQueue.isEmpty()) {
@@ -236,6 +226,15 @@ public class LogicThread implements Runnable {
         changed = true;
       }
 
+      // handle bluetooth messages
+      IRequest request = getBTMessage();
+      if (request != null) {
+        ConquestLog.addMessage(this, robot.getName() + " :"
+            + request.getKind().name());
+        btHandler.handleRequest(request);
+        changed = true;
+      }
+
       // execute behaviours on changed state
       if (changed && !getRobot().isControlled()) {
         Map<Integer, Integer> map = initMap();
@@ -243,11 +242,19 @@ public class LogicThread implements Runnable {
           getRobotState().setIntentPosition(getBestNode(map));
           driveTo();
         }
-      } else
+
+        // Update state.
+        currentState = getRobot().getRobotStatus().get(getRobot().getID())
+            .getState();
+      } else {
         Thread.yield();
+      }
     }
   }
 
+  /**
+   * Sets flag that will end Thread before next execution.
+   */
   public void destroy() {
     run = false;
   }

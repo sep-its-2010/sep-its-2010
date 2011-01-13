@@ -372,8 +372,8 @@ public abstract class Puck implements IComClient, IRobot {
   public void setControlled(boolean enable) {
     byte[] request = new byte[MSG_LENGTH];
     controlled = enable;
-    request[0] = (byte) (REQ_SETLED & 0xff);
-    request[1] = (byte) ((REQ_SETLED >> 8) & 0xff);
+    request[TYPE_FIRST_BYTE] = (byte) (REQ_SETLED & 0xff);
+    request[TYPE_SECOND_BYTE] = (byte) ((REQ_SETLED >> 8) & 0xff);
     request[2] = (byte) 0x10;
     request[3] = 0;
     writeSocket(request);
@@ -417,16 +417,10 @@ public abstract class Puck implements IComClient, IRobot {
 	}
 	
 	/**
-	 * Destroys the Puck.
+	 * Destroys the Puck. Shuts down the LogicThread.
 	 */
 	public void destroy() { 
 		logicThread.destroy();
 		executor.shutdown();
-		
-		try {
-			this.finalize();
-		} catch (Throwable e) {
-			throw new IllegalStateException("Error! Couldn't destroy Puck " + name);
-		}
 	}
 }

@@ -14,48 +14,80 @@ import sep.conquest.model.State;
  * @author Andreas Wilhelm
  */
 public final class IdleBehaviour extends Behaviour {
-	
-	private boolean timerActive = false;
+
+  /**
+   * Delay of start time of timer.
+   */
+  private static long DELAY = 5000;
+
+  /**
+   * Indicates whether timer has been started.
+   */
+  private boolean timerActive = false;
+
+  /**
+   * The constructor enables chain-handling by calling the constructor of the
+   * super-class (Behaviour).
+   * 
+   * @param stateLevel
+   *          The level of the state.
+   * @param next
+   *          A reference to the next behaviour.
+   */
+  protected IdleBehaviour(State stateLevel, IBehaviour next) {
+    super(stateLevel, next);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
+   */
+  public boolean execute(Map<Integer, Integer> map, Puck robot) {
+
+    if (!timerActive) {
+      // If timer is not active, start it with a certain delay.
+      // During this time, hello messages can be exchanged between
+      // Pucks.
+      timerActive = true;
+      Timer timer = new Timer();
+      timer.schedule(new ExecuteTimer(robot), DELAY);
+    }
+    // Execute next behaviour if exits.
+    return super.execute(map, robot);
+  }
+
+  /**
+   * Initiates a state transition from IDLE to LOCALIZING as soon as it is run.
+   * 
+   * @author Andreas Wilhelm
+   * 
+   */
+  private class ExecuteTimer extends TimerTask {
 
     /**
-     * The constructor enables chain-handling by calling the constructor of
-     * the super-class (Behaviour).
+     * The Puck whose state will be changed.
+     */
+    private Puck robot;
+
+    /**
+     * Constructor.
      * 
-     * @param stateLevel The level of the state.
-     * @param next A reference to the next behaviour.
+     * @param robot
+     *          The Puck whose state will be changed.
      */
-    protected IdleBehaviour(State stateLevel, IBehaviour next) {
-        super(stateLevel, next);
+    public ExecuteTimer(Puck robot) {
+      this.robot = robot;
     }
 
-    /* (non-Javadoc)
-     * @see sep.conquest.model.IBehaviour#execute(java.util.Map)
+    /**
+     * When executed, changes state of Puck.
      */
-    public boolean execute(Map<Integer, Integer> map, Puck robot) {
-    	
-    	if (!timerActive) {
-    		timerActive = true;
-	    	Timer timer = new Timer();
-	        timer.schedule(new ExecuteTimer(robot), 5000);    		
-    	}
-    	
-        return super.execute(map, robot);
+    @Override
+    public void run() {
+      if (robot != null) {
+        robot.changeBehaviour(State.LOCALIZE);
+      }
     }
-    
-    private class ExecuteTimer extends TimerTask {
-    	
-    	Puck robot;
-    	
-    	public ExecuteTimer(Puck robot) {
-    		this.robot = robot;
-    	}
-
-    	@Override
-    	public void run() {
-    		if (robot != null)
-    			robot.changeBehaviour(State.LOCALIZE);
-    	}
-    	
-    }
-    
+  }
 }

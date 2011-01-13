@@ -77,15 +77,6 @@ public class Environment extends Observable implements IComClient {
   }
 
   /**
-   * Resets the environment.
-   */
-  public void reset() {
-    INSTANCE.deleteObservers();
-    comManager.removeClient(id);
-    INSTANCE = new Environment();
-  }
-
-  /**
    * Initiate a drive-command to a specific robot by broadcast. In order to do
    * this a new request object will be created and sent.
    * 
@@ -201,7 +192,18 @@ public class Environment extends Observable implements IComClient {
     this.gridMap = gridMap;
   }
 
+  /**
+   * Destroys all running LogicThreads and finally resets itself.
+   */
   public void destroy() {
-    reset();
+    comManager.removeClient(id);
+    IComClient[] clients = comManager.getClients();
+
+    // Iterate over all clients and destroy them.
+    for (IComClient client : clients) {
+      client.destroy();
+      comManager.removeClient(client.getID());
+    }
+    INSTANCE = new Environment();
   }
 }

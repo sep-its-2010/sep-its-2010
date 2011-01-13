@@ -26,11 +26,10 @@ public class BehaviourFactory {
 			LocalLocalizeBehaviour locBeh = new LocalLocalizeBehaviour(state, null);
 			return locBeh;
 		case EXPLORE: 
-			RemovePathlessBehaviour rpBeh = new RemovePathlessBehaviour(state, null);
-			DistanceBehaviour distBeh = new DistanceBehaviour(state, rpBeh);
-			//InnerBehaviour inBeh = new InnerBehaviour(state, distBeh);
-			@SuppressWarnings("unused")
-			CooperativeBehaviour coBeh = new CooperativeBehaviour(state, distBeh);
+		  // InnerBehaviour inBeh = new InnerBehaviour(state, coBeh);
+		  DistanceBehaviour distBeh = new DistanceBehaviour (state, null);
+      CooperativeBehaviour coBeh = new CooperativeBehaviour(state, distBeh);
+		  RemovePathlessBehaviour rpBeh = new RemovePathlessBehaviour(state, coBeh);
 			return rpBeh;
 		case RETURN:
 			ReturnBehaviour retBeh = new ReturnBehaviour(state, null);
@@ -38,7 +37,5 @@ public class BehaviourFactory {
 		default: 
 			return null;
 		}
-		
 	}
-
 }

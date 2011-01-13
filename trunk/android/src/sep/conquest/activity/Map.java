@@ -140,11 +140,6 @@ public class Map extends Activity implements Observer {
         	Controller.getInstance().getEnv().deleteObserver(this);
         	}
     }
-    
-    public void onDestroy() {
-    	super.onDestroy();
-    	Controller.getInstance().getEnv().reset();
-    }
 
     /**
      * Sets the menu of the Activity.

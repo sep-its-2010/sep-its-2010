@@ -4,6 +4,7 @@ import sep.conquest.model.FailureType;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
 import sep.conquest.model.Puck;
+import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.FailureRequest;
 import sep.conquest.model.requests.MessageType;
 
@@ -47,10 +48,7 @@ public class PuckAbyssHandler extends Handler {
 			FailureType failType = FailureType.ABYSS;
 			FailureRequest failReq = new FailureRequest(request.getSender(),
 					request.getReceiver(), failType);
-			Puck robot = executor.getRobot();
-			synchronized(robot) {
-			  robot.broadcast(failReq);
-			}
+			executor.getRobot().broadcast(failReq);
 			return true;
 		}
 	}

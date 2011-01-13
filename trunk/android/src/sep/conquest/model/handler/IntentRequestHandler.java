@@ -48,11 +48,11 @@ public class IntentRequestHandler extends Handler {
       IntentRequest intReq = (IntentRequest) request;
       Puck robot = executor.getRobot();
 
-      // Set the new intent position of the puck
+      // Set the new intent position of the puck.
       robot.getRobotStatus().get(intReq.getSender()).setIntentPosition(
           intReq.getIntendedNode());
 
-      // Generates a StatusUpdateRequest Message and sends it via broadcast
+      // Generates a StatusUpdateRequest Message and sends it via broadcast.
       StatusUpdateRequest statusReq = new StatusUpdateRequest(robot.getID(),
           new UUID[0], robot.getRobotStatus().get(robot));
       robot.broadcast(statusReq);

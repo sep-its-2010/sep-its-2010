@@ -47,7 +47,7 @@ public class HelloRequestHandler extends Handler {
       // If sender is unknown, create new state.
       if (!robot.getRobotStatus().containsKey(req.getSender())) {
 
-        // Add status of robot.
+        // Add status of new robot.
         robot.getRobotStatus().put(req.getSender(),
             new RobotStatus());
 
