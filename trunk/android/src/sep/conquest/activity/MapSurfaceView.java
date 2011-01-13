@@ -716,8 +716,8 @@ public class MapSurfaceView extends SurfaceView
          */
         private void drawEpuck(final Canvas c, final int x, final int y) {
             paint.setColor(0xffcccccc);
-            c.drawCircle((x + (mScaleValue / 2)), (y + (mScaleValue / 2)),
-                         (mScaleValue / 2), paint);
+            //c.drawCircle((x + (mScaleValue / 2)), (y + (mScaleValue / 2)),
+            //             (mScaleValue / 2), paint);
             paint.setColor(0xff0000ff);
             c.drawCircle((x + (mScaleValue / 2)), (y + (mScaleValue / 2)),
                          (mScaleValue / 4), paint);

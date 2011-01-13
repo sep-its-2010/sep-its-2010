@@ -2,7 +2,6 @@ package sep.conquest.activity;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -18,6 +17,7 @@ import sep.conquest.model.MapFileHandler;
 import sep.conquest.model.MapNode;
 import sep.conquest.model.Orientation;
 import sep.conquest.model.PuckFactory;
+import sep.conquest.model.State;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
@@ -34,7 +34,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 
 /**
@@ -268,10 +267,19 @@ public class Map extends Activity implements Observer {
 			int[] position = cu.getRobotStatus().get(key).getPosition();
 			String name = cu.getRobotName(key);
 			Orientation ori = cu.getRobotStatus().get(key).getOrientation();
-			mPositions.add(new EpuckPosition(position[0], position[1], name, ori));
-			mIds.add(name);
+			
+			State state = cu.getRobotStatus(key).getState();
+			if (state == State.EXPLORE || state == State.FINISH || state == State.RETURN || state == State.BLOCKED) {
+				mPositions.add(new EpuckPosition(position[0], position[1], name, ori));
+				mIds.add(name);
+			}
+			
+			
 			//mRobotAdapter.add(name);
+			
+			
 		}
+		
 		
 		draw.setMode(mMode);
 		draw.setMap(cu.getMapList(), cu.getBorders());
