@@ -15,6 +15,7 @@ import sep.conquest.model.State;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -25,14 +26,15 @@ import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 /**
  * Allows user to control an e-puck manually via On-Screen-Joystick or the
@@ -71,22 +73,22 @@ public final class Steer extends Activity implements Observer {
   /**
    * Used to get 'up' commands.
    */
-  private Button btnUp;
+  private ImageButton btnUp;
 
   /**
    * Used to get 'down' commands.
    */
-  private Button btnDown;
+  private ImageButton btnDown;
 
   /**
    * Used to get 'left' commands.
    */
-  private Button btnLeft;
+  private ImageButton btnLeft;
 
   /**
    * Used to get 'right' commands.
    */
-  private Button btnRight;
+  private ImageButton btnRight;
 
   /**
    * Makes sensors and their data available.
@@ -334,15 +336,14 @@ public final class Steer extends Activity implements Observer {
     OnClickListener btnListener = new JoystickControl();
 
     // Get references on control buttons and set OnClickListener.
-    btnUp = (Button) findViewById(R.id.btn_up);
+    btnUp = (ImageButton) findViewById(R.id.btn_up);
     btnUp.setOnClickListener(btnListener);
-    btnDown = (Button) findViewById(R.id.btn_down);
+    btnDown = (ImageButton) findViewById(R.id.btn_down);
     btnDown.setOnClickListener(btnListener);
-    btnLeft = (Button) findViewById(R.id.btn_left);
+    btnLeft = (ImageButton) findViewById(R.id.btn_left);
     btnLeft.setOnClickListener(btnListener);
-    btnRight = (Button) findViewById(R.id.btn_right);
+    btnRight = (ImageButton) findViewById(R.id.btn_right);
     btnRight.setOnClickListener(btnListener);
-
     // Get reference on robot selection Spinner and set its listener.
     spRobots = (Spinner) findViewById(R.id.spRobots);
 

@@ -130,7 +130,10 @@ public class Map extends Activity implements Observer {
     	Controller.getInstance().getEnv().addObserver(this);
     	}
     	//automatischer start
-    	PuckFactory.getSimulator().start();
+    	if (mMode == MapMode.SIMULATION) {
+    		PuckFactory.getSimulator().start();
+    	}
+    	
     }
     
     public void onPause() {
