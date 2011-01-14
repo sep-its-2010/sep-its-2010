@@ -7,6 +7,12 @@
 #include "subs_node.h"
 
 
+enum {
+	LEFT_DATA = 0,
+	RIGHT_DATA = 1
+};
+
+
 /*!
  * \brief
  * Holds the node detection state.
@@ -40,9 +46,8 @@ static bool s_blDetectionActive = false;
  */
  bool subs_node_run( void) {
 
-	static uint16_t s_ui16AvgLeft = 0;
-	static uint16_t s_ui16AvgRight = 0;
-	static uint16_t s_ui16NodeDetectionCounter = 0;
+	static uint16_t s_aui32Sum[2] = { 0 };
+	static uint16_t s_ui16Counter = 0;
 
 	bool blActed = false;
 
@@ -52,9 +57,9 @@ static bool s_blDetectionActive = false;
 		// Trigger a new detection if idle & middle sensor is on white underground (cross in the middle of a node)
 		if( !s_blDetectionActive) {
 			if( lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] > SUBS_NODE_WHITE_THRESHOLD) {
- 				s_ui16AvgLeft = lpui16SenLine[SEN_LINE_SENSOR__LEFT];
- 				s_ui16AvgRight = lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
- 				s_ui16NodeDetectionCounter = 1;
+ 				s_aui32Sum[LEFT_DATA] = 0;
+ 				s_aui32Sum[RIGHT_DATA] = 0;
+				s_ui16Counter = 0;
 
 				hal_motors_setSteps( 0);
 				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
@@ -68,9 +73,6 @@ static bool s_blDetectionActive = false;
  			if( hal_motors_getStepsLeft() >= SUBS_NODE_CENTER_STEPS &&
 				hal_motors_getStepsRight() >= SUBS_NODE_CENTER_STEPS) {
 
- 				s_ui16AvgLeft = s_ui16AvgLeft / s_ui16NodeDetectionCounter;
- 				s_ui16AvgRight = s_ui16AvgRight / s_ui16NodeDetectionCounter;
-
 				uint16_t ui16Direction = CONQUEST_DIRECTION__DOWN;
 				if( lpui16SenLine[SEN_LINE_SENSOR__LEFT] < SUBS_NODE_BLACK_THRESHOLD ||
 					lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE_BLACK_THRESHOLD ||
@@ -78,13 +80,13 @@ static bool s_blDetectionActive = false;
 
 					ui16Direction |= CONQUEST_DIRECTION__UP;
 				}
-				if( s_ui16AvgLeft < SUBS_NODE_CROSSING_LINE_THRESHOLD) {
+				if( s_aui32Sum[LEFT_DATA] < SUBS_NODE_CROSSING_LINE_THRESHOLD * s_ui16Counter) {
 					ui16Direction |= CONQUEST_DIRECTION__LEFT;
 				}
-				if( s_ui16AvgRight < SUBS_NODE_CROSSING_LINE_THRESHOLD) {
+				if( s_aui32Sum[RIGHT_DATA] < SUBS_NODE_CROSSING_LINE_THRESHOLD * s_ui16Counter) {
 					ui16Direction |= CONQUEST_DIRECTION__RIGHT;
 				}
- 				hal_led_set( ui16Direction);
+				hal_led_set( ui16Direction);
 
 				conquest_setLastNode( conquest_convertDirMaskToNode( ui16Direction));
 				conquest_setState( CONQUEST_STATE__HIT_NODE);
@@ -95,21 +97,12 @@ static bool s_blDetectionActive = false;
  				s_blDetectionActive = false;
 				blActed = true;
 
-			// Keep scanning for left and right crossing lines
-			} else {
-				if( lpui16SenLine[SEN_LINE_SENSOR__RIGHT] < SUBS_NODE_CROSSING_LINE_THRESHOLD ||
-					lpui16SenLine[SEN_LINE_SENSOR__LEFT] < SUBS_NODE_CROSSING_LINE_THRESHOLD) {
-
-					s_ui16AvgLeft += lpui16SenLine[SEN_LINE_SENSOR__LEFT];
-					s_ui16AvgRight += lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
-					s_ui16NodeDetectionCounter++;
-				}
-
-				// Block any higher layer (subs_line) as long as the robot did not pass the white node marker.
-				// This ensures that the robot keeps driving a strait line.
-				if( lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] > SUBS_NODE_WHITE_THRESHOLD) {
-					blActed = true;
-				}
+			// Only scan in white marker area
+			} else if( lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] > SUBS_NODE_WHITE_THRESHOLD) {
+				s_aui32Sum[LEFT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__LEFT];
+				s_aui32Sum[RIGHT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
+				s_ui16Counter++;
+				blActed = true;
 			}
 		}
 	}
