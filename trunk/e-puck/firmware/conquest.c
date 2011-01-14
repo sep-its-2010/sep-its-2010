@@ -677,7 +677,7 @@ void cbHeartbeat(
 
 	sen_prox_getCurrent( &conquest_podSensorImage.podRawProximitySensors);
 	for( uint16_t ui16 = 0; ui16 < SEN_PROX_NUM_SENSORS; ui16++) {
-		conquest_podSensorImage.ablCollisionMask[ui16] = conquest_podSensorImage.podRawProximitySensors.aui8Data[ui16] < CONQUEST_COLLISION_THRESHOLD;
+		conquest_podSensorImage.ablCollisionMask[ui16] = conquest_podSensorImage.podRawProximitySensors.aui8Data[ui16] > CONQUEST_COLLISION_THRESHOLD;
 	}
 
 	fsm_update( &s_podSubsumptionFSM);
@@ -738,7 +738,7 @@ void conquest_init( void) {
 	subs_init();
 	subs_register( subs_calibration_run, subs_calibration_reset, 0xFF);
 	subs_register( subs_initial_run,     subs_initial_reset,     0xF5);
-//	subs_register( subs_abyss_run,       subs_abyss_reset,       0xEF);
+	subs_register( subs_abyss_run,       subs_abyss_reset,       0xEF);
  	subs_register( subs_collision_run,   subs_collision_reset,   0xDF);
  	subs_register( subs_movement_run,    subs_movement_reset,    0xBF);
  	subs_register( subs_node_run,        subs_node_reset,        0xAF);

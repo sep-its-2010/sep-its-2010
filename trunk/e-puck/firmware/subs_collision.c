@@ -4,6 +4,7 @@
 #include "hal_motors.h"
 #include "sen_line.h"
 #include "sen_prox.h"
+#include "hal_uart1.h"
 
 #include "subs_collision.h"
 
@@ -48,12 +49,13 @@ bool subs_collision_run( void) {
 			if( lpblCollision[ui16]) {				
 				blActed = true;
 			}
-		}
+		}		
+
+		// buffer collision-data of the first collision
+		bool ablCollisionBuffer[SEN_PROX_NUM_SENSORS];
+		memcpy( ablCollisionBuffer, lpblCollision, SEN_PROX_NUM_SENSORS);
 
 		if( blActed) {
-			subs_collision_podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_COLLISION;
-			memcpy( subs_collision_podResponse.aui8Data, lpblCollision, SEN_PROX_NUM_SENSORS);
-			memset( &subs_collision_podResponse.aui8Data[SEN_PROX_NUM_SENSORS], 0xFF, sizeof( subs_collision_podResponse.aui8Data) - SEN_PROX_NUM_SENSORS);
 			hal_motors_setSpeed( 0, 0);
 			hal_motors_setSteps( 0);
 		}
@@ -61,6 +63,7 @@ bool subs_collision_run( void) {
 		// Prevention not active? -> enable prevention and start turning.
 		if( !s_blPreventionActive && blActed) {		
 
+			hal_uart1_puts( "Drehung! \r\n");
 			// Decide into which direction the e-puck should turn.
 			conquest_ENode_t eNode = conquest_getLastNode();
  			if( eNode == CONQUEST_NODE__DOWN_RIGHT ||
@@ -106,6 +109,12 @@ bool subs_collision_run( void) {
 					s_blPreventionActive = false;
 					hal_motors_setSteps( 0);
 					hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
+					
+					// fill collision-message
+					subs_collision_podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_COLLISION;
+					memcpy( subs_collision_podResponse.aui8Data, ablCollisionBuffer, SEN_PROX_NUM_SENSORS);
+					memset( &subs_collision_podResponse.aui8Data[SEN_PROX_NUM_SENSORS], 0xFF, sizeof( subs_collision_podResponse.aui8Data) - SEN_PROX_NUM_SENSORS);
+
 					conquest_setState( CONQUEST_STATE__COLLISION);
 				}
 				blActed = true;
