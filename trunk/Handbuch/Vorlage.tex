@@ -43,28 +43,29 @@
 	\newpage
 \section{Einleitung}
 	\subsection{Einf\"uhrung}
-		Dieses Projekt richtet sich \"uberwiegend an Forschungsgruppen, Studenten sowie der e-puck Community. Grundlegende Kenntnisse der Programmiersprachen 
-		Java und C sowie ein sicherer Umgang mit Compilern werden f\"ur die Verwendung der Software vorausgesetzt. Auch ein geeigneter Umgang mit sensibler 
-		Hardware und ein grundlegendes Verst\"andnis f\"ur eingebettete Systeme sind notwendig. Bevor Sie das System zum ersten Mal in Betrieb 
-		nehmen, sollten Sie sich  die gesamte Anleitung sorgf\"altig durchlesen, um eine Besch\"adigung der Hardware zu vermeiden. Hierbei m\"ochten wir vor allem auf
+		Dieses Projekt richtet sich \"uberwiegend an Forschungsgruppen, Studenten sowie die e-puck Community. Grundlegende Kenntnisse der Programmiersprachen 
+		Java und C sowie ein sicherer Umgang mit Compilern werden f\"ur die Verwendung der Software vorausgesetzt. Auch Erfahrung mit sensibler 
+		Hardware und ein grundlegendes Verst\"andnis f\"ur eingebettete Systeme sind notwendig. Bevor Sie das gesamte System zum ersten Mal in Betrieb 
+		nehmen, sollten Sie sich  die Anleitung sorgf\"altig und vollst\"andig durchlesen, um eine Besch\"adigung der Hardware zu vermeiden. Hierbei m\"ochten wir vor allem auf
 		Kapitel \ref{e_puck_bedienung} verweisen, um sich mit dem e-puck Roboter und dessen Bedienung vertraut zu machen. Alle in diesem Handbuch  
 		aufgef\"uhrten Programme	sind im Internet zur freien Verf\"ugung gestellt.\\ 
 		Das Entwicklerteam \"ubernimmt keinerlei Haftung f\"ur auftretende Probleme oder Sch\"aden. \\ 
 	\subsection{Leistungsmerkmale des Systems}
 		\begin{itemize}
-			\item{Das System unterstützt bis zu sechs e-puck Roboter} \\		
-				Es k\"onnen bis zu sechs e-puck Roboter gleichzeitig effizient ein unbekanntes Gebiet erkunden.
+			\item{Unterst\"utzung von bis zu sechs e-puck Roboter} \\		
+				Es k\"onnen gleichzeitig bis zu sechs e-puck Roboter effizient ein unbekanntes Gebiet erkunden.
 			\item{Zwei verschiedene Steuerungsarten} \\
-				Das System unterst\"utzt einerseits die Steuerung eines e-puck Roboters durch eine Touch-Steuerung sowie eine Kippsteuerung.
+				Das System unterst\"utzt die Steuerung eines e-puck Roboters durch eine Touch-Steuerung sowie eine Kippsteuerung mithilfe der Beschleunigungssensoren.
 			\item{Kollisionsvermeidung} \\
 				Die e-puck Roboter vermeiden Kollisionen mit anderen Teilnehmern.
-			\item{Statistikanzeige}
-				Durch den Statistik-Dialog und Visualisierungen kann nachvollzogen werden, wie effizient die Roboter erkundet haben.
+			\item{Statistikanzeige} \\
+				Durch den Statistik-Dialog und Visualisierung der erkundeten Karte kann gepr\"uft werden, wie effizient die Roboter erkundet haben und wie viel Knoten jeder
+				einzelne Teilnehmer abgefahren hat.
 		\end{itemize}		
 \section{Systemanforderungen}
 		\subsection{Smartphone mit Android Betriebssystem} 
 				Ein bluetoothf\"ahiges Smartphone mit einem Android Betriebssystem ab Version 2.1 und installiertem CyanogenMod ab Version 6.0.1, integrierten 
-				Beschleunigungssensoren sowie ein Touch-Display sind erforderlich um das System zu verwenden. Ein Tutorial f\"ur die Installation des Android 
+				Beschleunigungssensoren sowie ein Touch-Display sind erforderlich, um das System zu verwenden. Ein Tutorial f\"ur die Installation des Android 
 				Betriebssystems inkl. CyanogenMod ist nicht Teil dieses Handbuchs, bitte wenden Sie sich im Problemfall an die Android-Community unter 
 				www.android.com
 		\subsection{e-puck Roboter ab Hardware Rev. 2} 
@@ -76,7 +77,8 @@
 \section{Betriebsbedingungen} 
 		\subsection{Ausreichende Stromversorgung} 
 				Um ein sicheres Ausf\"uren des Gesamtsystems zu gew\"ahrleisten, m\"ussen die Akkus der e-puck Roboter immer vor Inbetriebnahme vollst\"andig
-				aufgeladen sein. Ist dies nicht der Fall kann es zu unerwarteten Fehlern kommen und das System zum Absturz bringen.
+				aufgeladen sein. Ist dies nicht der Fall kann es zu unerwarteten Fehlern kommen und die korrekte und vollst\"andige Erkundgen durch die e-puck Roboter
+				ist nicht mehr gew\"ahrleistet.
 		\subsection{Geeignete Bedingungen f\"ur Funknetzwerke} 
 				Verwenden Sie die Hardware nicht in der N\"ahe von starken Strahlungsquellen. Dies kann die Bluetoothkommunikation der e-puck Roboter erheblich st\"oren 				und unvorhergesene Fehler erzeugen.
 		\subsection{Gr\"o\ss e des zu erkundenen Terrains} 
@@ -113,7 +115,7 @@
 					Der Selector kann auf 16 verschiedene Positionen gebracht werden. Ist der Selector nach Bet\"atigen des Power-Switch auf Position 0, befindet sich der e-
 					puck Roboter in der Kalibrierungsphase. In jedem anderen Fall ist der e-puck im Erkundungsmodus.
 				\subsection{Power-LED}
-					Die Power-LED Leuchtet gr\"un, sobald der e-puck eingeschaltet ist.
+					Die Power-LED leuchtet gr\"un, sobald der e-puck eingeschaltet ist.
 		\end{minipage}
    \end{figure}
    
@@ -141,7 +143,7 @@
 		Bodensensoren auf eine schwarze Linie gesetzt werden. Nachdem der Roboter mit dem Power-Switch durch den Benutzer aktiviert wurde, f\"ahrt der e-puck ca.
 		7 cm nach vorne. Hierbei muss darauf geachtet werden, dass die Fl\"ache vor dem Roboter wei\ss \ ist. Nach erfolgreicher Kalibrierung f\"ahrt der Roboter wieder
 		zur\"uck in seine Ausgangsposition. Falls beim Kalibriervorgang ein Fehler aufgetreten ist, blinken die 8 roten LEDs an der Aussenseite des Roboters. 
-		Wiederholen Sie dann den Vorgang erneut und achten Sie darauf dass der Roboter richtig positioniert ist. (siehe Abbildung \ref{kalibrierabbildung}) \\
+		Wiederholen Sie dann den Vorgang erneut und achten Sie darauf, dass der Roboter richtig positioniert ist. (siehe Abbildung \ref{kalibrierabbildung}) \\
 		
 		\vspace{30pt}
 		 \begin{figure}[htbp]
@@ -162,17 +164,18 @@
 			\end{itemize}
 			\subsection{Bootloader aufspielen} 
 				Wenn alle Vorbereitungen erfolgreich durchge\"uhrt wurden, muss der Bootloader des e-puck Roboters neu geflasht werden. Eine ausf\"uhrliche
-				Anleitung hierzu finden Sie unter \\ \url{http://www.gctronic.com/doc/index.php/E-Puck} \\
+				Anleitung hierzu finden Sie unter \url{http://www.gctronic.com/doc/index.php/E-Puck} \\
 				Das MPLAB-Projekt, das Sie ben\"otigen wird bei der Software mitgeliefert und befindet sich im Verzeichnis \textit{/trunk/epuck/bootloader/}.
 			\subsection{Bluetooth-Verbindung aufbauen} 
 				Schalten Sie den e-puck durch Umschalten des Power-Switch ein und starten Sie den \textit{Pairing}-Prozess. Eine ausf\"uhrliche Anleitung finden Sie
-				unter  \\ \url{http://www.gctronic.com/doc/index.php/E-Puck} \\
-				Nach der Zuweisung eines Com-Ports muss dieser im \textit{TinyBootloader} eingegeben werden.			
+				unter  \url{http://www.gctronic.com/doc/index.php/E-Puck} \\
+				Nach der Zuweisung eines Com-Ports muss dieser im \textit{TinyBootloader} eingetragen werden.			
 			\subsection{Firmware aufspielen} 
 				Als letzten Schritt m\"ussen Sie mithilfe des \textit{TinyBootloader} die Firmware auf den e-puck Roboter aufspielen. Ein Manual zu diesem Programm
 				ist unter \url{http://www.etc.ugal.ro/cchiculita/software/picbootloader.htm} zu finden. \\
-				Fahren Sie mit Kapitel \ref{programmstart_ablauf} fort.
+				Fahren Sie mit Kapitel \ref{programmstart_ablauf} fort, um eine Erkundung zu starten.
 \section{Benutzeroberfl\"ache des Smartphones}
+\label{benutzeroberflaeche}
 	\subsection{Activity Connect}
 		\paragraph*{Kurzbeschreibung:}
 		Die Activity Connect \"offnet sich direkt nach dem Start der Anwendung. \\	
@@ -272,13 +275,13 @@
  			90 Grad Links- bzw. Rechtsdrehung am nächsten Knoten. Das Kippen des Smartphones nach hinten bewirkt eine Drehung um 180 Grad.
  		\end{enumerate}
 
-
 \section{Programmablauf - Verschiedene Modi}
 \label{programmstart_ablauf}
 		Schalten Sie das Smartphone ein und starten Sie die Anwendung. Nun k\"onnen Sie sich f\"ur einen der zwei unterst\"utzen Modi entscheiden. M\"ochten Sie
 		die Erkundung ohne echte e-puck Roboter durchf\"uhren fahren Sie mit  Kapitel \ref{subsec:simulierte_erkundung} fort. Wollen Sie die Erkundung auf einem
 		realen Spielfeld mit Robotern durchf\"uhren fahren Sie mit Kapitel  \ref{subsec:reale_erkundung} fort. Durch mehrmaliges Dr\"ucken des \textit{Zur\"uck}-
-		Buttons ist es m\"oglich in den Ausgangsbildschirm zu gelangen und so zwischen den verschiedenen Modi zu wechseln.
+		Buttons ist es m\"oglich in den Ausgangsbildschirm zu gelangen und so zwischen den verschiedenen Modi zu wechseln. N\"ahere Informationen bzgl. der 			
+		Men\"uf\"uhrung finden Sie unter Kapitel \ref{benutzeroberflaeche}
 	\subsection{Simulation Modus -- Simulierte Erkundung}
 	\label{subsec:simulierte_erkundung}
 		Wollen Sie die simulierte Erkundung starten, dr\"ucken Sie \textit{Men\"u} und anschlie\ss end \textit{Simulation}. Nachdem sich ein neues Fenster ge\"offnet hat
@@ -343,5 +346,7 @@
 				\end{itemize}
 		\end{itemize}
 \section{Support}
-	Bei technischen Fragen bzgl. des e-puck Roboters wenden Sie sich bitte an die e-puck Community, sowie an den Hersteller.
+	Bei technischen Fragen bzgl. des e-puck Roboters wenden Sie sich bitte an die e-puck Community, sowie an den Hersteller. \\
+	Bei technischen Fragen bzgl. des Smartphones und des Android-Betriebssystem wenden Sie sich bitte an die Android-Community unter \url{www.android.com} 
+	und an den Hersteller des Handys.
 \end{document}
