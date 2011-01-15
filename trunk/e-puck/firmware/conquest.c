@@ -672,7 +672,7 @@ void cbHeartbeat(
 	sen_line_read( &conquest_podSensorImage.podRawLineSensors);
 	sen_line_rescale( &conquest_podSensorImage.podRawLineSensors, &conquest_podSensorImage.podCalibratedLineSensors);
 	for( uint16_t ui16 = 0; ui16 < SEN_LINE_NUM_SENSORS; ui16++) {
-		conquest_podSensorImage.ablAbyssMask[ui16] = conquest_podSensorImage.podCalibratedLineSensors.aui16Data[ui16] < CONQUEST_ABYSS_THRESHOLD;
+		conquest_podSensorImage.ablAbyssMask[ui16] = conquest_podSensorImage.podCalibratedLineSensors.aui16Reflected[ui16] < CONQUEST_ABYSS_THRESHOLD;
 	}
 
 	sen_prox_getCurrent( &conquest_podSensorImage.podRawProximitySensors);

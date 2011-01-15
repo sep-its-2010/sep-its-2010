@@ -95,7 +95,7 @@ bool subs_line_run( void) {
 	if( eState == CONQUEST_STATE__MOVE_FORWARD) {
 
 		// Fill delay buffer with the current line sensor data
-		ringbuf_pushRange( &s_podDelayBuffer, conquest_getSensorImage()->podCalibratedLineSensors.aui16Data, sizeof( sen_line_SData_t));
+		ringbuf_pushRange( &s_podDelayBuffer, &conquest_getSensorImage()->podCalibratedLineSensors, sizeof( sen_line_SData_t));
 
 		// Reached dead time?
 		if( ringbuf_getUsage( &s_podDelayBuffer) >= SUBS_LINE_DELAY_CYCLES * sizeof( sen_line_SData_t)) {
@@ -116,7 +116,7 @@ bool subs_line_run( void) {
 	if( blActed) {
 
 		// Get delta left-to-right line sensor
-		const int16_t i16DeltaNew = podDelayed.aui16Data[SEN_LINE_SENSOR__LEFT] - podDelayed.aui16Data[SEN_LINE_SENSOR__RIGHT];
+		const int16_t i16DeltaNew = podDelayed.aui16Reflected[SEN_LINE_SENSOR__LEFT] - podDelayed.aui16Reflected[SEN_LINE_SENSOR__RIGHT];
 		
 		// Constrain integration part
 		s_i16DeltaSum += s_i16DeltaOld;

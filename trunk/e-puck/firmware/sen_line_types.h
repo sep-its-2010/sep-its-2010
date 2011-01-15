@@ -3,9 +3,10 @@
 
 #include "common.h"
 
+
 enum {
 	SEN_LINE_LOWER_BOUND = 0, ///< Specifies the lower bound of the sensor values.
-	SEN_LINE_UPPER_BOUND = 1000, ///< Specifies the upper bound of the sensor values.
+	SEN_LINE_UPPER_BOUND = 1023, ///< Specifies the upper bound of the sensor values.
 	SEN_LINE_NUM_SENSORS = 3 ///< Specifies the amount of line sensors (left, middle, right).
 };
 
@@ -29,7 +30,8 @@ typedef enum {
  * sen_line_read | SEN_LINE_SENSOR__LEFT | SEN_LINE_SENSOR__RIGHT | SEN_LINE_SENSOR__MIDDLE
  */
 typedef struct {
-	uint16_t aui16Data[SEN_LINE_NUM_SENSORS]; ///< Holds the values of the left, middle and right sensor ranging from #SEN_LINE_LOWER_BOUND to #SEN_LINE_UPPER_BOUND.
+	uint16_t aui16Reflected[SEN_LINE_NUM_SENSORS]; ///< Holds the values of the left, middle and right sensor ranging from #SEN_LINE_LOWER_BOUND to #SEN_LINE_UPPER_BOUND.
+	uint16_t aui16Ambient[SEN_LINE_NUM_SENSORS]; ///< Holds the values of the left, middle and right sensor ranging from #SEN_LINE_LOWER_BOUND to #SEN_LINE_UPPER_BOUND.
 } sen_line_SData_t;
 
 #endif // sen_line_types_h__

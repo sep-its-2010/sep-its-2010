@@ -5,8 +5,8 @@
 #include "sen_line_types.h"
 
 enum {
-	SEN_LINE_NOMINAL_BLACK_LEVEL = 250, ///< Specifies the black level used for calibrating the sensors.
-	SEN_LINE_NOMINAL_WHITE_LEVEL = 750 ///< Specifies the white level used for calibrating the sensors.
+	SEN_LINE_NOMINAL_BLACK_LEVEL = 256, ///< Specifies the black level used for calibrating the sensors.
+	SEN_LINE_NOMINAL_WHITE_LEVEL = 768 ///< Specifies the white level used for calibrating the sensors.
 };
 
 void sen_line_read(

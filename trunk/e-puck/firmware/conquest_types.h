@@ -78,17 +78,17 @@ typedef enum {
  * conquest_getState | conquest_setState
  */
 typedef enum {
-	CONQUEST_STATE__START = 0,
-	CONQUEST_STATE__CALIBRATION,
-	CONQUEST_STATE__INITIAL,
-	CONQUEST_STATE__STOP,
-	CONQUEST_STATE__MOVE_FORWARD,
-	CONQUEST_STATE__TURN_LEFT,
-	CONQUEST_STATE__TURN_RIGHT,
-	CONQUEST_STATE__CENTER_LINE,
-	CONQUEST_STATE__HIT_NODE,
-	CONQUEST_STATE__COLLISION,
-	CONQUEST_STATE__ABYSS,
+	CONQUEST_STATE__START = 0, ///< Entry state of the global logic.
+	CONQUEST_STATE__CALIBRATION, ///< Manually triggered calibration.
+	CONQUEST_STATE__INITIAL, ///< Initial node detection state.
+	CONQUEST_STATE__STOP, ///< Initialized & idle.
+	CONQUEST_STATE__MOVE_FORWARD, ///< Advancing to next node.
+	CONQUEST_STATE__TURN_LEFT, ///< Turn left on current node.
+	CONQUEST_STATE__TURN_RIGHT, ///< Turn right on current node.
+	CONQUEST_STATE__CENTER_LINE, ///< Center on the current line.
+	CONQUEST_STATE__HIT_NODE, ///< Node detected & stopped.
+	CONQUEST_STATE__COLLISION, ///< Collision detected & stopped.
+	CONQUEST_STATE__ABYSS, ///< Abyss detected & stopped.
 } conquest_EState_t;
 
 

@@ -7,7 +7,8 @@
 
 
 enum {
-	SUBS_ABYSS_REGRESSION = 200 ///< Specifies the amount of steps to drive backwards in case an abyss is detected.
+	SUBS_ABYSS_REGRESSION = 200, ///< Specifies the amount of steps to drive backwards in case an abyss is detected.
+	SUBS_ABYSS_REQUIRED_POSITIVES = 3 ///< Specifies the amount of successive positive abyss detections in order to trigger the prevention.
 };
 
 

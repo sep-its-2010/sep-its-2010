@@ -145,7 +145,7 @@ bool subs_initial_run( void) {
 				hal_motors_setSteps( 0);
 
 				// Check whether the e-puck is currently right above a line with its sensors
-				s_blInPeak = conquest_getSensorImage()->podCalibratedLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_INITIAL_PEAK_BORDER;
+				s_blInPeak = conquest_getSensorImage()->podCalibratedLineSensors.aui16Reflected[SEN_LINE_SENSOR__MIDDLE] < SUBS_INITIAL_PEAK_BORDER;
 				s_blInPeakOnStart = s_blInPeak;
 				s_ui16NumEdges = 0;
 
@@ -163,8 +163,8 @@ bool subs_initial_run( void) {
 				hal_motors_setSpeed( 0, 0);
 
 			// Edge detected?
-			} else if( ( s_blInPeak && conquest_getSensorImage()->podCalibratedLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] > SUBS_INITIAL_PEAK_BORDER) ||
-				( !s_blInPeak && conquest_getSensorImage()->podCalibratedLineSensors.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_INITIAL_PEAK_BORDER)) {
+			} else if( ( s_blInPeak && conquest_getSensorImage()->podCalibratedLineSensors.aui16Reflected[SEN_LINE_SENSOR__MIDDLE] > SUBS_INITIAL_PEAK_BORDER) ||
+				( !s_blInPeak && conquest_getSensorImage()->podCalibratedLineSensors.aui16Reflected[SEN_LINE_SENSOR__MIDDLE] < SUBS_INITIAL_PEAK_BORDER)) {
 
 				if( s_ui16NumEdges < MAX_EDGES) {
 					s_blInPeak = !s_blInPeak;

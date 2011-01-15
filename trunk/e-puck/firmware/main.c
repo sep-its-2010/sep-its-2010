@@ -91,8 +91,8 @@ int main( void) {
 	sen_prox_enable();
 
 	// Perform a default calibration which does not transform the raw data at all.
- 	const sen_line_SData_t podDefaultBlackLevel = { { SEN_LINE_NOMINAL_BLACK_LEVEL } };
- 	const sen_line_SData_t podDefaultWhiteLevel = { { SEN_LINE_NOMINAL_WHITE_LEVEL } };
+	const sen_line_SData_t podDefaultBlackLevel = { { SEN_LINE_NOMINAL_BLACK_LEVEL }, { 0 } };
+ 	const sen_line_SData_t podDefaultWhiteLevel = { { SEN_LINE_NOMINAL_WHITE_LEVEL }, { 0 } };
  	sen_line_calibrate( &podDefaultBlackLevel, &podDefaultWhiteLevel);
 
 	hal_rtc_register( cbBlinker, RTC_FREQENCY / BLINK_FREQUENCY, true);

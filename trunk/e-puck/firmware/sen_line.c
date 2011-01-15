@@ -8,7 +8,9 @@ enum {
 	SENSOR_I2C_ADDRESS = 0xC0, ///< Specifies the I2C address of the line sensor device (padded with R/W bit).
 	DELTA_WHITE_TO_BLACK = SEN_LINE_NOMINAL_WHITE_LEVEL - SEN_LINE_NOMINAL_BLACK_LEVEL, ///< Specifies the delta between white and black.
 	NUM_COEFFICIENTS = 2, ///< Specifies the degree of the rescaling polynomial.
-	COEFFICIENT_SCALAR = 64 ///< Specifies the scalar for coefficients above the 0. degree.
+	COEFFICIENT_SCALAR = 2048, ///< Specifies the scalar for all coefficients.
+	SENSOR_I2C_AMBIENT_REG_OFFSET = 6, ///< Specifies the register block offset of the ambient light values.
+	SENSOR_I2C_REFLECTED_REG_OFFSET = 0 ///< Specifies the register block offset of the reflected light values.
 };
 
 
@@ -23,7 +25,7 @@ enum {
  * \see
  * sen_line_calibrate | sen_line_rescale
  */
-static int16_t s_aai16Coefficients[SEN_LINE_NUM_SENSORS][NUM_COEFFICIENTS];
+static int32_t s_aai32Coefficients[SEN_LINE_NUM_SENSORS][NUM_COEFFICIENTS];
 
 
 /*!
@@ -52,16 +54,10 @@ void sen_line_read(
 	) {
 
 	for( uint16_t ui16 = 0; ui16 < SEN_LINE_NUM_SENSORS; ui16++) {
-		int16_t i16Val = hal_i2c_readRegister( SENSOR_I2C_ADDRESS, ui16 * 2);
-		if( i16Val >= 0) {
-			_lppodData->aui16Data[ui16] = ( i16Val & 0xFF) << 8;
-			i16Val = hal_i2c_readRegister( SENSOR_I2C_ADDRESS, ui16 * 2 + 1);
-		}
-		if( i16Val >= 0) {
-			_lppodData->aui16Data[ui16] |= i16Val & 0xFF;
-		} else {
-			_lppodData->aui16Data[ui16] = SEN_LINE_LOWER_BOUND;
-		}
+		_lppodData->aui16Reflected[ui16] = hal_i2c_readRegister( SENSOR_I2C_ADDRESS, ui16 * 2 + SENSOR_I2C_REFLECTED_REG_OFFSET) << 8;
+		_lppodData->aui16Reflected[ui16] |= hal_i2c_readRegister( SENSOR_I2C_ADDRESS, ui16 * 2 + 1 + SENSOR_I2C_REFLECTED_REG_OFFSET) & 0xFF;
+		_lppodData->aui16Ambient[ui16] = hal_i2c_readRegister( SENSOR_I2C_ADDRESS, ui16 * 2 + SENSOR_I2C_AMBIENT_REG_OFFSET) << 8;
+		_lppodData->aui16Ambient[ui16] |= hal_i2c_readRegister( SENSOR_I2C_ADDRESS, ui16 * 2 + 1 + SENSOR_I2C_AMBIENT_REG_OFFSET) & 0xFF;
 	}
 }
 
@@ -113,26 +109,22 @@ bool sen_line_calibrate(
 	// => a_0 = y_black - a_1 * x_black
 	*/
 
-	int16_t aai16[SEN_LINE_NUM_SENSORS][NUM_COEFFICIENTS];
-	const uint16_t ui16DeltaNominal = SEN_LINE_NOMINAL_WHITE_LEVEL - SEN_LINE_NOMINAL_BLACK_LEVEL;
+	int32_t aai32[SEN_LINE_NUM_SENSORS][NUM_COEFFICIENTS];
 	for( uint16_t ui16 = 0; blSuccess && ui16 < SEN_LINE_NUM_SENSORS; ui16++) {
-		if( _lppodRawBlackLevel->aui16Data[ui16] > SEN_LINE_UPPER_BOUND ||
-			_lppodRawWhiteLevel->aui16Data[ui16] > SEN_LINE_UPPER_BOUND ||
-			_lppodRawBlackLevel->aui16Data[ui16] >= _lppodRawWhiteLevel->aui16Data[ui16]) {
-
+		if( _lppodRawBlackLevel->aui16Reflected[ui16] >= _lppodRawWhiteLevel->aui16Reflected[ui16]) {
 			blSuccess = false;
 		} else {
-			const uint16_t ui16DeltaRaw = _lppodRawWhiteLevel->aui16Data[ui16] - _lppodRawBlackLevel->aui16Data[ui16];
-			aai16[ui16][1] = ui16DeltaNominal * COEFFICIENT_SCALAR / ui16DeltaRaw;
-			const uint32_t ui32 = aai16[ui16][1] * _lppodRawBlackLevel->aui16Data[ui16];
-			aai16[ui16][0] = (int16_t)SEN_LINE_NOMINAL_BLACK_LEVEL - (int16_t)( ui32 / COEFFICIENT_SCALAR);
+			const uint16_t ui16DeltaRaw = _lppodRawWhiteLevel->aui16Reflected[ui16] - _lppodRawBlackLevel->aui16Reflected[ui16];
+			aai32[ui16][1] = (int32_t)DELTA_WHITE_TO_BLACK * COEFFICIENT_SCALAR / ui16DeltaRaw;
+			const int32_t i32RescaledBlack = aai32[ui16][1] * _lppodRawBlackLevel->aui16Reflected[ui16];
+			aai32[ui16][0] = (int32_t)SEN_LINE_NOMINAL_BLACK_LEVEL * COEFFICIENT_SCALAR - i32RescaledBlack;
 		}
 	}
 
 	if( blSuccess) {
 
 		// Element addressing is required due to compiler optimization
-		memcpy( &s_aai16Coefficients[0][0], &aai16[0][0], sizeof( aai16));
+		memcpy( &s_aai32Coefficients[0][0], &aai32[0][0], sizeof( aai32));
 	}
 
 	return blSuccess;
@@ -166,15 +158,17 @@ void sen_line_rescale(
 	) {
 
 	for( uint16_t ui16 = 0; ui16 < SEN_LINE_NUM_SENSORS; ui16++) {
-		const int32_t i32ScalarRescale = (int32_t)s_aai16Coefficients[ui16][1] * _lppodRawData->aui16Data[ui16];
-		const int16_t i16Rescale = s_aai16Coefficients[ui16][0] + (int16_t)( i32ScalarRescale / COEFFICIENT_SCALAR);
+		const int32_t i32ScalarRescale = s_aai32Coefficients[ui16][1] * _lppodRawData->aui16Reflected[ui16];
+		const int16_t i16Rescale = ( s_aai32Coefficients[ui16][0] + i32ScalarRescale) / COEFFICIENT_SCALAR;
 
 		if( i16Rescale < SEN_LINE_LOWER_BOUND) {
-			_lppodRescaledData->aui16Data[ui16] = SEN_LINE_LOWER_BOUND;
+			_lppodRescaledData->aui16Reflected[ui16] = SEN_LINE_LOWER_BOUND;
 		} else if( i16Rescale > SEN_LINE_UPPER_BOUND) {
-			_lppodRescaledData->aui16Data[ui16] = SEN_LINE_UPPER_BOUND;
+			_lppodRescaledData->aui16Reflected[ui16] = SEN_LINE_UPPER_BOUND;
 		} else {
-			_lppodRescaledData->aui16Data[ui16] = i16Rescale;
+			_lppodRescaledData->aui16Reflected[ui16] = i16Rescale;
 		}
+
+		_lppodRescaledData->aui16Ambient[ui16] = _lppodRawData->aui16Ambient[ui16];
 	}
 }

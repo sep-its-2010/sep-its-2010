@@ -10,7 +10,7 @@
 
 enum {
 	CONQUEST_COLLISION_THRESHOLD = 64, ///< Specifies the proximity sensor threshold above which a collision is detected.
-	CONQUEST_ABYSS_THRESHOLD = 190, ///< Specifies the line sensor threshold below which an abyss is detected.
+	CONQUEST_ABYSS_THRESHOLD = 220, ///< Specifies the line sensor threshold below which an abyss is detected.
 	CONQUEST_INITIAL_SPEED = 600, ///< Specifies the initial speed returned by #conquest_getRequestedLineSpeed().
 	CONQUEST_HEARTBEAT_INTERVAL = 10 ///< Specifies the update rate of the logic in RTC time units. \see hal_rtc_init
 };

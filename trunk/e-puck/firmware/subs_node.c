@@ -52,7 +52,7 @@ static bool s_blDetectionActive = false;
 	bool blActed = false;
 
 	if( conquest_getState() == CONQUEST_STATE__MOVE_FORWARD) {
-		const uint16_t* const lpui16SenLine = conquest_getSensorImage()->podCalibratedLineSensors.aui16Data;
+		const uint16_t* const lpui16SenLine = conquest_getSensorImage()->podCalibratedLineSensors.aui16Reflected;
 
 		// Trigger a new detection if idle & middle sensor is on white underground (cross in the middle of a node)
 		if( !s_blDetectionActive) {
