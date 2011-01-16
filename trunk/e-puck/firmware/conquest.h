@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-#include "hal_motors.h"
+#include "hal_motors_types.h"
 
 #include "conquest_types.h"
 

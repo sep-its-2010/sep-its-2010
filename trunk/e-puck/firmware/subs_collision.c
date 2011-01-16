@@ -1,10 +1,7 @@
 #include <string.h>
 
-#include "conquest.h"
 #include "hal_motors.h"
-#include "sen_line.h"
-#include "sen_prox.h"
-#include "hal_uart1.h"
+#include "conquest.h"
 
 #include "subs_collision.h"
 
@@ -41,15 +38,15 @@ bool subs_collision_run( void) {
 	bool blActed = false;
 
 	if( conquest_getState() == CONQUEST_STATE__MOVE_FORWARD) {
-	
+
 		// Check all IR-sensors for collision
 		const bool* const lpblCollision = conquest_getSensorImage()->ablCollisionMask;
-		
+
 		for( uint16_t ui16 = 0; ui16 < SEN_PROX_NUM_SENSORS; ui16++) {
 			if( lpblCollision[ui16]) {				
 				blActed = true;
 			}
-		}		
+		}
 
 		// buffer collision-data of the first collision
 		bool ablCollisionBuffer[SEN_PROX_NUM_SENSORS];
@@ -61,9 +58,8 @@ bool subs_collision_run( void) {
 		}
 
 		// Prevention not active? -> enable prevention and start turning.
-		if( !s_blPreventionActive && blActed) {		
+		if( !s_blPreventionActive && blActed) {
 
-			hal_uart1_puts( "Drehung! \r\n");
 			// Decide into which direction the e-puck should turn.
 			conquest_ENode_t eNode = conquest_getLastNode();
  			if( eNode == CONQUEST_NODE__DOWN_RIGHT ||
@@ -86,13 +82,10 @@ bool subs_collision_run( void) {
 			if( hal_motors_getStepsLeft() >= HAL_MOTORS_FULL_TURN_STEPS / 2 &&
 				hal_motors_getStepsRight() >= HAL_MOTORS_FULL_TURN_STEPS / 2) {
 
-				sen_line_SData_t podLineSensorData;
-				sen_line_read( &podLineSensorData);
-				sen_line_rescale( &podLineSensorData, &podLineSensorData);
-				
-				if( podLineSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] < SUBS_COLLISION_LINE_THRESHOLD ||
-					podLineSensorData.aui16Data[SEN_LINE_SENSOR__MIDDLE] < SUBS_COLLISION_LINE_THRESHOLD ||
-					podLineSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] < SUBS_COLLISION_LINE_THRESHOLD) {
+				const uint16_t* const lpui16LineSensors = conquest_getSensorImage()->podCalibratedLineSensors.aui16Reflected;
+				if( lpui16LineSensors[SEN_LINE_SENSOR__LEFT] < SUBS_COLLISION_LINE_THRESHOLD ||
+					lpui16LineSensors[SEN_LINE_SENSOR__MIDDLE] < SUBS_COLLISION_LINE_THRESHOLD ||
+					lpui16LineSensors[SEN_LINE_SENSOR__RIGHT] < SUBS_COLLISION_LINE_THRESHOLD) {
 
 					s_ui8DetectionCounter++;
 				} else {
@@ -102,8 +95,8 @@ bool subs_collision_run( void) {
 				// Several line-detections in a row, left and/or right ground-sensor detects a white surface?
 				// -> Move in straight direction and reset collision-prevention-state.
 				if( s_ui8DetectionCounter >= SUBS_COLLISION_LINE_MEASUREMENTS &&
-					( podLineSensorData.aui16Data[SEN_LINE_SENSOR__LEFT] > SUBS_COLLISION_SURFACE_THRESHOLD ||
-					podLineSensorData.aui16Data[SEN_LINE_SENSOR__RIGHT] > SUBS_COLLISION_SURFACE_THRESHOLD)) {
+					( lpui16LineSensors[SEN_LINE_SENSOR__LEFT] > SUBS_COLLISION_SURFACE_THRESHOLD ||
+					lpui16LineSensors[SEN_LINE_SENSOR__RIGHT] > SUBS_COLLISION_SURFACE_THRESHOLD)) {
 
 					s_ui8DetectionCounter = 0;
 					s_blPreventionActive = false;
@@ -118,7 +111,7 @@ bool subs_collision_run( void) {
 					conquest_setState( CONQUEST_STATE__COLLISION);
 				}
 				blActed = true;
-			}		
+			}
 		}
 	}
 

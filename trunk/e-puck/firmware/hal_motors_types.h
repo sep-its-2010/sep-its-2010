@@ -6,7 +6,9 @@
 
 enum {
 	HAL_MOTORS_LEFT = 0, ///< Specifies the array index for data concerning the left motor.
-	HAL_MOTORS_RIGHT = 1 ///< Specifies the array index for data concerning the right motor.
+	HAL_MOTORS_RIGHT = 1, ///< Specifies the array index for data concerning the right motor.
+	HAL_MOTORS_MAX_ABS_SPEED = 1000, ///< Maximal absolute step motor speed in steps per second.
+	HAL_MOTORS_FULL_TURN_STEPS = 1320 ///< Specifies the amount of steps required to turn by 360° when the motors drive in opposite directions.
 };
 
 
