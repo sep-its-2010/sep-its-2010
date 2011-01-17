@@ -25,7 +25,7 @@
 					Name="DefineMacro"
 					DisplayName="Define Macro"
 					Switch="-D [value]"
-					DefaultValue="_$(ConfigurationName);FCY=$(FCY)"
+					DefaultValue="__$(ConfigurationName);FCY=$(FCY)"
 					Delimited="true"
 				/>
 				<StringProperty
@@ -639,8 +639,8 @@
 				<StringProperty
 					Name="DefineSymbol"
 					DisplayName="Predefined Symbols"
-					Switch="&quot;-Wa,--defsym=[value]&quot;"
-					DefaultValue="_$(ConfigurationName);FCY=$(FCY);"
+					Switch="&quot;-Wa,--defsym,[value]&quot;"
+					DefaultValue="__$(ConfigurationName)=;FCY=$(FCY);"
 					Delimited="true"
 				/>
 			</Properties>
