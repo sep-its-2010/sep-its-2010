@@ -1,5 +1,6 @@
 package sep.conquest.model.handler.test;
 
+import java.util.TreeMap;
 import java.util.UUID;
 
 import sep.conquest.model.GridMap;
@@ -23,19 +24,79 @@ public class HandlerTest {
 	VirtualPuckRequest req_reset;
 	byte[] array = new byte[32];
 	GridMap map = new GridMap();
-	
+	TreeMap<UUID, int[]> initPositions;
+	int[] pos_r1 = {-1, -1 };
 	
 	public void setUp(){
 		buildMap();
 		
 		//sim = new Simulator();
-		puck = new VirtualPuck(id,sim,"");
+		puck = new VirtualPuck(id,sim,"PuckNumeroUno");
 		exe = new LogicThread(puck);
 		hf = new HandlerFactory();
 	}
+
 	
 	public void buildMap() {
 		
+		initPositions = new TreeMap<UUID, int[]>();
+		initPositions.put(id, pos_r1);
+		map.addNode(-3, -3, NodeType.BOTTOMRIGHTEDGE);
+		map.addNode(-2, -3, NodeType.BOTTOMT);
+		map.addNode(-1, -3, NodeType.BOTTOMLEFTEDGE);
+		map.addNode(1, -3, NodeType.BOTTOMRIGHTEDGE);
+		map.addNode(2, -3, NodeType.BOTTOMT);
+		map.addNode(3, -3, NodeType.BOTTOMLEFTEDGE);
+		map.addNode(-3, -2, NodeType.RIGHTT);
+		map.addNode(-2, -2, NodeType.CROSS);
+		map.addNode(-1, -2, NodeType.LEFTT);
+		map.addNode(1, -2,NodeType.RIGHTT);
+		map.addNode(2, -2, NodeType.CROSS);
+		map.addNode(3, -2,  NodeType.LEFTT);
+		map.addNode(-3, -1, NodeType.RIGHTT);
+		map.addNode(-2, -1,  NodeType.CROSS);
+		map.addNode(-1, -1,  NodeType.CROSS);
+		map.addNode(0, -1,  NodeType.BOTTOMT);
+		map.addNode(1, -1,  NodeType.CROSS);
+		map.addNode(2, -1,  NodeType.CROSS);
+		map.addNode(3 ,-1,  NodeType.LEFTT);
+		map.addNode(-3 ,0,  NodeType.TOPRIGHTEDGE);					
+		map.addNode(-2, 0,  NodeType.CROSS);													
+		map.addNode(-1 ,0,  NodeType.CROSS);																
+		map.addNode(0, 0 , NodeType.TOPT);		
+		map.addNode(1, 0, NodeType.CROSS);				
+		map.addNode(2, 0 ,NodeType.CROSS);						
+		map.addNode(3, 0 ,NodeType.TOPLEFTEDGE);						
+		map.addNode(-2 ,1, NodeType.RIGHTT);
+		map.addNode(-1, 1, NodeType.LEFTT);																											
+		map.addNode(1, 1, NodeType.RIGHTT);														
+		map.addNode(2, 1, NodeType.LEFTT);																
+		map.addNode(-3 ,2 ,NodeType.BOTTOMRIGHTEDGE);																		
+		map.addNode(-2 ,2,NodeType.CROSS);																				
+		map.addNode(-1, 2 ,NodeType.CROSS);																																																											
+		map.addNode(0, 2 ,NodeType.BOTTOMT);
+		map.addNode(-3, 3 ,NodeType.RIGHTT);
+		map.addNode(3, 2 ,NodeType.BOTTOMLEFTEDGE);
+		map.addNode(2, 2 ,NodeType.CROSS);
+		map.addNode(1 ,2 ,NodeType.CROSS);
+		map.addNode(-2, 3 ,NodeType.CROSS);
+		map.addNode(-1 ,3 ,NodeType.CROSS);
+		map.addNode(0, 3, NodeType.TOPT);
+		map.addNode(1 ,3 ,NodeType.CROSS);
+		map.addNode(2, 3, NodeType.CROSS);
+		map.addNode(3, 3,NodeType.LEFTT);
+		map.addNode(-3, 4, NodeType.RIGHTT);
+		map.addNode(-2, 4, NodeType.CROSS);
+		map.addNode(-1, 4, NodeType.LEFTT);
+		map.addNode(1, 4 ,NodeType.RIGHTT);
+		map.addNode(2, 4, NodeType.CROSS);
+		map.addNode(3 ,4, NodeType.LEFTT);
+		map.addNode(-3, 5, NodeType.TOPRIGHTEDGE);
+		map.addNode(-2, 5 ,NodeType.TOPT);
+		map.addNode(-1, 5, NodeType.TOPLEFTEDGE);
+		map.addNode(1, 5 ,NodeType.TOPRIGHTEDGE);
+		map.addNode(2, 5, NodeType.TOPT);
+		map.addNode(3, 5, NodeType.TOPLEFTEDGE);
 	}
 	
 	public void testSimulatorMessages() {
