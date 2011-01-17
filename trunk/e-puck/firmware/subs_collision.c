@@ -2,18 +2,16 @@
 
 #include "hal_motors.h"
 #include "conquest.h"
-//#include "hal_uart1.h"
 
 #include "subs_collision.h"
 
-enum {
+typedef enum {
 	STATE_DETECTING,
 	STATE_TURNING,
 	STATE_RETURNING
 } EState_t;
 
 static EState_t s_eState = STATE_DETECTING;
-//static bool s_blCollisionAlreadyDetected = false;
 static uint16_t s_ui16StepsAfterNodeDetection = 0;
 
 
@@ -36,9 +34,9 @@ com_SMessage_t subs_collision_podResponse;
  *
  * This layer only triggers in #CONQUEST_STATE__MOVE_FOWARD.
  *
- * Reads the values of the eight proximity sensors, which are located around the e-puck.
+ * Reads the values of the proximity sensors, which are located around the e-puck.
  * If any of these values is above a critical value a collision is detected and the motors are stopped.
- * After that a message, which contains the direction of the obstacle is created and sent to the Smartphone via bluetooth.
+ * After that a message is created and delivered to the Smartphone via bluetooth.
  */
 bool subs_collision_run( void) {
 
@@ -66,7 +64,7 @@ bool subs_collision_run( void) {
 					memcpy( subs_collision_podResponse.aui8Data, lpblCollision, SEN_PROX_NUM_SENSORS);
 					memset( &subs_collision_podResponse.aui8Data[SEN_PROX_NUM_SENSORS], 0xFF, sizeof( subs_collision_podResponse.aui8Data) - SEN_PROX_NUM_SENSORS);
 					
-					hal_motors_setSpeed( 0, conquest_getCurrentLineSpeed());
+					hal_motors_setSpeed( 0, conquest_getRequestedLineSpeed());
 					hal_motors_setSteps( 0);
 					s_eState = STATE_TURNING;
 				}
@@ -88,18 +86,26 @@ bool subs_collision_run( void) {
 		case STATE_RETURNING: {
 			blActed = true;
 
-			if( s_ui16StepsAfterNodeDetection > 0 &&
-				(hal_motors_getStepsLeft() + hal_motors_getStepsRight()) / 2 >= s_ui16StepsAfterNodeDetection) {
-
-				hal_motors_setSpeed( 0, 0);
+			if( s_ui16StepsAfterNodeDetection > 0) {
+				if( (hal_motors_getStepsLeft() + hal_motors_getStepsRight()) / 2 >= s_ui16StepsAfterNodeDetection) {
+					hal_motors_setSpeed( 0, 0);
+					hal_motors_setSteps( 0);
+					conquest_setState( CONQUEST_STATE__COLLISION);
+					s_eState = STATE_DETECTING;
+					blActed = false;
+				}
+			} else {
+				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
 				hal_motors_setSteps( 0);
-				conquest_setState( CONQUEST_STATE__COLLISION);
+				conquest_setState( CONQUEST_STATE__MOVE_FORWARD);
+				s_eState = STATE_DETECTING;
 				blActed = false;
 			}
 			break;
 		}
+		default: {
+		}
 	}
-
 	return blActed;
 }
 
@@ -112,7 +118,6 @@ bool subs_collision_run( void) {
  */
 void subs_collision_reset( void) {
 
-	s_blPreventionActive = false;
-	s_blCollisionAlreadyDetected = false;
-	s_ui8DetectionCounter = 0;
+	s_eState = STATE_DETECTING;
+	s_ui16StepsAfterNodeDetection = 0;	
 }
