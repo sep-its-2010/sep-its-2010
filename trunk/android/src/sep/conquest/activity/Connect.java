@@ -450,9 +450,10 @@ public final class Connect extends Activity {
         BluetoothDevice device = (BluetoothDevice) intent
             .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-        if (ePuckName.matcher(device.getName()).matches()) {
-          discoveredRobots.put(device.getName(), device);
-          robotList.add(device.getName());
+        String name = device.getName();
+        if ((name != null) && ePuckName.matcher(name).matches()) {
+          discoveredRobots.put(name, device);
+          robotList.add(name);
         }
 
         // If discovery is finished display the discovered devices.
