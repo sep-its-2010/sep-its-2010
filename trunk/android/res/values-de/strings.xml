@@ -53,4 +53,6 @@
 <string name="app_name">e-puck Conquest - Ultimate Exploration Experience</string>
 <string name="TXT_NODES">Knoten</string>
 <string name="TXT_MULTIPLE_NODES">mehrfach überfahrene Knoten</string>
+<string name="TXT_SYNC">Synchronisiere...</string>
+<string name="TXT_LOCALIZING">Roboter befinden sich in der Lokalisierung!</string>
 </resources>

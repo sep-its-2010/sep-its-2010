@@ -20,6 +20,7 @@ import sep.conquest.model.PuckFactory;
 import sep.conquest.model.State;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -56,6 +57,8 @@ public class Map extends Activity implements Observer {
 	private MapMode mMode;
 	
 	private LinkedList<String> mIds;
+	
+	private ProgressDialog pd;
 	
 	/**
 	 * Used to update the View from update-method.
@@ -127,6 +130,7 @@ public class Map extends Activity implements Observer {
     public void onResume() {
     	super.onResume();
     	if (mMode != MapMode.IMPORT) {
+    		pd = ProgressDialog.show(this, getString(R.string.TXT_SYNC), getString(R.string.TXT_LOCALIZING));
     	Controller.getInstance().getEnv().addObserver(this);
     	}
     	//automatischer start
@@ -269,6 +273,9 @@ public class Map extends Activity implements Observer {
 			
 			State state = cu.getRobotStatus(key).getState();
 			if (state == State.EXPLORE || state == State.FINISH || state == State.RETURN || state == State.BLOCKED) {
+				if (pd.isShowing()) {
+					pd.dismiss();
+				}
 				mPositions.add(new EpuckPosition(position[0], position[1], name, ori));
 				mIds.add(name);
 			}
