@@ -43,7 +43,14 @@
 	\newpage
 \section{Einleitung}
 \section{Java-Testf\"alle mit JUnit}
-\subsection{GridMap}
+	\subsection{GridMap}
+	\begin{itemize}
+		\item{testInsertNode} \\ F\"ugt einen Knoten in die Karte ein und \"uberpr\"uft die Anzahl der eingef\"ugten Objekte.
+		\item{testFrontierNode} \\ F\"ugt zu jeweils einem Knotentypen einen Knoten ein und \"uberpr\"uft auf richtige FrontierNodes.
+		\item{testUpdateNode} \\ F\"ugt nacheinander zwei benachbarte Knoten ein und \"uberpr\"uft ob der FrontierNode geupdatet wird.
+		\item{testMapBorders} \\ F\"ugt in die Karte einige Knoten ein und \"uberpr\"uft auf die richtig gesetzten Grenzen des Feldes.
+		\item{testSerializeMapInString} \\ Serialisiert eine Karte mit einigen Knoten in ein String-Array und \"uberpr\"uft auf richtiges Format.
+	\end{itemize}
 \section{C-Testf\"alle}
 \section{Globale Testszenarien}
 \end{document}
