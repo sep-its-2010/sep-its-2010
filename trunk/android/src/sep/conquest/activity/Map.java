@@ -121,16 +121,16 @@ public class Map extends Activity implements Observer {
         	loadMap();
         } else if (mMode == MapMode.EXPLORATION) {
         	setSpinner();
-        	
+        	setPD();       	
         } else {
         	mRobotSelect.setEnabled(false);
+        	setPD();
         }
     }
     
     public void onResume() {
     	super.onResume();
     	if (mMode != MapMode.IMPORT) {
-    		pd = ProgressDialog.show(this, getString(R.string.TXT_SYNC), getString(R.string.TXT_LOCALIZING));
     	Controller.getInstance().getEnv().addObserver(this);
     	}
     	//automatischer start
@@ -227,6 +227,10 @@ public class Map extends Activity implements Observer {
 			displayMessage(getString(R.string.ERR_MSG_INVALID_FILE), true);
 			return;
 		}
+    }
+    
+    private void setPD() {
+    	pd = ProgressDialog.show(this, getString(R.string.TXT_SYNC), getString(R.string.TXT_LOCALIZING));
     }
     
     private void drawMap(List<MapNode> map, int[] borders) {
