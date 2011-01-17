@@ -1,6 +1,5 @@
 package sep.conquest.model.handler;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 import sep.conquest.model.IRequest;
@@ -62,10 +61,33 @@ public class DriveRequestHandler extends Handler {
 
       if (command == Orientation.UP.getOrientation()) {
         // If command is forward, set intended position.
-        computeIntentPosition(state);
+        int x = state.getPosition()[0];
+        int y = state.getPosition()[1];
+
+        // Compute intent position.
+        switch (state.getOrientation()) {
+        case UP:
+          y++;
+          break;
+        case LEFT:
+          x--;
+          break;
+        case RIGHT:
+          x++;
+          break;
+        case DOWN:
+          y--;
+          break;
+        default:
+          break;
+        }
+        int[] intentPos = { x, y };
+        state.setIntentPosition(intentPos);
       } else {
         // Otherwise compute new orientation.
-        computeNewOrientation(state, command);
+        Orientation ori = state.getOrientation();
+        ori = Orientation.getTurnedOrientation(command, ori);
+        executor.setTurnOrientation(ori);
       }
 
       // Announce changes via broadcast.
@@ -75,36 +97,5 @@ public class DriveRequestHandler extends Handler {
       robot.broadcast(statusUpdateReq);
       return true;
     }
-  }
-
-  private void computeNewOrientation(RobotStatus state, int command) {
-    Orientation ori = state.getOrientation();
-    ori = Orientation.getTurnedOrientation(command, ori);
-    executor.setTurnOrientation(ori);
-  }
-
-  private void computeIntentPosition(RobotStatus state) {
-    int x = state.getPosition()[0];
-    int y = state.getPosition()[1];
-
-    // Compute intent position.
-    switch (state.getOrientation()) {
-    case UP:
-      y++;
-      break;
-    case LEFT:
-      x--;
-      break;
-    case RIGHT:
-      x++;
-      break;
-    case DOWN:
-      y--;
-      break;
-    default:
-      break;
-    }
-    int[] intentPos = { x, y };
-    state.setIntentPosition(intentPos);
   }
 }

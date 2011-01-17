@@ -105,11 +105,6 @@ public abstract class Puck implements IComClient, IRobot {
   public static final short REQ_TURN = (short) 0x03FF;
   
   /**
-   * Indicates whether an OK-message was received.
-   */
-  private boolean okRcvd = false;
-
-  /**
    * Global unique id.
    */
   private UUID id;

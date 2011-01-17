@@ -15,7 +15,6 @@ import sep.conquest.model.State;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -26,15 +25,14 @@ import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 /**
  * Allows user to control an e-puck manually via On-Screen-Joystick or the
@@ -260,7 +258,8 @@ public final class Steer extends Activity implements Observer {
         RobotStatus status = states.get(id);
 
         if (!robots.contains(id)) {
-          if (status.getState() == State.EXPLORE) {
+          if (status.getState() == State.EXPLORE
+              || status.getState() == State.FINISH) {
             // If id is not known and corresponding robot is not in error state,
             // add new id and moving state.
             robots.add(id);
@@ -536,14 +535,39 @@ public final class Steer extends Activity implements Observer {
   private final class SensorControl implements SensorEventListener {
 
     /**
-     * Minimal value to register commands in x direction.
+     * Threshold to filter signals that are to large. 
      */
-    private static final int THRESHOLD_X = 3;
+    private static final int THRESHOLD_ACC = 10;
 
     /**
-     * Minimal value to register commands in y direction.
+     * Triggers control evaluation.
      */
-    private static final int THRESHOLD_Y = 2;
+    private static final float THRESHOLD_X = 2.5f;
+
+    /**
+     * Triggers control evaluation.
+     */
+    private static final float THRESHOLD_Y = 2.5f;
+
+    /**
+     * Used as balance for sensor value filter.
+     */
+    private static final float FILTER_PARAM = 0.6f;
+
+    /**
+     * Used to sum up x measure values for the filter.
+     */
+    private float filterX = 0;
+
+    /**
+     * Used to sum up y measure values for the filter.
+     */
+    private float filterY = 0;
+
+    /**
+     * Used to sum up z measure values for the filter.
+     */
+    private float filterZ = 0;
 
     /**
      * Method is not implemented.
@@ -567,29 +591,60 @@ public final class Steer extends Activity implements Observer {
         // Controller.
         if ((selectedRobot != NO_SELECTION)
             && !moving.get(robots.get(selectedRobot))) {
-          float x = event.values[0];
-          float y = event.values[1];
-          float hyp = (float) Math.sqrt(x * x + y * y);
-          float acos = (float) Math.acos((float) x / hyp);
+          float[] values = event.values;
 
-          if (Math.abs(x) > THRESHOLD_X || Math.abs(y) > THRESHOLD_Y) {
-            if (acos < Math.PI / 4.0) {
-              // Action
-            } else if (Math.PI / 4.0 < acos && acos <= 3.0 * Math.PI / 4.0
-                && y < 0) {
-              // Action
-            } else if (Math.PI / 4.0 < acos && acos <= 3.0 * Math.PI / 4.0
-                && y >= 0) {
-              // Action
-            } else if (acos > 3.0 * Math.PI / 4.0) {
-              // Action
-            } else {
-              // Action
-            }
+          // If x or y value is greater than threshold, add values to filter.
+          if (Math.sqrt(values[0] * values[0] + values[1] * values[1]
+              + values[2] + values[2]) < THRESHOLD_ACC) {
+            addFilteredValues(values);
           }
-          moving.put(robots.get(selectedRobot), Boolean.TRUE);
+
+          // If filter variables exceed threshold, get command.
+          if (Math.abs(filterX) > THRESHOLD_X
+              || Math.abs(filterY) > THRESHOLD_Y) {
+            
+            // Get hypotenuse of sum-vector.
+            float hyp = (float) Math
+                .sqrt(filterX * filterX + filterY * filterY);
+            
+            // Compute angle between x-sum and y-sum.
+            float acos = (float) Math.acos((float) (filterX / hyp));
+
+            if (acos < Math.PI / 4.0) {
+              Controller.getInstance().left(robots.get(selectedRobot));
+            } else if (Math.PI / 4.0 < acos && acos <= 3.0 * Math.PI / 4.0
+                && filterY < 0) {
+              Controller.getInstance().forward(robots.get(selectedRobot));
+            } else if (Math.PI / 4.0 < acos && acos <= 3.0 * Math.PI / 4.0
+                && filterY >= 0) {
+              Controller.getInstance().turn(robots.get(selectedRobot));
+            } else if (acos > 3.0 * Math.PI / 4.0) {
+              Controller.getInstance().right(robots.get(selectedRobot));
+            } else {
+              Controller.getInstance().left(robots.get(selectedRobot));
+            }
+            // Reset filter values.
+            filterX = 0;
+            filterY = 0;
+            filterZ = 0;
+            
+            // Set moving state of selected robot.
+            moving.put(robots.get(selectedRobot), Boolean.TRUE);
+          }
         }
       }
+    }
+
+    /**
+     * Adds the current measured values to the filter values, weighted with the
+     * filter parameter.
+     * 
+     * @param values The measure values to add.
+     */
+    private void addFilteredValues(float[] values) {
+      filterX = filterX * FILTER_PARAM + values[0] * (float) (1 - FILTER_PARAM);
+      filterY = filterY * FILTER_PARAM + values[1] * (float) (1 - FILTER_PARAM);
+      filterZ = filterZ * FILTER_PARAM + values[2] * (float) (1 - FILTER_PARAM);
     }
   }
 
@@ -618,7 +673,6 @@ public final class Steer extends Activity implements Observer {
         // Button 'Up'
         case R.id.btn_up:
           Controller.getInstance().forward(robots.get(selectedRobot));
-          moving.put(robots.get(selectedRobot), Boolean.TRUE);
           break;
 
         // Button 'Down'
@@ -636,6 +690,7 @@ public final class Steer extends Activity implements Observer {
           Controller.getInstance().right(robots.get(selectedRobot));
           break;
         }
+        moving.put(robots.get(selectedRobot), Boolean.TRUE);
       }
     }
   }
