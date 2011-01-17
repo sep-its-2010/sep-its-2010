@@ -44,11 +44,14 @@ public class PuckOkHandler extends Handler {
   public boolean handleRequest(IRequest request) {
     if (request.getKind().equals(MessageType.RESPONSE_OK)) {
       Puck robot = executor.getRobot();
-      robot.setOkRcvd(true);
       RobotStatus state = robot.getRobotStatus().get(robot.getID());
       
       synchronized (state) {
+        // Reset moving state.
         state.setMoving(false);
+        
+        // Set new orientation.
+        state.setOrientation(executor.getTurnOrientation());
 
         // Announce changes via broadcast.
         StatusUpdateRequest statusUpdateReq = new StatusUpdateRequest(robot

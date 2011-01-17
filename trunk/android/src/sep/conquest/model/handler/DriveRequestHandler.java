@@ -1,5 +1,6 @@
 package sep.conquest.model.handler;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import sep.conquest.model.IRequest;
@@ -50,11 +51,22 @@ public class DriveRequestHandler extends Handler {
       DriveRequest driveReq = (DriveRequest) request;
       Puck robot = executor.getRobot();
 
+      // The drive command.
+      int command = driveReq.getCommand();
+
       // Pass drive command to robot.
+      robot.driveCommand(command);
+
+      // The current state of the robot.
       RobotStatus state = robot.getRobotStatus().get(robot.getID());
-      Orientation ori = state.getOrientation();
-      ori = Orientation.getTurnedOrientation(driveReq.getCommand(), ori);
-      robot.driveCommand(driveReq.getCommand());
+
+      if (command == Orientation.UP.getOrientation()) {
+        // If command is forward, set intended position.
+        computeIntentPosition(state);
+      } else {
+        // Otherwise compute new orientation.
+        computeNewOrientation(state, command);
+      }
 
       // Announce changes via broadcast.
       robot.getRobotStatus().get(robot.getID()).setMoving(true);
@@ -65,4 +77,34 @@ public class DriveRequestHandler extends Handler {
     }
   }
 
+  private void computeNewOrientation(RobotStatus state, int command) {
+    Orientation ori = state.getOrientation();
+    ori = Orientation.getTurnedOrientation(command, ori);
+    executor.setTurnOrientation(ori);
+  }
+
+  private void computeIntentPosition(RobotStatus state) {
+    int x = state.getPosition()[0];
+    int y = state.getPosition()[1];
+
+    // Compute intent position.
+    switch (state.getOrientation()) {
+    case UP:
+      y++;
+      break;
+    case LEFT:
+      x--;
+      break;
+    case RIGHT:
+      x++;
+      break;
+    case DOWN:
+      y--;
+      break;
+    default:
+      break;
+    }
+    int[] intentPos = { x, y };
+    state.setIntentPosition(intentPos);
+  }
 }

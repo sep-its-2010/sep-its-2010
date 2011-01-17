@@ -397,24 +397,6 @@ public abstract class Puck implements IComClient, IRobot {
   public boolean isControlled() {
     return controlled;
   }
-
-  /**
-   * Sets the ok-received flag.
-   * 
-   * @param okRcvd
-   */
-  public void setOkRcvd(boolean okRcvd) {
-    this.okRcvd = okRcvd;
-  }
-
-	/**
-	 * Indicates whether an ok-message has been received.
-	 * 
-	 * @return True, if ok message has been received, false otherwise.
-	 */
-	public boolean isOkRcvd() {
-		return okRcvd;
-	}
 	
 	/**
 	 * Destroys the Puck. Shuts down the LogicThread.

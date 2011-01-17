@@ -105,6 +105,24 @@ public class LogicThread implements Runnable {
   private RobotStatus getRobotState() {
     return robot.getRobotStatus().get(robot.getID());
   }
+  
+  /**
+   * Sets the next orientation of the robot.
+   * 
+   * @param ori The orientation to set after ok message is received.
+   */
+  public void setTurnOrientation(Orientation ori) {
+    turn = ori;
+  }
+  
+  /**
+   * Returns the orientation to set as soon as ok message is received.
+   * 
+   * @return The new orientation.
+   */
+  public Orientation getTurnOrientation() {
+    return turn;
+  }
 
   /**
    * Returns the robot of the logic thread.
@@ -173,14 +191,7 @@ public class LogicThread implements Runnable {
       int[] node = { nextMapNode.getXValue(), nextMapNode.getYValue() };
       Orientation newDir = Orientation.getTurnedOrientation(getRobotState()
           .getPosition(), node);
-
-      if (robot.isOkRcvd()) {
-        RobotStatus stat = getRobotState();
-        stat.setOrientation(turn);
-        robot.getRobotStatus().put(robot.getID(), stat);
-        robot.setOkRcvd(false);
-      }
-
+      
       int command = Orientation.addLocalDirection(getRobotState()
           .getOrientation(), newDir);
 
