@@ -230,7 +230,7 @@ public class AStarPathFinder implements IPathFinder {
 
 		int costs = 10; // add 10 for distance-driving-costs
 
-		// add additionally costs due to obstacles (other robots)
+		// add additional costs due to obstacles (other robots)
 		Set<UUID> keys = robot.getRobotStatus().keySet();
 		for (UUID key : keys) {
 			if (!key.equals(robot.getID())) {
@@ -240,6 +240,36 @@ public class AStarPathFinder implements IPathFinder {
 					costs += 50;
 			}
 		}
+		
+		// add additional costs if a turn is needed
+		RobotStatus status = robot.getRobotStatus().get(robot.getID());
+		switch(status.getOrientation()) {
+		case UP:
+			if (status.getPosition()[1] > node.getYValue())
+				costs += 2;
+			else if (status.getPosition()[0] != node.getXValue())
+				costs += 1;	
+			break;
+		case DOWN:
+			if (status.getPosition()[1] < node.getYValue())
+				costs += 2;
+			else if (status.getPosition()[0] != node.getXValue())
+				costs += 1;	
+			break;
+		case LEFT:
+			if (status.getPosition()[0] < node.getXValue())
+				costs += 2;
+			else if (status.getPosition()[1] != node.getYValue())
+				costs += 1;
+			break;
+		case RIGHT:
+			if (status.getPosition()[0] > node.getXValue())
+				costs += 2;
+			else if (status.getPosition()[1] != node.getYValue())
+				costs += 1;		
+			break;
+		}
+		
 		return costs;
 	}
 

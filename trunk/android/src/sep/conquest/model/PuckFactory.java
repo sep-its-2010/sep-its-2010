@@ -129,6 +129,7 @@ public class PuckFactory {
         LocalLocalizeBehaviour.startPositions.put(newId, Utility.makeKey(positions[i][0], positions[i][1]));
         LocalLocalizeBehaviour.startOrientations.put(newId, ori[i]);
       }
+      
       simulator = new Simulator(map, posMap, oriMap);
 
       int i = 0;
