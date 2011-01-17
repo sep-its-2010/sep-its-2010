@@ -1,0 +1,352 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{epstopdf}
+\usepackage[ngerman]{babel}
+\usepackage[ngerman]{translator}
+\usepackage{listings}
+\usepackage[singlelinecheck = false]{caption}
+\usepackage[colorlinks=true,
+        linkcolor=black,
+        citecolor=black,
+        filecolor=black,
+        pagecolor=black,
+        urlcolor=black,
+        bookmarks=true,
+        bookmarksopen=true,
+        bookmarksopenlevel=3,
+        plainpages=false,
+        pdfpagelabels=true]{hyperref}
+
+\parindent 0pt
+\pagestyle{headings}
+
+\let\oldsection\section
+\renewcommand{\section}{\newpage \oldsection}
+
+\title{
+	\includegraphics[height=10cm]{images/logo.eps} \\
+	\vspace{1cm}
+	Benutzerhandbuch \\
+	SEP-Conquest
+}
+\author{Andreas Wilhelm, Andreas Poxrucker, Martin Freund,\\ Max Binder, Florian B\"urchner, Florian Lorenz} 
+\begin{document}
+\date{14. Januar 2011}
+	\maketitle
+	\newpage
+	\tableofcontents	
+	\newpage
+\section{Einleitung}
+	\subsection{Einf\"uhrung}
+		Dieses Projekt richtet sich \"uberwiegend an Forschungsgruppen, Studenten sowie die e-puck Community. Grundlegende Kenntnisse der Programmiersprachen 
+		Java und C sowie ein sicherer Umgang mit Compilern werden f\"ur die Verwendung der Software vorausgesetzt. Auch Erfahrung mit sensibler 
+		Hardware und ein grundlegendes Verst\"andnis f\"ur eingebettete Systeme sind notwendig. Bevor Sie das gesamte System zum ersten Mal in Betrieb 
+		nehmen, sollten Sie sich  die Anleitung sorgf\"altig und vollst\"andig durchlesen, um eine Besch\"adigung der Hardware zu vermeiden. Hierbei m\"ochten wir vor allem auf
+		Kapitel \ref{e_puck_bedienung} verweisen, um sich mit dem e-puck Roboter und dessen Bedienung vertraut zu machen. Alle in diesem Handbuch  
+		aufgef\"uhrten Programme	sind im Internet zur freien Verf\"ugung gestellt.\\ 
+		Das Entwicklerteam \"ubernimmt keinerlei Haftung f\"ur auftretende Probleme oder Sch\"aden. \\ 
+	\subsection{Leistungsmerkmale des Systems}
+		\begin{itemize}
+			\item{Unterst\"utzung von bis zu sechs e-puck Roboter} \\		
+				Es k\"onnen gleichzeitig bis zu sechs e-puck Roboter effizient ein unbekanntes Gebiet erkunden.
+			\item{Zwei verschiedene Steuerungsarten} \\
+				Das System unterst\"utzt die Steuerung eines e-puck Roboters durch eine Touch-Steuerung sowie eine Kippsteuerung mithilfe der Beschleunigungssensoren.
+			\item{Kollisionsvermeidung} \\
+				Die e-puck Roboter vermeiden Kollisionen mit anderen Teilnehmern.
+			\item{Statistikanzeige} \\
+				Durch den Statistik-Dialog und Visualisierung der erkundeten Karte kann gepr\"uft werden, wie effizient die Roboter erkundet haben und wie viel Knoten jeder
+				einzelne Teilnehmer abgefahren hat.
+		\end{itemize}		
+\section{Systemanforderungen}
+		\subsection{Smartphone mit Android Betriebssystem} 
+				Ein bluetoothf\"ahiges Smartphone mit einem Android Betriebssystem ab Version 2.1 und installiertem CyanogenMod ab Version 6.0.1, integrierten 
+				Beschleunigungssensoren sowie ein Touch-Display sind erforderlich, um das System zu verwenden. Ein Tutorial f\"ur die Installation des Android 
+				Betriebssystems inkl. CyanogenMod ist nicht Teil dieses Handbuchs, bitte wenden Sie sich im Problemfall an die Android-Community unter 
+				www.android.com
+		\subsection{e-puck Roboter ab Hardware Rev. 2} 
+				Mindestens ein e-puck Roboter mit Erweiterungsmodul f\"ur Bodensensoren ist zur Erkundung und zum vollst\"andigen Betrieb notwendig.
+		\subsection{Computer mit mindestens 1 GHz} 
+				Ein Computer mit Bluetoothadapter zum Flashen der e-puck Roboter.
+		\subsection{MPLAB ICD 2 oder 3} 
+				Zum Ersetzen des Bootloaders auf dem e-puck Roboter wird MPLAB ICD 2 oder 3 inkl. eines Adapterkabels f\"ur den e-puck Roboter ben\"otigt.
+\section{Betriebsbedingungen} 
+		\subsection{Ausreichende Stromversorgung} 
+				Um ein sicheres Ausf\"uren des Gesamtsystems zu gew\"ahrleisten, m\"ussen die Akkus der e-puck Roboter immer vor Inbetriebnahme vollst\"andig
+				aufgeladen sein. Ist dies nicht der Fall kann es zu unerwarteten Fehlern kommen und die korrekte und vollst\"andige Erkundgen durch die e-puck Roboter
+				ist nicht mehr gew\"ahrleistet.
+		\subsection{Geeignete Bedingungen f\"ur Funknetzwerke} 
+				Verwenden Sie die Hardware nicht in der N\"ahe von starken Strahlungsquellen. Dies kann die Bluetoothkommunikation der e-puck Roboter erheblich st\"oren 				und unvorhergesene Fehler erzeugen.
+		\subsection{Gr\"o\ss e des zu erkundenen Terrains} 
+				Das Projekt ist darauf ausgelegt ein Feld mit bis zu 500 Knoten zu erkunden. Ist das zu erkundende Spielfeld gr\"o\ss er, reichen die Akku's der e-puck Roboter
+				nicht aus, um die Erkundung vollst\"andig durchzuf\"uhren.
+		\subsection{Spielfeldbedinungen} 
+				Das Spielfeld besteht ausschlie\ss lich aus gleichgro\ss en quadratischen Feldern, die rasterf\"ormig und zusammenh\"angend angeordnet sind. Ein Feld 
+				muss mindestens so gro\ss \ sein, dass ein im Zentrum stehender e-puck Roboter vollst\"andig in das Innere des Feldes passt. Die Erkundung mit den e-puck 
+				Robotern ben\"otigt ausreichend reflektierende und innerhalb der Spezifikation liegenden Linien, sowie eine durchgehend gute Beleuchtung des Spielfeldes 
+				von oben. Der Untergrund muss eben sein und darf keine rutschige oder teppich\"ahnliche Oberfl\"ache aufweisen, da sich sonst die e-puck Roboter nicht 
+				problemlos bewegen k\"onnen. Die e-puck Roboter d\"urfen w\"ahrend der Erkundung nicht ber\"uhrt, verschoben oder vom Spielfeld gehoben werden. Das 
+				Spielfeld darf w\"ahrend der Erkundung nicht ver\"andert werden und keine ung\"ultigen Passagen beinhalten. 
+		\subsection{Umgebungsbedinungen} 
+				Es d\"urfen nicht mehr als sechs e-puck Roboter und ein Smartphone zur selben Zeit verwendet werden und die Startpositionen der jeweiligen e-puck Roboter
+				sind vor Beginn der Erkundung fest zu w\"ahlen.
+		\subsection{Weitere Betriebsbedinungen des Smartphones und der e-puck Roboter} 
+				Die weiteren Betriebsbedinungen des Smartphones und der e-puck Roboter k\"onnen den jeweiligen Benutzerhandb\"uchern der Hardware entnommen 
+				werden.
+\section{Bedienung des e-puck Roboters}
+	\label{e_puck_bedienung}
+
+ 	\begin{figure}[htbp]
+		\begin{minipage}[t]{6.5cm}
+			\vspace{0pt}
+			\includegraphics[height=6.5cm]{images/puck1.png} 
+			\caption{e-puck}
+		\end{minipage}
+		\hfill
+		\begin{minipage}[t]{0.5\textwidth}
+			\vspace{5pt}
+				\subsection{Power-Switch}
+					Zum Ein/Ausschalten des e-puck Roboters.
+				\subsection{Selector}
+					Der Selector kann auf 16 verschiedene Positionen gebracht werden. Ist der Selector nach Bet\"atigen des Power-Switch auf Position 0, befindet sich der e-
+					puck Roboter in der Kalibrierungsphase. In jedem anderen Fall ist der e-puck im Erkundungsmodus.
+				\subsection{Power-LED}
+					Die Power-LED leuchtet gr\"un, sobald der e-puck eingeschaltet ist.
+		\end{minipage}
+   \end{figure}
+   
+    \begin{figure}[htbp]
+		\begin{minipage}[t]{6.5cm}
+			\vspace{0pt}
+			\includegraphics[height=6.5cm]{images/puck2.png} 
+			\caption{Bodensensoren}
+			\label{positionierung_epuck}
+		\end{minipage}
+		\hfill
+		\begin{minipage}[t]{0.5\textwidth}
+			\vspace{10pt}
+				\subsection{Bodensensoren}
+						Das Erweiterungsmodul f\"ur die Bodensensoren ist f\"ur dieses Projekt von sehr gro\ss er Bedeutung. Hierbei ist vor allem zu beachten, dass der e-puck 								Roboter	bei der Kalibrierung, sowie beim Erkundungsvorgang immer richtig positioniert ist. Die folgende Abbildung veranschaulicht, wie der Roboter 
+						beim Start der Erkundung	stehen muss. Die schwarze Linie muss zwischen den \"au\ss eren Bodensensoren liegen. (siehe Abbildung 				
+						\ref{positionierung_epuck})
+		\end{minipage}
+   \end{figure}
+   
+\newpage
+
+	\subsection{Kalibrierung}
+		Der Kalibrierungsvorgang beginnt damit, dass der Selector des ausgeschalteten e-pucks auf die Position 0 gesetzt wird. Danach muss der Roboter mit allen drei
+		Bodensensoren auf eine schwarze Linie gesetzt werden. Nachdem der Roboter mit dem Power-Switch durch den Benutzer aktiviert wurde, f\"ahrt der e-puck ca.
+		7 cm nach vorne. Hierbei muss darauf geachtet werden, dass die Fl\"ache vor dem Roboter wei\ss \ ist. Nach erfolgreicher Kalibrierung f\"ahrt der Roboter wieder
+		zur\"uck in seine Ausgangsposition. Falls beim Kalibriervorgang ein Fehler aufgetreten ist, blinken die 8 roten LEDs an der Aussenseite des Roboters. 
+		Wiederholen Sie dann den Vorgang erneut und achten Sie darauf, dass der Roboter richtig positioniert ist. (siehe Abbildung \ref{kalibrierabbildung}) \\
+		
+		\vspace{30pt}
+		 \begin{figure}[htbp]
+			\includegraphics[height=8cm]{images/puck3.png} 
+			\caption{Kalibriervorgang}
+			\label{kalibrierabbildung}
+		\end{figure}
+\section{Installation}
+			\subsection{Vorbereitungen} 
+			Vor der Installation und der ersten Inbetriebnahme sind folgende vorbereitenden Schritte notwendig:
+			\begin{itemize}
+				\item{Die Akku's der e-puck Roboter m\"ussen vollst\"andig geladen sein}
+				\item{Download und Installation von MPLAB IDE}
+				\item{Download und Installation von PIC30}
+				\item{Download und Installation von Tiny-Bootloader}
+				\item{Download und Installation der UNIX-Tools f\"ur Windows}
+				\item{Download des modifizierten Bootloader f\"ur 16-fache PLL auf dem e-puck Roboter}
+			\end{itemize}
+			\subsection{Bootloader aufspielen} 
+				Wenn alle Vorbereitungen erfolgreich durchge\"uhrt wurden, muss der Bootloader des e-puck Roboters neu geflasht werden. Eine ausf\"uhrliche
+				Anleitung hierzu finden Sie unter \url{http://www.gctronic.com/doc/index.php/E-Puck} \\
+				Das MPLAB-Projekt, das Sie ben\"otigen wird bei der Software mitgeliefert und befindet sich im Verzeichnis \textit{/trunk/epuck/bootloader/}.
+			\subsection{Bluetooth-Verbindung aufbauen} 
+				Schalten Sie den e-puck durch Umschalten des Power-Switch ein und starten Sie den \textit{Pairing}-Prozess. Eine ausf\"uhrliche Anleitung finden Sie
+				unter  \url{http://www.gctronic.com/doc/index.php/E-Puck} \\
+				Nach der Zuweisung eines Com-Ports muss dieser im \textit{TinyBootloader} eingetragen werden.			
+			\subsection{Firmware aufspielen} 
+				Als letzten Schritt m\"ussen Sie mithilfe des \textit{TinyBootloader} die Firmware auf den e-puck Roboter aufspielen. Ein Manual zu diesem Programm
+				ist unter \url{http://www.etc.ugal.ro/cchiculita/software/picbootloader.htm} zu finden. \\
+				Fahren Sie mit Kapitel \ref{programmstart_ablauf} fort, um eine Erkundung zu starten.
+\section{Benutzeroberfl\"ache des Smartphones}
+\label{benutzeroberflaeche}
+	\subsection{Activity Connect}
+		\paragraph*{Kurzbeschreibung:}
+		Die Activity Connect \"offnet sich direkt nach dem Start der Anwendung. \\	
+		Sie ermöglicht die Suche nach verbindungsbereiten e-puck Robotern und die Herstellung der Bluetooth-Verbindungen.
+		Über das Men\"u der Activity können außerdem die Activities \textit{Simulation} und \textit{Import} gestartet werden.
+
+		\paragraph*{Menübeschreibung:}
+		\begin{itemize}
+			\item Start: Über den Men\"ueintrag \textbf{Start} kann der Erkundungsvorgang gestartet werden. Dazu muss jedoch mindestens ein e-puck
+			verf\"ugbar und in der Liste der gefundenen Roboter als Teilnehmer ausgew\"ahlt worden sein.
+			\item Simulation: Durch Auswahl des Men\"ueintrags \textbf{Simulation} gelangt man zur Activity \textit{Simulation}. Diese erm\"oglicht
+			die simulierte Ausf\"uhrung einer Erkundung auf dem Smartphone.
+			\item Import: Der Men\"ueintrag \textbf{Import} startet die Activity \textit{Import}. Mit dieser k\"onnen auf dem Smartphone gespeicherte
+			Karten betrachtet werden.
+		\end{itemize}
+
+		\paragraph*{Funktionsbeschreibung:}
+		Um zu einem oder mehreren e-puck Robotern eine Bluetooth-Verbindung aufzubauen und die Erkundung zu starten, f\"uhren Sie folgende Schritte
+		durch:
+		\begin{enumerate}
+			\item \textbf{Klick auf den Button Suche:} Durch den Klick auf den Button \textbf{Suche} wird die Suche nach verbindungsbereiten e-puck
+			Robotern gestartet. Diese dauert ca. 12s. Die Oberfl\"ache der Activity ist in dieser Zeit gesperrt.
+			\item \textbf{Auswahl der teilnehmenden e-puck Roboter:} Nachdem die Suche beendet worden ist, werden die gefundenen e-pucks in einer
+			Liste dargestellt. Durch Klick auf die Bluetooth-Namen der Roboter k\"onnen diese für die Teilnahme an der Erkundung ausgew\"ahlt bzw.
+			ausgeschlossen werden. Die Namen teilnehmender Roboter werden in gr\"uner Schrift dargestellt, nicht teilnehmende in roter Schrift.
+			\item \textbf{Herstellung der Bluetooth-Verbindungen und Start der Erkundung:} Nach Auswahl der teilnehmenden e-pucks aus der Liste der
+			gefundenen Roboter kann der Verbindungsvorgang durch Auswahl des Men\"ueintrags \textbf{Start} gestartet werden. \\ 
+			Es muss mindestens ein e-puck Roboter ausgew\"ahlt sein. Während des Verbindungsvorgangs ist die Oberfl\"ache der Activity gesperrt.
+			Tritt w\"ahrend der Verbindungsherstellung ein Fehler auf, wird der Verbindungsvorgang abgebrochen und eine entsprechende Fehlermeldung
+			ausgegeben. \\
+			Wurden alle Verbindungen erfolgreich aufgebaut wird die Activity \textit{Map“} automatisch gestartet.
+		\end{enumerate}
+		
+	\subsection{Activtiy Import}
+		\paragraph*{Kurzbeschreibung:}
+		Die Activity \textit{Import} erm\"oglicht das Betrachten von Karten, die auf dem externen Speicher des Smartphones gespeichert sind.
+		\textit{Import} kann über das Men\"u der Activity \textit{Connect} durch Klick auf den Eintrag \textbf{Import} gestartet werden. Nach Start
+		der Anwendung werden automatisch alle gefundenen Karten aufgelistet. 
+
+		\paragraph*{Funktionsbeschreibung:}
+		Um eine Karte aus dem Dateisystem zu \"offnen und anzuzeigen, muss das Smartphone über ein externes Speichermedium verfügen. Dieses muss
+		lesbar sein und das Verzeichnis /mnt/sdcard/Android/data/sep.conquest/ enthalten. Zum Öffnen m\"ussen folgende Schritte durchgef\"uhrt
+		werden:
+		\begin{enumerate}
+ 			\item \textbf{Auswahl der zu \"offnenden Karte:} Nach Start der Activity werden automatisch die Dateinamen aller gefundenen Karten
+ 			aufgelistet. Durch Klick auf die Eintr\"age der Liste kann eine der Karten ausgewählt und geöffnet werden. Die Karte wird anschließend in
+ 			der Activity \textit{Map} angezeigt. \\
+ 		\end{enumerate}
+ 	
+ 	\subsection{Activity Export}
+ 		\paragraph*{Kurzbeschreibung:}
+ 		Die Activtiy \textit{Export} ermöglicht das Abspeichern der während einer Erkundung bereits erforschten Karte. Das Smartphone muss dazu über
+ 		ein beschreibbares externes Speichermedium verfügen. Die Karten werden im Verzeichnis /mnt/sdcard/Android/data/sep.conquest/files
+ 		gespeichert. \\
+ 		Die Activity \textit{Export} kann von der Activtiy \textit{Map} durch das Menü gestartet werden. Sie ist jedoch nur im Exploration Modus
+ 		verfügbar. Abgespeicherte Karten können mit der Activity \textit{Import} wieder geöffnet werden.
+ 		
+ 		\paragraph*{Funktionsbeschreibung:}
+ 		Um eine teilweise oder vollständig erkundete Karte zu speichern, führen Sie folgende Schritte durch:
+ 		\begin{enumerate}
+ 			\item \textbf{Eintrag eines gültigen Dateinamens in das Textfeld:} Bevor die Karte gespeichert werden kann, muss in das Textfeld ein
+ 			gültiger Dateiname eingetragen werden. Durch Klick auf das Textfeld kann dieser eingetragen werden. \\ 
+ 			Der Dateiname muss mit einem Buchstaben oder einer Ziffer beginnen, gefolgt von einer beliebigen Anzahl von Buchstaben, Ziffern oder
+ 			Unterstrichen. Die Dateiendung \textbf{.sep} kann, muss aber nicht miteingetragen werden.
+ 			\item \textbf{Auswahl eines güligen Dateinames aus der Dateiliste:} Über dem Textfeld werden bereits abgespeicherte Kartendateien in
+ 			einer Liste angezeigt. Durch Klick auf einen Eintrag wird der Dateiname in das Textfeld kopiert und kann nach Wunsch bearbeitet werden.
+ 			\item \textbf{Speichern der Karte:} Nachdem ein gültiger Dateiname eingegeben wurde, kann die Karte durch Betätigen des Buttons
+ 			\textbf{Speichern} abgespeichert werden. Wurde der Speichervorgang erfolgreich abgeschlossen, wird die Activity \textit{Export} beendet
+ 			und die Anwendung kehrt zur Activtiy \textit{Map} zurück. Andernfalls wird eine Fehlermeldung ausgegeben.
+ 		\end{enumerate}
+ 	
+ 	\subsection{Activity Steer}
+ 		\paragraph*{Kurzbeschreibung:}
+ 		Mit Hilfe der Activity \textit{Steer} kann ein an der Erkundung teilnehmender e-puck ausgewählt und manuell über das
+ 		Spielfeld gesteuert werden. Der Roboter bewegt sich dabei wie bei der automatischen Erkundung stets entlang der Linien und von Knoten zu
+ 		Knoten. Kommandos werden nur auf Knoten entgegengenommen. Die Steuerung erfolgt wahlweise mit einem On-Screen-Joystick oder mit den
+ 		Beschleunigungssensoren des Smartphones (nur falls im Smartphone integriert. Es kann nur ein e-puck zur gleichen Zeit gesteuert werden.
+ 		
+ 		\paragraph*{Funktionsbeschreibung:}
+ 		Um eine e-puck manuell zu steuern, führen Sie folgende Schritte durch:
+ 		\begin{enumerate}
+ 			\item \textbf{Auswahl des zu steuernden e-pucks:} Mit Hilfe des DropDown-Menüs kann der gewünschte e-puck ausgewählt werden. Es werden
+ 			nur solche Roboter angezeigt, die bereits lokalisiert sind und sich nicht in einem Fehlerzustand befinden. Nach dem Öffnen der Activity
+ 			ist standardmäßig der in der Activity \textit{Map} ausgewählte e-puck selektiert. 
+ 			\item \textbf{Aktivierung der manuellen Steuerung:} Durch Anhaken der CheckBox "manuelle Steuerung aktivieren" kann die manuelle 
+ 			Steuerung des ausgewählten Roboters aktiviert werden. Durch einen erneuten Klick auf die CheckBox wird die manuelle Steuerung deaktiviert
+ 			und der Roboter fährt selbstständig mit der Erkundung fort.
+ 			\item \textbf{Auswahl der Steuerungsart:} Mit Hilfe des unteren DropDown-Menüs kann zu verwendende Steuerungsart ausgewählt werden. Zur
+ 			Auswahl stehen die Steuerung über einen On-Screen-Joystick in Form von vier Pfeilbuttons oder die Steuerung mit dem im Smartphone
+ 			integrierten Beschleunigungssensor. Ist kein Beschleunigungssensor vorhanden, wird das DropDown-Steuerelement ausgegraut dargestellt und
+ 			der Roboter kann nur mit Hilfe des Joysticks gesteuert werden.
+ 			\item \textbf{Steuerung mit dem On-Screen-Joystick:} Durch die vier Richtungsbuttons kann der e-puck über das Spielfeld gesteuert werden.
+ 			Mit Pfeil aufwärts fährt der e-puck am nächsten Knoten vorwärts. Pfeil links und rechts bewirken eine 90 Grad Links- bzw. Rechtsdrehung
+ 			am nächsten Knoten, Pfeil abwärts eine Drehung um 180 Grad.
+ 			\item \textbf{Steuerung mit dem Beschleunigungssensor:}
+ 			Durch das Neigen des Smartphones nach vorne fährt der e-puck am nächsten Knoten vorwärts. Neigungen nach links und rechts bewirken eine
+ 			90 Grad Links- bzw. Rechtsdrehung am nächsten Knoten. Das Kippen des Smartphones nach hinten bewirkt eine Drehung um 180 Grad.
+ 		\end{enumerate}
+
+\section{Programmablauf - Verschiedene Modi}
+\label{programmstart_ablauf}
+		Schalten Sie das Smartphone ein und starten Sie die Anwendung. Nun k\"onnen Sie sich f\"ur einen der zwei unterst\"utzen Modi entscheiden. M\"ochten Sie
+		die Erkundung ohne echte e-puck Roboter durchf\"uhren fahren Sie mit  Kapitel \ref{subsec:simulierte_erkundung} fort. Wollen Sie die Erkundung auf einem
+		realen Spielfeld mit Robotern durchf\"uhren fahren Sie mit Kapitel  \ref{subsec:reale_erkundung} fort. Durch mehrmaliges Dr\"ucken des \textit{Zur\"uck}-
+		Buttons ist es m\"oglich in den Ausgangsbildschirm zu gelangen und so zwischen den verschiedenen Modi zu wechseln. N\"ahere Informationen bzgl. der 			
+		Men\"uf\"uhrung finden Sie unter Kapitel \ref{benutzeroberflaeche}
+	\subsection{Simulation Modus -- Simulierte Erkundung}
+	\label{subsec:simulierte_erkundung}
+		Wollen Sie die simulierte Erkundung starten, dr\"ucken Sie \textit{Men\"u} und anschlie\ss end \textit{Simulation}. Nachdem sich ein neues Fenster ge\"offnet hat
+		dr\"ucken Sie erneut auf  \textit{Men\"u} und \textit{\"Offnen}. Nun werden alle verf\"ugbaren Karten, die im Verzeichniss 
+		\textit{/mnt/sdcard/Android/data/sep.conquest/files} gespeichert sind, angezeigt. W\"ahlen Sie per Touch auf den Dateinamen die gew\"unschte Karte aus. Die
+		Auswahl wird nun geladen und als Vorschau mit den Startpositionen der ausgew\"ahlten e-puck Robotern angezeigt. Auf der linken Seite k\"onnen mittels eines 
+		Drop-Down-Men\"us die Anzahl der Roboter, die die Erkundung durchf\"uhren sollen eingestellt werden. Die Anzahl der e-puck 	Roboter kann in Abh\"angigkeit 
+		der eingetragenen Startpositionen in der Karte variieren. Um die Erkundung zu starten, w\"ahlen Sie im \textit{Men\"u} nun \textit{Start} aus. Ein neuer Bildschirm 
+		\"offnet sich und Sie k\"onnen verfolgen, wie die e-puck Roboter  die geladene Karte erkunden.
+	\subsection{Exploration Modus -- Reale Erkundung mit Robotern}
+	\label{subsec:reale_erkundung}
+		Stellen Sie die e-puck Roboter auf den vordefinierten Startpositionen auf einen Knoten und vergewissern Sie sich, dass der Selector \textbf{nicht} auf die Position 			0	eingestellt ist. Schalten Sie die Roboter nun mithilfe des Power-Switch (Kapitel \ref{e_puck_bedienung}) ein. Nach korrektem Einschalten leuchtet nun die 
+		\textit{POWER-LED}. Dr\"ucken Sie anschlie\ss end den \textit{Suchen}-Button, um die Bluetooth-Suche nach verf\"ugbaren Robotern zu starten. Nach 								erfolgreicher	Suche werden alle verf\"ugbaren Roboter angezeigt. Sie k\"onnen per Touch alle e-pucks ausw\"ahlen die an der Erkundung teilnehmen sollen. Ist 					ein Roboter ausgew\"ahlt wird er durch \"Anderung der Schriftfarbe hervorgehoben. Nachdem Ihre Auswahl abgeschlossen ist, bet\"atigen Sie \textit{Men\"u} 					und dr\"ucken  \textit{Start} um die Erkundung zu starten. Sie k\"onnen am Handy den Fortschritt der Erkundung beobachten. Sie k\"onnen w\"ahrend der
+		Erkundung auch einen der e-puck Roboter selbst via Handy steuern. Beachten Sie, dass zur selben Zeit nur ein Roboter gesteuert werden kann. Dieser kann nur
+		auf den  Linien fahren und beim Erreichen eines neuen Knotens bleibt er stehen und erwartet das n\"achste Fahrkommando . Zum Wechseln in den manuellen 
+		Steuerungmodus dr\"ucken Sie \textit{Men\"u} und \textit{Steuerung}. Nun \"offnet sich der Steuerungsdialog. Hier k\"onnen Sie mittels Drop-Down-Men\"u 
+		ausw\"ahlen, welcher Roboter gesteuert werden soll und welche Steuerungsart aktiv ist. Durch Dr\"ucken des \textit{Zur\"uck}-Buttons wird der Roboter wieder
+		freigegeben und der Benutzer wechselt in den Exploration Modus zur\"uck. W\"ahrend ein Roboter gesteuert wird, l\"auft die Erkundung der anderen e-pucks
+		weiter. Nach erfolgreicher Erkundung fahren die e-puck Roboter wieder auf ihre Ausgangspositionen zur\"uck und k\"onnen weiterhin gesteuert werden. Die
+		Bluetooth-Verbindung wird getrennt, sobald die Applikation beendet wird oder der Benutzer durch Bet\"atigen des \textit{Zur\"uck}-Buttons auf den 
+		Ausgangsdialog wechselt.
+	\subsection{Import/Export Modus}
+		\begin{itemize}
+			\item{Export:	Wenn Sie im Exploration Modus eine Karte erfolgreich und vollst\"andig erkundet haben, k\"onnen Sie mithilfe der  \textit{Export}-Funktion die 
+			Karte abspeichern.	Dr\"ucken Sie hierzu unter  \textit{Men\"u} den Button  \textit{Export}. Ein neuer Bildschirm wird angezeigt, in welche Sie aufgefordert 
+			werden einen Kartennamen	einzugeben. Nachdem Sie einen Namen eingegeben haben, k\"onnen Sie durch bet\"atigen des  \textit{OK}-Buttons die Karte 
+			abspeichern. Die Karte  wird mit der Dateiendung .sep im Ordner \textit{/mnt/sdcard/Android/data/sep.conquest/files} gespeichert.}
+			\item{Import: Sie k\"onnen bereits erkundete und gespeicherte Karten betrachten, indem Sie nach Starten der Anwendung unter \textit{Men\"u} den Button 
+				\textit{Import} ausw\"ahlen. Es werden alle verf\"ugbaren Karten in einer Liste angezeigt. Durch Ber\"uhren und anschlie\ss endem Dr\"ucken des 										\textit{\"Offnen}-Buttons kann die Karte geladen werden.}
+		\end{itemize}
+\section{Schnellstart}
+	\subsection{Simulation Modus}
+		\begin{itemize}
+			\item{\textit{Men\"u \frq \frq \ Simulation}}
+			\item{\textit{Men\"u \frq \frq \ \"Offnen} : W\"ahlen Sie eine der angezeigten Karten per Touch aus}
+			\item{W\"ahlen Sie die Anzahl der zu erkundenden e-puck Robotern aus}
+			\item{\textit{Men\"u \frq \frq \ Start}}									
+		\end{itemize}
+	\subsection{Exploration Modus}
+		\begin{itemize}
+			\item{e-puck Roboter auf Startpositionen platzieren und einschalten}
+			\item{\textit{Suchen} : W\"ahlen Sie die Roboter aus, die erkunden sollen}			
+			\item{\textit{Men\"u \frq \frq \ Start}}
+			\item{Zum Steuern eines e-puck Roboters}
+			\begin{itemize}
+				\item{\textit{Men\"u \frq \frq \ Steuerung}}
+				\item{W\"ahlen Sie den zu steuernden Roboter mittels Drop-Down aus}
+				\item{W\"ahlen Sie die Steuerungsart mittels Drop-Down aus}
+			\end{itemize}
+		\end{itemize}
+	\subsection{Import/Export}
+		\begin{itemize}
+			\item{Export}
+				\begin{itemize}
+					\item{Nach erfolgreicher und vollst\"andiger Erkundung : \textit{Men\"u \frq \frq \ Export}}
+					\item{Dateiname eingeben : \textit{Men\"u \frq \frq \ Ok}}
+				\end{itemize}
+			\item{Import}			
+				\begin{itemize}
+					\item{\textit{Men\"u \frq \frq \ Import} : Karte zum Laden ausw\"ahlen}
+					\item{\textit{Men\"u \frq \frq \ Laden}}
+				\end{itemize}
+		\end{itemize}
+\section{Support}
+	Bei technischen Fragen bzgl. des e-puck Roboters wenden Sie sich bitte an die e-puck Community, sowie an den Hersteller. \\
+	Bei technischen Fragen bzgl. des Smartphones und des Android-Betriebssystem wenden Sie sich bitte an die Android-Community unter \url{www.android.com} 
+	und an den Hersteller des Handys.
+\end{document}
