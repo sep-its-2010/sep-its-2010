@@ -7,8 +7,9 @@
 
 enum {
 	SUBS_COLLISION_SURFACE_THRESHOLD = 500, ///< Specifies the threshold-value above which the robot detects that there is no line under a line-sensor.
-	SUBS_COLLISION_LINE_MEASUREMENTS = 4, ///< Specifies how many positive measurements in a row are necessary to detect a line.
-	SUBS_COLLISION_LINE_THRESHOLD = 280 ///< Specifies the threshold for line-detection.
+	SUBS_COLLISION_LINE_MEASUREMENTS = 5, ///< Specifies how many positive measurements in a row are necessary to detect a line.
+	SUBS_COLLISION_LINE_THRESHOLD = 290, ///< Specifies the threshold for line-detection.
+	SUBS_COLLISION_MOVE_BACKWARD_THRESHOLD = 295 ///< Specifies the number of steps above which it is possible to turn the e-puck by 180° and he will detect a node.
 };
 
 bool subs_collision_run( void);

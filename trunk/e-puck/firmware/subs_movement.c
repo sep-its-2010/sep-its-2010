@@ -68,6 +68,7 @@ bool subs_movement_run( void) {
 		}
 		case CONQUEST_STATE__MOVE_FORWARD: {
 			if( !s_blActive) {
+				hal_motors_setSteps( 0);
 				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
 				s_blActive = true;
 				blActed = true;

@@ -92,7 +92,8 @@ bool subs_line_run( void) {
 
 	sen_line_SData_t podDelayed;
 	const conquest_EState_t eState = conquest_getState();
-	if( eState == CONQUEST_STATE__MOVE_FORWARD) {
+	if( eState == CONQUEST_STATE__MOVE_FORWARD ||
+		eState == CONQUEST_STATE__RETURN_NODE) {
 
 		// Fill delay buffer with the current line sensor data
 		ringbuf_pushRange( &s_podDelayBuffer, &conquest_getSensorImage()->podCalibratedLineSensors, sizeof( sen_line_SData_t));

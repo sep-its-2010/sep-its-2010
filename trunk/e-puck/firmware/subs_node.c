@@ -51,7 +51,10 @@ static bool s_blDetectionActive = false;
 
 	bool blActed = false;
 
-	if( conquest_getState() == CONQUEST_STATE__MOVE_FORWARD) {
+	const conquest_EState_t eState = conquest_getState();
+	if( eState == CONQUEST_STATE__MOVE_FORWARD ||
+		eState == CONQUEST_STATE__RETURN_NODE) {
+
 		const uint16_t* const lpui16SenLine = conquest_getSensorImage()->podCalibratedLineSensors.aui16Reflected;
 
 		// Trigger a new detection if idle & middle sensor is on white underground (cross in the middle of a node)
@@ -89,7 +92,11 @@ static bool s_blDetectionActive = false;
 				hal_led_set( ui16Direction);
 
 				conquest_setLastNode( conquest_convertDirMaskToNode( ui16Direction));
-				conquest_setState( CONQUEST_STATE__HIT_NODE);
+				if( eState == CONQUEST_STATE__RETURN_NODE) {
+					conquest_setState( CONQUEST_STATE__COLLISION);
+				} else {
+					conquest_setState( CONQUEST_STATE__HIT_NODE);
+				}
 
  				hal_motors_setSpeed( 0, 0);
  				hal_motors_setSteps( 0);
