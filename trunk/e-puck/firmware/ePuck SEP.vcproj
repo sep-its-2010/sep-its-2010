@@ -149,6 +149,10 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath=".\traps.c"
+				>
+			</File>
 			<Filter
 				Name="Hardware Abstraction Layer"
 				>
