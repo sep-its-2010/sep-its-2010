@@ -34,7 +34,7 @@ public class RobotStatus implements Cloneable {
 	/**
 	 * Saves the sensors which detected a collision
 	 */
-	private boolean[] sensorCollisionArray = new boolean[IRSensor.values().length - 1];
+	private boolean[] sensorCollisionArray = new boolean[IRSensor.values().length];
 
 	/**
 	 * The current state of the robot.

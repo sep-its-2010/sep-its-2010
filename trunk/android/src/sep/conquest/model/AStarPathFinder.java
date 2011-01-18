@@ -294,10 +294,12 @@ public class AStarPathFinder implements IPathFinder {
 			}
 
 			if (robot.getCollisionReactCount() < Puck.COLLISION_REACT_STEPS) {
-				Integer pos = Utility.makeKey(status.getPosition()[0], status
-						.getPosition()[1]);
-				if (pos.equals(robot.getCollisionNode()))
+				Integer key = Utility.makeKey(node.getXValue(), node.getYValue());
+				if (key.equals(robot.getCollisionNode())) {
 					costs += 40;
+					System.out.println("Ole");
+				}
+					
 				robot
 						.setCollisionReactCount(robot.getCollisionReactCount() + 1);
 			} else {
