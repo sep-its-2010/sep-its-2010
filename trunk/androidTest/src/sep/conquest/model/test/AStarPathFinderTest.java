@@ -7,6 +7,8 @@ import android.test.AndroidTestCase;
 import sep.conquest.model.*;
 
 /**
+ * A testcase for the a-star-pathfinder algorithm.
+ * 
  * @author Andreas Wilhelm
  *
  */
