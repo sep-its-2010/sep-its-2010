@@ -60,6 +60,8 @@ public class Map extends Activity implements Observer {
 	
 	private ProgressDialog pd;
 	
+	private boolean first = true;
+	
 	/**
 	 * Used to update the View from update-method.
 	 */
@@ -134,8 +136,9 @@ public class Map extends Activity implements Observer {
     	Controller.getInstance().getEnv().addObserver(this);
     	}
     	//automatischer start
-    	if (mMode == MapMode.SIMULATION) {
+    	if (mMode == MapMode.SIMULATION && first) {
     		PuckFactory.getSimulator().start();
+    		first = false;
     	}
     	
     }

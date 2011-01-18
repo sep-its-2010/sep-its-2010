@@ -1,5 +1,8 @@
 package sep.conquest.activity;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -8,6 +11,7 @@ import java.util.UUID;
 import sep.conquest.R;
 import sep.conquest.controller.Controller;
 import sep.conquest.model.ConquestUpdate;
+import sep.conquest.model.MapNode;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +31,8 @@ public class Statistics extends Activity implements Observer {
 	private int[] exploredNumber;
 
 	private int total;
+	
+	private int multipleCrossed;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,11 +55,10 @@ public class Statistics extends Activity implements Observer {
 								+ " " + getString(R.string.TXT_NODES) + "\n");
 						
 						frontier.append(name[i] + ": \n");
-						
-						multiple.append(name[i] + ": \n");
 
 					}
 					explored.append("\nTotal: " + total + " " + getString(R.string.TXT_NODES ) + "\n");
+					multiple.append("\nTotal: " + multipleCrossed);
 				}
 			}
 		};
@@ -78,12 +83,25 @@ public class Statistics extends Activity implements Observer {
 			exploredNumber = new int[id.size()];
 			int i = 0;
 			total = 0;
+			
 			for (UUID key : id) {
 				exploredNumber[i] = cu.getExploredNodes(key);
 				name[i] = cu.getRobotName(key);
 				total += exploredNumber[i];
 				i++;
 			}
+
+			multipleCrossed = 0;
+
+			List<MapNode> temp = cu.getMapList();
+			Iterator<MapNode> it = temp.iterator();
+			
+			while (it.hasNext()) {
+				MapNode node = (MapNode) it.next();
+				int sum = node.getVisitCounter() - 1;
+				multipleCrossed += sum;
+			}
+		
 			updateHandler.obtainMessage(UPDATE_MESSAGE).sendToTarget();
 		}
 
