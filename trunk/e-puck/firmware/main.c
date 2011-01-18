@@ -1,4 +1,5 @@
 #include "common.h"
+#include <stdio.h>
 
 #include "com.h"
 #include "hal_adc.h"
@@ -100,6 +101,17 @@ int main( void) {
 	conquest_init();
 
 	for( ;;) {
+
+		//test
+	//sen_prox_SData_t proxData;
+	//sen_prox_getCurrent( &proxData);
+	
+	//if( proxData.aui8Data[0] > 30) {
+	//	char buffer[50];
+	//	sprintf(buffer, "%i", proxData.aui8Data[0]);
+	//	hal_uart1_puts( buffer);
+	//}
+
 		com_processIncoming();
 	}
 }
