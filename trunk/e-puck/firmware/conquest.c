@@ -516,8 +516,8 @@ void cbSyncRequestReset( void) {
 	memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 	com_send( &podResponse);
 
-	// conquest_reset() implies the FSM reset
-//	fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE);
+	conquest_reset(); //implies the FSM reset
+	fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE);
 }
 
 
