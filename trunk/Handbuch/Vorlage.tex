@@ -181,7 +181,6 @@
 		Die Activity Connect \"offnet sich direkt nach dem Start der Anwendung. \\	
 		Sie ermöglicht die Suche nach verbindungsbereiten e-puck Robotern und die Herstellung der Bluetooth-Verbindungen.
 		Über das Men\"u der Activity können außerdem die Activities \textit{Simulation} und \textit{Import} gestartet werden.
-
 		\paragraph*{Menübeschreibung:}
 		\begin{itemize}
 			\item Start: Über den Men\"ueintrag \textbf{Start} kann der Erkundungsvorgang gestartet werden. Dazu muss jedoch mindestens ein e-puck
@@ -191,22 +190,32 @@
 			\item Import: Der Men\"ueintrag \textbf{Import} startet die Activity \textit{Import}. Mit dieser k\"onnen auf dem Smartphone gespeicherte
 			Karten betrachtet werden.
 		\end{itemize}
-
-		\paragraph*{Funktionsbeschreibung:}
+			\paragraph*{Funktionsbeschreibung:}
 		Um zu einem oder mehreren e-puck Robotern eine Bluetooth-Verbindung aufzubauen und die Erkundung zu starten, f\"uhren Sie folgende Schritte
 		durch:
 		\begin{enumerate}
-			\item \textbf{Klick auf den Button Suche:} Durch den Klick auf den Button \textbf{Suche} wird die Suche nach verbindungsbereiten e-puck
-			Robotern gestartet. Diese dauert ca. 12s. Die Oberfl\"ache der Activity ist in dieser Zeit gesperrt.
-			\item \textbf{Auswahl der teilnehmenden e-puck Roboter:} Nachdem die Suche beendet worden ist, werden die gefundenen e-pucks in einer
-			Liste dargestellt. Durch Klick auf die Bluetooth-Namen der Roboter k\"onnen diese für die Teilnahme an der Erkundung ausgew\"ahlt bzw.
-			ausgeschlossen werden. Die Namen teilnehmender Roboter werden in gr\"uner Schrift dargestellt, nicht teilnehmende in roter Schrift.
-			\item \textbf{Herstellung der Bluetooth-Verbindungen und Start der Erkundung:} Nach Auswahl der teilnehmenden e-pucks aus der Liste der
-			gefundenen Roboter kann der Verbindungsvorgang durch Auswahl des Men\"ueintrags \textbf{Start} gestartet werden. \\ 
-			Es muss mindestens ein e-puck Roboter ausgew\"ahlt sein. Während des Verbindungsvorgangs ist die Oberfl\"ache der Activity gesperrt.
-			Tritt w\"ahrend der Verbindungsherstellung ein Fehler auf, wird der Verbindungsvorgang abgebrochen und eine entsprechende Fehlermeldung
-			ausgegeben. \\
-			Wurden alle Verbindungen erfolgreich aufgebaut wird die Activity \textit{Map“} automatisch gestartet.
+			\begin{figure}[htbp]
+				\begin{minipage}[t]{6.5cm}
+					\vspace{0pt}
+					\includegraphics[height=6.5cm]{images/connect3.png} 
+					\caption{Connect-Activity}
+				\end{minipage}
+				\hfill
+				\begin{minipage}[t]{0.5\textwidth}
+					\vspace{5pt}
+						\item \textbf{Klick auf den Button Suche:} Durch den Klick auf den Button \textbf{Suche} wird die Suche nach verbindungsbereiten e-puck
+						Robotern gestartet. Diese dauert ca. 12s. Die Oberfl\"ache der Activity ist in dieser Zeit gesperrt.
+						\item \textbf{Auswahl der teilnehmenden e-puck Roboter:} Nachdem die Suche beendet worden ist, werden die gefundenen e-pucks in einer
+						Liste dargestellt. Durch Klick auf die Bluetooth-Namen der Roboter k\"onnen diese für die Teilnahme an der Erkundung ausgew\"ahlt bzw.
+						ausgeschlossen werden. Die Namen teilnehmender Roboter werden in gr\"uner Schrift dargestellt, nicht teilnehmende in roter Schrift.						
+				\end{minipage}
+   			\end{figure}
+   						\item \textbf{Herstellung der Bluetooth-Verbindungen und Start der Erkundung:} Nach Auswahl der teilnehmenden e-pucks aus der Liste der
+						gefundenen Roboter kann der Verbindungsvorgang durch Auswahl des Men\"ueintrags \textbf{Start} gestartet werden. \\ 
+						Es muss mindestens ein e-puck Roboter ausgew\"ahlt sein. Während des Verbindungsvorgangs ist die Oberfl\"ache der Activity gesperrt.
+						Tritt w\"ahrend der Verbindungsherstellung ein Fehler auf, wird der Verbindungsvorgang abgebrochen und eine entsprechende Fehlermeldung
+						ausgegeben. \\
+						Wurden alle Verbindungen erfolgreich aufgebaut wird die Activity \textit{Map“} automatisch gestartet.
 		\end{enumerate}
 		
 	\subsection{Activtiy Import}
@@ -224,7 +233,19 @@
  			aufgelistet. Durch Klick auf die Eintr\"age der Liste kann eine der Karten ausgewählt und geöffnet werden. Die Karte wird anschließend in
  			der Activity \textit{Map} angezeigt. \\
  		\end{enumerate}
- 	
+			\begin{figure}[htbp]
+				\begin{minipage}[t]{6.5cm}
+					\vspace{0pt}
+					\includegraphics[height=6.5cm]{images/import.png} 
+					\caption{Import-Activity 1}
+				\end{minipage}
+				\hfill
+				\begin{minipage}[t]{6.5cm}
+					\vspace{0pt}
+					\includegraphics[height=6.5cm]{images/import3.png} 
+					\caption{Import-Activity 2}
+				\end{minipage}
+   			\end{figure} 	
  	\subsection{Activity Export}
  		\paragraph*{Kurzbeschreibung:}
  		Die Activtiy \textit{Export} ermöglicht das Abspeichern der während einer Erkundung bereits erforschten Karte. Das Smartphone muss dazu über
@@ -236,12 +257,25 @@
  		\paragraph*{Funktionsbeschreibung:}
  		Um eine teilweise oder vollständig erkundete Karte zu speichern, führen Sie folgende Schritte durch:
  		\begin{enumerate}
- 			\item \textbf{Eintrag eines gültigen Dateinamens in das Textfeld:} Bevor die Karte gespeichert werden kann, muss in das Textfeld ein
- 			gültiger Dateiname eingetragen werden. Durch Klick auf das Textfeld kann dieser eingetragen werden. \\ 
- 			Der Dateiname muss mit einem Buchstaben oder einer Ziffer beginnen, gefolgt von einer beliebigen Anzahl von Buchstaben, Ziffern oder
- 			Unterstrichen. Die Dateiendung \textbf{.sep} kann, muss aber nicht miteingetragen werden.
- 			\item \textbf{Auswahl eines güligen Dateinames aus der Dateiliste:} Über dem Textfeld werden bereits abgespeicherte Kartendateien in
- 			einer Liste angezeigt. Durch Klick auf einen Eintrag wird der Dateiname in das Textfeld kopiert und kann nach Wunsch bearbeitet werden.
+ 		
+ 		\begin{figure}[htbp]
+				\begin{minipage}[t]{6.5cm}
+					\vspace{20pt}
+					\includegraphics[height=6.5cm]{images/export.png} 
+					\caption{Export-Activity}
+				\end{minipage}
+				\hfill
+				\begin{minipage}[t]{0.5\textwidth}
+					\vspace{10pt}
+					\item \textbf{Eintrag eines gültigen Dateinamens in das Textfeld:} Bevor die Karte gespeichert werden kann, muss in das Textfeld ein
+ 					gültiger Dateiname eingetragen werden. Durch Klick auf das Textfeld kann dieser eingetragen werden. \\ 
+ 					Der Dateiname muss mit einem Buchstaben oder einer Ziffer beginnen, gefolgt von einer beliebigen Anzahl von Buchstaben, Ziffern oder
+ 					Unterstrichen. Die Dateiendung \textbf{.sep} kann, muss aber nicht miteingetragen werden.
+ 					\item \textbf{Auswahl eines güligen Dateinames aus der Dateiliste:} Über dem Textfeld werden bereits abgespeicherte Kartendateien in
+ 					einer Liste angezeigt. Durch Klick auf einen Eintrag wird der Dateiname in das Textfeld kopiert und kann nach Wunsch bearbeitet werden.
+				\end{minipage}
+   			\end{figure} 	
+ 			
  			\item \textbf{Speichern der Karte:} Nachdem ein gültiger Dateiname eingegeben wurde, kann die Karte durch Betätigen des Buttons
  			\textbf{Speichern} abgespeichert werden. Wurde der Speichervorgang erfolgreich abgeschlossen, wird die Activity \textit{Export} beendet
  			und die Anwendung kehrt zur Activtiy \textit{Map} zurück. Andernfalls wird eine Fehlermeldung ausgegeben.
@@ -265,16 +299,54 @@
  			und der Roboter fährt selbstständig mit der Erkundung fort.
  			\item \textbf{Auswahl der Steuerungsart:} Mit Hilfe des unteren DropDown-Menüs kann zu verwendende Steuerungsart ausgewählt werden. Zur
  			Auswahl stehen die Steuerung über einen On-Screen-Joystick in Form von vier Pfeilbuttons oder die Steuerung mit dem im Smartphone
- 			integrierten Beschleunigungssensor. Ist kein Beschleunigungssensor vorhanden, wird das DropDown-Steuerelement ausgegraut dargestellt und
+ 			integrierten Beschleunigungssensor. Ist kein Beschleunigungssensor vorhanden, wird das Drop-Down-Steuerelement ausgegraut dargestellt und
  			der Roboter kann nur mit Hilfe des Joysticks gesteuert werden.
- 			\item \textbf{Steuerung mit dem On-Screen-Joystick:} Durch die vier Richtungsbuttons kann der e-puck über das Spielfeld gesteuert werden.
- 			Mit Pfeil aufwärts fährt der e-puck am nächsten Knoten vorwärts. Pfeil links und rechts bewirken eine 90 Grad Links- bzw. Rechtsdrehung
- 			am nächsten Knoten, Pfeil abwärts eine Drehung um 180 Grad.
- 			\item \textbf{Steuerung mit dem Beschleunigungssensor:}
- 			Durch das Neigen des Smartphones nach vorne fährt der e-puck am nächsten Knoten vorwärts. Neigungen nach links und rechts bewirken eine
- 			90 Grad Links- bzw. Rechtsdrehung am nächsten Knoten. Das Kippen des Smartphones nach hinten bewirkt eine Drehung um 180 Grad.
+ 			
+			\begin{figure}[htbp]
+				\begin{minipage}[t]{6.5cm}
+					\vspace{10pt}
+					\includegraphics[height=6.5cm]{images/steer.png} 
+					\caption{Export-Activity}
+				\end{minipage}
+				\hfill
+				\begin{minipage}[t]{0.5\textwidth}
+					\vspace{10pt}
+					\item \textbf{Steuerung mit dem On-Screen-Joystick:} Durch die vier Richtungsbuttons kann der e-puck über das Spielfeld gesteuert werden.
+ 					Mit Pfeil aufwärts fährt der e-puck am nächsten Knoten vorwärts. Pfeil links und rechts bewirken eine 90 Grad Links- bzw. Rechtsdrehung
+ 					am nächsten Knoten, Pfeil abwärts eine Drehung um 180 Grad.
+ 					\item \textbf{Steuerung mit dem Beschleunigungssensor:}
+ 					Durch das Neigen des Smartphones nach vorne fährt der e-puck am nächsten Knoten vorwärts. Neigungen nach links und rechts bewirken eine
+ 					90 Grad Links- bzw. Rechtsdrehung am nächsten Knoten. Das Kippen des Smartphones nach hinten bewirkt eine Drehung um 180 Grad.
+				\end{minipage}
+   			\end{figure} 	 			
+ 			
+ 			
  		\end{enumerate}
-
+ 		\newpage
+	\subsection{Activity Statistics}
+ 		\paragraph*{Kurzbeschreibung:}
+ 		Die Activity \textit{Statistics} zeigt verschiedene Informationen bzgl. der erkundeten Karte und Knoten an. Diese Activity ist im Simulations-Modus sowie im
+ 		Exploration-Modus verf\"ugbar. Die \textit{Statistics}-Anzeige kann von der Activity \textit{Map} \"uber das Men\"u gestartet werden. \\ \\
+ 		\includegraphics[height=6cm]{images/statistic.png}
+ 	\subsection{Activity Map}
+ 		\paragraph{Kurzbeschreibung:}
+ 		Die Activity \textit{Map} stellt die Kern-Activity dar. Sie zeigt die bereits erkundete Karte und die aktuelle Position der e-puck Roboter an. Von ihr aus gelangt man
+ 		mithilfe des Men\"us in die Activities \textit{Statistics}, \textit{Steer}, und \textit{Export}. Durch Dr\"ucken auf einen in der Karte angezeigten e-puck oder durch 
+ 		Auswahl mit einem Drop-Down-Men\" oberhalb der Karte kann ein e-puck ausgew\"ahlt werden, um ihn dann beispielsweise zu steuern.
+ 		\begin{figure}[htbp]
+				\begin{minipage}[t]{6cm}
+					\vspace{10pt}
+					\includegraphics[height=6.5cm]{images/map.png} 
+					\caption{Map-Activity 1}
+				\end{minipage}
+				\hfill
+				\begin{minipage}[t]{6cm}
+					\vspace{10pt}
+					\includegraphics[height=6.5cm]{images/map.png} 
+					\caption{Map-Activity 2}
+				\end{minipage}
+   			\end{figure} 	 			
+ 		
 \section{Programmablauf - Verschiedene Modi}
 \label{programmstart_ablauf}
 		Schalten Sie das Smartphone ein und starten Sie die Anwendung. Nun k\"onnen Sie sich f\"ur einen der zwei unterst\"utzen Modi entscheiden. M\"ochten Sie
@@ -345,8 +417,33 @@
 					\item{\textit{Men\"u \frq \frq \ Laden}}
 				\end{itemize}
 		\end{itemize}
+\section{Erweiterbarkeit}
+	Zur Erweiterung der Software raten wir die Entwicklungsumgebungen zu ben\"utzen, die zur Entwicklung des Systems verwendet wurden.
+	Nachfolgende Auflistung enth\"alt alle relevanten Programme und Compiler, die zur Weiterentwicklung notwendig sind.
+	\begin{itemize}
+		\item{Zur Ver\"anderung der Android-Applikation}
+		\begin{itemize}
+			\item{Eclipse IDE ab Version 3.5}
+			\item{Java Development Kit (JDK) 6}
+			\item{Android Development Tools (ADT) - Plugin f\"ur Eclipse ab Version 7}
+			\item{Android SDK ab Platform 2.1}
+		\end{itemize}
+		\item{Zur Ver\"anderung der Firmware auf dem e-puck Roboter}
+		\begin{itemize}
+			\item{MPLAB Version Moartl mit Complier C-Moartl}
+		\end{itemize}
+	\end{itemize}
+	Hier noch einige Anregungen, die zur Erweiterungen und Verbesserung des Systems verwendet werden k\"onnen:
+	\begin{itemize}
+		\item{Globale Lokalisierung} \\ Die Roboter k\"onnen die Erkundung mit beliebigen Startpositionen und Orientierungen beginnen.
+		\item{Knotenanalyse mit Kamera} \\ Die Erkennung der Knotentypen erfolgt durch Auswertung der Kamera.
+		\item{Unterst\"utzung von komplexeren Spielfeldern} \\ Es sollen auch Spielfeldern mit ungeraden Linien erkundet werden k\"onnen.
+		\item{u.v.m.}
+	\end{itemize}
+	
 \section{Support}
 	Bei technischen Fragen bzgl. des e-puck Roboters wenden Sie sich bitte an die e-puck Community, sowie an den Hersteller. \\
 	Bei technischen Fragen bzgl. des Smartphones und des Android-Betriebssystem wenden Sie sich bitte an die Android-Community unter \url{www.android.com} 
 	und an den Hersteller des Handys.
+
 \end{document}
