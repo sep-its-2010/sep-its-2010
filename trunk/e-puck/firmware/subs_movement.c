@@ -22,6 +22,9 @@ static bool s_blActive = false;
  * \remarks
  * The layer needs to be reset after #CONQUEST_STATE__MOVE_FORWARD is left before a new move forward instruction can be handled.
  *
+ * \warning
+ * The motors abstraction layer needs to be initialized (#hal_motors_init()).
+ *
  * \see
  * subs_movement_reset
  */

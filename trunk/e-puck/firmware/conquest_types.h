@@ -89,7 +89,7 @@ typedef enum {
 	CONQUEST_STATE__HIT_NODE, ///< Node detected & stopped.
 	CONQUEST_STATE__COLLISION, ///< Collision detected & stopped.
 	CONQUEST_STATE__ABYSS, ///< Abyss detected & stopped.
-	CONQUEST_STATE__RETURN_NODE ///< A Collision happended; return to the last node.
+	CONQUEST_STATE__RETURN_NODE ///< Return to last node & send a collision response.
 } conquest_EState_t;
 
 

@@ -34,12 +34,15 @@ static bool s_blDetectionActive = false;
  * - \c true: driving above the white node marker
  * - \c false: otherwise
  *
- * This layer only triggers in #CONQUEST_STATE__MOVE_FORWARD and remains active until it has finished.
+ * This layer only triggers in #CONQUEST_STATE__MOVE_FORWARD and #CONQUEST_STATE__RETURN_NODE and remains active until it has finished.
  * 
  * Triggers when driving above a white node marker (#SUBS_NODE_WHITE_THRESHOLD) with the middle line sensor.
  * Then advances to the middle of the node (#SUBS_NODE_CENTER_STEPS) while scanning for left or right crossing lines.
  * When reaching the center a check for a line in face direction is performed (#SUBS_NODE_BLACK_THRESHOLD).
  * Finally, the conquest state is updated with the detected node type.
+ *
+ * \warning
+ * The motors abstraction layer needs to be initialized (#hal_motors_init()).
  *
  * \see
  * subs_node_reset

@@ -717,6 +717,7 @@ void cbStateMoveExit( void) {
 	subs_line_reset();
 	subs_abyss_reset();
 	subs_movement_reset();
+	subs_collision_reset();
 }
 
 
@@ -757,6 +758,7 @@ void conquest_init( void) {
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__HIT_NODE,     NULL, NULL,          NULL);
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__COLLISION,    NULL, NULL,          NULL);
 	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__ABYSS,        NULL, NULL,          NULL);
+	fsm_configureState( &s_podSubsumptionFSM, CONQUEST_STATE__RETURN_NODE,  NULL, cbSubsumption, cbStateMoveExit);
 
 	fsm_init( &s_podMessageFSM);
 	fsm_configureState( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE,       NULL, NULL,                  NULL);

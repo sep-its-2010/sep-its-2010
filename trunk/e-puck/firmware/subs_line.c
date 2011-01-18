@@ -69,7 +69,7 @@ static int16_t s_i16DeltaOld = 0;
  * - \c true: PID active
  * - \c false: PID inactive
  *
- * This layer only triggers in #CONQUEST_STATE__MOVE_FORWARD if after the dead time or in #CONQUEST_STATE__CENTER_LINE.
+ * This layer only triggers in #CONQUEST_STATE__MOVE_FORWARD, #CONQUEST_STATE__CENTER_LINE or #CONQUEST_STATE__RETURN_NODE.
  * 
  * Uses the difference of the calibrated left and right line sensors as input to a (dead time) PID feedback controller.
  * The controller is fix point based and can be configured through #SUBS_LINE_P_FIXPOINT_FACTOR, #SUBS_LINE_I_FIXPOINT_FACTOR,
@@ -80,8 +80,7 @@ static int16_t s_i16DeltaOld = 0;
  * - The line speed will never exceed #conquest_getRequestedLineSpeed().
  *
  * \warning
- * - The line sensors need to be calibrated before (#sen_line_calibrate()).
- * - The motors abstraction layer needs to be initialized (#hal_motors_init()).
+ * The motors abstraction layer needs to be initialized (#hal_motors_init()).
  * 
  * \see
  * subs_line_reset

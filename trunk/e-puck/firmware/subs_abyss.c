@@ -53,7 +53,7 @@ com_SMessage_t subs_abyss_podResponse;
  *
  * This layer only triggers in #CONQUEST_STATE__MOVE_FORWARD and remains active until it has finished.
  *
- * In case an abyss is detected on any calibrated line sensor (#SUBS_ABYSS_THRESHOLD) the abyss mask is saved.
+ * In case an abyss is detected on any calibrated line sensor (#CONQUEST_ABYSS_THRESHOLD) the abyss mask is saved.
  * Next, a specified amount of positive measurement is required in #STATE__META to enter #STATE__ABYSS_PREVENTION where the e-puck
  * reverts a specified amount of steps (#SUBS_ABYSS_REGRESSION) but at least as long as the line sensors still detect an abyss.
  * Afterwards a global blocking state (#CONQUEST_STATE__ABYSS) is entered.
@@ -62,9 +62,7 @@ com_SMessage_t subs_abyss_podResponse;
  * This layer will not allow any further layers to execute until #subs_abyss_reset() is called after the abyss prevention state.
  *
  * \warning
- * - The line sensors need to be calibrated before (#sen_line_calibarte()).
- * - The motors abstraction layer needs to be initialized (#hal_motors_init()).
- * - The communication layer needs to be initialized (#com_init()).
+ * The motors abstraction layer needs to be initialized (#hal_motors_init()).
  *
  * \see
  * subs_abyss_reset | subs_abyss_getResponse
@@ -84,9 +82,11 @@ bool subs_abyss_run( void) {
 				if( lpblAbyss[SEN_LINE_SENSOR__LEFT] || lpblAbyss[SEN_LINE_SENSOR__MIDDLE] || lpblAbyss[SEN_LINE_SENSOR__RIGHT]) {
 					hal_motors_setSteps( 0);
 					hal_motors_setSpeed( -conquest_getRequestedLineSpeed(), 0);
+
 					subs_abyss_podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_ABYSS;
 					memcpy( subs_abyss_podResponse.aui8Data, lpblAbyss, SEN_LINE_NUM_SENSORS);
 					memset( &subs_abyss_podResponse.aui8Data[SEN_LINE_NUM_SENSORS], 0xFF, sizeof( subs_abyss_podResponse.aui8Data) - SEN_LINE_NUM_SENSORS);
+
 					s_ui16Positives = 0;
 					s_eState = STATE__ABYSS_PREVENTION;
 					blActed = true;

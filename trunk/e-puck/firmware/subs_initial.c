@@ -126,8 +126,7 @@ void cbDetectionErrorBlinker(
  * - Any ongoing higher subsumption actions will be interrupted and resumed after this layer finishes.
  *
  * \warning
- * - The motors abstraction layer needs to be initialized (#hal_motors_init()).
- * - The I2C abstraction layer needs to be initialized (#hal_i2c_init()).
+ * The motors abstraction layer needs to be initialized (#hal_motors_init()).
  */
 bool subs_initial_run( void) {
 

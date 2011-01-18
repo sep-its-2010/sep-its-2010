@@ -27,7 +27,7 @@ enum {
  * Specifies the states of the calibration FSM.
  * 
  * \see
- * subs_calibration_run | s_eStatus
+ * subs_calibration_run | s_eState
  */
 typedef enum {
 	STATE__NOT_CALIBRATED = 0, ///< Entry state of the FSM. The calibration values are read from the EEPROM.
@@ -50,7 +50,7 @@ static void cbInvalidCalibrationBlinker(
  * \see
  * subs_calibration_reset
  */
-static EState_t s_eStatus = STATE__NOT_CALIBRATED;
+static EState_t s_eState = STATE__NOT_CALIBRATED;
 
 
 /*!
@@ -140,8 +140,7 @@ void cbInvalidCalibrationBlinker(
  * - Any ongoing higher subsumption actions will be interrupted and resumed after this layer finishes.
  *
  * \warning
- * - The motors abstraction layer needs to be initialized (#hal_motors_init()).
- * - The I2C abstraction layer needs to be initialized (#hal_i2c_init()).
+ * The motors abstraction layer needs to be initialized (#hal_motors_init()).
  */
 bool subs_calibration_run( void) {
 
@@ -149,7 +148,7 @@ bool subs_calibration_run( void) {
 
 	bool blActed = false;
 
-	switch( s_eStatus) {
+	switch( s_eState) {
 		case STATE__NOT_CALIBRATED: {
 			_prog_addressT addrCalibrationValues;
 			_init_prog_address( addrCalibrationValues, s_podCalibrationLevels);
@@ -157,7 +156,7 @@ bool subs_calibration_run( void) {
 			if( !sen_line_calibrate( &s_podLevels[BLACK_LEVEL], &s_podLevels[WHITE_LEVEL])) {
 				hal_rtc_activate( s_hBlinkEvent);
 			}
-			s_eStatus = STATE__WAIT;
+			s_eState = STATE__WAIT;
 			break;
 		}
 		case STATE__WHITE_LEVEL: {
@@ -167,7 +166,7 @@ bool subs_calibration_run( void) {
 				memcpy( &s_podLevels[WHITE_LEVEL], &conquest_getSensorImage()->podRawLineSensors, sizeof( *s_podLevels));
 				hal_motors_setSpeed( -conquest_getRequestedLineSpeed(), 0);
 				hal_motors_setSteps( 0);
-				s_eStatus = STATE__RETURN;
+				s_eState = STATE__RETURN;
 			}
 			blActed = true;
 			break;
@@ -184,7 +183,7 @@ bool subs_calibration_run( void) {
 					_init_prog_address( addrCalibrationValues, s_podCalibrationLevels);
 					hal_nvm_writeEEPROM( addrCalibrationValues, s_podLevels, sizeof( s_podLevels));
 				}
-				s_eStatus = STATE__CALIBRATED;
+				s_eState = STATE__CALIBRATED;
 				conquest_setState( CONQUEST_STATE__START);
 			}
 			blActed = true;
@@ -192,7 +191,7 @@ bool subs_calibration_run( void) {
 		}
 		case STATE__CALIBRATED: {
 			if( hal_sel_getPosition() != SUBS_CALIBRATION_SELECTOR) {
-				s_eStatus = STATE__WAIT;
+				s_eState = STATE__WAIT;
 			}
 			break;
 		}
@@ -202,7 +201,7 @@ bool subs_calibration_run( void) {
 				memcpy( &s_podLevels[BLACK_LEVEL], &conquest_getSensorImage()->podRawLineSensors, sizeof( *s_podLevels));
 				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
 				hal_motors_setSteps( 0);
-				s_eStatus = STATE__WHITE_LEVEL;
+				s_eState = STATE__WHITE_LEVEL;
 				blActed = true;
 			}
 			break;
@@ -238,7 +237,7 @@ void subs_calibration_reset( void) {
 		hal_rtc_deactivate( s_hBlinkEvent);
 		hal_rtc_reset( s_hBlinkEvent);
 	}
-	s_eStatus = STATE__NOT_CALIBRATED;
+	s_eState = STATE__NOT_CALIBRATED;
 	s_ui16ToggleCount = 0;
 	hal_led_switchOff( BLINK_MASK);
 }
