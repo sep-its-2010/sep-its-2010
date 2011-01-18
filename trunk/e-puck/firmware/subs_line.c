@@ -143,7 +143,7 @@ bool subs_line_run( void) {
 			i16AngularSpeed = (int16_t)( i32PID / 2);
 		}
 
-		if( eState == CONQUEST_STATE__MOVE_FORWARD) {
+		if( eState != CONQUEST_STATE__CENTER_LINE) {
 			uint16_t ui16RequestedLineSpeed = conquest_getRequestedLineSpeed();
 			if( ui16RequestedLineSpeed + abs( i16AngularSpeed) > HAL_MOTORS_MAX_ABS_SPEED) {
 				ui16RequestedLineSpeed = HAL_MOTORS_MAX_ABS_SPEED - abs( i16AngularSpeed);
