@@ -104,6 +104,8 @@ public abstract class Puck implements IComClient, IRobot {
    */
   public static final short REQ_TURN = (short) 0x03FF;
   
+  public static final int COLLISION_REACT_STEPS = 2;
+  
   /**
    * Global unique id.
    */
@@ -138,6 +140,16 @@ public abstract class Puck implements IComClient, IRobot {
    * Indicates whether the robot is controlled by the user.
    */
   private boolean controlled = false;
+  
+  /**
+   * Counts the steps since the last collision to the needed number of steps.
+   */
+  private int collisionReactCount = 0;
+  
+  /**
+   * The node with the last collision (until it's recovered).
+   */
+  private Integer collisionNode = null;
 
   /**
    * Indicates whether the robot expects a message from the socket.
@@ -375,6 +387,42 @@ public abstract class Puck implements IComClient, IRobot {
   }
 
   /**
+   * Returns the current steps after a collision.
+   * 
+   * @return The number of steps after a collision.
+   */
+  public int getCollisionReactCount() {
+	return collisionReactCount;
+  }
+
+	/**
+	 * Sets the number of steps after a collision.
+	 * 
+	 * @param collisionReactCount The number of steps.
+	 */
+	public void setCollisionReactCount(int collisionReactCount) {
+		this.collisionReactCount = collisionReactCount;
+	}
+
+   /**
+    * Sets the node with the last collision. 
+    * 
+	* @param collisionNode the collisionNode to set
+	*/
+	public void setCollisionNode(Integer collisionNode) {
+		this.collisionNode = collisionNode;
+	}
+
+	/**
+	 * Returns the node with the last collision.
+	 * 
+	 * @return the collisionNode
+	 */
+	public Integer getCollisionNode() {
+		return collisionNode;
+	}
+
+/**
    * Sends status request message to Puck.
    */
   public void requestStatus() {

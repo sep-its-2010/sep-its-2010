@@ -4,6 +4,8 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.UUID;
 
+import sep.conquest.util.Utility;
+
 /**
  * The class realizes an A*-algorithm for finding the shortest path between
  * nodes.
@@ -75,13 +77,16 @@ public class AStarPathFinder implements IPathFinder {
 		}
 		return paths;
 	}
-	
+
 	/**
 	 * Initializes a new search for a specific start-destination path.
 	 * 
-	 * @param robot The robot.
-	 * @param start The start-node.
-	 * @param destination The destination-node.
+	 * @param robot
+	 *            The robot.
+	 * @param start
+	 *            The start-node.
+	 * @param destination
+	 *            The destination-node.
 	 */
 	private void initialize(Puck robot, MapNode start, MapNode destination) {
 		if (closeList.isEmpty()) {
@@ -89,14 +94,16 @@ public class AStarPathFinder implements IPathFinder {
 			openList.add(first);
 		} else {
 			if (closeList.contains(destination))
-				for (AStarNode node: closeList) {
+				for (AStarNode node : closeList) {
 					if (node.equals(destination))
 						openList.add(node);
-				}		
-			for (AStarNode node: closeList)
-				node.setEstimatedCosts(estimateCosts(node.getNode(), destination));
-			for (AStarNode node: openList)
-				node.setEstimatedCosts(estimateCosts(node.getNode(), destination));
+				}
+			for (AStarNode node : closeList)
+				node.setEstimatedCosts(estimateCosts(node.getNode(),
+						destination));
+			for (AStarNode node : openList)
+				node.setEstimatedCosts(estimateCosts(node.getNode(),
+						destination));
 		}
 	}
 
@@ -163,20 +170,22 @@ public class AStarPathFinder implements IPathFinder {
 
 		GraphNode[] neighbours = new GraphNode[4];
 		GraphNode tmp = (GraphNode) currentNode.getNode();
-		/*neighbours[Orientation.RIGHT.ordinal()] = map.getNode(currentNode
-				.getNode().getXValue() + 1, currentNode.getNode().getYValue());
-		neighbours[Orientation.LEFT.ordinal()] = map.getNode(currentNode
-				.getNode().getXValue() - 1, currentNode.getNode().getYValue());
-		neighbours[Orientation.UP.ordinal()] = map.getNode(currentNode.getNode()
-				.getXValue(), currentNode.getNode().getYValue() + 1);
-		neighbours[Orientation.DOWN.ordinal()] = map.getNode(currentNode
-				.getNode().getXValue(), currentNode.getNode().getYValue() - 1);
-		*/
+		/*
+		 * neighbours[Orientation.RIGHT.ordinal()] = map.getNode(currentNode
+		 * .getNode().getXValue() + 1, currentNode.getNode().getYValue());
+		 * neighbours[Orientation.LEFT.ordinal()] = map.getNode(currentNode
+		 * .getNode().getXValue() - 1, currentNode.getNode().getYValue());
+		 * neighbours[Orientation.UP.ordinal()] =
+		 * map.getNode(currentNode.getNode() .getXValue(),
+		 * currentNode.getNode().getYValue() + 1);
+		 * neighbours[Orientation.DOWN.ordinal()] = map.getNode(currentNode
+		 * .getNode().getXValue(), currentNode.getNode().getYValue() - 1);
+		 */
 		neighbours[0] = tmp.getNeighbours()[3];
 		neighbours[1] = tmp.getNeighbours()[0];
 		neighbours[2] = tmp.getNeighbours()[2];
 		neighbours[3] = tmp.getNeighbours()[1];
-		return  neighbours;
+		return neighbours;
 	}
 
 	/**
@@ -208,7 +217,8 @@ public class AStarPathFinder implements IPathFinder {
 					} else {
 						AStarNode tmp = new AStarNode(currentNode, neighbor,
 								costs);
-						tmp.setEstimatedCosts(estimateCosts(tmp.getNode(),
+						tmp
+								.setEstimatedCosts(estimateCosts(tmp.getNode(),
 										dest));
 						openList.add(tmp);
 					}
@@ -240,21 +250,21 @@ public class AStarPathFinder implements IPathFinder {
 					costs += 50;
 			}
 		}
-		
+
 		// add additional costs if a turn is needed
 		RobotStatus status = robot.getRobotStatus().get(robot.getID());
-		switch(status.getOrientation()) {
+		switch (status.getOrientation()) {
 		case UP:
 			if (status.getPosition()[1] > node.getYValue())
 				costs += 2;
 			else if (status.getPosition()[0] != node.getXValue())
-				costs += 1;	
+				costs += 1;
 			break;
 		case DOWN:
 			if (status.getPosition()[1] < node.getYValue())
 				costs += 2;
 			else if (status.getPosition()[0] != node.getXValue())
-				costs += 1;	
+				costs += 1;
 			break;
 		case LEFT:
 			if (status.getPosition()[0] < node.getXValue())
@@ -266,11 +276,106 @@ public class AStarPathFinder implements IPathFinder {
 			if (status.getPosition()[0] > node.getXValue())
 				costs += 2;
 			else if (status.getPosition()[1] != node.getYValue())
-				costs += 1;		
+				costs += 1;
 			break;
 		}
-		
+
+		// add additional costs due to collisions
+		boolean[] sensors = status.getSensorCollisionArray();
+		if (sensors[0] || sensors[1] || sensors[2] || sensors[3] || sensors[4]
+				|| sensors[5] || sensors[6] || sensors[7]) {
+			if (robot.getCollisionNode() == null) {
+
+				// collision behind robot (due to turn)
+				if (sensors[0] || sensors[7]) {
+					robot.setCollisionNode(getAdjacentNode(status,
+							Orientation.DOWN));
+				}
+			}
+
+			if (robot.getCollisionReactCount() < Puck.COLLISION_REACT_STEPS) {
+				Integer pos = Utility.makeKey(status.getPosition()[0], status
+						.getPosition()[1]);
+				if (pos.equals(robot.getCollisionNode()))
+					costs += 40;
+				robot
+						.setCollisionReactCount(robot.getCollisionReactCount() + 1);
+			} else {
+				robot.setCollisionReactCount(0);
+				robot.setCollisionNode(null);
+				for (int i = 0; i < sensors.length; i++)
+					sensors[i] = false;
+				status.setSensorCollisionArray(sensors);
+			}
+		}
+
 		return costs;
+	}
+
+	/**
+	 * Returns the neighbour-node (integer-key) in direction nodePos according
+	 * to the robot-orientation.
+	 * 
+	 * @param status
+	 *            the status of the robot
+	 * @param nodePos
+	 *            the orientation of the adjacent neighbour-node
+	 * @return the position of the neighbour-node.
+	 */
+	private Integer getAdjacentNode(RobotStatus status, Orientation nodePos) {
+		int[] pos = status.getPosition();
+
+		switch (status.getOrientation()) {
+		case UP:
+			switch (nodePos) {
+			case UP:
+				return Utility.makeKey(pos[0], pos[1] + 1);
+			case DOWN:
+				return Utility.makeKey(pos[0], pos[1] - 1);
+			case RIGHT:
+				return Utility.makeKey(pos[0] + 1, pos[1]);
+			case LEFT:
+				return Utility.makeKey(pos[0] - 1, pos[1]);
+			}
+			break;
+		case DOWN:
+			switch (nodePos) {
+			case UP:
+				return Utility.makeKey(pos[0], pos[1] - 1);
+			case DOWN:
+				return Utility.makeKey(pos[0], pos[1] + 1);
+			case RIGHT:
+				return Utility.makeKey(pos[0] - 1, pos[1]);
+			case LEFT:
+				return Utility.makeKey(pos[0] + 1, pos[1]);
+			}
+			break;
+		case RIGHT:
+			switch (nodePos) {
+			case UP:
+				return Utility.makeKey(pos[0] + 1, pos[1]);
+			case DOWN:
+				return Utility.makeKey(pos[0] - 1, pos[1]);
+			case RIGHT:
+				return Utility.makeKey(pos[0], pos[1] - 1);
+			case LEFT:
+				return Utility.makeKey(pos[0], pos[1] + 1);
+			}
+			break;
+		case LEFT:
+			switch (nodePos) {
+			case UP:
+				return Utility.makeKey(pos[0] - 1, pos[1]);
+			case DOWN:
+				return Utility.makeKey(pos[0] + 1, pos[1]);
+			case RIGHT:
+				return Utility.makeKey(pos[0], pos[1] + 1);
+			case LEFT:
+				return Utility.makeKey(pos[0], pos[1] - 1);
+			}
+			break;
+		}
+		return 0;
 	}
 
 	/**

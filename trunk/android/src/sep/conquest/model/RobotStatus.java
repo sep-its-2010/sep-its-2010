@@ -98,6 +98,16 @@ public class RobotStatus implements Cloneable {
 			this.sensorCollisionArray[i] = bufferSensorEnum[i];
 		}
 	}
+	
+	/**
+	 * Returns the sensorCollisionArray with the actual values of the
+	 * sensors.
+	 * 
+	 * @return An array with all actual sensor values.
+	 */
+	public boolean[] getSensorCollisionArray() {
+		return sensorCollisionArray;
+	}	
 
 	/**
 	 * Returns the current position of the robot.
