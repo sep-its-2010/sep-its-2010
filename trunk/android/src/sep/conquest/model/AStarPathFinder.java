@@ -282,22 +282,13 @@ public class AStarPathFinder implements IPathFinder {
 
 		// add additional costs due to collisions
 		boolean[] sensors = status.getSensorCollisionArray();
-		if (sensors[0] || sensors[1] || sensors[2] || sensors[3] || sensors[4]
-				|| sensors[5] || sensors[6] || sensors[7]) {
-			if (robot.getCollisionNode() == null) {
-
-				// collision behind robot (due to turn)
-				if (sensors[0] || sensors[7]) {
-					robot.setCollisionNode(getAdjacentNode(status,
-							Orientation.DOWN));
-				}
-			}
-
-			if (robot.getCollisionReactCount() < Puck.COLLISION_REACT_STEPS) {
+		if (sensors[0] || sensors[1] || sensors[2] || sensors[3] ||
+			sensors[4] || sensors[5] || sensors[6] || sensors[7]) {
+			if (robot.getCollisionReactCount() < Puck.COLLISION_REACT_STEPS
+					&& robot.getCollisionNode() != null) {
 				Integer key = Utility.makeKey(node.getXValue(), node.getYValue());
 				if (key.equals(robot.getCollisionNode())) {
 					costs += 40;
-					System.out.println("Ole");
 				}
 					
 				robot
@@ -312,72 +303,6 @@ public class AStarPathFinder implements IPathFinder {
 		}
 
 		return costs;
-	}
-
-	/**
-	 * Returns the neighbour-node (integer-key) in direction nodePos according
-	 * to the robot-orientation.
-	 * 
-	 * @param status
-	 *            the status of the robot
-	 * @param nodePos
-	 *            the orientation of the adjacent neighbour-node
-	 * @return the position of the neighbour-node.
-	 */
-	private Integer getAdjacentNode(RobotStatus status, Orientation nodePos) {
-		int[] pos = status.getPosition();
-
-		switch (status.getOrientation()) {
-		case UP:
-			switch (nodePos) {
-			case UP:
-				return Utility.makeKey(pos[0], pos[1] + 1);
-			case DOWN:
-				return Utility.makeKey(pos[0], pos[1] - 1);
-			case RIGHT:
-				return Utility.makeKey(pos[0] + 1, pos[1]);
-			case LEFT:
-				return Utility.makeKey(pos[0] - 1, pos[1]);
-			}
-			break;
-		case DOWN:
-			switch (nodePos) {
-			case UP:
-				return Utility.makeKey(pos[0], pos[1] - 1);
-			case DOWN:
-				return Utility.makeKey(pos[0], pos[1] + 1);
-			case RIGHT:
-				return Utility.makeKey(pos[0] - 1, pos[1]);
-			case LEFT:
-				return Utility.makeKey(pos[0] + 1, pos[1]);
-			}
-			break;
-		case RIGHT:
-			switch (nodePos) {
-			case UP:
-				return Utility.makeKey(pos[0] + 1, pos[1]);
-			case DOWN:
-				return Utility.makeKey(pos[0] - 1, pos[1]);
-			case RIGHT:
-				return Utility.makeKey(pos[0], pos[1] - 1);
-			case LEFT:
-				return Utility.makeKey(pos[0], pos[1] + 1);
-			}
-			break;
-		case LEFT:
-			switch (nodePos) {
-			case UP:
-				return Utility.makeKey(pos[0] - 1, pos[1]);
-			case DOWN:
-				return Utility.makeKey(pos[0] + 1, pos[1]);
-			case RIGHT:
-				return Utility.makeKey(pos[0], pos[1] + 1);
-			case LEFT:
-				return Utility.makeKey(pos[0], pos[1] - 1);
-			}
-			break;
-		}
-		return 0;
 	}
 
 	/**

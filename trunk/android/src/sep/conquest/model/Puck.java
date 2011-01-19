@@ -104,7 +104,7 @@ public abstract class Puck implements IComClient, IRobot {
    */
   public static final short REQ_TURN = (short) 0x03FF;
   
-  public static final int COLLISION_REACT_STEPS = 2;
+  public static final int COLLISION_REACT_STEPS = 5;
   
   /**
    * Global unique id.
