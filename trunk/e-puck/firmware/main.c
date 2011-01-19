@@ -11,8 +11,6 @@
 #include "sen_line.h"
 #include "sen_prox.h"
 
-#include "test_ringbuf.h"
-
 #include "conquest.h"
 
 
@@ -80,7 +78,7 @@ int main( void) {
 	ringbuf_init( hal_uart1_getTxRingBuffer(), s_aui8TxBufferSpace, sizeof( s_aui8TxBufferSpace));
 	hal_uart1_configure( HAL_UART_CONFIG__8N1, UART1_BAUDRATE_DIVISOR);
 	hal_uart1_enable( true, NULL);
-	com_init( NULL);
+	com_init( conquest_cbConnection);
 
 	hal_i2c_init( I2C_DIVISOR, true);
 
@@ -99,10 +97,10 @@ int main( void) {
 
 	hal_rtc_register( cbBlinker, RTC_FREQENCY / BLINK_FREQUENCY, true);
 
-//	conquest_init();
-	test_ringbuf_run();
+	conquest_init();
 
 	for( ;;) {
+
 		com_processIncoming();
 	}
 }

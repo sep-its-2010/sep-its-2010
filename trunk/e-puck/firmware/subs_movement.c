@@ -4,7 +4,17 @@
 #include "subs_movement.h"
 
 
-static bool s_blActive = false;
+/*!
+ * \brief
+ * Holds the state of pending move operations.
+ * 
+ * \remarks
+ * #subs_movement_reset() must be called to start a new move operation.
+ * 
+ * \see
+ * subs_movement_run
+ */
+static bool s_blBusy = false;
 
 
 /*!
@@ -16,8 +26,7 @@ static bool s_blActive = false;
  * - \c false: no action taken
  *
  * The layer handles #CONQUEST_STATE__TURN_RIGHT, #CONQUEST_STATE__TURN_LEFT and #CONQUEST_STATE__MOVE_FORWARD states.
- * When a turn is finished the line centering (#CONQUEST_STATE__CENTER_LINE) state is entered if there is a line in front of the e-puck.
- * If there is no line #CONQUEST_STATE__STOP is entered.
+ * When a turn is finished the line centering (#CONQUEST_STATE__CENTER_LINE) state is entered.
  *
  * \remarks
  * The layer needs to be reset after #CONQUEST_STATE__MOVE_FORWARD is left before a new move forward instruction can be handled.
@@ -37,7 +46,7 @@ bool subs_movement_run( void) {
 	switch( eState) {
 		case CONQUEST_STATE__TURN_RIGHT:
 		case CONQUEST_STATE__TURN_LEFT: {
-			if( s_blActive) {
+			if( s_blBusy) {
 				if( hal_motors_getStepsLeft() >= HAL_MOTORS_FULL_TURN_STEPS / 4 &&
 					hal_motors_getStepsRight() >= HAL_MOTORS_FULL_TURN_STEPS / 4) {
 
@@ -53,9 +62,9 @@ bool subs_movement_run( void) {
 						ui16RawDirections |= ui16RawDirections >> 8;
 					}
 
-					conquest_setState( ui16RawDirections & CONQUEST_DIRECTION__UP ? CONQUEST_STATE__CENTER_LINE : CONQUEST_STATE__STOP);
+					conquest_setState( CONQUEST_STATE__CENTER_LINE);
 					conquest_setLastNode( conquest_convertDirMaskToNode( ui16RawDirections & 0xFF));
-					s_blActive = false;
+					s_blBusy = false;
 				}
 			} else {
 				hal_motors_setSteps( 0);
@@ -64,16 +73,16 @@ bool subs_movement_run( void) {
 				} else {
 					hal_motors_setSpeed( 0, -conquest_getRequestedLineSpeed());
 				}
-				s_blActive = true;
+				s_blBusy = true;
 			}
 			blActed = true;
 			break;
 		}
 		case CONQUEST_STATE__MOVE_FORWARD: {
-			if( !s_blActive) {
+			if( !s_blBusy) {
 				hal_motors_setSteps( 0);
 				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
-				s_blActive = true;
+				s_blBusy = true;
 				blActed = true;
 			}
 			break;
@@ -97,5 +106,5 @@ bool subs_movement_run( void) {
 
 void subs_movement_reset( void) {
 
-	s_blActive = false;
+	s_blBusy = false;
 }

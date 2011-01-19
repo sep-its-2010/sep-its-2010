@@ -90,6 +90,8 @@ bool subs_line_run( void) {
 	bool blActed = false;
 
 	sen_line_SData_t podDelayed;
+
+	// Do we need a dead time delay?
 	const conquest_EState_t eState = conquest_getState();
 	if( eState == CONQUEST_STATE__MOVE_FORWARD ||
 		eState == CONQUEST_STATE__RETURN_NODE) {
@@ -102,8 +104,17 @@ bool subs_line_run( void) {
 			ringbuf_popRange( &s_podDelayBuffer, &podDelayed, sizeof( podDelayed));
 			blActed = true;
 		}
+
+	// Or just center on the line?
 	} else if( eState == CONQUEST_STATE__CENTER_LINE) {
-		if( ++s_ui16CenteringCycles > SUBS_LINE_CENTERING_CYCLES) {
+
+		// Exit centering if no line is detected or enough steps were performed
+		const uint16_t* const lpui16Reflected = conquest_getSensorImage()->podCalibratedLineSensors.aui16Reflected;
+		if( ++s_ui16CenteringCycles > SUBS_LINE_CENTERING_CYCLES ||
+			( lpui16Reflected[SEN_LINE_SENSOR__LEFT] > CONQUEST_BLACK_THRESHOLD &&
+			lpui16Reflected[SEN_LINE_SENSOR__MIDDLE] > CONQUEST_BLACK_THRESHOLD &&
+			lpui16Reflected[SEN_LINE_SENSOR__RIGHT] > CONQUEST_BLACK_THRESHOLD)) {
+
 			s_ui16CenteringCycles = 0;
 			hal_motors_setSpeed( 0, 0);
 			conquest_setState( CONQUEST_STATE__STOP);

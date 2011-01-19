@@ -36,9 +36,9 @@ static bool s_blDetectionActive = false;
  *
  * This layer only triggers in #CONQUEST_STATE__MOVE_FORWARD and #CONQUEST_STATE__RETURN_NODE and remains active until it has finished.
  * 
- * Triggers when driving above a white node marker (#SUBS_NODE_WHITE_THRESHOLD) with the middle line sensor.
+ * Triggers when driving above a white node marker (#CONQUEST_WHITE_THRESHOLD) with the middle line sensor.
  * Then advances to the middle of the node (#SUBS_NODE_CENTER_STEPS) while scanning for left or right crossing lines.
- * When reaching the center a check for a line in face direction is performed (#SUBS_NODE_BLACK_THRESHOLD).
+ * When reaching the center a check for a line in face direction is performed (#CONQUEST_BLACK_THRESHOLD).
  * Finally, the conquest state is updated with the detected node type.
  *
  * \warning
@@ -62,7 +62,7 @@ static bool s_blDetectionActive = false;
 
 		// Trigger a new detection if idle & middle sensor is on white underground (cross in the middle of a node)
 		if( !s_blDetectionActive) {
-			if( lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] > SUBS_NODE_WHITE_THRESHOLD) {
+			if( lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] > CONQUEST_WHITE_THRESHOLD) {
  				s_aui32Sum[LEFT_DATA] = 0;
  				s_aui32Sum[RIGHT_DATA] = 0;
 				s_ui16Counter = 0;
@@ -80,9 +80,9 @@ static bool s_blDetectionActive = false;
 				hal_motors_getStepsRight() >= SUBS_NODE_CENTER_STEPS) {
 
 				uint16_t ui16Direction = CONQUEST_DIRECTION__DOWN;
-				if( lpui16SenLine[SEN_LINE_SENSOR__LEFT] < SUBS_NODE_BLACK_THRESHOLD ||
-					lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] < SUBS_NODE_BLACK_THRESHOLD ||
-					lpui16SenLine[SEN_LINE_SENSOR__RIGHT] < SUBS_NODE_BLACK_THRESHOLD) {
+				if( lpui16SenLine[SEN_LINE_SENSOR__LEFT] < CONQUEST_BLACK_THRESHOLD ||
+					lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] < CONQUEST_BLACK_THRESHOLD ||
+					lpui16SenLine[SEN_LINE_SENSOR__RIGHT] < CONQUEST_BLACK_THRESHOLD) {
 
 					ui16Direction |= CONQUEST_DIRECTION__UP;
 				}
@@ -108,7 +108,7 @@ static bool s_blDetectionActive = false;
 				blActed = true;
 
 			// Only scan in white marker area
-			} else if( lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] > SUBS_NODE_WHITE_THRESHOLD) {
+			} else if( lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] > CONQUEST_WHITE_THRESHOLD) {
 				s_aui32Sum[LEFT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__LEFT];
 				s_aui32Sum[RIGHT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
 				s_ui16Counter++;
