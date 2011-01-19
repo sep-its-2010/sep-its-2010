@@ -249,6 +249,14 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Test"
+				>
+				<File
+					RelativePath=".\test_ringbuf.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -427,6 +435,14 @@
 				</File>
 				<File
 					RelativePath=".\sen_prox_types.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Test"
+				>
+				<File
+					RelativePath=".\test_ringbuf.h"
 					>
 				</File>
 			</Filter>
