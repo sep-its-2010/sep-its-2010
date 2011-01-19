@@ -16,7 +16,8 @@
 typedef enum {
 	STATE__DETECTING, ///< Collision scan active.
 	STATE__TURNING, ///< Turn by 180 degree after collision detected.
-	STATE__RETURNING ///< Return to last node.
+	STATE__RETURNING, ///< Return to last node.
+	STATE__BLOCKED ///< Cannot return; wait.
 } EState_t;
 
 
@@ -53,7 +54,7 @@ com_SMessage_t subs_collision_podResponse;
  * In case a collision is detected on on the two front IR proximity sensors (#CONQUEST_COLLISION_THRESHOLD) the collision mask is saved.
  * Next, the e-puck turns by 180 degree and returns to the last node. Line following and node detection is activated (#CONQUEST_STATE__RETURN_NODE)
  * if the e-puck is far enough from the last node. Otherwise, it just returns based on the step counters, updates the node type
- * and enters #CONQUEST_STATE__COLLISION.
+ * and enters #CONQUEST_STATE__COLLISION. If the path is blocked when returning the e-puck waits until it can move.
  *
  * \warning
  * The motors abstraction layer needs to be initialized (#hal_motors_init()).
@@ -73,7 +74,7 @@ bool subs_collision_run( void) {
 
 				// Check for front left or front right IR collision detected
 				const bool* const lpblCollision = conquest_getSensorImage()->ablCollisionMask;
-				if( lpblCollision[0] || lpblCollision[7]) {
+				if( lpblCollision[0] || lpblCollision[1] || lpblCollision[6] || lpblCollision[7]) {
 
 					// Fill collision message
 					subs_collision_podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_COLLISION;
@@ -83,6 +84,9 @@ bool subs_collision_run( void) {
 					s_ui16StepsSinceLastNode = ( hal_motors_getStepsLeft() + hal_motors_getStepsRight()) / 2;
 					hal_motors_setSpeed( 0, conquest_getRequestedLineSpeed());
 					hal_motors_setSteps( 0);
+					if( s_ui16StepsSinceLastNode >= SUBS_COLLISION_MOVE_BACKWARD_THRESHOLD) {
+						conquest_setState( CONQUEST_STATE__RETURN_NODE);
+					}
 					s_eState = STATE__TURNING;
 					blActed = true;
 				}
@@ -101,9 +105,14 @@ bool subs_collision_run( void) {
 			break;
 		}
 		case STATE__RETURNING: {
+			const bool* const lpblCollision = conquest_getSensorImage()->ablCollisionMask;
+			if( lpblCollision[0] || lpblCollision[1] || lpblCollision[6] || lpblCollision[7]) {
+				hal_motors_setSpeed( 0, 0);
+				s_eState = STATE__BLOCKED;
+				blActed = true;
 
 			// Return without line following?
-			if( s_ui16StepsSinceLastNode < SUBS_COLLISION_MOVE_BACKWARD_THRESHOLD) {
+			} else if( s_ui16StepsSinceLastNode < SUBS_COLLISION_MOVE_BACKWARD_THRESHOLD) {
 
 				// Reached last node?
 				if( ( hal_motors_getStepsLeft() + hal_motors_getStepsRight()) / 2 >= s_ui16StepsSinceLastNode) {
@@ -118,11 +127,16 @@ bool subs_collision_run( void) {
 
 				// Block higher level subsumption layers
 				blActed = true;
-			} else {
-				hal_motors_setSteps( 0);
-				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
-				conquest_setState( CONQUEST_STATE__RETURN_NODE);
 			}
+			break;
+		}
+		case STATE__BLOCKED: {
+			const bool* const lpblCollision = conquest_getSensorImage()->ablCollisionMask;
+			if( !lpblCollision[0] && !lpblCollision[1] && !lpblCollision[6] && !lpblCollision[7]) {
+				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
+				s_eState = STATE__RETURNING;
+			}
+			blActed = true;
 			break;
 		}
 		default: {
