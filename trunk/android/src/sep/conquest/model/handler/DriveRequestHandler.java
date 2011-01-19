@@ -50,51 +50,53 @@ public class DriveRequestHandler extends Handler {
       DriveRequest driveReq = (DriveRequest) request;
       Puck robot = executor.getRobot();
 
-      // The drive command.
-      int command = driveReq.getCommand();
+      if (robot.getID() == driveReq.getReceiver()[0]) {
 
-      // Pass drive command to robot.
-      robot.driveCommand(command);
+        // The drive command.
+        int command = driveReq.getCommand();
 
-      // The current state of the robot.
-      RobotStatus state = robot.getRobotStatus().get(robot.getID());
+        // Pass drive command to robot.
+        robot.driveCommand(command);
 
-      if (command == Orientation.UP.getOrientation()) {
-        // If command is forward, set intended position.
-        int x = state.getPosition()[0];
-        int y = state.getPosition()[1];
+        // The current state of the robot.
+        RobotStatus state = robot.getRobotStatus().get(robot.getID());
 
-        // Compute intent position.
-        switch (state.getOrientation()) {
-        case UP:
-          y++;
-          break;
-        case LEFT:
-          x--;
-          break;
-        case RIGHT:
-          x++;
-          break;
-        case DOWN:
-          y--;
-          break;
-        default:
-          break;
+        if (command == Orientation.UP.getOrientation()) {
+          // If command is forward, set intended position.
+          int x = state.getPosition()[0];
+          int y = state.getPosition()[1];
+
+          // Compute intent position.
+          switch (state.getOrientation()) {
+          case UP:
+            y++;
+            break;
+          case LEFT:
+            x--;
+            break;
+          case RIGHT:
+            x++;
+            break;
+          case DOWN:
+            y--;
+            break;
+          default:
+            break;
+          }
+          int[] intentPos = { x, y };
+          state.setIntentPosition(intentPos);
+        } else {
+          // Otherwise compute new orientation.
+          Orientation ori = state.getOrientation();
+          ori = Orientation.getTurnedOrientation(command, ori);
+          executor.setTurnOrientation(ori);
         }
-        int[] intentPos = { x, y };
-        state.setIntentPosition(intentPos);
-      } else {
-        // Otherwise compute new orientation.
-        Orientation ori = state.getOrientation();
-        ori = Orientation.getTurnedOrientation(command, ori);
-        executor.setTurnOrientation(ori);
+        // Announce changes via broadcast.
+        robot.getRobotStatus().get(robot.getID()).setMoving(true);
+        StatusUpdateRequest statusUpdateReq = new StatusUpdateRequest(robot
+            .getID(), new UUID[0], robot.getRobotStatus().get(robot.getID()));
+        robot.broadcast(statusUpdateReq);
       }
-
-      // Announce changes via broadcast.
-      robot.getRobotStatus().get(robot.getID()).setMoving(true);
-      StatusUpdateRequest statusUpdateReq = new StatusUpdateRequest(robot
-          .getID(), new UUID[0], robot.getRobotStatus().get(robot.getID()));
-      robot.broadcast(statusUpdateReq);
       return true;
     }
   }

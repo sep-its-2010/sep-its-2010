@@ -58,6 +58,9 @@ public class PuckNodeHitHandler extends Handler {
           hitNodeReq.getSender());
 
       synchronized (statusOfRobot) {
+        // Reset moving state.
+        statusOfRobot.setMoving(false);
+        
         // Get the last position of the robot to add the node in the map.
         int[] bufferPosition = statusOfRobot.getPosition();
 
@@ -138,17 +141,14 @@ public class PuckNodeHitHandler extends Handler {
 
         // Add the new node to local map of the robot.
         robot.getMap().addNode(newCoordinateX, newCoordinateY, finalNodeType);
-        
+
         // Assign new position to buffer.
         bufferPosition[0] = newCoordinateX;
         bufferPosition[1] = newCoordinateY;
-
+        
         // Set new position and node type.
         statusOfRobot.setPosition(bufferPosition);
         statusOfRobot.setNodeType(finalNodeType);
-        
-        // Reset moving state.
-        statusOfRobot.setMoving(false);
 
         // Announce changes via broadcast.
         StatusUpdateRequest statusUpdateReq = new StatusUpdateRequest(robot

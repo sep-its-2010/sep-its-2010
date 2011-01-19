@@ -52,7 +52,7 @@ public enum NodeType{
 	CROSS,
 	
 	/**
-	 * The node hasen't been visited yet.
+	 * The node hasn't been visited yet.
 	 */
 	FRONTIERNODE;
 }

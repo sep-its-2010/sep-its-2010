@@ -159,7 +159,7 @@ public final class Steer extends Activity implements Observer {
     // Initially selected control is joystick.
     selectedControl = Control.JOYSTICK;
 
-    // And no robot is selcted.
+    // And no robot is selected.
     selectedRobot = NO_SELECTION;
 
     // Initially there are no robots registered.
@@ -231,6 +231,7 @@ public final class Steer extends Activity implements Observer {
     if (selectedRobot != NO_SELECTION) {
       Controller.getInstance().setControlled(robots.get(selectedRobot), false);
     }
+    
     super.onDestroy();
   }
 
@@ -272,7 +273,7 @@ public final class Steer extends Activity implements Observer {
             robots.remove(id);
             moving.remove(id);
             names.remove(id);
-            selectedRobot = 0;
+            selectedRobot = NO_SELECTION;
           } else {
             // If id is known and robot has not entered error state, update
             // moving state.
@@ -359,16 +360,20 @@ public final class Steer extends Activity implements Observer {
           int position, long id) {
         // If same item is selected again then there is nothing to do.
         if (selectedRobot != position) {
-          // Save position of last selected entry. As the first entry is
-          // "none", save position - 1
+          // End manual control of previously selected robot.
+          if (selectedRobot != NO_SELECTION) {
+            Controller.getInstance().setControlled(robots.get(selectedRobot),
+                false);
+          }
+          
+          // Set new selected robot.
           selectedRobot = position;
 
           // Uncheck CheckBox every time a new robot is selected.
           chkActivate.setChecked(false);
-
-          // If item "none" is selected, disable CheckBox.
           chkActivate.setEnabled(true);
         }
+
       }
 
       public void onNothingSelected(AdapterView<?> parent) {
@@ -535,7 +540,7 @@ public final class Steer extends Activity implements Observer {
   private final class SensorControl implements SensorEventListener {
 
     /**
-     * Threshold to filter signals that are to large. 
+     * Threshold to filter signals that are to large.
      */
     private static final int THRESHOLD_ACC = 10;
 
@@ -602,11 +607,11 @@ public final class Steer extends Activity implements Observer {
           // If filter variables exceed threshold, get command.
           if (Math.abs(filterX) > THRESHOLD_X
               || Math.abs(filterY) > THRESHOLD_Y) {
-            
+
             // Get hypotenuse of sum-vector.
             float hyp = (float) Math
                 .sqrt(filterX * filterX + filterY * filterY);
-            
+
             // Compute angle between x-sum and y-sum.
             float acos = (float) Math.acos((float) (filterX / hyp));
 
@@ -627,7 +632,7 @@ public final class Steer extends Activity implements Observer {
             filterX = 0;
             filterY = 0;
             filterZ = 0;
-            
+
             // Set moving state of selected robot.
             moving.put(robots.get(selectedRobot), Boolean.TRUE);
           }
@@ -639,7 +644,8 @@ public final class Steer extends Activity implements Observer {
      * Adds the current measured values to the filter values, weighted with the
      * filter parameter.
      * 
-     * @param values The measure values to add.
+     * @param values
+     *          The measure values to add.
      */
     private void addFilteredValues(float[] values) {
       filterX = filterX * FILTER_PARAM + values[0] * (float) (1 - FILTER_PARAM);

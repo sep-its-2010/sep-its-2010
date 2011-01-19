@@ -105,16 +105,17 @@ public class LogicThread implements Runnable {
   private RobotStatus getRobotState() {
     return robot.getRobotStatus().get(robot.getID());
   }
-  
+
   /**
    * Sets the next orientation of the robot.
    * 
-   * @param ori The orientation to set after ok message is received.
+   * @param ori
+   *          The orientation to set after ok message is received.
    */
   public void setTurnOrientation(Orientation ori) {
     turn = ori;
   }
-  
+
   /**
    * Returns the orientation to set as soon as ok message is received.
    * 
@@ -191,7 +192,7 @@ public class LogicThread implements Runnable {
       int[] node = { nextMapNode.getXValue(), nextMapNode.getYValue() };
       Orientation newDir = Orientation.getTurnedOrientation(getRobotState()
           .getPosition(), node);
-      
+
       int command = Orientation.addLocalDirection(getRobotState()
           .getOrientation(), newDir);
 
@@ -230,10 +231,12 @@ public class LogicThread implements Runnable {
 
       // handle broadcast messages
       if (!bcQueue.isEmpty()) {
-        IRequest req = bcQueue.poll();
-        ConquestLog.addMessage(this, robot.getName() + " :"
-            + req.getKind().name());
-        bcHandler.handleRequest(req);
+        while (!bcQueue.isEmpty()) {
+          IRequest req = bcQueue.poll();
+          ConquestLog.addMessage(this, robot.getName() + " :"
+              + req.getKind().name());
+          bcHandler.handleRequest(req);
+        }
         changed = true;
       }
 

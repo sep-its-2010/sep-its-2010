@@ -2,6 +2,7 @@ package sep.conquest.model.handler;
 
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
+import sep.conquest.model.Puck;
 import sep.conquest.model.requests.ControlledRequest;
 import sep.conquest.model.requests.MessageType;
 
@@ -42,7 +43,11 @@ public class ControlledRequestHandler extends Handler {
 		  ControlledRequest req = (ControlledRequest) request;
 		  
 		  // Get controlled state out of the message and set according robot state.
-		  executor.getRobot().setControlled(req.isControlled());      
+		  Puck robot = executor.getRobot();
+		  
+		  if (robot.getID() == req.getReceiver()[0]) {
+	      robot.setControlled(req.isControlled());
+		  }
       return true;
 		} else {
 	    return super.handleRequest(request);

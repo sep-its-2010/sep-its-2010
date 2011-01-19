@@ -32,10 +32,12 @@ public class EnvFailureRequestHandler extends Handler {
 
       // Get status of sender and set error state.
       RobotStatus state = env.getStatus().getRobotStatus(request.getSender());
-      synchronized (state) {
-        state.setState(State.ERROR);
-      }
 
+      if (state != null) {
+        synchronized (state) {
+          state.setState(State.ERROR);
+        }
+      }
       // Send update.
       env.sendUpdate();
       return true;
