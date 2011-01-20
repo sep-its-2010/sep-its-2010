@@ -239,39 +239,11 @@ public class HandlerTest extends AndroidTestCase{
 		assertTrue(handler.toString() + LOG_MES, handler.handleRequest(req2));
 	}
 	
-	/**
-	public void testIntentRequestHandler() {
-		int[] node = {-1,0}; 
-		req3 = new IntentRequest(id, receiver, node);
-		IntentRequestHandler handler = new IntentRequestHandler(null, exe);
-		assertTrue("SimReset" + LOG_MES, handler.handleRequest(req3));
-	}**/
-	
 	public void testFailureRequestHandler() {
 		FailureRequestHandler handler = new FailureRequestHandler(null, exe);
 		FailureRequest req4 = new FailureRequest(id, receiver, FailureType.ABYSS);
 		assertTrue("SimReset" + LOG_MES, handler.handleRequest(req4));	
 	}
-	
-	/**
-	public void testEnvStatusUpdateRequestHandler() {
-		int[] pos = {0,0};
-		Orientation ori = Orientation.UP;
-		boolean moving = true;
-		State state = State.EXPLORE;
-		NodeType type = NodeType.CROSS;
-		int[] intpos = {0,1};
-		EnvStatusUpdateRequestHandler handler = new EnvStatusUpdateRequestHandler(null);
-		StatusUpdateRequest req4 = new StatusUpdateRequest(id, receiver, new RobotStatus(pos, ori, moving, state, type, intpos));
-		assertTrue("", handler.handleRequest(req4));
-	}**/
-	
-	/**
-	public void testEnvFailureRequestHandler() {
-		EnvFailureRequestHandler handler = new EnvFailureRequestHandler(null);
-		FailureRequest req4 = new FailureRequest(id, receiver, FailureType.ABYSS);
-		assertTrue("", handler.handleRequest(req4));
-	}**/
 	
 	public void testDriveRequestHandler() {
 		DriveRequestHandler handler = new DriveRequestHandler(null, exe);
