@@ -34,9 +34,27 @@
 	Benutzerhandbuch \\
 	SEP-Conquest
 }
-\author{Andreas Wilhelm, Andreas Poxrucker, Martin Freund,\\ Max Binder, Florian B\"urchner, Florian Lorenz} 
+\author{
+            \begin{tabular}[r]{*{3}{|c|}}
+	\hline
+	Phase & Verantwortlicher & E-Mail \\
+	\hline \hline
+	Pflichtenheft & Florian Lorenz & lorenz@fim.uni-passau.de \\
+	\hline
+	Entwurf & Andreas Wilhelm &  wilhelma@fim.uni-passau.de \\
+	\hline
+	Spezifikation & Andreas Poxrucker & poxrucke@fim.uni-passau.de \\
+	\hline
+	Implementierung & Martin Freund & freund@fim.uni-passau.de \\
+	\hline
+	Validierung & Florian Bürchner & buerchne@fim.uni-passau.de \\
+	\hline
+	Präsentation & Max Binder & binder@fim.uni-passau.de \\
+	\hline
+	\end{tabular}
+}
 \begin{document}
-\date{14. Januar 2011}
+\date{20. Januar 2011}
 	\maketitle
 	\newpage
 	\tableofcontents	
@@ -46,8 +64,8 @@
 		Dieses Projekt richtet sich \"uberwiegend an Forschungsgruppen, Studenten sowie die e-puck Community. Grundlegende Kenntnisse der Programmiersprachen 
 		Java und C sowie ein sicherer Umgang mit Compilern werden f\"ur die Verwendung der Software vorausgesetzt. Auch Erfahrung mit sensibler 
 		Hardware und ein grundlegendes Verst\"andnis f\"ur eingebettete Systeme sind notwendig. Bevor Sie das gesamte System zum ersten Mal in Betrieb 
-		nehmen, sollten Sie sich  die Anleitung sorgf\"altig und vollst\"andig durchlesen, um eine Besch\"adigung der Hardware zu vermeiden. Hierbei m\"ochten wir vor allem auf
-		Kapitel \ref{e_puck_bedienung} verweisen, um sich mit dem e-puck Roboter und dessen Bedienung vertraut zu machen. Alle in diesem Handbuch  
+		nehmen, sollten Sie sich  die Anleitung sorgf\"altig und vollst\"andig durchlesen, um eine Besch\"adigung der Hardware zu vermeiden. Hierbei m\"ochten wir vor 
+		allem auf Kapitel \ref{e_puck_bedienung} verweisen, um sich mit dem e-puck Roboter und dessen Bedienung vertraut zu machen. Alle in diesem Handbuch  
 		aufgef\"uhrten Programme	sind im Internet zur freien Verf\"ugung gestellt.\\ 
 		Das Entwicklerteam \"ubernimmt keinerlei Haftung f\"ur auftretende Probleme oder Sch\"aden. \\ 
 	\subsection{Leistungsmerkmale des Systems}
@@ -55,16 +73,17 @@
 			\item{Unterst\"utzung von bis zu sechs e-puck Roboter} \\		
 				Es k\"onnen gleichzeitig bis zu sechs e-puck Roboter effizient ein unbekanntes Gebiet erkunden.
 			\item{Zwei verschiedene Steuerungsarten} \\
-				Das System unterst\"utzt die Steuerung eines e-puck Roboters durch eine Touch-Steuerung sowie eine Kippsteuerung mithilfe der Beschleunigungssensoren.
+				Das System unterst\"utzt die Steuerung eines e-puck Roboters durch eine Touch-Steuerung sowie eine Kippsteuerung mithilfe der 
+				Beschleunigungssensoren.
 			\item{Kollisionsvermeidung} \\
 				Die e-puck Roboter vermeiden Kollisionen mit anderen Teilnehmern.
 			\item{Statistikanzeige} \\
-				Durch den Statistik-Dialog und Visualisierung der erkundeten Karte kann gepr\"uft werden, wie effizient die Roboter erkundet haben und wie viel Knoten jeder
-				einzelne Teilnehmer abgefahren hat.
+				Durch den Statistik-Dialog und Visualisierung der erkundeten Karte kann gepr\"uft werden, wie effizient die Roboter erkundet haben und wie viel Knoten 
+				jeder einzelne Teilnehmer abgefahren hat.
 		\end{itemize}		
 \section{Systemanforderungen}
 		\subsection{Smartphone mit Android Betriebssystem} 
-				Ein bluetoothf\"ahiges Smartphone mit einem Android Betriebssystem ab Version 2.1 und installiertem CyanogenMod ab Version 6.0.1, integrierten 
+				Ein bluetoothf\"ahiges Smartphone mit der freien Android Distribution \textit{CyanogenMod} ab Version 6.0.1, integrierten 
 				Beschleunigungssensoren sowie ein Touch-Display sind erforderlich, um das System zu verwenden. Ein Tutorial f\"ur die Installation des Android 
 				Betriebssystems inkl. CyanogenMod ist nicht Teil dieses Handbuchs, bitte wenden Sie sich im Problemfall an die Android-Community unter 
 				www.android.com
@@ -76,24 +95,25 @@
 				Zum Ersetzen des Bootloaders auf dem e-puck Roboter wird MPLAB ICD 2 oder 3 inkl. eines Adapterkabels f\"ur den e-puck Roboter ben\"otigt.
 \section{Betriebsbedingungen} 
 		\subsection{Ausreichende Stromversorgung} 
+		\label{stromversorgung}
 				Um ein sicheres Ausf\"uren des Gesamtsystems zu gew\"ahrleisten, m\"ussen die Akkus der e-puck Roboter immer vor Inbetriebnahme vollst\"andig
-				aufgeladen sein. Ist dies nicht der Fall kann es zu unerwarteten Fehlern kommen und die korrekte und vollst\"andige Erkundgen durch die e-puck Roboter
-				ist nicht mehr gew\"ahrleistet.
+				aufgeladen sein, damit eine Erkundung, die bis zu 10 Minuten dauern kann, erfolgreich beendet wird. Ist dies nicht der Fall kann es zu unerwarteten 
+				Fehlern kommen und die korrekte und vollst\"andige Erkundgen durch die e-puck Roboter ist nicht mehr gew\"ahrleistet.
 		\subsection{Geeignete Bedingungen f\"ur Funknetzwerke} 
 				Verwenden Sie die Hardware nicht in der N\"ahe von starken Strahlungsquellen. Dies kann die Bluetoothkommunikation der e-puck Roboter erheblich st\"oren 				und unvorhergesene Fehler erzeugen.
 		\subsection{Gr\"o\ss e des zu erkundenen Terrains} 
-				Das Projekt ist darauf ausgelegt ein Feld mit bis zu 500 Knoten zu erkunden. Ist das zu erkundende Spielfeld gr\"o\ss er, reichen die Akku's der e-puck Roboter
-				nicht aus, um die Erkundung vollst\"andig durchzuf\"uhren.
+				Das Projekt ist darauf ausgelegt ein Feld mit bis zu 500 Knoten zu erkunden. Ist das zu erkundende Spielfeld gr\"o\ss er, reichen die Akku's der e-puck 
+				Roboter nicht aus, um die Erkundung vollst\"andig durchzuf\"uhren (siehe Kapitel \ref{stromversorgung}).
 		\subsection{Spielfeldbedinungen} 
 				Das Spielfeld besteht ausschlie\ss lich aus gleichgro\ss en quadratischen Feldern, die rasterf\"ormig und zusammenh\"angend angeordnet sind. Ein Feld 
-				muss mindestens so gro\ss \ sein, dass ein im Zentrum stehender e-puck Roboter vollst\"andig in das Innere des Feldes passt. Die Erkundung mit den e-puck 
-				Robotern ben\"otigt ausreichend reflektierende und innerhalb der Spezifikation liegenden Linien, sowie eine durchgehend gute Beleuchtung des Spielfeldes 
-				von oben. Der Untergrund muss eben sein und darf keine rutschige oder teppich\"ahnliche Oberfl\"ache aufweisen, da sich sonst die e-puck Roboter nicht 
-				problemlos bewegen k\"onnen. Die e-puck Roboter d\"urfen w\"ahrend der Erkundung nicht ber\"uhrt, verschoben oder vom Spielfeld gehoben werden. Das 
-				Spielfeld darf w\"ahrend der Erkundung nicht ver\"andert werden und keine ung\"ultigen Passagen beinhalten. 
+				muss mindestens so gro\ss \ sein, dass ein im Zentrum stehender e-puck Roboter vollst\"andig in das Innere des Feldes passt. Die Erkundung mit den e-
+				puck Robotern ben\"otigt ausreichend reflektierende und innerhalb der Spezifikation liegenden Linien, sowie eine durchgehend gute Beleuchtung des 
+				Spielfeldes von oben. Der Untergrund muss eben sein und darf keine rutschige oder teppich\"ahnliche Oberfl\"ache aufweisen, da sich sonst die e-puck 
+				Roboter nicht problemlos bewegen k\"onnen. Die e-puck Roboter d\"urfen w\"ahrend der Erkundung nicht ber\"uhrt, verschoben oder vom Spielfeld 
+				gehoben werden. Das Spielfeld darf w\"ahrend der Erkundung nicht ver\"andert werden und keine ung\"ultigen Passagen beinhalten. 
 		\subsection{Umgebungsbedinungen} 
-				Es d\"urfen nicht mehr als sechs e-puck Roboter und ein Smartphone zur selben Zeit verwendet werden und die Startpositionen der jeweiligen e-puck Roboter
-				sind vor Beginn der Erkundung fest zu w\"ahlen.
+				Es d\"urfen nicht mehr als sechs e-puck Roboter und ein Smartphone zur selben Zeit verwendet werden und die Startpositionen der jeweiligen e-puck 
+				Roboter sind vor Beginn der Erkundung fest zu w\"ahlen (siehe Kapitel \ref{subsec:reale_erkundung}).
 		\subsection{Weitere Betriebsbedinungen des Smartphones und der e-puck Roboter} 
 				Die weiteren Betriebsbedinungen des Smartphones und der e-puck Roboter k\"onnen den jeweiligen Benutzerhandb\"uchern der Hardware entnommen 
 				werden.
@@ -130,8 +150,9 @@
 		\begin{minipage}[t]{0.5\textwidth}
 			\vspace{10pt}
 				\subsection{Bodensensoren}
-						Das Erweiterungsmodul f\"ur die Bodensensoren ist f\"ur dieses Projekt von sehr gro\ss er Bedeutung. Hierbei ist vor allem zu beachten, dass der e-puck 								Roboter	bei der Kalibrierung, sowie beim Erkundungsvorgang immer richtig positioniert ist. Die folgende Abbildung veranschaulicht, wie der Roboter 
-						beim Start der Erkundung	stehen muss. Die schwarze Linie muss zwischen den \"au\ss eren Bodensensoren liegen. (siehe Abbildung 				
+						Das Erweiterungsmodul f\"ur die Bodensensoren ist f\"ur dieses Projekt von sehr gro\ss er Bedeutung. Hierbei ist vor allem zu beachten, dass der e-
+						puck Roboter	bei der Kalibrierung, sowie beim Erkundungsvorgang immer richtig positioniert ist. Die folgende Abbildung veranschaulicht, wie der 
+						Roboter beim Start der Erkundung stehen muss. Die schwarze Linie muss zwischen den \"au\ss eren Bodensensoren liegen. (siehe Abbildung 				
 						\ref{positionierung_epuck})
 		\end{minipage}
    \end{figure}
@@ -155,12 +176,16 @@
 			\subsection{Vorbereitungen} 
 			Vor der Installation und der ersten Inbetriebnahme sind folgende vorbereitenden Schritte notwendig:
 			\begin{itemize}
-				\item{Die Akku's der e-puck Roboter m\"ussen vollst\"andig geladen sein}
-				\item{Download und Installation von MPLAB IDE}
-				\item{Download und Installation von PIC30}
-				\item{Download und Installation von Tiny-Bootloader}
-				\item{Download und Installation der UNIX-Tools f\"ur Windows}
-				\item{Download des modifizierten Bootloader f\"ur 16-fache PLL auf dem e-puck Roboter}
+				\item{Die Akku's der e-puck Roboter m\"ussen vollst\"andig geladen sein}																																					
+	            \item{Download\footnote[1]
+	            {\url{http://www.microchip.com/stellent/idcplg?IdcService=SS_GET_PAGE&nodeId=1406&dDocName=en019469&part=SW007002}} 
+				und Installation von MPLAB IDE}
+				\item {Download\footnote[2]{\url{http://www.microchip.com/stellent/idcplg?IdcService=SS_GET_PAGE&nodeId=1406&dDocName=en010065}} und 
+				Installation von PIC30}
+				\item{Download\footnote[3]{\url{http://www.etc.ugal.ro/cchiculita/software/picbootloader.htm}} und Installation von Tiny-Bootloader}
+				\item{Download\footnote[4]{\url{http://download.chip.eu/de/Unix-Dos-Toolkit-4.3d_23782.html}} und Installation der UNIX-Tools f\"ur Windows}
+				\item{Download\footnote[5]{\url{http://code.google.com/p/sep-its-2010/source/browse/##svn/trunk/e-puck/bootloader}} des modifizierten Bootloader f\"ur 
+				16-fache PLL auf dem e-puck Roboter}
 			\end{itemize}
 			\subsection{Bootloader aufspielen} 
 				Wenn alle Vorbereitungen erfolgreich durchge\"uhrt wurden, muss der Bootloader des e-puck Roboters neu geflasht werden. Eine ausf\"uhrliche
@@ -168,11 +193,11 @@
 				Das MPLAB-Projekt, das Sie ben\"otigen wird bei der Software mitgeliefert und befindet sich im Verzeichnis \textit{/trunk/epuck/bootloader/}.
 			\subsection{Bluetooth-Verbindung aufbauen} 
 				Schalten Sie den e-puck durch Umschalten des Power-Switch ein und starten Sie den \textit{Pairing}-Prozess. Eine ausf\"uhrliche Anleitung finden Sie
-				unter  \url{http://www.gctronic.com/doc/index.php/E-Puck} \\
+				unter \\  \url{http://www.gctronic.com/doc/index.php/E-Puck} \\
 				Nach der Zuweisung eines Com-Ports muss dieser im \textit{TinyBootloader} eingetragen werden.			
 			\subsection{Firmware aufspielen} 
 				Als letzten Schritt m\"ussen Sie mithilfe des \textit{TinyBootloader} die Firmware auf den e-puck Roboter aufspielen. Ein Manual zu diesem Programm
-				ist unter \url{http://www.etc.ugal.ro/cchiculita/software/picbootloader.htm} zu finden. \\
+				ist unter \\ \url{http://www.etc.ugal.ro/cchiculita/software/picbootloader.htm} zu finden. \\
 				Fahren Sie mit Kapitel \ref{programmstart_ablauf} fort, um eine Erkundung zu starten.
 \section{Benutzeroberfl\"ache des Smartphones}
 \label{benutzeroberflaeche}
@@ -324,15 +349,30 @@
  		\end{enumerate}
  		\newpage
 	\subsection{Activity Statistics}
- 		\paragraph*{Kurzbeschreibung:}
+ 		
+\begin{figure}[htbp]
+
+				\begin{minipage}[t]{6cm}
+					\vspace{5pt}					
+			 		\includegraphics[height=6cm]{images/statistic.png}
+ 					\caption{Statistics-Activity}
+				\end{minipage}
+				\hfill
+				\begin{minipage}[t]{6cm}
+					\vspace{10pt}
+					\paragraph*{Kurzbeschreibung:}
  		Die Activity \textit{Statistics} zeigt verschiedene Informationen bzgl. der erkundeten Karte und Knoten an. Diese Activity ist im Simulations-Modus sowie im
  		Exploration-Modus verf\"ugbar. Die \textit{Statistics}-Anzeige kann von der Activity \textit{Map} \"uber das Men\"u gestartet werden. \\ \\
- 		\includegraphics[height=6cm]{images/statistic.png}
+				\end{minipage}
+
+
+
+\end{figure} 		
  	\subsection{Activity Map}
  		\paragraph{Kurzbeschreibung:}
  		Die Activity \textit{Map} stellt die Kern-Activity dar. Sie zeigt die bereits erkundete Karte und die aktuelle Position der e-puck Roboter an. Von ihr aus gelangt man
  		mithilfe des Men\"us in die Activities \textit{Statistics}, \textit{Steer}, und \textit{Export}. Durch Dr\"ucken auf einen in der Karte angezeigten e-puck oder durch 
- 		Auswahl mit einem Drop-Down-Men\" oberhalb der Karte kann ein e-puck ausgew\"ahlt werden, um ihn dann beispielsweise zu steuern.
+ 		Auswahl mit einem Drop-Down-Men\"u oberhalb der Karte kann ein e-puck ausgew\"ahlt werden, um ihn dann beispielsweise zu steuern.
  		\begin{figure}[htbp]
 				\begin{minipage}[t]{6cm}
 					\vspace{10pt}
@@ -365,7 +405,9 @@
 		\"offnet sich und Sie k\"onnen verfolgen, wie die e-puck Roboter  die geladene Karte erkunden.
 	\subsection{Exploration Modus -- Reale Erkundung mit Robotern}
 	\label{subsec:reale_erkundung}
-		Stellen Sie die e-puck Roboter nebeneinander von links nach rechts mit aufsteigender 4-stelliger Seriennummer und gleicher Blickrichtung nach vorne auf. 
+		Positionieren Sie die e-puck Roboter nebeneinander von links nach rechts mit aufsteigender 4-stelliger Seriennummer und gleicher Blickrichtung auf 
+		aneinanderliegende Knoten. 
+		(siehe Abbildung \ref{puck_aufstellung})
 		Vergewissern Sie sich, dass der Selector \textbf{nicht} auf die Position 0	eingestellt ist und schalten Sie die Roboter nun mithilfe des Power-Switch (Kapitel 
 		\ref{e_puck_bedienung}) ein. Nach korrektem Einschalten leuchtet nun die 
 		\textit{POWER-LED}. Dr\"ucken Sie anschlie\ss end den \textit{Suchen}-Button, um die Bluetooth-Suche nach verf\"ugbaren Robotern zu starten. Nach 								erfolgreicher	Suche werden alle verf\"ugbaren Roboter angezeigt. Sie k\"onnen per Touch alle e-pucks ausw\"ahlen die an der Erkundung teilnehmen sollen. Ist 					ein Roboter ausgew\"ahlt wird er durch \"Anderung der Schriftfarbe hervorgehoben. Nachdem Ihre Auswahl abgeschlossen ist, bet\"atigen Sie \textit{Men\"u} 					und dr\"ucken  \textit{Start} um die Erkundung zu starten. Sie k\"onnen am Handy den Fortschritt der Erkundung beobachten. Sie k\"onnen w\"ahrend der
@@ -376,7 +418,12 @@
 		freigegeben und der Benutzer wechselt in den Exploration Modus zur\"uck. W\"ahrend ein Roboter gesteuert wird, l\"auft die Erkundung der anderen e-pucks
 		weiter. Nach erfolgreicher Erkundung fahren die e-puck Roboter wieder auf ihre Ausgangspositionen zur\"uck und k\"onnen weiterhin gesteuert werden. Die
 		Bluetooth-Verbindung wird getrennt, sobald die Applikation beendet wird oder der Benutzer durch Bet\"atigen des \textit{Zur\"uck}-Buttons auf den 
-		Ausgangsdialog wechselt.
+		Ausgangsdialog wechselt. \\
+		\begin{figure}[htbp]
+			\includegraphics[height=6.5cm]{images/puckaufstellung} 
+			\caption{Puck-Aufstellung}
+			\label{puck_aufstellung}
+		\end{figure}
 	\subsection{Import/Export Modus}
 		\begin{itemize}
 			\item{Export:	Wenn Sie im Exploration Modus eine Karte erfolgreich und vollst\"andig erkundet haben, k\"onnen Sie mithilfe der  \textit{Export}-Funktion die 
@@ -433,7 +480,10 @@
 		\end{itemize}
 		\item{Zur Ver\"anderung der Firmware auf dem e-puck Roboter}
 		\begin{itemize}
-			\item{Microsoft Visual Studio 2008 mit dsPIC30Project Wizzard}
+			\item{UNIX Tools f\"ur Windows}
+			\item{gcc-pic30-Compiler}
+			\item{Microsoft Visual Studio 2008 mit e-puck Projektordner (zu finden unter \url{http://code.google.com/p/sep-its-2010/source/browse/#svn/trunk/e-
+			puck/firmware})}
 		\end{itemize}
 	\end{itemize}
 	Hier noch einige Anregungen, die zur Erweiterungen und Verbesserung des Systems verwendet werden k\"onnen:
