@@ -2,6 +2,7 @@ package sep.conquest.model;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.LinkedList;
 import java.util.UUID;
 
 import sep.conquest.model.requests.FailureRequest;
@@ -32,8 +33,30 @@ public class RealPuck extends Puck {
    * The buffer for the current Bluetooth message.
    */
   private byte[] btMessage = new byte[MSG_LENGTH];
-
+  
   /**
+   * The position of the robot was set externally.
+   */
+  private boolean positionSet = false;
+  
+  public LinkedList<UUID> nextLocalizers = new LinkedList<UUID>();
+  public UUID localizeSuccessor = null;
+	/**
+	 * @return the positionSet
+	 */
+	public boolean isPositionSet() {
+		return positionSet;
+	}
+
+	/**
+	 * @param positionSet
+	 *            the positionSet to set
+	 */
+	public void setPositionSet(boolean positionSet) {
+		this.positionSet = positionSet;
+	}
+
+/**
    * Constructor which generates an instance of the class RealPuck.
    * 
    * @param btSocket

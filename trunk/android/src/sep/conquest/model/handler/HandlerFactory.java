@@ -19,7 +19,8 @@ public class HandlerFactory {
    * 
    * Handled types of requests: - DriveRequest - StatusUpdateRequest -
    * SpeedRequest - CollisionRequest - ControlledRequest - FailureRequest -
-   * IntentRequest - HelloRequest
+   * IntentRequest - HelloRequest - LocalizeCollisionReuqest -
+   * LocalizeFinishedRequest - LocalizePassRequest
    * 
    * @param puck
    *          The LogicThread of the Puck that should get the chain.
@@ -34,7 +35,10 @@ public class HandlerFactory {
     Handler intHndl = new IntentRequestHandler(helloHndl, executor);
     Handler spdHndl = new SpeedRequestHandler(intHndl, executor);
     Handler statHndl = new StatusUpdateRequestHandler(spdHndl, executor);
-    return statHndl;
+    Handler locColHndl = new LocalizeCollisionRequestHandler(statHndl, executor);
+    Handler locFinHndl = new LocalizeFinishedRequestHandler(locColHndl, executor);
+    Handler locPasHndl = new LocalizePassRequestHandler(locFinHndl, executor);
+    return locPasHndl;
   }
 
   /**

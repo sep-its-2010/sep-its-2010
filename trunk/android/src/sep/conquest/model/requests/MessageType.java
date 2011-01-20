@@ -112,5 +112,20 @@ public enum MessageType {
   /**
    * e-puck has rejected a command.
    */
-  RESPONSE_REJECT;
+  RESPONSE_REJECT,
+  
+  /**
+   * Specifies a message in case of a collision of robots during localization.
+   */
+  LOCALIZE_COLLISION,
+  
+  /**
+   * Specifies a message for passing the localization process to the next client.
+   */
+  PASS_LOCALIZATION,
+  
+  /**
+   * Specifies a message for anouncing the finished localization.
+   */
+  FINISHED_LOCALIZATION;
 }

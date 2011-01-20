@@ -1,6 +1,5 @@
 package sep.conquest.model;
 
-import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,12 +56,22 @@ public class ComManager implements IComMan {
 	 * sep.conquest.model.IRequest)
 	 */
 	public synchronized void broadcast(IRequest request) {
-		Iterator<UUID> it = clients.keySet().iterator();
-
-		while (it.hasNext()) {
-			UUID id = it.next();
-			IComClient client = clients.get(id);
-			client.deliver(request);
+		
+		// broadcast
+		if (request.getSender() == null) {
+			for (UUID id: clients.keySet()) {
+				IComClient client = clients.get(id);
+				client.deliver(request);
+			}
+			
+		// multicast
+		} else {
+			for (UUID id: request.getReceiver()) {
+				if (clients.containsKey(id)) {
+					IComClient client = clients.get(id);
+					client.deliver(request);
+				}
+			}
 		}
 	}
 
