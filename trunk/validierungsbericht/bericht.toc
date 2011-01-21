@@ -1,0 +1,28 @@
+\select@language {ngerman}
+\contentsline {section}{\numberline {1}Globale Testszenarien und Testf\IeC {\"a}lle}{3}{section.1}
+\contentsline {subsection}{\numberline {1.1}Pflichtenheft Testf\IeC {\"a}lle}{3}{subsection.1.1}
+\contentsline {subsubsection}{\numberline {1.1.1}/T50/ Kalibrierung}{3}{subsubsection.1.1.1}
+\contentsline {subsubsection}{\numberline {1.1.2}/T60/ Linienerkennung}{3}{subsubsection.1.1.2}
+\contentsline {subsubsection}{\numberline {1.1.3}/T70/ Bluetooth-Scan}{3}{subsubsection.1.1.3}
+\contentsline {subsubsection}{\numberline {1.1.4}/T80/ Broadcast-Test}{3}{subsubsection.1.1.4}
+\contentsline {subsubsection}{\numberline {1.1.5}/T90/ Knotenanalyse und manuelle Steuerung per On-Screen-Joystick}{3}{subsubsection.1.1.5}
+\contentsline {subsubsection}{\numberline {1.1.6}/T100/ Steuerung der Fahrtgeschwindigkeit}{3}{subsubsection.1.1.6}
+\contentsline {subsubsection}{\numberline {1.1.7}/T110/ Steuerung per Beschleunigungssensor}{3}{subsubsection.1.1.7}
+\contentsline {subsubsection}{\numberline {1.1.8}/T120/ Erkundungstest}{4}{subsubsection.1.1.8}
+\contentsline {subsubsection}{\numberline {1.1.9}/T130/ erweiterter Steuerungstest}{4}{subsubsection.1.1.9}
+\contentsline {subsubsection}{\numberline {1.1.10}/T140W/ Speichern der Kartendaten}{4}{subsubsection.1.1.10}
+\contentsline {subsubsection}{\numberline {1.1.11}/T150W/ Laden der Kartendaten}{4}{subsubsection.1.1.11}
+\contentsline {subsubsection}{\numberline {1.1.12}/T160W/ Test von globaler Lokalisierung}{4}{subsubsection.1.1.12}
+\contentsline {subsubsection}{\numberline {1.1.13}/T170W/ Test der Zoomfunktionalit\IeC {\"a}t}{4}{subsubsection.1.1.13}
+\contentsline {subsection}{\numberline {1.2}weitere Testf\IeC {\"a}lle}{4}{subsection.1.2}
+\contentsline {section}{\numberline {2}Unit Tests}{4}{section.2}
+\contentsline {subsection}{\numberline {2.1}Android Anwendung}{4}{subsection.2.1}
+\contentsline {subsubsection}{\numberline {2.1.1}GridMap}{4}{subsubsection.2.1.1}
+\contentsline {subsubsection}{\numberline {2.1.2}Behaviour}{6}{subsubsection.2.1.2}
+\contentsline {subsubsection}{\numberline {2.1.3}ComManager}{6}{subsubsection.2.1.3}
+\contentsline {subsubsection}{\numberline {2.1.4}AStarPathFinder}{6}{subsubsection.2.1.4}
+\contentsline {subsubsection}{\numberline {2.1.5}Handler}{6}{subsubsection.2.1.5}
+\contentsline {subsection}{\numberline {2.2}E-puck Firmware}{7}{subsection.2.2}
+\contentsline {subsubsection}{\numberline {2.2.1}Ringpuffer}{7}{subsubsection.2.2.1}
+\contentsline {section}{\numberline {3}Blackbox Tests}{7}{section.3}
+\contentsline {section}{\numberline {4}kontrollflussorientierte Testverfahren}{7}{section.4}
