@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <libpic30.h>
 
 #include "hal_rtc.h"
 #include "hal_led.h"
@@ -515,9 +516,6 @@ void cbSyncRequestReset( void) {
 	podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
 	memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
 	com_send( &podResponse);
-
-	conquest_reset(); //implies the FSM reset
-	fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__NONE);
 }
 
 
@@ -834,6 +832,7 @@ void conquest_cbConnection(
 
 	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
 		if( _blConnected) {
+			__delay32( FCY / 4);
 			fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__RESET);
 		} else {
 			conquest_reset();
