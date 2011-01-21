@@ -25,7 +25,7 @@ enum {
  * \see
  * sen_line_calibrate | sen_line_rescale
  */
-static int32_t s_aai32Coefficients[SEN_LINE_NUM_SENSORS][NUM_COEFFICIENTS];
+int32_t s_aai32Coefficients[SEN_LINE_NUM_SENSORS][NUM_COEFFICIENTS];
 
 
 /*!

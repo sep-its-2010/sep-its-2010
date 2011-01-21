@@ -12,6 +12,9 @@
 #include "sen_line.h"
 #include "sen_prox.h"
 
+#include "test_calibration.h"
+#include "test_ringbuf.h"
+
 #include "conquest.h"
 
 
@@ -91,26 +94,14 @@ int main( void) {
 	sen_prox_init( 1);
 	sen_prox_enable();
 
-	// Perform a default calibration which does not transform the raw data at all.
-	const sen_line_SData_t podDefaultBlackLevel = { { SEN_LINE_NOMINAL_BLACK_LEVEL }, { 0 } };
- 	const sen_line_SData_t podDefaultWhiteLevel = { { SEN_LINE_NOMINAL_WHITE_LEVEL }, { 0 } };
- 	sen_line_calibrate( &podDefaultBlackLevel, &podDefaultWhiteLevel);
-
 	hal_rtc_register( cbBlinker, RTC_FREQENCY / BLINK_FREQUENCY, true);
+
+	test_ringbuf_run();
+	test_calibration_run();
 
 	conquest_init();
 
 	for( ;;) {
-
-		//test
-	//sen_prox_SData_t proxData;
-	//sen_prox_getCurrent( &proxData);
-	
-	//if( proxData.aui8Data[0] > 30) {
-	//	char buffer[50];
-	//	sprintf(buffer, "%i", proxData.aui8Data[0]);
-	//	hal_uart1_puts( buffer);
-	//}
 
 		com_processIncoming();
 	}

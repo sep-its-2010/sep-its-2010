@@ -253,6 +253,10 @@
 				Name="Test"
 				>
 				<File
+					RelativePath=".\test_calibration.c"
+					>
+				</File>
+				<File
 					RelativePath=".\test_ringbuf.c"
 					>
 				</File>
@@ -441,6 +445,10 @@
 			<Filter
 				Name="Test"
 				>
+				<File
+					RelativePath=".\test_calibration.h"
+					>
+				</File>
 				<File
 					RelativePath=".\test_ringbuf.h"
 					>
