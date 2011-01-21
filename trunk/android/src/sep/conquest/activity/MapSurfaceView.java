@@ -133,7 +133,6 @@ public class MapSurfaceView extends SurfaceView
      */
     private MapMode mMode;
     
-    private ExecutorService exec = Executors.newSingleThreadExecutor();
 
     /**
      * The constructor resgisters the interface SurfaceHolder.Callback on the

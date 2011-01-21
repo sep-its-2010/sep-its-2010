@@ -21,17 +21,44 @@ public class Statistics extends Activity implements Observer {
 
 	private static final int UPDATE_MESSAGE = 0;
 
+	/**
+	 * Displays the number of explored nodes for every single e-puck.
+	 */
 	private TextView explored;
+	
+	/**
+	 * Displays the number of frontier nodes total.
+	 */
 	private TextView frontier;
+	
+	/**
+	 * Display the number of nodes which were multiple crossed.
+	 */
 	private TextView multiple;
 
+	/**
+	 * Takes the values of the update messages to the control elements.
+	 */
 	private Handler updateHandler;
 
+	/**
+	 * Saves the robot names.
+	 */
 	private String[] name;
+	
+	/**
+	 * Saves the nodes which are explored for every single e-puck.
+	 */
 	private int[] exploredNumber;
 
+	/**
+	 * Total number of explored nodes.
+	 */
 	private int total;
 	
+	/**
+	 * Total number of multiple crossed nodes.
+	 */
 	private int multipleCrossed;
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +67,7 @@ public class Statistics extends Activity implements Observer {
 		setContentView(R.layout.statistics_main);
 
 		explored = (TextView) findViewById(R.id.nodeNumberValues);
-		frontier = (TextView) findViewById(R.id.frontierNumberValues);
+		//frontier = (TextView) findViewById(R.id.frontierNumberValues);
 		multiple = (TextView) findViewById(R.id.multipleNumberValues);
 
 		updateHandler = new Handler() {
@@ -54,7 +81,6 @@ public class Statistics extends Activity implements Observer {
 						explored.append(name[i] + ": " + exploredNumber[i]
 								+ " " + getString(R.string.TXT_NODES) + "\n");
 						
-						frontier.append(name[i] + ": \n");
 
 					}
 					explored.append("\nTotal: " + total + " " + getString(R.string.TXT_NODES ) + "\n");
@@ -75,6 +101,10 @@ public class Statistics extends Activity implements Observer {
 		Controller.getInstance().getEnv().deleteObserver(this);
 	}
 
+	/**
+	 * The ConquestUpdate provides the statistic data and they are handled in
+	 * this method.
+	 */
 	public void update(Observable obs, Object data) {
 		synchronized (data) {
 			ConquestUpdate cu = (ConquestUpdate) data;

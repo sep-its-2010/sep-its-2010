@@ -48,18 +48,40 @@ public class Map extends Activity implements Observer {
 	
 	private static final int UPDATE_MESSAGE = 0;
 	
+	/**
+	 * The Spinner to select a robot in the map. For manual control, e.g.
+	 */
 	private Spinner mRobotSelect;
 	
+	/**
+	 * Saves the values for the spinner.
+	 */
 	private ArrayAdapter < String > mRobotAdapter;
 	
+	/**
+	 * Saves the positions of the robots.
+	 */
 	private LinkedList < EpuckPosition > mPositions;
 	
+	/**
+	 * Saves the map mode, whether the spinner is enabled or not.
+	 */
 	private MapMode mMode;
 	
+	/**
+	 * Saves the ids of the e-pucks.
+	 */
 	private LinkedList<String> mIds;
 	
+	/**
+	 * Dialog is shown when robots are synchronizing.
+	 */
 	private ProgressDialog pd;
 	
+	/**
+	 * Once the simulator is started and the activity is returned, it shouldn't
+	 * be started a second time.
+	 */
 	private boolean first = true;
 	
 	/**
@@ -218,6 +240,9 @@ public class Map extends Activity implements Observer {
         return true;
     }
     
+    /**
+     * Gets the file name from the intent and loads the map for preview.
+     */
     private void loadMap() {
     	String mapName = getIntent().getStringExtra(Import.EXTRA_FILE_PATH);
     	try {
@@ -232,10 +257,18 @@ public class Map extends Activity implements Observer {
 		}
     }
     
+    /**
+     * Makes the progress dialog appear.
+     */
     private void setPD() {
     	pd = ProgressDialog.show(this, getString(R.string.TXT_SYNC), getString(R.string.TXT_LOCALIZING));
     }
     
+    /**
+     * Draws a preview of the selected map.
+     * @param map chosen map
+     * @param borders map borders
+     */
     private void drawMap(List<MapNode> map, int[] borders) {
     	MapSurfaceView draw = (MapSurfaceView) findViewById(R.id.map_view);
 		
@@ -243,6 +276,10 @@ public class Map extends Activity implements Observer {
 		draw.setMap(map, borders);
     }
     
+    /**
+     * Sets the spinner into the surface view to make it possible to
+     * select a e-puck out of the map by a touch event.
+     */
     private void setSpinner() {
     	MapSurfaceView map = (MapSurfaceView) findViewById(R.id.map_view);
     	map.setSpinner(mRobotSelect);
@@ -263,6 +300,10 @@ public class Map extends Activity implements Observer {
         };
     }
 
+    /**
+     * The ConquestUpdate provides the data of the robots. E.g. explored
+     * nodes and new positions.
+     */
 	public void update(Observable obs, Object data) {
 		synchronized(data) {
 		ConquestUpdate cu = (ConquestUpdate) data;

@@ -69,12 +69,24 @@ public class Simulation extends Activity {
 	 */
 	private int mNumber;
 	
+	/**
+	 * Avoids an incorrect selection in the spinner menu.
+	 */
 	private boolean mFirstRun = false;
 	
+	/**
+	 * This spinner contains the number of robots.
+	 */
 	private Spinner numberOfRobots;
 	
+	/**
+	 * Saves the values for the spinner.
+	 */
 	private ArrayAdapter<String> numberAdapter;
 	
+	/**
+	 * Displays the filename of the chosen map.
+	 */
 	private TextView filename;
 
 	/**
@@ -235,6 +247,10 @@ public class Simulation extends Activity {
 		}
 	}
 	
+	/**
+	 * Updates the robot positions in the map if a new number of robots is 
+	 * chosen.
+	 */
 	private void setRobotPositions() {
 		positions.clear();
 		for (int j = 0; j < mNumber+1; j++) {
