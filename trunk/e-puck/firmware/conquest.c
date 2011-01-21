@@ -818,8 +818,8 @@ void conquest_reset( void) {
  * 
  * The conquest logic can be linked to bluetooth connection events #with com_init().
  *
- * When a connection is established, an internal reset message is generated which responds with #CONQUEST_MESSAGE_TYPE__RESPONSE_STATUS.
- * When the connection is closed, a plain reset is triggered (#conquest_reset()).
+ * Any connection event triggers a reset.
+ * When a connection is established, a response (#CONQUEST_MESSAGE_TYPE__RESPONSE_STATUS) is sent after a short delay.
  * 
  * The handler is synchronized to #cbHeartbeat().
  * 
@@ -831,11 +831,15 @@ void conquest_cbConnection(
 	) {
 
 	HAL_INT_ATOMIC_BLOCK( hal_int_getPriority( HAL_INT_SOURCE__TIMER1)) {
+		conquest_reset();
+
 		if( _blConnected) {
 			__delay32( FCY / 4);
-			fsm_switch( &s_podMessageFSM, CONQUEST_MESSAGE_STATE__RESET);
-		} else {
-			conquest_reset();
+
+			com_SMessage_t podResponse;
+			podResponse.ui16Type = CONQUEST_MESSAGE_TYPE__RESPONSE_OK;
+			memset( podResponse.aui8Data, 0xFF, sizeof( podResponse.aui8Data));
+			com_send( &podResponse);
 		}
 	}
 }
