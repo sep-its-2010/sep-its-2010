@@ -79,7 +79,7 @@
 	\section{Globale Testszenarien und Testfälle}
 		\subsection{Pflichtenheft Testfälle}
 			\subsubsection{/T50/ Kalibrierung}
-			Nach ordnungsgemäßer Kalibrierung beginnen die Außen-LEDs nacheinander zu leuchten (/F180/).
+			Nach ordnungsgemäßer Kalibrierung findet keine Fehlervisualisierung statt. Andernfalls beginnen die Außen LEDs zu blinken. (/F180/).
 			
 			\subsubsection{/T60/ Linienerkennung}
 			Der e-puck wird im Betrieb entlang einer Linie aufgestellt und folgt dieser in Richtung der
@@ -162,6 +162,7 @@
 			\subsubsection{Behaviour}
 			\begin{itemize}
 				\item \texttt{testExploreBehaviour()} 
+				Für den Test des Behaviours wurde eine vorgefertigte Map mit zwei Frontierknoten angelegt. Da diese Knoten bekannt sind, konnte so überprüft werden, ob durch das Behaviour 					der beste Knoten ausgewählt wurde. Dazu wurde eine Instanz des Interface IBehaviour angelegt und mit \texttt{execute()} die Liste der verschiedenen Behaviours durchlaufen. 					Als erstes entfernt das \texttt{removePathlessBehaviour()} unerreichbare Knoten, dann ermittelt das \texttt{DistanceBehaviour()} die Wegkosten von einem Startknoten zum 						Zielknoten, als nächstes werden durch das \texttt{InnerBehaviour()} unerkundete Knoten in bereits erkundeten Flächen weniger stark gewichtet, als Frontierknoten außerhalb 						dieser Flächen. Zuletzt wird durch das \texttt{CooperativeBehaviour()} festgestellt, dass sich nicht zwei Roboter auf ein und denselben Zielknoten zubewegen. Wenn diese Kette 				durchlaufen wird aus der Map der Knoten mit den geringsten Fahrtkosten ausgelesen und mit dem vorher bestimmten, besten Knoten verglichen. 
 			\end{itemize}
 			
 			\subsubsection{ComManager}
@@ -198,6 +199,9 @@
 		\subsection{E-puck Firmware}
 		
 			\subsubsection{Ringpuffer}
+			Auf dem Ringpuffer wurden die üblichen Funktionen, wie \texttt{pop()} und \texttt{push()} getestet. Zunächst wurde auf den leeren Puffer ein pop ausgeführt. Als Statusmeldung wurde -1 zurückgeliefert, was den Erwartungen entsprach \texttt{(Size: 32  Usage: 0  Free: 32)}. Dann wurden die Buchstaben a bis z gepusht \texttt{(IsEmpty: False Size: 32  Usage: 26  Free: 6)}. Anschließend wurden die Zahlen 0 bis 5 gepusht, um den Puffer zu füllen \texttt{(IsFull: True)}. Es wurde versucht ein weiteres Element zu pushen. Dies wurde vom Ringpuffer angelehnt und die Nachricht wurde verworfen. Zum Ende wurden alle Elemente gepopt \texttt{(Size: 32  Usage: 0  Free: 32).}
+
+
 	
 	\section{Blackbox Tests}
 	
