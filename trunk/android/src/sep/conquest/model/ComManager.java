@@ -58,7 +58,7 @@ public class ComManager implements IComMan {
 	public synchronized void broadcast(IRequest request) {
 		
 		// broadcast
-		if (request.getSender() == null) {
+		if (request.getReceiver() == null) {
 			for (UUID id: clients.keySet()) {
 				IComClient client = clients.get(id);
 				client.deliver(request);
