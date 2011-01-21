@@ -135,6 +135,8 @@
 					\subsubsection{Test der Autoskalierung}
 					Es werden nacheinander zwei unterschiedlich gro\ss e Karten mittels Import-Funktion (/F260W/) geladen. Beide Karten
 					werden nun autoskaliert und vollst\"andig angezeigt.
+					\subsubsection{Test der Karten\"uberpr\"ufung auf G\"ultigkeit}
+					Es werden ung\"ultige Karten erstellt und nacheinander geladen. Es wird eine Meldung ausgegeben, dass die Karte nicht g\"ultig ist.
 	
 	\section{Unit Tests}
 		\subsection{Android Anwendung}
@@ -159,7 +161,6 @@
 			\subsubsection{Behaviour}
 			\begin{itemize}
 				\item \texttt{testExploreBehaviour()} 
-				Für den Test des Behaviours wurde eine vorgefertigte Map mit zwei Frontierknoten angelegt. Da diese Knoten bekannt sind, konnte so überprüft werden, ob durch das Behaviour 					der beste Knoten ausgewählt wurde. Dazu wurde eine Instanz des Interface IBehaviour angelegt und mit \texttt{execute()} die Liste der verschiedenen Behaviours durchlaufen. 					Als erstes entfernt das \texttt{removePathlessBehaviour()} unerreichbare Knoten, dann ermittelt das \texttt{DistanceBehaviour()} die Wegkosten von einem Startknoten zum 						Zielknoten, als nächstes werden durch das \texttt{InnerBehaviour()} unerkundete Knoten in bereits erkundeten Flächen weniger stark gewichtet, als Frontierknoten außerhalb 						dieser Flächen. Zuletzt wird durch das \texttt{CooperativeBehaviour()} festgestellt, dass sich nicht zwei Roboter auf ein und denselben Zielknoten zubewegen. Wenn diese Kette 				durchlaufen wird aus der Map der Knoten mit den geringsten Fahrtkosten ausgelesen und mit dem vorher bestimmten, besten Knoten verglichen. 
 			\end{itemize}
 			
 			\subsubsection{ComManager}
@@ -196,12 +197,23 @@
 		\subsection{e-puck Firmware}
 		
 			\subsubsection{Ringpuffer}
-			Auf dem Ringpuffer wurden die üblichen Funktionen, wie \texttt{pop()} und \texttt{push()} getestet. Zunächst wurde auf den leeren Puffer ein pop ausgeführt. Als Statusmeldung wurde -1 zurückgeliefert, was den Erwartungen entsprach \texttt{(Size: 32  Usage: 0  Free: 32)}. Dann wurden die Buchstaben a bis z gepusht \texttt{(IsEmpty: False Size: 32  Usage: 26  Free: 6)}. Anschließend wurden die Zahlen 0 bis 5 gepusht, um den Puffer zu füllen \texttt{(IsFull: True)}. Es wurde versucht ein weiteres Element zu pushen. Dies wurde vom Ringpuffer angelehnt und die Nachricht wurde verworfen. Zum Ende wurden alle Elemente gepopt \texttt{(Size: 32  Usage: 0  Free: 32).}
-
-
 	
 	\section{Blackbox Tests}
-	
+		\subsection{Simulator}
+			Es wird eine Karte erstellt und im Simulator geladen. Anschlie\ss end wird eine Erkundung mit mehreren e-puck Robotern durchgef\"uhrt. Nach erfolgreicher
+			Erkundung fahren die virtuellen Roboter auf ihre Ausgangsposition zur\"uck.
+		\subsection{Mehrfach \"uberfahrene Knoten}
+			Es wird eine Karte erstellt, die ein Roboter nicht abfahren kann, ohne einen Knoten mehrfach zu befahren. Die Erkundung wird dann mit mehreren Roboter 
+ 			gestartet und gepr\"uft, ob sich ein Knoten, wenn er mehrfach \"uberfahren worden ist verf\"arbt.
+		\subsection{Steuerung}
+			Nach erfolgreichem Verbindungsaufbau eines e-puck Roboters mit dem Smartphone wird zum Dialog \textit{Steer} gewechselt und der Roboter in alle vier
+			Richtungen gesteuert. Der Vorgang wird mit der zweiten Steuerungsart wiederholt.
+		\subsection{Men\"uf\"uhrung}
+			Von jeder Activity wird \"uber das Men\"u zu allen anderen erreichbaren Dialogen gewechselt.
+		\subsection{Korrektes Anzeigen aller Schaltfl\"achen und der Karte}
+			Es werden g\"ultige Karten erstellt und nacheinander geladen und gepr\"uft, ob sie korrekt dargestellt werden. Beim Verbinden mit den e-puck Robotern werden 
+			nacheinander alle angezeigten Roboter an- und wieder abge\"ahlt. Diese m\"ussen farblich jeweils hervorgehoben werden. Anschlie\ss end wird zum Dialog 
+			\textit{Steer} gewechselt und jeder Button f\"ur die Richtungen nacheinander gedr\"uckt und validiert, ob die jeweilige Auswahl hervorgehoben wird.
 	\section{kontrollflussorientierte Testverfahren}
 
 				 			
