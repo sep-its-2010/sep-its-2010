@@ -40,6 +40,7 @@ public abstract class Request implements IRequest {
      */
     protected Request(UUID sender) {
     	this.sender = sender;
+    	this.receiver = new UUID[0];
     }
 
     /* (non-Javadoc)
