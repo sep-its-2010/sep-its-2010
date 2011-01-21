@@ -9,20 +9,26 @@
 \contentsline {subsubsection}{\numberline {1.1.6}/T100/ Steuerung der Fahrtgeschwindigkeit}{3}{subsubsection.1.1.6}
 \contentsline {subsubsection}{\numberline {1.1.7}/T110/ Steuerung per Beschleunigungssensor}{3}{subsubsection.1.1.7}
 \contentsline {subsubsection}{\numberline {1.1.8}/T120/ Erkundungstest}{4}{subsubsection.1.1.8}
-\contentsline {subsubsection}{\numberline {1.1.9}/T130/ erweiterter Steuerungstest}{4}{subsubsection.1.1.9}
+\contentsline {subsubsection}{\numberline {1.1.9}/T130/ Erweiterter Steuerungstest}{4}{subsubsection.1.1.9}
 \contentsline {subsubsection}{\numberline {1.1.10}/T140W/ Speichern der Kartendaten}{4}{subsubsection.1.1.10}
 \contentsline {subsubsection}{\numberline {1.1.11}/T150W/ Laden der Kartendaten}{4}{subsubsection.1.1.11}
 \contentsline {subsubsection}{\numberline {1.1.12}/T160W/ Test von globaler Lokalisierung}{4}{subsubsection.1.1.12}
-\contentsline {subsubsection}{\numberline {1.1.13}/T170W/ Test der Zoomfunktionalit\IeC {\"a}t}{4}{subsubsection.1.1.13}
-\contentsline {subsection}{\numberline {1.2}weitere Testf\IeC {\"a}lle}{4}{subsection.1.2}
-\contentsline {section}{\numberline {2}Unit Tests}{4}{section.2}
-\contentsline {subsection}{\numberline {2.1}Android Anwendung}{4}{subsection.2.1}
-\contentsline {subsubsection}{\numberline {2.1.1}GridMap}{4}{subsubsection.2.1.1}
+\contentsline {subsubsection}{\numberline {1.1.13}/T170W/ Test der Zoomfunktionalit\"at}{4}{subsubsection.1.1.13}
+\contentsline {subsection}{\numberline {1.2}Weitere Testf\IeC {\"a}lle}{4}{subsection.1.2}
+\contentsline {subsubsection}{\numberline {1.2.1}Test der Autoskalierung}{4}{subsubsection.1.2.1}
+\contentsline {subsubsection}{\numberline {1.2.2}Test der Karten\"uberpr\"ufung auf G\"ultigkeit}{4}{subsubsection.1.2.2}
+\contentsline {section}{\numberline {2}Unit Tests}{5}{section.2}
+\contentsline {subsection}{\numberline {2.1}Android Anwendung}{5}{subsection.2.1}
+\contentsline {subsubsection}{\numberline {2.1.1}GridMap}{5}{subsubsection.2.1.1}
 \contentsline {subsubsection}{\numberline {2.1.2}Behaviour}{6}{subsubsection.2.1.2}
 \contentsline {subsubsection}{\numberline {2.1.3}ComManager}{6}{subsubsection.2.1.3}
 \contentsline {subsubsection}{\numberline {2.1.4}AStarPathFinder}{6}{subsubsection.2.1.4}
 \contentsline {subsubsection}{\numberline {2.1.5}Handler}{6}{subsubsection.2.1.5}
-\contentsline {subsection}{\numberline {2.2}E-puck Firmware}{7}{subsection.2.2}
-\contentsline {subsubsection}{\numberline {2.2.1}Ringpuffer}{7}{subsubsection.2.2.1}
-\contentsline {section}{\numberline {3}Blackbox Tests}{7}{section.3}
-\contentsline {section}{\numberline {4}kontrollflussorientierte Testverfahren}{7}{section.4}
+\contentsline {subsection}{\numberline {2.2}e-puck Firmware}{8}{subsection.2.2}
+\contentsline {subsubsection}{\numberline {2.2.1}Ringpuffer}{8}{subsubsection.2.2.1}
+\contentsline {section}{\numberline {3}Blackbox Tests}{9}{section.3}
+\contentsline {subsection}{\numberline {3.1}Simulator}{9}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Mehrfach \"uberfahrene Knoten}{9}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Steuerung}{9}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Korrektes Anzeigen aller Schaltfl\"achen und der Karte}{9}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}Men\"uf\"uhrung}{9}{subsection.3.5}

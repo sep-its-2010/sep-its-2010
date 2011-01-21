@@ -133,7 +133,7 @@
 			\subsubsection{/T170W/ Test der Zoomfunktionalit\"at}
 			Dieser Test konnte aufgrund der ge\"anderten Funktionalit\"aten nicht durchgef\"uhrt werden.
 		
-		\subsection{weitere Testfälle}
+		\subsection{Weitere Testfälle}
 					\subsubsection{Test der Autoskalierung}
 					Es werden nacheinander zwei unterschiedlich gro\ss e Karten mittels Import-Funktion (/F260W/) geladen. Beide Karten
 					werden nun autoskaliert und vollst\"andig angezeigt.
@@ -168,61 +168,65 @@
 			\subsubsection{ComManager}
 			\begin{itemize}
 				\item \texttt{testAddClientAndSend()}
+				Für diesen Testfall muss ein Testclient erstellt werden, der anschließend dem ComManager hinzugefügt wird. Über den ComManager wird nun an den Testclient über 									\texttt{broadcast()} eine HelloRequest Nachricht gesendet. Diese wird vom Testclient ausgelesen und mit der vorher erzeugten HelloRequest Nachricht verglichen.		
+				
 				\item \texttt{testRemoveClient()}
+				Hier wird dem ComManager ebenfalls ein Testclient hinzugefügt, aber anschließend auch gleich wieder entfernt. Dann wird wie im obigen Testfall ein Broadcast mit einer 							HelloRequest Nachricht versendet. Am Testclient wird nun versucht die Nachricht auszulesen. Dies ist nicht erfolgreich, da andernfalls das Entfernen vom Testclient nicht 						funktioniert hätte.
 			\end{itemize}
 			
 			\subsubsection{AStarPathFinder}
 			\begin{itemize}
 				\item \texttt{testFindPuckMapNodeMapNodeArray()} 
+				Für diesen Testfall wird ebenfalls eine vollständig, vorgegebene Karte erstellt. Außerdem wird ein Start- sowie Zielknoten festgelegt. Der A-Stern Algorithmus wird anhand 						diesen Parameterwerten gestartet und nach Abschluss geprüft, ob der gefundene Pfad (inklusive exakter Wegkosten) dem erwarteten Ergebnis entspricht.
 			\end{itemize}
 			
 			\subsubsection{Handler}
 			\begin{itemize}
-				\item \texttt{testSimTurnHandler()} Es wird eine neue Nachricht erzeugt im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
+				\item \texttt{testSimTurnHandler()} Es wird eine neue Nachricht im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
 				Die ersten beiden Bytes der Nachricht (Nachrichtenheader) werden auf REQUEST\_TURN gesetzt. Anschließend wird mit dem Array ein neuer
 				VirtualPuckRequest erzeugt und an den Handler weitergegeben.
 				Der Test ist bestanden, wenn der Handler die Nachricht anhand des Nachrichtenheaders erkennt.
-				\item \texttt{testSimStatusHandler()} Es wird eine neue Nachricht erzeugt im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
+				\item \texttt{testSimStatusHandler()} Es wird eine neue Nachricht im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
 				Die ersten beiden Bytes der Nachricht (Nachrichtenheader) werden auf REQUEST\_STATUS gesetzt. Anschließend wird mit dem Array ein
 				neuer VirtualPuckRequest erzeugt und an den Handler weitergegeben.
 				Der Test ist bestanden, wenn der Handler die Nachricht anhand des Nachrichtenheaders erkennt.
-				\item \texttt{testSimSpeedHandler()} Es wird eine neue Nachricht erzeugt im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
+				\item \texttt{testSimSpeedHandler()} Es wird eine neue Nachricht im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
 				Die ersten beiden Bytes der Nachricht (Nachrichtenheader) werden auf REQUEST\_SPEED gesetzt. Anschließend wird mit dem Array ein
 				neuer VirtualPuckRequest erzeugt und an den Handler weitergegeben.
 				Der Test ist bestanden, wenn der Handler die Nachricht anhand des Nachrichtenheaders erkennt.
-				\item \texttt{testSimResetHandler()} Es wird eine neue Nachricht erzeugt im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
+				\item \texttt{testSimResetHandler()} Es wird eine neue Nachricht im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
 				Die ersten beiden Bytes der Nachricht (Nachrichtenheader) werden auf REQUEST\_RESET gesetzt. Anschließend wird mit dem Array ein neuer
 				VirtualPuckRequest erzeugt und an den Handler weitergegeben.
 				Der Test ist bestanden, wenn der Handler die Nachricht anhand des Nachrichtenheaders erkennt.
-				\item \texttt{testSimMoveHandler()} Es wird eine neue Nachricht erzeugt im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
+				\item \texttt{testSimMoveHandler()} Es wird eine neue Nachricht im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
 				Die ersten beiden Bytes der Nachricht (Nachrichtenheader) werden auf REQUEST\_MOVE gesetzt. Anschließend wird mit dem Array ein neuer
 				VirtualPuckRequest erzeugt und an den Handler weitergegeben.
 				Der Test ist bestanden, wenn der Handler die Nachricht anhand des Nachrichtenheaders erkennt.
-				\item \texttt{testSimLEDHandler()} Es wird eine neue Nachricht erzeugt im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
+				\item \texttt{testSimLEDHandler()} Es wird eine neue Nachricht im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
 				Die ersten beiden Bytes der Nachricht (Nachrichtenheader) werden auf REQUEST\_LED gesetzt. Anschließend wird mit dem Array ein neuer
 				VirtualPuckRequest erzeugt und an den Handler weitergegeben.
 				Der Test ist bestanden, wenn der Handler die Nachricht anhand des Nachrichtenheaders erkennt.
-				\item \texttt{testPuckStatusHandler()} Es wird eine neue Nachricht erzeugt im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
+				\item \texttt{testPuckStatusHandler()} Es wird eine neue Nachricht im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
 				Die ersten beiden Bytes der Nachricht (Nachrichtenheader) werden auf RES\_STATUS gesetzt. Anschließend wird mit dem Array ein
 				neuer PuckRequest erzeugt und an den Handler weitergegeben.
 				Der Test ist bestanden, wenn der Handler die Nachricht anhand des Nachrichtenheaders erkennt.
-				\item \texttt{testPuckRejectHandler()} Es wird eine neue Nachricht erzeugt im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
+				\item \texttt{testPuckRejectHandler()} Es wird eine neue Nachricht im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
 				Die ersten beiden Bytes der Nachricht (Nachrichtenheader) werden auf RES\_REJECT gesetzt. Anschließend wird mit dem Array ein
 				neuer PuckRequest erzeugt und an den Handler weitergegeben.
 				Der Test ist bestanden, wenn der Handler die Nachricht anhand des Nachrichtenheaders erkennt.
-				\item \texttt{testPuckOkHandler()} Es wird eine neue Nachricht erzeugt im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
+				\item \texttt{testPuckOkHandler()} Es wird eine neue Nachricht im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
 				Die ersten beiden Bytes der Nachricht (Nachrichtenheader) werden auf RES\_OK gesetzt. Anschließend wird mit dem Array ein
 				neuer PuckRequest erzeugt und an den Handler weitergegeben.
 				Der Test ist bestanden, wenn der Handler die Nachricht anhand des Nachrichtenheaders erkennt.
-				\item \texttt{testPuckNodeHitHandler()} Es wird eine neue Nachricht erzeugt im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
+				\item \texttt{testPuckNodeHitHandler()} Es wird eine neue Nachricht im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
 				Die ersten beiden Bytes der Nachricht (Nachrichtenheader) werden auf RES\_HIT\_NODE gesetzt. Anschließend wird mit dem Array ein
 				neuer PuckRequest erzeugt und an den Handler weitergegeben.
 				Der Test ist bestanden, wenn der Handler die Nachricht anhand des Nachrichtenheaders erkennt.
-				\item \texttt{testPuckCollisionHandler()} Es wird eine neue Nachricht erzeugt im verwendeten Nachrichtenformat (32 Byte Array)
+				\item \texttt{testPuckCollisionHandler()} Es wird eine neue Nachricht im verwendeten Nachrichtenformat (32 Byte Array)
 				erzeugt. Die ersten beiden Bytes der Nachricht (Nachrichtenheader) werden auf RES\_COLLISION gesetzt. Anschließend wird mit dem Array
 				ein neuer PuckRequest erzeugt und an den Handler weitergegeben.
 				Der Test ist bestanden, wenn der Handler die Nachricht anhand des Nachrichtenheaders erkennt.
-				\item \texttt{testPuckAbyssHandler()} Es wird eine neue Nachricht erzeugt im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
+				\item \texttt{testPuckAbyssHandler()} Es wird eine neue Nachricht im verwendeten Nachrichtenformat (32 Byte Array) erzeugt.
 				Die ersten beiden Bytes der Nachricht (Nachrichtenheader) werden auf RES\_ABYSS gesetzt. Anschließend wird mit dem Array ein
 				neuer PuckRequest erzeugt und an den Handler weitergegeben.
 				Der Test ist bestanden, wenn der Handler die Nachricht anhand des Nachrichtenheaders erkennt.
@@ -239,6 +243,9 @@
 		\subsection{e-puck Firmware}
 		
 			\subsubsection{Ringpuffer}
+			Auf dem Ringpuffer wurden die üblichen Funktionen, wie \texttt{pop()} und \texttt{push()} getestet. Zunächst wurde auf den leeren Puffer ein pop ausgeführt. Als Statusmeldung 					wurde -1 zurückgeliefert, was den Erwartungen entsprach \texttt{(Size: 32  Usage: 0  Free: 32)}. Dann wurden die Buchstaben a bis z gepusht \texttt{(IsEmpty: False Size: 32  					Usage: 26  Free: 6)}. Anschließend wurden die Zahlen 0 bis 5 gepusht, um den Puffer zu füllen \texttt{(IsFull: True)}. Es wurde versucht ein weiteres Element zu pushen. Dies 					wurde vom Ringpuffer angelehnt und die Nachricht wurde verworfen. Zum Ende wurden alle Elemente gepopt \texttt{(Size: 32  Usage: 0  Free: 32).}
+
+
 	
 	\section{Blackbox Tests}
 		\subsection{Simulator}
@@ -262,7 +269,6 @@
 			\caption{Men\"uf\"uhrung}
 		\end{figure}
 		
-	\section{kontrollflussorientierte Testverfahren}
 
 				 			
 \end{document}
