@@ -23,7 +23,7 @@
 		android:layout_below="@id/ruler1" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" />
 
-	<TextView android:id="@+id/numberOfFrontierNodes" android:textSize="22sp"
+	<!-- <TextView android:id="@+id/numberOfFrontierNodes" android:textSize="22sp"
 		android:layout_width="wrap_content" android:layout_below="@id/nodeNumberValues"
 		android:layout_height="wrap_content" android:text="@string/TXT_FRONTIER_NODES" />
 
@@ -34,10 +34,10 @@
 
 	<TextView android:id="@+id/frontierNumberValues" android:textSize="15sp"
 		android:layout_below="@id/ruler2" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" />
+		android:layout_height="wrap_content" /> -->
 		
 		<TextView android:id="@+id/numberOfmultipleCrossedNodes" android:textSize="22sp"
-		android:layout_width="wrap_content" android:layout_below="@id/frontierNumberValues"
+		android:layout_width="wrap_content" android:layout_below="@id/nodeNumberValues"
 		android:layout_height="wrap_content" android:text="@string/TXT_MULTIPLE_NODES" />
 		
 		  <View xmlns:android="http://schemas.android.com/apk/res/android"
