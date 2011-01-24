@@ -74,7 +74,7 @@ public class Statistics extends Activity implements Observer {
 			public void handleMessage(android.os.Message msg) {
 				if (msg.what == UPDATE_MESSAGE) {
 					explored.setText("");
-					frontier.setText("");
+					//frontier.setText("");
 					multiple.setText("");
 					for (int i = 0; i < name.length; i++) {
 
