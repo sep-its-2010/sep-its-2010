@@ -53,7 +53,7 @@
 <string name="TXT_NO_SELECTION">none</string>
 <string name="ERR_MSG_LOST_CONNECTION">has lost connection to the smartphone.</string>
 <string name="TXT_NODES">nodes</string>
-<string name="TXT_MULTIPLE_NODES">multiple crossed nodes</string>
+<string name="TXT_MULTIPLE_NODES">multiple crosses</string>
 <string name="TXT_SYNC">Synchronizing...</string>
 <string name="TXT_LOCALIZING">Robots are localizing!</string>
 </resources>
