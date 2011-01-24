@@ -50,6 +50,7 @@ static bool s_blDetectionActive = false;
  bool subs_node_run( void) {
 
 	static uint16_t s_aui32Sum[2] = { 0 };
+	static uint16_t s_ui16StepsOnHit[2] = { 0 };
 	static uint16_t s_ui16Counter = 0;
 
 	bool blActed = false;
@@ -67,7 +68,8 @@ static bool s_blDetectionActive = false;
  				s_aui32Sum[RIGHT_DATA] = 0;
 				s_ui16Counter = 0;
 
-				hal_motors_setSteps( 0);
+				s_ui16StepsOnHit[LEFT_DATA] = hal_motors_getStepsLeft();
+				s_ui16StepsOnHit[RIGHT_DATA] = hal_motors_getStepsRight();
 				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
 
  				s_blDetectionActive = true;
@@ -76,8 +78,8 @@ static bool s_blDetectionActive = false;
 		} else {
 
  			// Robot reached center of node?
- 			if( hal_motors_getStepsLeft() >= SUBS_NODE_CENTER_STEPS &&
-				hal_motors_getStepsRight() >= SUBS_NODE_CENTER_STEPS) {
+ 			if( hal_motors_getStepsLeft() - s_ui16StepsOnHit[LEFT_DATA] >= SUBS_NODE_CENTER_STEPS &&
+				hal_motors_getStepsRight() - s_ui16StepsOnHit[RIGHT_DATA] >= SUBS_NODE_CENTER_STEPS) {
 
 				uint16_t ui16Direction = CONQUEST_DIRECTION__DOWN;
 				if( lpui16SenLine[SEN_LINE_SENSOR__LEFT] < CONQUEST_BLACK_THRESHOLD ||

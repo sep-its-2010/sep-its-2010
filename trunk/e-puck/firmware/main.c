@@ -54,6 +54,20 @@ enum {
 void cbBlinker(
 	IN const hal_rtc_handle_t _hEvent
 	);
+
+
+/*!
+ * \brief
+ * Cyclic logic update callback.
+ * 
+ * \param _hEvent
+ * Specifies the unique event handle.
+ * 
+ * Toggles the body LED to identify deadlocks and resets.
+ * 
+ * \see
+ * hal_rtc_register
+ */
 void cbBlinker(
 	IN const hal_rtc_handle_t UNUSED _hEvent
 	) {
