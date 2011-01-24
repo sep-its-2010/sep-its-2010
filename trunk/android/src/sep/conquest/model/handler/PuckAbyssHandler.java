@@ -3,8 +3,6 @@ package sep.conquest.model.handler;
 import sep.conquest.model.FailureType;
 import sep.conquest.model.IRequest;
 import sep.conquest.model.LogicThread;
-import sep.conquest.model.Puck;
-import sep.conquest.model.RobotStatus;
 import sep.conquest.model.requests.FailureRequest;
 import sep.conquest.model.requests.MessageType;
 

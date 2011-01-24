@@ -231,7 +231,6 @@ public final class Steer extends Activity implements Observer {
     if (selectedRobot != NO_SELECTION) {
       Controller.getInstance().setControlled(robots.get(selectedRobot), false);
     }
-    
     super.onDestroy();
   }
 
@@ -254,28 +253,33 @@ public final class Steer extends Activity implements Observer {
     java.util.Map<UUID, RobotStatus> states = update.getRobotStatus();
 
     synchronized (states) {
-      // Iterate over all RobotStates of the update container and check them.
+      // Iterate over all RobotStates of the update container and check
+      // them.
       for (UUID id : states.keySet()) {
         RobotStatus status = states.get(id);
 
         if (!robots.contains(id)) {
           if (status.getState() == State.EXPLORE
-              || status.getState() == State.FINISH) {
-            // If id is not known and corresponding robot is not in error state,
+              || status.getState() == State.FINISH
+              || status.getState() == State.RETURN) {
+            // If id is not known and corresponding robot is not in
+            // error state,
             // add new id and moving state.
             robots.add(id);
             moving.put(id, Boolean.valueOf(status.isMoving()));
             names.put(id, update.getRobotName(id));
           }
         } else {
-          // If id is known but robot has entered error state, remove id.
+          // If id is known but robot has entered error state, remove
+          // id.
           if (status.getState() == State.ERROR) {
             robots.remove(id);
             moving.remove(id);
             names.remove(id);
             selectedRobot = NO_SELECTION;
           } else {
-            // If id is known and robot has not entered error state, update
+            // If id is known and robot has not entered error state,
+            // update
             // moving state.
             moving.put(id, Boolean.valueOf(status.isMoving()));
           }
@@ -318,7 +322,8 @@ public final class Steer extends Activity implements Observer {
     chkActivate.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        // If a robot is currently selected, set its controlled state and enable
+        // If a robot is currently selected, set its controlled state
+        // and enable
         // currently selected control.
         if (selectedRobot != NO_SELECTION) {
           Controller.getInstance().setControlled(robots.get(selectedRobot),
@@ -365,7 +370,7 @@ public final class Steer extends Activity implements Observer {
             Controller.getInstance().setControlled(robots.get(selectedRobot),
                 false);
           }
-          
+
           // Set new selected robot.
           selectedRobot = position;
 
@@ -388,7 +393,8 @@ public final class Steer extends Activity implements Observer {
     String[] controls = { getString(R.string.CONTROL_JOYSTICK),
         getString(R.string.CONTROL_ACC_SENSOR) };
 
-    // Saves the available controls and is used to display them in the control
+    // Saves the available controls and is used to display them in the
+    // control
     // spinner.
     ArrayAdapter<String> adpControl = new ArrayAdapter<String>(this,
         android.R.layout.simple_spinner_item, controls);
@@ -467,9 +473,11 @@ public final class Steer extends Activity implements Observer {
     btnLeft.setEnabled(enable);
     btnRight.setEnabled(enable);
 
-    // If smartphone does not have an acceleration sensor then control selection
+    // If smartphone does not have an acceleration sensor then control
+    // selection
     // spinner is always disabled.
-    // Otherwise, state of control selection spinner depends on state of control
+    // Otherwise, state of control selection spinner depends on state of
+    // control
     // activate check box.
     TextView txtControl = (TextView) findViewById(R.id.txtControl);
     if (sensMan != null) {
@@ -592,13 +600,15 @@ public final class Steer extends Activity implements Observer {
      */
     public void onSensorChanged(SensorEvent event) {
       if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-        // If a robot is selected and not moving, pass control command to
+        // If a robot is selected and not moving, pass control command
+        // to
         // Controller.
         if ((selectedRobot != NO_SELECTION)
             && !moving.get(robots.get(selectedRobot))) {
           float[] values = event.values;
 
-          // If x or y value is greater than threshold, add values to filter.
+          // If x or y value is greater than threshold, add values to
+          // filter.
           if (Math.sqrt(values[0] * values[0] + values[1] * values[1]
               + values[2] + values[2]) < THRESHOLD_ACC) {
             addFilteredValues(values);

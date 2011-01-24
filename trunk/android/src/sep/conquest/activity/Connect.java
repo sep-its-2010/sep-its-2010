@@ -531,6 +531,9 @@ public final class Connect extends Activity {
 
       for (BluetoothDevice device : devices) {
         try {
+        	
+          bluetoothAdapter.cancelDiscovery();
+          
           // Open RFCommSocket with standard UUID.
           BluetoothSocket socket = device
               .createRfcommSocketToServiceRecord(STD_UUID);
@@ -566,6 +569,7 @@ public final class Connect extends Activity {
       // Send connection successful message.
       intent.setAction(CONNECTION_SUCCESSFUL);
       sendBroadcast(intent);
+      
     }
 
     /**

@@ -17,6 +17,7 @@ public class ControlledRequest extends Request {
      */
     private boolean controlled;
     
+    
     /**
      * The constructor expects a list of receiver as well as the
      * indicator if the robot shall be controlled.
