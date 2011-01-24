@@ -284,18 +284,15 @@ public class AStarPathFinder implements IPathFinder {
 		boolean[] sensors = status.getSensorCollisionArray();
 		if (sensors[0] || sensors[1] || sensors[2] || sensors[3] ||
 			sensors[4] || sensors[5] || sensors[6] || sensors[7]) {
-			if (robot.getCollisionReactCount() < Puck.COLLISION_REACT_STEPS
-					&& robot.getCollisionNode() != null) {
+			if (robot.getCollisionReactCount() < Puck.COLLISION_REACT_STEPS) {
 				Integer key = Utility.makeKey(node.getXValue(), node.getYValue());
-				if (key.equals(robot.getCollisionNode())) {
-					costs += 40 * (robot.getCollisionReactCount() + 1);
+				int collisions = robot.numberOfCollisions(key);
+				if (collisions > 0) {
+					costs += 40 * robot.numberOfCollisions(key);
+					robot.setCollisionReactCount(robot.getCollisionReactCount() + 1);
 				}
-					
-				robot
-						.setCollisionReactCount(robot.getCollisionReactCount() + 1);
-			} else {
-				robot.setCollisionReactCount(0);
-				robot.setCollisionNode(null);
+			} else {				
+				robot.removeCollisions();
 				for (int i = 0; i < sensors.length; i++)
 					sensors[i] = false;
 				status.setSensorCollisionArray(sensors);

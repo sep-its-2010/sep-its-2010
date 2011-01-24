@@ -18,7 +18,7 @@ public final class IdleBehaviour extends Behaviour {
   /**
    * Delay of start time of timer.
    */
-  private static long DELAY = 5000;
+  private static long DELAY = 2000;
 
   /**
    * Indicates whether timer has been started.

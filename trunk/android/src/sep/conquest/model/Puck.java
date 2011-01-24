@@ -1,8 +1,10 @@
 package sep.conquest.model;
 
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -114,7 +116,7 @@ public abstract class Puck implements IComClient, IRobot {
    */
   public static final short REQ_TURN = (short) 0x03FF;
 
-  public static final int COLLISION_REACT_STEPS = 5;
+  public static final int COLLISION_REACT_STEPS = 50;
 
   /**
    * Global unique id.
@@ -157,10 +159,15 @@ public abstract class Puck implements IComClient, IRobot {
   private int collisionReactCount = 0;
 
   /**
-   * The node with the last collision (until it's recovered).
+   * The nodes with the last collision (until it's recovered).
    */
-  private Integer collisionNode = null;
-
+  private ConcurrentLinkedQueue<Integer> collisionNodes = new ConcurrentLinkedQueue<Integer>();
+  
+  /**
+   * Indicates whether the collision have changed.
+   */
+  private boolean collisionsChanged = false;
+  
   /**
    * Indicates whether the robot expects a message from the socket.
    */
@@ -430,24 +437,49 @@ public abstract class Puck implements IComClient, IRobot {
     this.collisionReactCount = collisionReactCount;
   }
 
-  /**
-   * Sets the node with the last collision.
-   * 
-   * @param collisionNode
-   *          the collisionNode to set
-   */
-  public void setCollisionNode(Integer collisionNode) {
-    this.collisionNode = collisionNode;
-  }
-
-  /**
-   * Returns the node with the last collision.
-   * 
-   * @return the collisionNode
-   */
-  public Integer getCollisionNode() {
-    return collisionNode;
-  }
+   /**
+    * Adds a node with the last collision. 
+    * 
+	* @param collisionNode the collisionNode to set
+	*/
+	public void addCollisionNode(Integer collisionNode) {
+		this.collisionNodes.add(collisionNode);
+	}
+	/**
+	 * Returns the number of collisions on the node.
+	 * 
+	 * @return the number of collisions.
+	 */
+	public int numberOfCollisions(Integer node) {
+		int no = 0;
+		for (Integer item: collisionNodes) {
+			if (item.equals(node))
+				no++;
+		}
+		return no;
+	}
+	
+	/**
+	 * Removes all elements from the collision-array.
+	 */
+	public void removeCollisions() {
+		collisionNodes.clear();
+	}
+	
+	/**
+	 * Returns whether collisions exist.
+	 * 
+	 * @return Returns true, if collisions exist.
+	 */
+	public boolean collisionsExist() {
+		return (!collisionNodes.isEmpty());
+	}
+	
+	public boolean collisionChanged() {
+		boolean tmp = collisionsChanged;
+		collisionsChanged = false;
+		return tmp;
+	}
 
   /**
    * Sends status request message to Puck.
