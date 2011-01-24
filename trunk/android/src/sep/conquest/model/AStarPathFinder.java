@@ -288,7 +288,7 @@ public class AStarPathFinder implements IPathFinder {
 					&& robot.getCollisionNode() != null) {
 				Integer key = Utility.makeKey(node.getXValue(), node.getYValue());
 				if (key.equals(robot.getCollisionNode())) {
-					costs += 40;
+					costs += 40 * (robot.getCollisionReactCount() + 1);
 				}
 					
 				robot
