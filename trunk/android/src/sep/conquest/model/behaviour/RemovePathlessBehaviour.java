@@ -45,6 +45,7 @@ public final class RemovePathlessBehaviour extends Behaviour {
 
     // If there are no FrontierNodes left, change to RETURN behaviour.
     if (map.isEmpty()) {
+      robot.removeCollisions();
       robot.changeBehaviour(State.RETURN);
     }
 
