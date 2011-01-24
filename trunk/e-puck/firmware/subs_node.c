@@ -8,8 +8,10 @@
 
 
 enum {
-	LEFT_DATA = 0,
-	RIGHT_DATA = 1
+	LEFT_DATA = 0, ///< Specifies the local index of left motor specific data.
+	RIGHT_DATA = 1, ///< Specifies the local index of right motor specific data.
+	UPPER_MARKER_BOUND = SUBS_NODE_MARKER_LENGTH / 2 + SUBS_NODE_MARKER_WIDTH / 2, ///< Specifies the amount of steps within the node marker whether the line sensors are before the horizontal line.
+	LOWER_MARKER_BOUND = SUBS_NODE_MARKER_LENGTH / 2 - SUBS_NODE_MARKER_WIDTH / 2 ///< Specifies the amount of steps within the node marker whether the line sensors are after the horizontal line.
 };
 
 
@@ -50,7 +52,7 @@ static bool s_blDetectionActive = false;
  bool subs_node_run( void) {
 
 	static uint16_t s_aui32Sum[2] = { 0 };
-	static uint16_t s_ui16StepsOnHit[2] = { 0 };
+	static uint16_t s_aui16StepsOnHit[2] = { 0 };
 	static uint16_t s_ui16Counter = 0;
 
 	bool blActed = false;
@@ -68,8 +70,8 @@ static bool s_blDetectionActive = false;
  				s_aui32Sum[RIGHT_DATA] = 0;
 				s_ui16Counter = 0;
 
-				s_ui16StepsOnHit[LEFT_DATA] = hal_motors_getStepsLeft();
-				s_ui16StepsOnHit[RIGHT_DATA] = hal_motors_getStepsRight();
+				s_aui16StepsOnHit[LEFT_DATA] = hal_motors_getStepsLeft();
+				s_aui16StepsOnHit[RIGHT_DATA] = hal_motors_getStepsRight();
 				hal_motors_setSpeed( conquest_getRequestedLineSpeed(), 0);
 
  				s_blDetectionActive = true;
@@ -78,9 +80,11 @@ static bool s_blDetectionActive = false;
 		} else {
 
  			// Robot reached center of node?
- 			if( hal_motors_getStepsLeft() - s_ui16StepsOnHit[LEFT_DATA] >= SUBS_NODE_CENTER_STEPS &&
-				hal_motors_getStepsRight() - s_ui16StepsOnHit[RIGHT_DATA] >= SUBS_NODE_CENTER_STEPS) {
+ 			if( hal_motors_getStepsLeft() - s_aui16StepsOnHit[LEFT_DATA] >= SUBS_NODE_CENTER_STEPS &&
+				hal_motors_getStepsRight() - s_aui16StepsOnHit[RIGHT_DATA] >= SUBS_NODE_CENTER_STEPS) {
 
+				// One could actually extract the up direction from s_aui32Sum because these values are rather accurate:
+				// ~280 when up exists and ~520 otherwise
 				uint16_t ui16Direction = CONQUEST_DIRECTION__DOWN;
 				if( lpui16SenLine[SEN_LINE_SENSOR__LEFT] < CONQUEST_BLACK_THRESHOLD ||
 					lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] < CONQUEST_BLACK_THRESHOLD ||
@@ -109,12 +113,18 @@ static bool s_blDetectionActive = false;
  				s_blDetectionActive = false;
 				blActed = true;
 
-			// Only scan in white marker area
+			// Only scan in white marker area but not the horizontal line.
 			} else if( lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] > CONQUEST_WHITE_THRESHOLD) {
-				s_aui32Sum[LEFT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__LEFT];
-				s_aui32Sum[RIGHT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
-				s_ui16Counter++;
-				blActed = true;
+				const uint16_t ui16StepsLeft = hal_motors_getStepsLeft() - s_aui16StepsOnHit[LEFT_DATA];
+				const uint16_t ui16StepsRight = hal_motors_getStepsRight() - s_aui16StepsOnHit[RIGHT_DATA];
+				if( ( ui16StepsLeft < LOWER_MARKER_BOUND || ui16StepsRight > UPPER_MARKER_BOUND) &&
+					( ui16StepsRight < LOWER_MARKER_BOUND || ui16StepsRight > UPPER_MARKER_BOUND)) {
+
+					s_aui32Sum[LEFT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__LEFT];
+					s_aui32Sum[RIGHT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
+					s_ui16Counter++;
+					blActed = true;
+				}
 			}
 		}
 	}
