@@ -34,6 +34,9 @@ public class BehaviourFactory {
 		case RETURN:
 			ReturnBehaviour retBeh = new ReturnBehaviour(state, null);
 			return retBeh;
+		case FINISH:
+		  FinishBehaviour finBeh = new FinishBehaviour(state, null);
+		  return finBeh;
 		default: 
 			return null;
 		}

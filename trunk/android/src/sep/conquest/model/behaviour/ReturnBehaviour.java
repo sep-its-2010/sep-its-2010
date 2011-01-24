@@ -53,7 +53,7 @@ public final class ReturnBehaviour extends Behaviour {
 
       // If robot has returned to its initial position, change
       if ((startPos[0] == pos[0]) && (startPos[1] == pos[1])) {
-        status.setState(State.FINISH);
+        robot.changeBehaviour(State.FINISH);
       } else {
         map.put(startKey, 1);
         changed = true;

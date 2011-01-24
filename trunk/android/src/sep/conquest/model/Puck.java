@@ -40,9 +40,19 @@ public abstract class Puck implements IComClient, IRobot {
   public static final int NODE_STATUS_BYTE = 17;
 
   /**
-   * he position of the byte containing the node type in a node hit message.
+   * The position of the byte containing the node type in a node hit message.
    */
   public static final int NODE_HIT_BYTE = 2;
+
+  /**
+   * The position of the first byte containing the led information.
+   */
+  public static final int LED_FIRST_BYTE = 2;
+
+  /**
+   * The position of the second byte containing the led information.
+   */
+  public static final int LED_SECOND_BYTE = 3;
 
   /**
    * Represents the byte-Code for the messageType RESPONSE_OK
@@ -78,7 +88,7 @@ public abstract class Puck implements IComClient, IRobot {
    * Represents the byte-Code for the messageType REQUEST_MOVE
    */
   public static final short REQ_MOVE = (short) 0x04FF;
- 
+
   /**
    * Represents the byte-Code for the messageType REQUEST_RESET
    */
@@ -103,9 +113,9 @@ public abstract class Puck implements IComClient, IRobot {
    * Represents the byte-Code for the messageType REQUEST_TURN
    */
   public static final short REQ_TURN = (short) 0x03FF;
-  
+
   public static final int COLLISION_REACT_STEPS = 5;
-  
+
   /**
    * Global unique id.
    */
@@ -140,12 +150,12 @@ public abstract class Puck implements IComClient, IRobot {
    * Indicates whether the robot is controlled by the user.
    */
   private boolean controlled = false;
-  
+
   /**
    * Counts the steps since the last collision to the needed number of steps.
    */
   private int collisionReactCount = 0;
-  
+
   /**
    * The node with the last collision (until it's recovered).
    */
@@ -239,7 +249,7 @@ public abstract class Puck implements IComClient, IRobot {
   public void changeBehaviour(State state) {
     // Get current robot state.
     RobotStatus status = getRobotStatus().get(id);
-    
+
     // If there is a real state transition, change state and behaviour and
     // announce changes via broadcast.
     if (state != status.getState()) {
@@ -262,7 +272,8 @@ public abstract class Puck implements IComClient, IRobot {
    * Translates a direction-command in a specific drive-call of the concrete
    * Puck.
    * 
-   * @param command The command to sent to the Puck.
+   * @param command
+   *          The command to sent to the Puck.
    */
   public void driveCommand(int command) {
     switch (command) {
@@ -374,15 +385,29 @@ public abstract class Puck implements IComClient, IRobot {
   /**
    * Enables/Disables manual control of Puck.
    * 
-   * @param enable True to activate manual control, false otherwise.
+   * @param enable
+   *          True to activate manual control, false otherwise.
    */
   public void setControlled(boolean enable) {
-    byte[] request = new byte[MSG_LENGTH];
+    // Set robot controlled.
     controlled = enable;
+  }
+
+  /**
+   * Sets the LEDs of the robot. The LEDs to set are enumerated from 0 to 9
+   * (0-7: LED ring starting in camera direction, 8: ground LED, 9: front LED).
+   * Each LED can be set be setting to corresponding bit in leds argument.
+   * 
+   * @param leds
+   *          The number containing those bits set, where the corresponding LEDs
+   *          should be set.
+   */
+  public void setLED(short leds) {
+    byte[] request = new byte[MSG_LENGTH];
     request[TYPE_FIRST_BYTE] = (byte) (REQ_SETLED & 0xff);
     request[TYPE_SECOND_BYTE] = (byte) ((REQ_SETLED >> 8) & 0xff);
-    request[2] = (byte) 0x10;
-    request[3] = 0;
+    request[LED_FIRST_BYTE] = (byte) (leds & 0xff);
+    request[LED_SECOND_BYTE] = (byte) ((leds >> 8) & 0xff);
     writeSocket(request);
   }
 
@@ -392,37 +417,39 @@ public abstract class Puck implements IComClient, IRobot {
    * @return The number of steps after a collision.
    */
   public int getCollisionReactCount() {
-	return collisionReactCount;
+    return collisionReactCount;
   }
 
-	/**
-	 * Sets the number of steps after a collision.
-	 * 
-	 * @param collisionReactCount The number of steps.
-	 */
-	public void setCollisionReactCount(int collisionReactCount) {
-		this.collisionReactCount = collisionReactCount;
-	}
+  /**
+   * Sets the number of steps after a collision.
+   * 
+   * @param collisionReactCount
+   *          The number of steps.
+   */
+  public void setCollisionReactCount(int collisionReactCount) {
+    this.collisionReactCount = collisionReactCount;
+  }
 
-   /**
-    * Sets the node with the last collision. 
-    * 
-	* @param collisionNode the collisionNode to set
-	*/
-	public void setCollisionNode(Integer collisionNode) {
-		this.collisionNode = collisionNode;
-	}
+  /**
+   * Sets the node with the last collision.
+   * 
+   * @param collisionNode
+   *          the collisionNode to set
+   */
+  public void setCollisionNode(Integer collisionNode) {
+    this.collisionNode = collisionNode;
+  }
 
-	/**
-	 * Returns the node with the last collision.
-	 * 
-	 * @return the collisionNode
-	 */
-	public Integer getCollisionNode() {
-		return collisionNode;
-	}
+  /**
+   * Returns the node with the last collision.
+   * 
+   * @return the collisionNode
+   */
+  public Integer getCollisionNode() {
+    return collisionNode;
+  }
 
-/**
+  /**
    * Sends status request message to Puck.
    */
   public void requestStatus() {
@@ -440,12 +467,12 @@ public abstract class Puck implements IComClient, IRobot {
   public boolean isControlled() {
     return controlled;
   }
-	
-	/**
-	 * Destroys the Puck. Shuts down the LogicThread.
-	 */
-	public void destroy() { 
-		logicThread.destroy();
-		executor.shutdown();
-	}
+
+  /**
+   * Destroys the Puck. Shuts down the LogicThread.
+   */
+  public void destroy() {
+    logicThread.destroy();
+    executor.shutdown();
+  }
 }
