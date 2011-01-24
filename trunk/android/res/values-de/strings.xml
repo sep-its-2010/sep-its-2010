@@ -14,7 +14,7 @@
 <string name="MNU_CONNECT">Verbinden</string>
 <string name="MNU_STATISTICS">Statistik</string>
 <string name="TXT_AVAILABLE_MAPS">Verfügbare Karten:</string>
-<string name="MNU_CONTROL">Kontrolle</string>
+<string name="MNU_CONTROL">Steuerung</string>
 <string name="MNU_EXPORT">Export</string>
 <string name="MSG_NO_ROBOT">Kein Roboter ausgewählt.</string>
 <string name="ERR_MSG_BLUETOOTH_NOT_SUPPORTED">Ihr Smartphone unterstüzt kein Bluetooth. \nDie Anwendung kann nur im Import oder Simulationsmodus ausgeführt werden.</string>
