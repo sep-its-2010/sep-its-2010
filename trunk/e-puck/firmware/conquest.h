@@ -10,7 +10,7 @@
 
 enum {
 	CONQUEST_WHITE_THRESHOLD = 400, ///< Specifies the threshold for detecting white underground.
-	CONQUEST_BLACK_THRESHOLD = 290, ///< Specifies the threshold for detecting black underground.
+	CONQUEST_BLACK_THRESHOLD = 350, ///< Specifies the threshold for detecting black underground.
 	CONQUEST_COLLISION_THRESHOLD = 32, ///< Specifies the proximity sensor threshold above which a collision is detected.
 	CONQUEST_ABYSS_THRESHOLD = 150, ///< Specifies the line sensor threshold below which an abyss is detected.
 	CONQUEST_INITIAL_SPEED = 600, ///< Specifies the initial speed returned by #conquest_getRequestedLineSpeed().

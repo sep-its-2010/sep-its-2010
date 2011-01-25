@@ -10,6 +10,8 @@
 enum {
 	LEFT_DATA = 0, ///< Specifies the local index of left motor specific data.
 	RIGHT_DATA = 1, ///< Specifies the local index of right motor specific data.
+	FRONT_DATA = 1, ///< Specifies the local index of the front marker sub field.
+	BACK_DATA = 0, ///< Specifies the local index of the back marker sub field.
 	UPPER_MARKER_BOUND = SUBS_NODE_MARKER_LENGTH / 2 + SUBS_NODE_MARKER_WIDTH / 2, ///< Specifies the amount of steps within the node marker whether the line sensors are before the horizontal line.
 	LOWER_MARKER_BOUND = SUBS_NODE_MARKER_LENGTH / 2 - SUBS_NODE_MARKER_WIDTH / 2 ///< Specifies the amount of steps within the node marker whether the line sensors are after the horizontal line.
 };
@@ -51,9 +53,9 @@ static bool s_blDetectionActive = false;
  */
  bool subs_node_run( void) {
 
-	static uint16_t s_aui32Sum[2] = { 0 };
+	static uint16_t s_aaui32Sum[2][2] = { { 0 }, { 0 } };
 	static uint16_t s_aui16StepsOnHit[2] = { 0 };
-	static uint16_t s_ui16Counter = 0;
+	static uint16_t s_aui16Counter[2] = { 0 };
 
 	bool blActed = false;
 
@@ -66,9 +68,12 @@ static bool s_blDetectionActive = false;
 		// Trigger a new detection if idle & middle sensor is on white underground (cross in the middle of a node)
 		if( !s_blDetectionActive) {
 			if( lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] > CONQUEST_WHITE_THRESHOLD) {
- 				s_aui32Sum[LEFT_DATA] = 0;
- 				s_aui32Sum[RIGHT_DATA] = 0;
-				s_ui16Counter = 0;
+ 				s_aaui32Sum[FRONT_DATA][LEFT_DATA] = 0;
+				s_aaui32Sum[FRONT_DATA][RIGHT_DATA] = 0;
+				s_aaui32Sum[BACK_DATA][LEFT_DATA] = 0;
+				s_aaui32Sum[BACK_DATA][RIGHT_DATA] = 0;
+				s_aui16Counter[FRONT_DATA] = 0;
+				s_aui16Counter[BACK_DATA] = 0;
 
 				s_aui16StepsOnHit[LEFT_DATA] = hal_motors_getStepsLeft();
 				s_aui16StepsOnHit[RIGHT_DATA] = hal_motors_getStepsRight();
@@ -83,7 +88,7 @@ static bool s_blDetectionActive = false;
  			if( hal_motors_getStepsLeft() - s_aui16StepsOnHit[LEFT_DATA] >= SUBS_NODE_CENTER_STEPS &&
 				hal_motors_getStepsRight() - s_aui16StepsOnHit[RIGHT_DATA] >= SUBS_NODE_CENTER_STEPS) {
 
-				// One could actually extract the up direction from s_aui32Sum because these values are rather accurate:
+				// One could actually extract the up direction from s_aaui32Sum because these values are rather accurate:
 				// ~280 when up exists and ~520 otherwise
 				uint16_t ui16Direction = CONQUEST_DIRECTION__DOWN;
 				if( lpui16SenLine[SEN_LINE_SENSOR__LEFT] < CONQUEST_BLACK_THRESHOLD ||
@@ -92,10 +97,14 @@ static bool s_blDetectionActive = false;
 
 					ui16Direction |= CONQUEST_DIRECTION__UP;
 				}
-				if( s_aui32Sum[LEFT_DATA] < SUBS_NODE_CROSSING_LINE_THRESHOLD * s_ui16Counter) {
+				if( s_aaui32Sum[BACK_DATA][LEFT_DATA] < SUBS_NODE_CROSSING_LINE_THRESHOLD * s_aui16Counter[BACK_DATA] ||
+					s_aaui32Sum[FRONT_DATA][LEFT_DATA] < SUBS_NODE_CROSSING_LINE_THRESHOLD * s_aui16Counter[FRONT_DATA]) {
+
 					ui16Direction |= CONQUEST_DIRECTION__LEFT;
 				}
-				if( s_aui32Sum[RIGHT_DATA] < SUBS_NODE_CROSSING_LINE_THRESHOLD * s_ui16Counter) {
+				if( s_aaui32Sum[BACK_DATA][RIGHT_DATA] < SUBS_NODE_CROSSING_LINE_THRESHOLD * s_aui16Counter[BACK_DATA] ||
+					s_aaui32Sum[FRONT_DATA][RIGHT_DATA] < SUBS_NODE_CROSSING_LINE_THRESHOLD * s_aui16Counter[FRONT_DATA]) {
+
 					ui16Direction |= CONQUEST_DIRECTION__RIGHT;
 				}
 				hal_led_set( ui16Direction);
@@ -117,14 +126,16 @@ static bool s_blDetectionActive = false;
 			} else if( lpui16SenLine[SEN_LINE_SENSOR__MIDDLE] > CONQUEST_WHITE_THRESHOLD) {
 				const uint16_t ui16StepsLeft = hal_motors_getStepsLeft() - s_aui16StepsOnHit[LEFT_DATA];
 				const uint16_t ui16StepsRight = hal_motors_getStepsRight() - s_aui16StepsOnHit[RIGHT_DATA];
-				if( ( ui16StepsLeft < LOWER_MARKER_BOUND || ui16StepsRight > UPPER_MARKER_BOUND) &&
-					( ui16StepsRight < LOWER_MARKER_BOUND || ui16StepsRight > UPPER_MARKER_BOUND)) {
-
-					s_aui32Sum[LEFT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__LEFT];
-					s_aui32Sum[RIGHT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
-					s_ui16Counter++;
-					blActed = true;
+				if( ui16StepsLeft < LOWER_MARKER_BOUND  && ui16StepsRight < LOWER_MARKER_BOUND) {
+					s_aaui32Sum[BACK_DATA][LEFT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__LEFT];
+					s_aaui32Sum[BACK_DATA][RIGHT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
+					s_aui16Counter[BACK_DATA]++;
+				} else if( ui16StepsRight > UPPER_MARKER_BOUND && ui16StepsRight > UPPER_MARKER_BOUND) {
+					s_aaui32Sum[FRONT_DATA][LEFT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__LEFT];
+					s_aaui32Sum[FRONT_DATA][RIGHT_DATA] += lpui16SenLine[SEN_LINE_SENSOR__RIGHT];
+					s_aui16Counter[FRONT_DATA]++;
 				}
+				blActed = true;
 			}
 		}
 	}
