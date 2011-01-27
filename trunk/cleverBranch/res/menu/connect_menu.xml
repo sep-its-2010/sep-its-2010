@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:title="@string/MNU_START" android:id="@+id/mnuStart" android:icon="@drawable/mnu_start"></item>
-	<item android:title="@string/MNU_SIMULATION" android:id="@+id/mnuSimulation" android:icon="@drawable/mnu_simulation"></item>
-<item android:title="@string/MNU_IMPORT" android:id="@+id/mnuImport" android:icon="@drawable/mnu_import"></item>
-</menu>
