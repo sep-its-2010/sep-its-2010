@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+          
+    <item android:id="@+id/mnuControl"
+          android:icon="@drawable/mnu_control"
+          android:title="@string/MNU_CONTROL" />
+          
+    <item android:id="@+id/mnuStatistics"
+          android:icon="@drawable/mnu_statistics"
+          android:title="@string/MNU_STATISTICS" />
+          
+    <item android:id="@+id/mnuExport"
+          android:icon="@drawable/mnu_export"
+          android:title="@string/MNU_EXPORT" />                
+          
+</menu>

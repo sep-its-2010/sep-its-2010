@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content" android:layout_height="wrap_content">
+
+	<ScrollView android:id="@+id/ScrollView01"
+		android:layout_width="fill_parent" android:layout_height="fill_parent">
+		
+		<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/RelativeLayout01"
+    android:layout_width="fill_parent" android:layout_height="fill_parent">
+	
+
+	<TextView android:id="@+id/numberOfNodes" android:textSize="22sp"
+		android:layout_alignParentTop="true" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="@string/TXT_NUMBER_NODES" />
+
+	<View xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/ruler1" android:layout_width="fill_parent"
+		android:layout_height="1dip" android:layout_below="@id/numberOfNodes"
+		android:background="#ccc" />
+
+	<TextView android:id="@+id/nodeNumberValues" android:textSize="15sp"
+		android:layout_below="@id/ruler1" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+
+	<!-- <TextView android:id="@+id/numberOfFrontierNodes" android:textSize="22sp"
+		android:layout_width="wrap_content" android:layout_below="@id/nodeNumberValues"
+		android:layout_height="wrap_content" android:text="@string/TXT_FRONTIER_NODES" />
+
+	<View xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/ruler2" android:layout_width="fill_parent"
+		android:layout_below="@id/numberOfFrontierNodes" 
+		android:layout_height="1dip" android:background="#ccc" />
+
+	<TextView android:id="@+id/frontierNumberValues" android:textSize="15sp"
+		android:layout_below="@id/ruler2" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" /> -->
+		
+		<TextView android:id="@+id/numberOfmultipleCrossedNodes" android:textSize="22sp"
+		android:layout_width="wrap_content" android:layout_below="@id/nodeNumberValues"
+		android:layout_height="wrap_content" android:text="@string/TXT_MULTIPLE_NODES" />
+		
+		  <View xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/ruler3" android:layout_width="fill_parent"
+        android:layout_below="@id/numberOfmultipleCrossedNodes" 
+        android:layout_height="1dip" android:background="#ccc" />
+        
+        <TextView android:id="@+id/multipleNumberValues" android:textSize="15sp"
+        android:layout_below="@id/ruler3" android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+        
+        </RelativeLayout>
+        
+        </ScrollView>
+
+</RelativeLayout>

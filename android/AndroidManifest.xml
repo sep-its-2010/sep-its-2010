@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="sep.conquest" android:versionCode="1" android:versionName="1.0">
+	<application android:icon="@drawable/icon" android:label="@string/app_name"
+		android:debuggable="true">
+
+
+		<activity android:name=".activity.Connect" android:screenOrientation="portrait">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN"></action>
+				<category android:name="android.intent.category.LAUNCHER"></category>
+			</intent-filter>
+		</activity>
+		<activity android:name=".activity.Simulation" android:screenOrientation="portrait"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
+</intent-filter>
+</activity>
+		<activity android:name=".activity.Import" android:screenOrientation="portrait"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
+</intent-filter>
+</activity>
+		<activity android:name=".activity.Steer" android:screenOrientation="portrait"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
+</intent-filter>
+</activity>
+		<activity android:name=".activity.Map" android:finishOnTaskLaunch="false" android:allowTaskReparenting="false" android:clearTaskOnLaunch="false" android:alwaysRetainTaskState="true" android:screenOrientation="portrait"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
+</intent-filter>
+</activity>
+		<activity android:name=".activity.Export" android:screenOrientation="portrait"><intent-filter><category android:name="android.intent.category.ALTERNATIVE"></category>
+</intent-filter>
+</activity>
+	<activity android:name=".activity.Statistics" android:screenOrientation="portrait"></activity>
+
+</application>
+	<uses-sdk android:minSdkVersion="7" />
+
+
+	<uses-permission android:name="android.permission.BLUETOOTH"></uses-permission>
+	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"></uses-permission>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+</manifest> 

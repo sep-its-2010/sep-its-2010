@@ -1,0 +1,295 @@
+% $Header: /cvsroot/latex-beamer/latex-beamer/solutions/conference-talks/conference-ornate-20min.de.tex,v 1.7 2004/10/07 20:53:08 tantau Exp $
+
+\documentclass[xcolor=dvipsnames]{beamer}
+
+  	\usetheme{Frankfurt}
+  	\setbeamertemplate{footline}[frame number]
+	\definecolor{RoyalBlue3}{rgb}{0.23,0.37,0.8}
+	\definecolor{RoyalBlue4}{rgb}{0.15,0.25,0.54}
+	\definecolor{SlateGray4}{rgb}{0.42,0.48,0.54}
+	\definecolor{SteelBlue4}{rgb}{0.21,0.39,0.54}
+  	\usecolortheme[named=RoyalBlue3]{structure}
+	\useinnertheme{circles}  
+
+
+\usepackage{beamerthemesplit}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{listings}
+\usepackage[nomarkers]{pause}
+\usepackage{hyperref}
+        
+\usepackage[german]{babel}
+% oder was auch immer
+
+\usepackage[utf8]{inputenc}
+% oder was auch immer
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+
+
+\title[Validierung] % (optional, nur bei langen Titeln ntig)
+{e-puck Conquest}
+
+\subtitle
+{Validierung}
+
+\author[Binder, Bürchner, Freund, Lorenz, Poxrucker, Wilhelm] % (optional, nur bei vielen Autoren)
+{SEP - ITS 2010 \\ Max Binder \and Florian Bürchner \and Martin Freund
+	\\ Florian Lorenz \and Andreas Poxrucker \and Andreas Wilhelm}
+% - Namen mssen in derselben Reihenfolge wie im Papier erscheinen.
+% - Der \inst{?} Befehl sollte nur verwendet werden, wenn die Autoren
+%   unterschiedlichen Instituten angehren.
+
+\institute[Universität Passau] % (optional, aber oft ntig)
+{
+  Fakultät für Informatik und Mathematik\\
+  Universität Passau}
+
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Inhaltsverzeichnis}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+
+% Falls Aufzhlungen immer schrittweise gezeigt werden sollen, kann
+% folgendes Kommando benutzt werden:
+
+%\beamerdefaultoverlayspecification{<+->}
+
+\begin{document}
+
+\lstset{language=Java, basicstyle=\footnotesize, tabsize=2}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{Inhaltsverzeichnis}
+  \tableofcontents
+\end{frame}	
+
+\section{Projektdaten}
+		\begin{frame}
+		\frametitle{Projektdaten}
+   			\begin{itemize}
+				\item[•]LOC Java (ohne Kommentare) 6656
+				\item[•]Anzahl an Methoden 454
+				\item[•]Anzahl an Packages 10
+				\item[•]LOC Gesamt 24000
+			\end{itemize}			
+		\end{frame}
+
+		
+\section{Testvoraussetzungen}
+		\begin{frame}
+		\frametitle{Wie haben wir getestet?}
+   			\begin{itemize}
+				\item[•]Android JUnit 3 
+				\item[•]HyperTerminal / Putty
+				\item[•]GUI durch Benutzung
+			\end{itemize}			
+		\end{frame}
+
+\section{Globale Testszenarien und Testfälle}
+	\begin{frame}
+	\frametitle{Globale Testszenarien und Testfälle}
+		\begin{itemize}
+			\item[•]Abweichung zum Pflichtenheft
+			\begin{itemize}
+				\item[/T100/]Steuerung der Fahrtgeschwindigkeit
+				\item[/T160W/]Globale Lokalisierung
+				\item[/T170W/]Zoomfunktion der Karte
+            \end{itemize}
+		\end{itemize}
+	\end{frame}
+	
+		\begin{frame}
+	\frametitle{Globale Testszenarien und Testfälle}
+		\begin{itemize}
+			\item[•]Alle anderen Testfälle wurden durchgeführt und bestanden
+		
+		            \begin{tabular}{l|p{2cm}}
+				\hline
+					\textbf{Testfall} & \textbf{bestanden}\\
+				\hline \hline
+					 /T50/ Kalibrierung & OK \\
+ 				\hline
+					/T60/ Linienerkennung & OK \\
+				\hline		
+					/T70/ Bluetooth-Scan & OK \\
+				\hline	
+					/T80/ Broadcast-Test & OK \\
+				\hline		
+					/T90/ Knotenanalyse und manuelle Steuerung & OK \\
+				\hline	
+					/T110/ Steuerung per Beschleunigungssensor & OK \\
+				\hline									
+					/T120/ Erkundungstest & OK \\
+				\hline			
+					/T130/ Erweiterter Steuerungstest & OK \\
+				\hline		
+					/T140W/ Speichern der Kartendaten & OK \\
+				\hline		
+					/T150W/ Laden der Kartendaten & OK \\
+				\hline		
+			\end{tabular}
+			\item[•]Weitere Testfälle		
+		\end{itemize}
+	\end{frame}
+
+\section{Unit Tests}
+	\begin{frame}
+	\frametitle{Android JUnit}
+		\begin{itemize}
+			\item[•]GridMap
+		\end{itemize}
+				            \begin{tabular}{l|p{2cm}}
+				\hline
+					\textbf{Testmethode} & \textbf{bestanden}\\
+				\hline \hline
+					 testInsertNode() & OK \\
+ 				\hline
+					testFrontierNodeRightT() & OK \\
+				\hline		
+					testFrontierNodeLeftT() & OK \\
+				\hline		
+					testFrontierNodeBottomT() & OK \\
+				\hline	
+					testFrontierNodeTopT() & OK \\
+				\hline	
+					testFrontierNodeCross() & OK \\
+				\hline	
+					testFrontierNodeBottomLeftEdge() & OK \\
+				\hline	
+					testFrontierNodeBottomRightEdge() & OK \\
+				\hline	
+					testFrontierNodeTopLeftEdge() & OK \\
+				\hline	
+					testFrontierNodeTopRightEdge() & OK \\
+				\hline	
+					testUpdateNode() & OK \\
+				\hline	
+					testMapBorders() & OK \\
+				\hline	
+					testSerializeMapInString() & OK \\
+				\hline	
+			\end{tabular}
+	\end{frame}
+	
+	\begin{frame}
+	\frametitle{Android JUnit}
+		\begin{itemize}
+			\item[•]ComManager
+		\end{itemize}		
+	    \begin{tabular}{l|p{2cm}}
+				\hline
+					\textbf{Testmethode} & \textbf{bestanden}\\
+				\hline \hline
+					 testAddClientAndSend() & OK \\
+ 				\hline
+					testRemoveClient() & OK \\
+				\hline		
+			\end{tabular}
+			\vspace{0.5cm}
+		\begin{itemize}
+				\item[•]Behaviour
+		\end{itemize}	
+		 	\begin{tabular}{l|p{2cm}}
+				\hline
+					\textbf{Testmethode} & \textbf{bestanden}\\
+				\hline \hline
+					 testExploreBehaviour() & OK \\
+ 				\hline		
+			\end{tabular}
+			\vspace{0.5cm}
+		\begin{itemize}
+				\item[•]AStarPathFinder
+		\end{itemize}	
+		 	\begin{tabular}{l|p{2cm}}
+				\hline
+					\textbf{Testmethode} & \textbf{bestanden}\\
+				\hline \hline
+					 testFindPuckMapNodeMapNodeArray() & OK \\
+ 				\hline		
+			\end{tabular}	
+	\end{frame}
+	
+	\begin{frame}
+	\frametitle{Android JUnit}
+		\begin{itemize}
+			\item[•]Handler
+		\end{itemize}
+			\begin{tabular}{l|p{2cm}}
+				\hline
+					\textbf{Testmethode} & \textbf{bestanden}\\
+				\hline \hline
+					 testSimTurnHandler() & OK \\
+ 				\hline
+					testSimStatusHandler() & OK \\
+				\hline		
+					testSimSpeedHandler() & OK \\
+				\hline		
+					testSimResetHandler() & OK \\
+				\hline	
+					testSimMoveHandler() & OK \\
+				\hline	
+					testSimLEDHandler() & OK \\
+				\hline	
+					testPuckStatusHandler() & OK \\
+				\hline	
+					testPuckRejectHandler() & OK \\
+				\hline	
+					testPuckOkHandler() & OK \\
+				\hline	
+					testPuckNodeHitHandler() & OK \\
+				\hline	
+					testPuckCollisionHandler() & OK \\
+				\hline	
+					testPuckAbyssHandler() & OK \\
+				\hline
+			\end{tabular}
+	\end{frame}
+	
+	\begin{frame}
+	\frametitle{Epuck Unit Test}
+		\begin{itemize}
+			\item[•]Ringpuffer
+		\end{itemize}
+			\begin{tabular}{l|p{2cm}}
+				\hline
+					\textbf{Testmethode} & \textbf{bestanden}\\
+				\hline \hline
+					 testRingPuffer() & OK \\
+ 				\hline
+			\end{tabular}
+	\end{frame}
+
+		
+\section{Herausforderungen und Probleme des Projekts}
+	\begin{frame}
+	\frametitle{Herausforderungen und Probleme des Projekts}
+		\begin{itemize}
+			\item[•]Knotenerkennung des E-puck Roboters
+			\item[•]Kollisionserkennung der Roboter auf dem Spielfeld
+			\item[•]RaceConditions aufgrund mehrerer Threads
+		\end{itemize}
+	\end{frame}
+		
+
+\section{Ende}
+	\begin{frame}
+		\begin{center}
+			Vielen Dank für die Aufmerksamkeit!
+		\end{center}
+	\end{frame}
+		
+\end{document}
+
+
